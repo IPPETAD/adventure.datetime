@@ -1,12 +1,17 @@
 adventure.datetime
 ==================
+An android app involving the creating and consumption of Choose-Your-Own-Adventure stories.
 
 Authors
 =======
 Andrew Fontaine
+
 Jacob Viau
+
 James Finlay
+
 Evan DeGraff
+
 Jesse Tucker
 
 Description
