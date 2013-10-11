@@ -16,4 +16,4 @@ Jesse Tucker
 
 Description
 ===========
-You know when u in da club, and you got mad stax. Dis app help you navigate the harsh realities of who you are, and where you are going. There is no spork. Spoons are also not allowed. Forks are provided you use them on your children before disowning them.
+Android application that implements the project description for CMPUT 301 at UAlberta. Application is an interactive adventure, similar to the Adventure books that were popular in the 1970s and 1980s. This application allows users to create, collaborate, play, and build their own choose your own adventure story.
