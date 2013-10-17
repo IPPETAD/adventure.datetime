@@ -1,48 +1,46 @@
 Oct 16
 ======
 
-Azure? Check with Hindle
-
 Jacob
 -----
 - Past Week
 	- Looking at DB stuff
--• Issue
+- Issue
 	- Can we use Azure?
--• This wek
+- This week
 	- Work on Azure, wrap DB
 
 Jesse
 -----
--• Past wee
+- Past week
 	- Mockup/storyboard with James
--• Issues
+- Issues
 	- Technical questions, offline
--• This week
+- This week
 	- Basic project set up, UI on screen
 	- User stories
 
 Evan
 ----
--• Past week
+- Past week
 	- Not much :'(
--• Issues
+- Issues
 	- None
-	• 
+- This week
 	- Requirements spec
 
 Andrew
 ------
--• Past week
+- Past week
 	- Github setup
 	- Started class diagram
--• This wee
+- This week
 	- Class diagram
 	- Release planning
 
 James
 -----
-•- Past eek
+- Past eek
 	- Github setup
 	- Mockups
 	- Thowing up
@@ -53,7 +51,7 @@ James
 
 TA - haiming1@ualberta.ca
 -------------------------
--• Past week
+- Past week
 	- Figure out what our progress should be
 - This week
 	- Project part 3:
@@ -62,22 +60,24 @@ TA - haiming1@ualberta.ca
 
 TODO
 ----
--• Requirements spec
--• Tests
--• Release planning
+- Requirements spec
+- Tests
+- Release planning
 	- User cases into doable tasks, owners, start+due date
--• UML
+- UML
 	- More MVC, maybe MVVM
 
 Questions
 ---------
-- How many choices per fragment?
-	• No limit, can set limit
-- Film strip cool?
-	• Film strip probably cool
-- Videos offline?
-	• Yes
-- Photos?
-	• Photo tags, comments
-- Target device?
-	• ICS and up
+- How many choices per fragment?  
+	No limit, can set limit
+- Film strip cool?  
+	Film strip probably cool
+- Videos offline?  
+	Yes
+- Photos?  
+	Photo tags, comments
+- Target device?  
+	ICS and up
+- Azure?  
+	Check with Hindle
