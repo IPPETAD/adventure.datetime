@@ -22,5 +22,17 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.graphics.Bitmap;
+
+import java.util.Collection;
+
 public class Story {
+
+	private long id;
+	private String title;
+	private String synopsis;
+	private Bitmap thumbnail;
+	private Collection<String> tags;
+	private Collection<Long> fragmentIDs;
+
 }
