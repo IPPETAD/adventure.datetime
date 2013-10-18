@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
@@ -37,7 +38,11 @@ public class MainView extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
+		
+		
 		
 		
 		Button browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);

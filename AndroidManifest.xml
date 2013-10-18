@@ -19,13 +19,16 @@
         </activity>
         <activity
             android:name=".view.ContinueView"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:parentActivityName=".view.MainView" />
         <activity
             android:name=".view.BrowseView"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:parentActivityName=".view.MainView" />
         <activity
             android:name=".view.AuthorList"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:parentActivityName=".view.MainView" />
     </application>
 
 </manifest>
