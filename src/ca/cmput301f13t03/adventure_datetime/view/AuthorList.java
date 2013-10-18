@@ -26,13 +26,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import ca.cmput301f13t03.adventure_datetime.R;
 
-public class ChooseYourOwnActivity extends Activity {
-	/**
-	 * Called when the activity is first created.
-	 */
+/** Called when activity is first created */
+public class AuthorList extends Activity {
+	private static final String TAG = "AuthorList";
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.browse_authored);
 	}
+
 }
