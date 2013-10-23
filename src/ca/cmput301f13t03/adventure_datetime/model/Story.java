@@ -22,5 +22,91 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class Story {
+
+	private long headFragmentId;
+	private long id;
+	private String title;
+	private String synopsis;
+	private Uri thumbnail;
+	private Collection<String> tags;
+	private Collection<Long> fragmentIDs;
+
+	public Story() {
+		id = -1;
+		title = "";
+		headFragmentId = -1;
+		fragmentIDs = new ArrayList<Long>();
+		fragmentIDs.add(headFragmentId);
+		tags = new ArrayList<String>();
+		tags.add("new");
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getSynopsis() {
+		return synopsis;
+	}
+
+	public void setSynopsis(String synopsis) {
+		this.synopsis = synopsis;
+	}
+
+	public long getHeadFragmentId() {
+		return headFragmentId;
+	}
+
+	public void setHeadFragmentId(long headFragmentId) {
+		this.headFragmentId = headFragmentId;
+	}
+
+	public Uri getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String uri) {
+		this.thumbnail = new Uri.Builder().path(uri).build();
+	}
+
+	public void setThumbnail(Uri uri) {
+		this.thumbnail = uri;
+	}
+
+	public void addTag(String tag) {
+		this.tags.add(tag);
+	}
+
+	public void removeTag(String tag) {
+		this.tags.remove(tag);
+	}
+
+	public void addFragment(Long id) {
+		this.fragmentIDs.add(id);
+	}
+
+	public void removeFragment(Long id) {
+		this.fragmentIDs.remove(id);
+	}
+
 }
