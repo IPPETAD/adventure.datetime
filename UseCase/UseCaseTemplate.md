@@ -28,5 +28,5 @@ Basic Flow
 Exceptions
 ----------
 Steps:
-	If
-		- bullets
+- If
+	- bullets
