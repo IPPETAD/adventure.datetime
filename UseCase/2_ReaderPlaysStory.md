@@ -40,6 +40,6 @@ Basic Flow
 
 Exceptions
 ----------
-3, 5, 8:
-	If story resides on local storage:
-		- System fetches all story information and fragments from local storage.
+3, 5, 8:  
+- If story resides on local storage:  
+	- System fetches all story information and fragments from local storage.
