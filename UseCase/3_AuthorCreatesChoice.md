@@ -38,9 +38,9 @@ Basic Flow
 Exceptions
 ----------
 3:  
-	If the Author does not enter a description:  
-		- The System cancels the choice creation.
+- If the Author does not enter a description:  
+	- The System cancels the choice creation.
 
 6:  
-	If the Author cancels the save:  
-		- The System does not save the new choice.  
+- If the Author cancels the save:  
+	- The System does not save the new choice.  
