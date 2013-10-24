@@ -22,6 +22,36 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-public class StoryFragment {
+import java.util.Collection;
 
+/**
+ * Service for publishing Stories or saving them
+ * locally while working on them.
+ */
+public interface IAuthorStorage extends IReaderStorage {
+	
+	/**
+	 * Publish a story to the web. May be an insert or update.
+	 * Must be the author in case of an update.
+	 * @param story the story
+	 * @param fragments the fragments for the story
+	 * @return the ID of the story published
+	 */
+	int publishStory(Story story, Collection<StoryFragment> fragments);
+	
+	/**
+	 * Remove a story from the web service.
+	 * Must be the author of the story
+	 * @param storyId the story id
+	 * @return True if story deleted, false otherwise
+	 */
+	boolean unpublishStory(long storyId);
+	
+	/**
+	 * Save a story to local storage. Does not publish the story
+	 * @param story the story
+	 * @param fragments the fragments for the story
+	 * @return True if saved, false otherwise
+	 */
+	boolean saveStory(Story story, Collection<StoryFragment> fragments);
 }
