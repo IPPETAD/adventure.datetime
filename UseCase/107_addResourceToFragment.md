@@ -32,3 +32,7 @@ Basic Steps
 5. Author selects 'Add image/video' button.
 6. Author selects an image or video from a list.
 7. System saves the resource information locally with the fragment.
+
+Aternate Flow
+-----------
+1. At step 6, the Author could choose to take a photo with their camera.  The photo could be retaken until it is satisfactory.
