@@ -13,7 +13,7 @@ Goal
 
 Trigger
 -------
-- Author creates a fragment and selects "Add to Current Story".
+- Author creates a fragment and selects "Add to Story".
 
 Precondition
 ------------
@@ -26,7 +26,7 @@ Postconditions
 
 Basic Flow
 ----------
-1. Author selects "Add to Current Story".
+1. Author selects "Add to Story".
 2. System prompts Author to confirm.
 3. Author confirms.
 
