@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo" />
+    
+    <Button
+        android:id="@+id/btn_browseBookmarks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue" />
+    
+    <Button
+        android:id="@+id/btn_browseStories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Browse" />
+    
+    <Button
+        android:id="@+id/btn_authorList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author" />
+
+</LinearLayout>

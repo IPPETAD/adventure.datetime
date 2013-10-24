@@ -27,7 +27,7 @@ Basic Flow
 ----------
 1. Reader opens app
 2. Reader selects the Browse button
-3. Readerr selects a story to view
+3. Reader selects a story to view
 4. Reader presses annotate photo on a fragment
 6. Reader takes photo
 7. Reader confirms the annotation
