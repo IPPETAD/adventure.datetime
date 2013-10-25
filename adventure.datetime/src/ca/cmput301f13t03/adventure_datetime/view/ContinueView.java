@@ -26,11 +26,15 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -49,7 +53,20 @@ public class ContinueView extends Activity {
 		setContentView(R.layout.browse_bookmarks);
 
 		_listView = (ListView) findViewById(R.id.list_view);
-		//TODO: _listView.setOnItemClickListener(..) to appropriate story
+		_listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				// Get selected item
+				ListView listView = (ListView) parent;
+				Story item = (Story) listView.getItemAtPosition(position);
+				
+				// TODO: Send fragment info to controller
+				
+				Intent intent = new Intent(ContinueView.this, FragmentView.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override
@@ -57,10 +74,9 @@ public class ContinueView extends Activity {
 
 		// TODO: Load known bookmarks as views. For now, placeholders are set
 
-		Story[] stories = new Story[3];
-		stories[0] = new Story();
-		stories[1] = new Story();
-		stories[2] = new Story();
+		Story[] stories = new Story[10];
+		for (int i=0; i<stories.length; i++)
+			stories[i] = new Story();
 
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
 		_listView.setAdapter(_adapter);
@@ -93,7 +109,6 @@ public class ContinueView extends Activity {
 
 			// TODO: fill out views from values[position]
 
-			Log.v(TAG, "here");
 			
 			return rowView;
 		}
