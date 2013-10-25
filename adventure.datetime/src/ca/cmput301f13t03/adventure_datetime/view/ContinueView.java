@@ -74,10 +74,9 @@ public class ContinueView extends Activity {
 
 		// TODO: Load known bookmarks as views. For now, placeholders are set
 
-		Story[] stories = new Story[3];
-		stories[0] = new Story();
-		stories[1] = new Story();
-		stories[2] = new Story();
+		Story[] stories = new Story[10];
+		for (int i=0; i<stories.length; i++)
+			stories[i] = new Story();
 
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
 		_listView.setAdapter(_adapter);
@@ -110,7 +109,6 @@ public class ContinueView extends Activity {
 
 			// TODO: fill out views from values[position]
 
-			Log.v(TAG, "here");
 			
 			return rowView;
 		}

@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wrapper"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:weightSum="20" >
+    android:fillViewport="true" >
 
-    <ImageView
-        android:id="@+id/filmstrip"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="7"
-        android:background="#333333"
-        android:contentDescription="Filmstrip" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_weight="13"
-        android:text="I am watching you, Jesse.."
-        android:textSize="18sp"
-        android:singleLine="false" />
+        <!-- TODO: Change to 'CustomView' -->
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/filmstrip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#333333"
+            android:contentDescription="Filmstrip" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:singleLine="false"
+            android:text="I am watching you, Jesse.."
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="10dp" >
+
+            <Button
+                android:id="@+id/choices"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Actions" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>
