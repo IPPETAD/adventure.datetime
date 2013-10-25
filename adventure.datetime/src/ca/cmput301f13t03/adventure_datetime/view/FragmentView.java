@@ -1,28 +1,44 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class FragmentView extends Activity {
 	private static final String TAG = "FragmentView";
-	
-	//TODO: Use custom view, not this 'ImageView' bullshit
-	ImageView _filmstrip;
-	TextView _content;
-	
+
+	private HorizontalScrollView _filmstrip;
+	private TextView _content;
+	//private ListView _listView;
+	private LinearLayout _filmLayout;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
-		
+
+
+		//_listView = (ListView) findViewById(R.id.list_view);
+		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
+		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
+
 		// Programmatically set filmstrip height
 		// TODO: Unshitify this, aka not static value
-		_filmstrip = (ImageView) findViewById(R.id.filmstrip);
 		_filmstrip.getLayoutParams().height = 300;
-		
+
 		//TODO: read actual content from model
 		_content = (TextView) findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
@@ -47,9 +63,16 @@ public class FragmentView extends Activity {
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
 		_content.setText(tempText);
-		
-		
-		
+
+		Bitmap[] frags = new Bitmap[10];
+		for (int i=0; i<frags.length; i++) {
+			ImageView li = new ImageView(this);
+			li.setBackgroundResource(R.drawable.grumpy_cat);
+			_filmLayout.addView(li);
+		}
+
+
+
 	}
 
 }
