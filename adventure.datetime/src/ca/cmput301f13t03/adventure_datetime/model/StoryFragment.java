@@ -20,8 +20,8 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package ca.cmput301f13t03.adventure_datetime.model;
 
-package ca.cmput301f13t03.adventure_datetime.controller;
+public class StoryFragment {
 
-public class UserController {
 }
