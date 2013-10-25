@@ -1,21 +1,13 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class FragmentView extends Activity {
