@@ -4,7 +4,10 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -61,8 +64,9 @@ public class FragmentView extends Activity {
 		// TODO : Not use Bitmap, but proper object. Load illustrations from model
 		Bitmap[] frags = new Bitmap[10];
 		
-		// Create new ImageView and add to the LinearLayout
-		// Next, set appropriate Layout Params to ImageView
+		// 1) Create new ImageView and add to the LinearLayout
+		// 2) Set appropriate Layout Params to ImageView
+		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
 		for (int i=0; i<frags.length; i++) {
 			
@@ -76,6 +80,13 @@ public class FragmentView extends Activity {
 			lp.width = LayoutParams.WRAP_CONTENT;
 			lp.gravity = Gravity.CENTER_VERTICAL;
 			li.setLayoutParams(lp);
+			
+			li.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO: Open image in fullscreen
+				}
+			});
 		}
 
 
