@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ public class FragmentView extends Activity {
 
 	private HorizontalScrollView _filmstrip;
 	private TextView _content;
-	//private ListView _listView;
 	private LinearLayout _filmLayout;
 
 	@Override
@@ -30,12 +30,12 @@ public class FragmentView extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
 
-
-		//_listView = (ListView) findViewById(R.id.list_view);
+		
+		/** Layout items **/
 		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
 		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
 
-		// Programmatically set filmstrip height
+		/** Programmatically set filmstrip height **/
 		// TODO: Unshitify this, aka not static value
 		_filmstrip.getLayoutParams().height = 300;
 
@@ -64,11 +64,20 @@ public class FragmentView extends Activity {
 				"umpy Cat for Forbes, released March 25.";
 		_content.setText(tempText);
 
+		// TODO : Not use Bitmap, but proper object. Load illustrations from model
 		Bitmap[] frags = new Bitmap[10];
+		
+		LinearLayout.LayoutParams lp;
 		for (int i=0; i<frags.length; i++) {
 			ImageView li = new ImageView(this);
 			li.setBackgroundResource(R.drawable.grumpy_cat);
+			
 			_filmLayout.addView(li);
+			
+			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
+			lp.setMargins(10, 10, 10, 10);
+			lp.gravity = Gravity.CENTER_VERTICAL;
+			li.setLayoutParams(lp);
 		}
 
 
