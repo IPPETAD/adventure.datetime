@@ -22,17 +22,31 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.Collection;
+import java.util.Date;
 
-public interface IStoryStorageService {
-	
-	Story getStory(long id);
-	
-	Collection<Story> getAllStories();
-	
-	StoryFragment getFragment(long storyId, long fragmentId);
-	
-	Collection<StoryFragment> getAllFragmentsForStory(long storyId); 
-	
-	int publishStory(Story story, Collection<StoryFragment> fragments);
+/**
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
+public class Bookmark {
+
+	private long fragmentID;
+	private Date date;
+
+	public long getFragmentID() {
+		return fragmentID;
+	}
+
+	public void setFragmentID(long fragmentID) {
+		this.fragmentID = fragmentID;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 }

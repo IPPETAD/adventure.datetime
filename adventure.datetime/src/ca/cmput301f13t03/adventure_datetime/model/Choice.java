@@ -22,17 +22,29 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.Collection;
+/**
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
+public class Choice {
 
-public interface IStoryStorageService {
-	
-	Story getStory(long id);
-	
-	Collection<Story> getAllStories();
-	
-	StoryFragment getFragment(long storyId, long fragmentId);
-	
-	Collection<StoryFragment> getAllFragmentsForStory(long storyId); 
-	
-	int publishStory(Story story, Collection<StoryFragment> fragments);
+	private String text;
+	private long target;
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public long getTarget() {
+		return target;
+	}
+
+	public void setTarget(long target) {
+		this.target = target;
+	}
 }
