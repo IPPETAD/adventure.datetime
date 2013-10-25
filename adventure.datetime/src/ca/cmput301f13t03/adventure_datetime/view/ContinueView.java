@@ -26,11 +26,15 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -49,7 +53,20 @@ public class ContinueView extends Activity {
 		setContentView(R.layout.browse_bookmarks);
 
 		_listView = (ListView) findViewById(R.id.list_view);
-		//TODO: _listView.setOnItemClickListener(..) to appropriate story
+		_listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				// Get selected item
+				ListView listView = (ListView) parent;
+				Story item = (Story) listView.getItemAtPosition(position);
+				
+				// TODO: Send fragment info to controller
+				
+				Intent intent = new Intent(ContinueView.this, FragmentView.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override
