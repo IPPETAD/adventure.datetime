@@ -67,8 +67,11 @@ public class FragmentView extends Activity {
 		// TODO : Not use Bitmap, but proper object. Load illustrations from model
 		Bitmap[] frags = new Bitmap[10];
 		
+		// Create new ImageView and add to the LinearLayout
+		// Next, set appropriate Layout Params to ImageView
 		LinearLayout.LayoutParams lp;
 		for (int i=0; i<frags.length; i++) {
+			
 			ImageView li = new ImageView(this);
 			li.setBackgroundResource(R.drawable.grumpy_cat);
 			
