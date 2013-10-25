@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -65,12 +67,13 @@ public class FragmentView extends Activity {
 		for (int i=0; i<frags.length; i++) {
 			
 			ImageView li = new ImageView(this);
-			li.setBackgroundResource(R.drawable.grumpy_cat);
-			
+			li.setScaleType(ScaleType.CENTER_INSIDE);
+			li.setImageResource(R.drawable.grumpy_cat2);
 			_filmLayout.addView(li);
 			
 			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
 			lp.setMargins(10, 10, 10, 10);
+			lp.width = LayoutParams.WRAP_CONTENT;
 			lp.gravity = Gravity.CENTER_VERTICAL;
 			li.setLayoutParams(lp);
 		}
