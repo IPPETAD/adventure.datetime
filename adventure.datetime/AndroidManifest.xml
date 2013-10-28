@@ -33,8 +33,7 @@
             android:parentActivityName=".view.MainView" />
         <activity
             android:name=".view.FragmentView"
-            android:label="@string/app_name"
-            android:parentActivityName=".view.MainView" />
+            android:label="@string/app_name"/>
         
     </application>
 
