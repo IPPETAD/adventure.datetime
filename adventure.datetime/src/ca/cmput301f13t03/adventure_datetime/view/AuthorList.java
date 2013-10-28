@@ -95,9 +95,10 @@ public class AuthorList extends Activity {
 		if (title.equals("New")) {
 			// TODO : Create new story on click
 			Log.v(TAG, "New click");
+			return true;
 		}
 		
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
