@@ -126,9 +126,16 @@ public class AuthorList extends Activity {
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
 			// TODO: fill out views from values[position]
+			if (position == 3)
+				status.setImageResource(R.drawable.ic_action_cloud);
+			else if (position == 5)
+				status.setImageResource(R.drawable.ic_action_upload);
+			else
+				status.setImageResource(R.drawable.ic_action_sync);
+			
 			fragments.setText("Fragments: 69");
 			lastModified.setText("Last Modified: 01/01/1969");
-			status.setImageResource(R.drawable.ic_action_cloud);
+			
 
 			return rowView;
 		}
