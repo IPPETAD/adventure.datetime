@@ -25,8 +25,10 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -80,6 +82,21 @@ public class AuthorList extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
 		getMenuInflater().inflate(R.menu.authorlist, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		String title = (String) item.getTitle();
+		
+		// TODO : Verify if using item title is best way. It works without
+		// issue, but is it standard?
+		
+		if (title.equals("New")) {
+			// TODO : Create new story on click
+			Log.v(TAG, "New click");
+		}
+		
 		return true;
 	}
 
