@@ -3,40 +3,42 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <ImageView 
+    <ImageView
         android:id="@+id/thumbnail"
-        android:src="@drawable/grumpy_cat"
         android:layout_width="wrap_content"
-        android:contentDescription="Thumbnail"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
-    
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="Thumbnail"
+        android:maxHeight="80dp"
+        android:src="@drawable/grumpy_cat" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_toRightOf="@id/thumbnail"
-        android:orientation="vertical">
-        
+        android:orientation="vertical" >
+
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:layout_marginTop="10dp"
-            android:text="Story Name"/>
-        
+            android:layout_marginTop="5dp"
+            android:text="Story Name"
+            android:textSize="20dp" />
+
         <TextView
             android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author: Tartar Sauce"/>
-        
+            android:text="Author: Tartar Sauce" />
+
         <TextView
             android:id="@+id/datetime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last Played: 3h"/>
-        
+            android:text="Last Played: 3h" />
     </LinearLayout>
-  
+
 </RelativeLayout>
