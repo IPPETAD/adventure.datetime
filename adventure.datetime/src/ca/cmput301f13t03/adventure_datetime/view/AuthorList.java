@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -74,6 +75,13 @@ public class AuthorList extends Activity {
 		
 		super.onResume();
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		getMenuInflater().inflate(R.menu.authorlist, menu);
+		return true;
+	}
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
 
@@ -96,11 +104,12 @@ public class AuthorList extends Activity {
 
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
-			TextView author = (TextView) rowView.findViewById(R.id.author);
-			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
+			TextView fragments = (TextView) rowView.findViewById(R.id.author);
+			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
 
 			// TODO: fill out views from values[position]
-
+			fragments.setText("Fragments: 69");
+			lastModified.setText("Last Modified: 01/01/1969");
 
 			return rowView;
 		}
