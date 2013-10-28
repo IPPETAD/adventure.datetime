@@ -123,10 +123,12 @@ public class AuthorList extends Activity {
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView fragments = (TextView) rowView.findViewById(R.id.author);
 			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
+			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
 			// TODO: fill out views from values[position]
 			fragments.setText("Fragments: 69");
 			lastModified.setText("Last Modified: 01/01/1969");
+			status.setImageResource(R.drawable.ic_action_cloud);
 
 			return rowView;
 		}

@@ -6,12 +6,11 @@
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:layout_height="80dp"
         android:adjustViewBounds="true"
         android:contentDescription="Thumbnail"
-        android:maxHeight="80dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:src="@drawable/grumpy_cat" />
 
     <LinearLayout
@@ -40,5 +39,16 @@
             android:layout_height="wrap_content"
             android:text="Last Played: 3h" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/status_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:contentDescription="Status"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" />
 
 </RelativeLayout>
