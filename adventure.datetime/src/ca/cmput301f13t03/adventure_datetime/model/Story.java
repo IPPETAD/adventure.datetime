@@ -34,6 +34,7 @@ public class Story {
 
 	private long headFragmentId;
 	private long id;
+	private long timestamp;
 	private String author;
 	private String title;
 	private String synopsis;
@@ -49,16 +50,20 @@ public class Story {
 		fragmentIDs.add(headFragmentId);
 		tags = new ArrayList<String>();
 		tags.add("new");
+		timestamp = System.currentTimeMillis() / 1000L;
 	}
 
 	public Story(Cursor cursor) {
 		id = cursor.getInt(cursor.getColumnIndex(StoryDB._ID));
 		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
 		headFragmentId = cursor.getInt(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
+		fragmentIDs = new ArrayList<Long>();
+		fragmentIDs.add(headFragmentId);
 		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
 		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
-		thumbnail = new BitmapFactory().decodeByteArray(thumb, 0, thumb.length);
+		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
+		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 	}
 
 	public long getId() {

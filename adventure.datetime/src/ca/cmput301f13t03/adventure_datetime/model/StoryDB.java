@@ -28,6 +28,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -54,6 +57,11 @@ public class StoryDB implements BaseColumns {
 		mDbHelper = new StoryDBHelper(context);
 	}
 
+	/**
+	 * Grabs a story with the given id from the local database
+	 * @param id The id of the story
+	 * @return The Story object or null if the id doesn't exist in the database
+	 */
 	public Story getStory(long id) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -75,6 +83,61 @@ public class StoryDB implements BaseColumns {
 		}
 		else
 			return null;
+	}
+
+	/**
+	 * Retrieves all stories located on local storage
+	 * @return Collection of all stories on local storage. Collection is empty if there are no stories
+	 */
+	public Collection<Story> getStories() {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(STORY_TABLE_NAME,
+				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				null,
+				null,
+				null,
+				null,
+				null);
+		Collection<Story> stories = new ArrayList<Story>();
+
+		cursor.moveToFirst();
+		do {
+			stories.add(new Story(cursor));
+		} while(cursor.moveToNext());
+
+		cursor.close();
+
+		return stories;
+	}
+
+	/**
+	 * Retrieves all stories located on local storage by an author
+	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories
+	 * by author.
+	 */
+	public Collection<Story> getStoriesAuthoredBy(String author) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(STORY_TABLE_NAME,
+				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				STORY_COLUMN_AUTHOR + " = ?",
+				new String[] {author},
+				null,
+				null,
+				null);
+		Collection<Story> stories = new ArrayList<Story>();
+
+		cursor.moveToFirst();
+		do {
+			stories.add(new Story(cursor));
+		} while(cursor.moveToNext());
+
+		cursor.close();
+
+		return stories;
 	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
