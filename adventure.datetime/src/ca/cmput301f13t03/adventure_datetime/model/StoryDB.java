@@ -59,14 +59,14 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Grabs a story with the given id from the local database
-	 * @param id The id of the story
+	 * @param id The _ID of the story
 	 * @return The Story object or null if the id doesn't exist in the database
 	 */
 	public Story getStory(long id) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
 						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				_ID + " = ?",
 				new String[] {String.valueOf(id)},
@@ -75,14 +75,17 @@ public class StoryDB implements BaseColumns {
 				null,
 				"1");
 
+		Story story;
+
 		if (cursor.moveToFirst()) {
-			Story story = new Story(cursor);
-			cursor.close();
-			db.close();
-			return story;
+			story = new Story(cursor);
 		}
 		else
-			return null;
+			story = null;
+
+		cursor.close();
+		db.close();
+		return story;
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
 						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				null,
 				null,
@@ -108,7 +111,7 @@ public class StoryDB implements BaseColumns {
 		} while(cursor.moveToNext());
 
 		cursor.close();
-
+		db.close();
 		return stories;
 	}
 
@@ -121,7 +124,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
 						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				STORY_COLUMN_AUTHOR + " = ?",
 				new String[] {author},
@@ -136,8 +139,34 @@ public class StoryDB implements BaseColumns {
 		} while(cursor.moveToNext());
 
 		cursor.close();
-
+		db.close();
 		return stories;
+	}
+
+	/**
+	 * Retrieves story fragments by specific ID from local storage
+	 * @param id The _ID of the fragment
+	 * @return StoryFragment instance or null
+	 */
+	public StoryFragment getStoryFragment(long id) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
+				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				_ID + " = ?",
+				new String[] {String.valueOf(id)},
+				null,
+				null,
+				"1");
+
+		StoryFragment frag;
+		if(cursor.moveToFirst())
+			frag = new StoryFragment(cursor);
+		else
+			frag = null;
+		cursor.close();
+		db.close();
+		return frag;
 	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {

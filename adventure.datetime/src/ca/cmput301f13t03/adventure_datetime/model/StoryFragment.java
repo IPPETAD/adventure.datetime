@@ -1,5 +1,7 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.database.Cursor;
+
 import java.util.Collection;
 
 public class StoryFragment {
@@ -9,6 +11,13 @@ public class StoryFragment {
 	private Collection<String> storyMedia;
 	private String storyText;
 	private Collection<Choice> choices;
+
+	public StoryFragment(Cursor cursor) {
+		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
+		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB._ID));
+		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
+		/* TODO figure out JSON serialization for choices and media */
+	}
 
 	public long getStoryID() {
 		return storyID;

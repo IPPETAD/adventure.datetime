@@ -103,7 +103,7 @@ public class Story {
 	}
 
 	public void setThumbnail(String bitmap) {
-		this.thumbnail = new BitmapFactory().decodeFile(bitmap);
+		this.thumbnail = BitmapFactory.decodeFile(bitmap);
 	}
 
 	public void setThumbnail(Bitmap bitmap) {
@@ -126,4 +126,19 @@ public class Story {
 		this.fragmentIDs.remove(id);
 	}
 
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 }
