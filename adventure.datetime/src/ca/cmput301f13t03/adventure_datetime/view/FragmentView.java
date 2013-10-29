@@ -1,28 +1,62 @@
+/*
+ *	Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+ * 	Evan DeGraff
+ *
+ * 	Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * 	this software and associated documentation files (the "Software"), to deal in
+ * 	the Software without restriction, including without limitation the rights to
+ * 	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * 	the Software, and to permit persons to whom the Software is furnished to do so,
+ * 	subject to the following conditions:
+ *
+ * 	The above copyright notice and this permission notice shall be included in all
+ * 	copies or substantial portions of the Software.
+ *
+ * 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * 	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * 	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * 	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class FragmentView extends Activity {
 	private static final String TAG = "FragmentView";
-	
-	//TODO: Use custom view, not this 'ImageView' bullshit
-	ImageView _filmstrip;
-	TextView _content;
-	
+
+	private HorizontalScrollView _filmstrip;
+	private TextView _content;
+	private LinearLayout _filmLayout;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
+
 		
-		// Programmatically set filmstrip height
+		/** Layout items **/
+		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
+		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
+
+		/** Programmatically set filmstrip height **/
 		// TODO: Unshitify this, aka not static value
-		_filmstrip = (ImageView) findViewById(R.id.filmstrip);
 		_filmstrip.getLayoutParams().height = 300;
-		
+
 		//TODO: read actual content from model
 		_content = (TextView) findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
@@ -47,9 +81,37 @@ public class FragmentView extends Activity {
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
 		_content.setText(tempText);
+
+		// TODO : Not use Bitmap, but proper object. Load illustrations from model
+		Bitmap[] frags = new Bitmap[10];
 		
-		
-		
+		// 1) Create new ImageView and add to the LinearLayout
+		// 2) Set appropriate Layout Params to ImageView
+		// 3) Give onClickListener for going to fullscreen
+		LinearLayout.LayoutParams lp;
+		for (int i=0; i<frags.length; i++) {
+			
+			ImageView li = new ImageView(this);
+			li.setScaleType(ScaleType.CENTER_INSIDE);
+			li.setImageResource(R.drawable.grumpy_cat2);
+			_filmLayout.addView(li);
+			
+			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
+			lp.setMargins(10, 10, 10, 10);
+			lp.width = LayoutParams.WRAP_CONTENT;
+			lp.gravity = Gravity.CENTER_VERTICAL;
+			li.setLayoutParams(lp);
+			
+			li.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO: Open image in fullscreen
+				}
+			});
+		}
+
+
+
 	}
 
 }
