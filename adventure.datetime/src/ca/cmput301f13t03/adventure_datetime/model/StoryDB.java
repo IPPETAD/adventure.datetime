@@ -39,6 +39,7 @@ public class StoryDB implements BaseColumns {
 	public static final String STORY_COLUMN_HEAD_FRAGMENT = "HeadFragment";
 	public static final String STORY_COLUMN_TIMESTAMP = "Timestamp";
 	public static final String STORY_COLUMN_SYNOPSIS = "Synopsis";
+	public static final String STORY_COLUMN_THUMBNAIL = "Thumbnail";
 
 	public static final String STORYFRAGMENT_TABLE_NAME = "StoryFragment";
 	public static final String STORYFRAGMENT_COLUMN_STORYID = "StoryID";
@@ -51,16 +52,55 @@ public class StoryDB implements BaseColumns {
 		public static final int DATABASE_VERSION = 1;
 		public static final String DATABASE_NAME = "adventure.database";
 
+		private static final String CREATE_STORY_TABLE =
+				"CREATE TABLE " + STORY_TABLE_NAME + " ("
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ STORY_COLUMN_AUTHOR + " TEXT, "
+				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
+				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
+				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
+				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
+				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
+				+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
+				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
+				+ "(" +  _ID + ") )";
+
+		private static final String CREATE_STORYFRAGMENT_TABLE =
+				"CREATE TABLE " + STORYFRAGMENT_TABLE_NAME + " ("
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ STORYFRAGMENT_COLUMN_STORYID + " INTEGER, "
+				+ STORYFRAGMENT_COLUMN_CONTENT + " TEXT, "
+				+ STORYFRAGMENT_COLUMN_CHOICES + " BLOB, "
+				+ "FOREIGN KEY(" + STORYFRAGMENT_COLUMN_STORYID
+				+ ") REFERENCES " + STORY_TABLE_NAME + "("
+				+ _ID + "))";
+
+		private static final String DELETE_STORY_TABLE =
+				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
+
+		private static final String DELETE_STORYFRAGMENT_TABLE =
+				"DROP TABLE IF EXISTS " + STORYFRAGMENT_TABLE_NAME;
+
 		public StoryDBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			db.execSQL(CREATE_STORY_TABLE);
+			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			db.execSQL(DELETE_STORYFRAGMENT_TABLE);
+			db.execSQL(DELETE_STORY_TABLE);
+		}
+
+		@Override
+		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			onUpgrade(db, oldVersion, newVersion);
+
 		}
 	}
 }
