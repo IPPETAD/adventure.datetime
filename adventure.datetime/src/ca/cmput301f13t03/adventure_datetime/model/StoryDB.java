@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -40,12 +41,41 @@ public class StoryDB implements BaseColumns {
 	public static final String STORY_COLUMN_TIMESTAMP = "Timestamp";
 	public static final String STORY_COLUMN_SYNOPSIS = "Synopsis";
 	public static final String STORY_COLUMN_THUMBNAIL = "Thumbnail";
+	public static final String STORY_COLUMN_TITLE = "Title";
 
 	public static final String STORYFRAGMENT_TABLE_NAME = "StoryFragment";
 	public static final String STORYFRAGMENT_COLUMN_STORYID = "StoryID";
 	public static final String STORYFRAGMENT_COLUMN_CONTENT = "Content";
 	public static final String STORYFRAGMENT_COLUMN_CHOICES = "Choices";
 
+	private StoryDBHelper mDbHelper;
+
+	public StoryDB(Context context) {
+		mDbHelper = new StoryDBHelper(context);
+	}
+
+	public Story getStory(long id) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(STORY_TABLE_NAME,
+				new String[] {STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
+						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				_ID + " = ?",
+				new String[] {String.valueOf(id)},
+				null,
+				null,
+				null,
+				"1");
+
+		if (cursor.moveToFirst()) {
+			Story story = new Story(cursor);
+			cursor.close();
+			db.close();
+			return story;
+		}
+		else
+			return null;
+	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
@@ -55,6 +85,7 @@ public class StoryDB implements BaseColumns {
 		private static final String CREATE_STORY_TABLE =
 				"CREATE TABLE " + STORY_TABLE_NAME + " ("
 				+ _ID + " INTEGER PRIMARY KEY, "
+				+ STORY_COLUMN_TITLE + " TEXT, "
 				+ STORY_COLUMN_AUTHOR + " TEXT, "
 				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
 				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "

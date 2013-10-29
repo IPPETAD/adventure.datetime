@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -33,9 +34,10 @@ public class Story {
 
 	private long headFragmentId;
 	private long id;
+	private String author;
 	private String title;
 	private String synopsis;
-	private Uri thumbnail;
+	private Bitmap thumbnail;
 	private Collection<String> tags;
 	private Collection<Long> fragmentIDs;
 
@@ -47,6 +49,16 @@ public class Story {
 		fragmentIDs.add(headFragmentId);
 		tags = new ArrayList<String>();
 		tags.add("new");
+	}
+
+	public Story(Cursor cursor) {
+		id = cursor.getInt(cursor.getColumnIndex(StoryDB._ID));
+		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
+		headFragmentId = cursor.getInt(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
+		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
+		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
+		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
+		thumbnail = new BitmapFactory().decodeByteArray(thumb, 0, thumb.length);
 	}
 
 	public long getId() {
@@ -81,16 +93,16 @@ public class Story {
 		this.headFragmentId = headFragmentId;
 	}
 
-	public Uri getThumbnail() {
+	public Bitmap getThumbnail() {
 		return thumbnail;
 	}
 
-	public void setThumbnail(String uri) {
-		this.thumbnail = new Uri.Builder().path(uri).build();
+	public void setThumbnail(String bitmap) {
+		this.thumbnail = new BitmapFactory().decodeFile(bitmap);
 	}
 
-	public void setThumbnail(Uri uri) {
-		this.thumbnail = uri;
+	public void setThumbnail(Bitmap bitmap) {
+		this.thumbnail = bitmap;
 	}
 
 	public void addTag(String tag) {
