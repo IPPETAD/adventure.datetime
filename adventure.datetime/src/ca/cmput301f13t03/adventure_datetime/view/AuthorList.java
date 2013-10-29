@@ -130,9 +130,9 @@ public class AuthorList extends Activity {
 			if (position == 3)
 				status.setImageResource(R.drawable.ic_action_cloud);
 			else if (position == 5)
-				status.setImageResource(R.drawable.ic_action_upload);
-			else
 				status.setImageResource(R.drawable.ic_action_sync);
+			else
+				; // no icon if not uploaded
 			
 			fragments.setText("Fragments: 69");
 			lastModified.setText("Last Modified: 01/01/1969");
