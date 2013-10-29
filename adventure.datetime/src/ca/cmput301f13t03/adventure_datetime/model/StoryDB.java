@@ -169,6 +169,34 @@ public class StoryDB implements BaseColumns {
 		return frag;
 	}
 
+	/**
+	 * Retrieves all StoryFragments for a particular Story's _ID
+	 * @param storyid The _ID for a story
+	 * @return A Collection of StoryFragments. Empty if none exist.
+	 */
+	public Collection<StoryFragment> getStoryFragments(long storyid) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
+				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				STORYFRAGMENT_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(storyid)},
+				null,
+				null,
+				null);
+
+		Collection<StoryFragment> fragments = new ArrayList<StoryFragment>();
+
+		cursor.moveToFirst();
+		do {
+			fragments.add(new StoryFragment(cursor));
+		} while(cursor.moveToNext());
+
+		cursor.close();
+		db.close();
+		return fragments;
+	}
+
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
 		public static final int DATABASE_VERSION = 1;
