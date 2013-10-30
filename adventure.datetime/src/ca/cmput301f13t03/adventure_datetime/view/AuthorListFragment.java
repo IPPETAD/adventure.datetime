@@ -22,12 +22,15 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,27 +44,30 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /** Called when activity is first created */
-public class AuthorList extends Activity {
+public class AuthorListFragment extends Fragment {
 	private static final String TAG = "AuthorList";
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.browse_authored);
-
-		// TODO : Load shit from the model
-
-		_listView = (ListView) findViewById(R.id.list_view);
+	
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		setHasOptionsMenu(true);
+	}
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		
+		View rootView = inflater.inflate(R.layout.browse_authored, container, false);
+		
+		_listView = (ListView) rootView.findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// TODO : Launch activity from item click
-			}
+			}			
 		});
 
+		return rootView;
 	}
 
 	@Override
@@ -71,20 +77,24 @@ public class AuthorList extends Activity {
 		for (int i=0; i<stories.length; i++)
 			stories[i] = new Story();
 		
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
+		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, stories);
 		_listView.setAdapter(_adapter);
-		
-		
+
 		super.onResume();
 	}
 	
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		
+		inflater.inflate(R.menu.authorlist, menu);
+	}
+/*	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
 		getMenuInflater().inflate(R.menu.authorlist, menu);
 		return true;
 	}
-	
+*/	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		String title = (String) item.getTitle();
