@@ -13,7 +13,7 @@ Goal
 
 Trigger
 -------
-- User selects to either begin or continue a story that was previously stored locally for offline reading (see use case 100).
+- Reader selects to either begin or continue a story that was previously stored locally for offline reading (see use case 100).
 
 Precondition
 ------------
