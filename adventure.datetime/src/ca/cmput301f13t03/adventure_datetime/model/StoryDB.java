@@ -36,7 +36,7 @@ import java.util.Collection;
  * @version 1.0
  * @since 28/10/13
  */
-public class StoryDB implements BaseColumns {
+public class StoryDB implements BaseColumns, IAuthorStorage, IReaderStorage {
 
 	public static final String STORY_TABLE_NAME = "Story";
 	public static final String STORY_COLUMN_AUTHOR = "Author";
@@ -59,17 +59,20 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Grabs a story with the given id from the local database
-	 * @param id The _ID of the story
+	 *
+	 * @param storyId The _ID of the story
+	 *
 	 * @return The Story object or null if the id doesn't exist in the database
 	 */
-	public Story getStory(long id) {
+	@Override
+	public Story getStory(long storyId) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
 				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
 						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				_ID + " = ?",
-				new String[] {String.valueOf(id)},
+				new String[] {String.valueOf(storyId)},
 				null,
 				null,
 				null,
@@ -90,9 +93,11 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves all stories located on local storage
+	 *
 	 * @return Collection of all stories on local storage. Collection is empty if there are no stories
 	 */
-	public Collection<Story> getStories() {
+	@Override
+	public Collection<Story> getAllStories() {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -117,6 +122,7 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves all stories located on local storage by an author
+	 *
 	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories
 	 * by author.
 	 */
@@ -145,16 +151,21 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves story fragments by specific ID from local storage
-	 * @param id The _ID of the fragment
+	 *
+	 * @param fragmentId The _ID of the fragment
+	 *
+	 * @param storyId the _ID of the story
+	 *
 	 * @return StoryFragment instance or null
 	 */
-	public StoryFragment getStoryFragment(long id) {
+	@Override
+	public StoryFragment getFragment(long storyId, long fragmentId) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
-				_ID + " = ?",
-				new String[] {String.valueOf(id)},
+				_ID + " = ?, " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(fragmentId), String.valueOf(storyId)},
 				null,
 				null,
 				"1");
@@ -171,10 +182,13 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves all StoryFragments for a particular Story's _ID
+	 *
 	 * @param storyid The _ID for a story
+	 *
 	 * @return A Collection of StoryFragments. Empty if none exist.
 	 */
-	public Collection<StoryFragment> getStoryFragments(long storyid) {
+	@Override
+	public Collection<StoryFragment> getAllFragmentsForStory(long storyid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
@@ -196,6 +210,134 @@ public class StoryDB implements BaseColumns {
 		db.close();
 		return fragments;
 	}
+
+	/**
+	 * Subscribe to a story to receive updates
+	 *
+	 * @param storyId the story id
+	 *
+	 * @return True if subscribed, false if it fails
+	 */
+	@Override
+	public boolean subsribe(long storyId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Unsubscribe from a story
+	 *
+	 * @param storyId the story id
+	 *
+	 * @return True if unsubscribed, false otherwise
+	 */
+	@Override
+	public boolean unsubscribe(long storyId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Put a story in local storage
+	 *
+	 * @param storyId the story id
+	 *
+	 * @return True is saved locally, false otherwise
+	 */
+	@Override
+	public boolean saveStoryLocally(long storyId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Deletes a story from local storage
+	 *
+	 * @param storyId the story to delete
+	 *
+	 * @return True if story deleted, false otherwise
+	 */
+	@Override
+	public boolean deleteStoryLocally(long storyId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Gets a collection of comments for a given story fragment
+	 *
+	 * @param storyId    the story id
+	 * @param fragmentId the fragment id
+	 *
+	 * @return A collection of Comment objects
+	 */
+	@Override
+	public Collection<Comment> getComments(long storyId, long fragmentId) {
+		return null;  //TODO Implement
+	}
+
+	/**
+	 * Comment on a story
+	 *
+	 * @param storyId    the story to comment on
+	 * @param fragmentId the fragment to comment on
+	 * @param comment    the comment
+	 *
+	 * @return True if comment successful, false otherwise
+	 */
+	@Override
+	public boolean comment(long storyId, long fragmentId, Comment comment) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Delete a comment from a story fragment
+	 *
+	 * @param storyId    the story id
+	 * @param fragmentId the fragment id
+	 * @param commentId  the comment id
+	 *
+	 * @return True if comment deleted, false otherwise
+	 */
+	@Override
+	public boolean deleteComment(long storyId, long fragmentId, long commentId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Publish a story to the web. May be an insert or update. Must be the author in case of an update.
+	 *
+	 * @param story     the story
+	 * @param fragments the fragments for the story
+	 *
+	 * @return the ID of the story published
+	 */
+	@Override
+	public int publishStory(Story story, Collection<StoryFragment> fragments) {
+		return 0;  //TODO Implement
+	}
+
+	/**
+	 * Remove a story from the web service. Must be the author of the story
+	 *
+	 * @param storyId the story id
+	 *
+	 * @return True if story deleted, false otherwise
+	 */
+	@Override
+	public boolean unpublishStory(long storyId) {
+		return false;  //TODO Implement
+	}
+
+	/**
+	 * Save a story to local storage. Does not publish the story
+	 *
+	 * @param story     the story
+	 * @param fragments the fragments for the story
+	 *
+	 * @return True if saved, false otherwise
+	 */
+	@Override
+	public boolean saveStory(Story story, Collection<StoryFragment> fragments) {
+		return false;  //TODO Implement
+	}
+
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
