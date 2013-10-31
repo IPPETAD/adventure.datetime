@@ -49,16 +49,16 @@ public class AuthorStoryListFragment extends Fragment {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	
+
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setHasOptionsMenu(true);
 	}
-	
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View rootView = inflater.inflate(R.layout.browse_authored, container, false);
-		
+
 		_listView = (ListView) rootView.findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -72,42 +72,34 @@ public class AuthorStoryListFragment extends Fragment {
 
 	@Override
 	public void onResume() {
-		
+
 		Story[] stories = new Story[10];
 		for (int i=0; i<stories.length; i++)
 			stories[i] = new Story();
-		
+
 		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, stories);
 		_listView.setAdapter(_adapter);
 
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		
+
 		inflater.inflate(R.menu.authorlist, menu);
 	}
-/*	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		
-		getMenuInflater().inflate(R.menu.authorlist, menu);
-		return true;
-	}
-*/	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		String title = (String) item.getTitle();
-		
-		// TODO : Verify if using item title is best way. It works without
-		// issue, but is it standard?
-		
-		if (title.equals("New")) {
-			// TODO : Create new story on click
-			Log.v(TAG, "New click");
-			return true;
+
+		switch (item.getItemId()) {
+		case R.id.action_new:
+			break;
+		default:
+			Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");
+			break;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -143,10 +135,10 @@ public class AuthorStoryListFragment extends Fragment {
 				status.setImageResource(R.drawable.ic_action_sync);
 			else
 				; // no icon if not uploaded
-			
+
 			fragments.setText("Fragments: 69");
 			lastModified.setText("Last Modified: 01/01/1969");
-			
+
 
 			return rowView;
 		}
