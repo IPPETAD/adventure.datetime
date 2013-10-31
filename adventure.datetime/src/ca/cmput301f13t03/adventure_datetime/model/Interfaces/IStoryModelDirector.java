@@ -36,4 +36,5 @@ public interface IStoryModelDirector
 	void SelectFragment(long fragmentId);
 	// void AddComment(Comment comment); 
 	/* Commenting out as I don't want to deal with this right now*/
+	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
 }
