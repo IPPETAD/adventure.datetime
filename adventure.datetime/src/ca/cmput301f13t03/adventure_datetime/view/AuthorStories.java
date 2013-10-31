@@ -40,7 +40,7 @@ public class AuthorStories extends FragmentActivity {
 		public Fragment getItem(int i) {
 
 			if (i == 0) {
-				Fragment fragment = new AuthorListFragment();
+				Fragment fragment = new AuthorStoryListFragment();
 				return fragment;
 			} else {
 				Fragment fragment = new AuthorStoryDescriptionFragment();
@@ -63,22 +63,4 @@ public class AuthorStories extends FragmentActivity {
 			return "Object " + (position+1);
 		}
 	}
-
-	public static class AuthorStoryDescriptionFragment extends Fragment {
-		public static final String ARG_OBJECT = "object";
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-			View rootView = inflater.inflate(R.layout.listviewitem, container, false);
-			Bundle args = getArguments();
-
-			//TextView content = (TextView) rootView.findViewById(R.id.content);
-			//content.setText(Integer.toString(args.getInt(ARG_OBJECT)));
-
-			return rootView;
-		}
-	}
-
-
 }

@@ -44,7 +44,7 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /** Called when activity is first created */
-public class AuthorListFragment extends Fragment {
+public class AuthorStoryListFragment extends Fragment {
 	private static final String TAG = "AuthorList";
 
 	private ListView _listView;
