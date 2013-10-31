@@ -15,6 +15,11 @@ public class AuthorStoryDescriptionFragment extends Fragment {
 	private static final String TAG = "AuthorStoryDescriptionFragment";
 	public static final String ARG_OBJECT = "object";
 
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		setHasOptionsMenu(true);
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

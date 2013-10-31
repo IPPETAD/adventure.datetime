@@ -17,7 +17,7 @@ public class AuthorStories extends FragmentActivity {
 
 	private AuthorStoriesPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,10 +44,10 @@ public class AuthorStories extends FragmentActivity {
 				return fragment;
 			} else {
 				Fragment fragment = new AuthorStoryDescriptionFragment();
-				Bundle args = new Bundle();
+				/*Bundle args = new Bundle();
 
 				args.putInt(AuthorStoryDescriptionFragment.ARG_OBJECT, i + 1);
-				fragment.setArguments(args);
+				fragment.setArguments(args);*/
 
 				return fragment;
 			}

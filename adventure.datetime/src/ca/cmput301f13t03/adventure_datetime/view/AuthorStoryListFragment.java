@@ -86,7 +86,7 @@ public class AuthorStoryListFragment extends Fragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		inflater.inflate(R.menu.authorlist, menu);
+		inflater.inflate(R.menu.authordesc, menu);
 	}
 
 	@Override
