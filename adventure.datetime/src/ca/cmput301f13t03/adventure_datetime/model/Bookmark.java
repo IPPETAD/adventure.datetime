@@ -44,6 +44,15 @@ public class Bookmark {
 		this.date = Calendar.getInstance().getTime();
 	}
 
+	public Bookmark(Cursor cursor) {
+		this.fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_FRAGMENTID));
+		this.storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_STORYID));
+		long unix = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_DATE));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(unix);
+		this.date = cal.getTime();
+	}
+
 	public long getFragmentID() {
 		return fragmentID;
 	}
