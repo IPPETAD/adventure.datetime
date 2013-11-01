@@ -34,6 +34,10 @@
             android:name=".view.AuthorStories"
             android:label="@string/app_name"
             android:parentActivityName=".view.MainView"/>
+        <activity
+            android:name=".view.AuthorStoryDescription"
+            android:label="@string/app_name"
+            android:parentActivityName=".view.AuthorStories"/>
         
     </application>
 

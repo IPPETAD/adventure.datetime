@@ -52,7 +52,7 @@ public class AuthorStories extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.author_stories);
+		setContentView(R.layout.browse_authored);
 
 		_listView = (ListView) findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
@@ -89,6 +89,15 @@ public class AuthorStories extends FragmentActivity {
 		
 		super.onResume();
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+
+		getMenuInflater().inflate(R.menu.authorlist, menu);
+		return true;
+	}
+
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
 
