@@ -51,6 +51,10 @@ public class StoryDB implements BaseColumns {
 	public static final String STORYFRAGMENT_COLUMN_CONTENT = "Content";
 	public static final String STORYFRAGMENT_COLUMN_CHOICES = "Choices";
 
+	public static final String BOOKMARK_TABLE_NAME = "Bookmark";
+	public static final String BOOKMARK_COLUMN_STORYID = "StoryID";
+	public static final String BOOKMARK_COLUMN_FRAGMENTID = "FragmentID";
+
 	private StoryDBHelper mDbHelper;
 
 	public StoryDB(Context context) {
@@ -226,11 +230,25 @@ public class StoryDB implements BaseColumns {
 				+ ") REFERENCES " + STORY_TABLE_NAME + "("
 				+ _ID + "))";
 
+		private static final String CREATE_BOOKMARK_TABLE =
+				"CREATE TABLE " + BOOKMARK_TABLE_NAME + " ("
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ BOOKMARK_COLUMN_FRAGMENTID + " INTEGER, "
+				+ BOOKMARK_COLUMN_STORYID + " INTEGER, "
+				+ "FOREIGN KEY(" + BOOKMARK_COLUMN_FRAGMENTID
+				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
+				+ "(" + _ID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
+				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + BOOKMARK_COLUMN_STORYID
+				+ "))";
+
 		private static final String DELETE_STORY_TABLE =
 				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
 
 		private static final String DELETE_STORYFRAGMENT_TABLE =
 				"DROP TABLE IF EXISTS " + STORYFRAGMENT_TABLE_NAME;
+
+		private static final String DELETE_BOOKMARK_TABLE =
+				"DROP TABLE IF EXISTS " + BOOKMARK_TABLE_NAME;
 
 		public StoryDBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -240,12 +258,14 @@ public class StoryDB implements BaseColumns {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(CREATE_STORY_TABLE);
 			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
+			db.execSQL(CREATE_BOOKMARK_TABLE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			db.execSQL(DELETE_STORYFRAGMENT_TABLE);
 			db.execSQL(DELETE_STORY_TABLE);
+			db.execSQL(DELETE_BOOKMARK_TABLE);
 		}
 
 		@Override
