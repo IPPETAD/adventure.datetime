@@ -54,6 +54,7 @@ public class StoryDB implements BaseColumns {
 	public static final String BOOKMARK_TABLE_NAME = "Bookmark";
 	public static final String BOOKMARK_COLUMN_STORYID = "StoryID";
 	public static final String BOOKMARK_COLUMN_FRAGMENTID = "FragmentID";
+	public static final String BOOKMARK_COLUMN_DATE = "Date";
 
 	private StoryDBHelper mDbHelper;
 
@@ -201,6 +202,63 @@ public class StoryDB implements BaseColumns {
 		return fragments;
 	}
 
+	/**
+	 * Get a Bookmark from the Story ID and Fragment ID
+	 * @param storyid The _ID of the story
+	 * @param fragmentid The _ID of the story fragment
+	 * @return a Bookmark object from the database
+	 */
+	public Bookmark getBookMark(long storyid, long fragmentid) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
+				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
+				BOOKMARK_COLUMN_FRAGMENTID + " = ?, " + BOOKMARK_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(fragmentid), String.valueOf(storyid)},
+				null,
+				null,
+				null);
+
+		Bookmark bookmark;
+
+		if(cursor.moveToFirst())
+			bookmark = new Bookmark(cursor);
+		else
+			bookmark = null;
+
+		cursor.close();
+		db.close();
+		return bookmark;
+	}
+
+	/**
+	 * Gets the Bookmark from the story ID
+	 * @param storyid The _ID of the story
+	 * @return The Bookmark object
+	 */
+	public Bookmark getBookMark(long storyid) {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
+				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
+				BOOKMARK_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(storyid)},
+				null,
+				null,
+				null);
+
+		Bookmark bookmark;
+
+		if(cursor.moveToFirst())
+			bookmark = new Bookmark(cursor);
+		else
+			bookmark = null;
+
+		cursor.close();
+		db.close();
+		return bookmark;
+	}
+
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
 		public static final int DATABASE_VERSION = 1;
@@ -235,6 +293,7 @@ public class StoryDB implements BaseColumns {
 				+ _ID + " INTEGER PRIMARY KEY, "
 				+ BOOKMARK_COLUMN_FRAGMENTID + " INTEGER, "
 				+ BOOKMARK_COLUMN_STORYID + " INTEGER, "
+				+ BOOKMARK_COLUMN_DATE + " INTEGER, "
 				+ "FOREIGN KEY(" + BOOKMARK_COLUMN_FRAGMENTID
 				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
 				+ "(" + _ID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
