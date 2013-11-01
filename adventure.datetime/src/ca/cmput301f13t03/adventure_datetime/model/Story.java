@@ -25,7 +25,6 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.Collection;
