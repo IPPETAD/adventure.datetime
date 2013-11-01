@@ -22,6 +22,9 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.database.Cursor;
+
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -32,7 +35,14 @@ import java.util.Date;
 public class Bookmark {
 
 	private long fragmentID;
+	private long storyID;
 	private Date date;
+
+	public Bookmark(long fragmentID, long storyID) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
+		this.date = Calendar.getInstance().getTime();
+	}
 
 	public long getFragmentID() {
 		return fragmentID;
@@ -48,5 +58,14 @@ public class Bookmark {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public long getStoryID() {
+
+		return storyID;
+	}
+
+	public void setStoryID(long storyID) {
+		this.storyID = storyID;
 	}
 }
