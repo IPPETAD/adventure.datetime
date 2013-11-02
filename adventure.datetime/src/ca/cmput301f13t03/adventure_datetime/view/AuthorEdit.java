@@ -32,7 +32,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class AuthorEdit extends FragmentActivity {
 	private static final String TAG = "AuthorEdit";
@@ -85,6 +86,25 @@ public class AuthorEdit extends FragmentActivity {
 
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.authoredit, menu);
+		return true;		
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.action_save:
+			break;
+		case R.id.action_discard:
+			break;
+		default:
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
 		public ViewPagerAdapter(FragmentManager fm) {
 			super(fm);

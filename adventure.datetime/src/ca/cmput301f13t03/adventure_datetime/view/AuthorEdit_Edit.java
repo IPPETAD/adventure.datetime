@@ -23,21 +23,15 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
 public class AuthorEdit_Edit extends Fragment {
 
@@ -50,7 +44,7 @@ public class AuthorEdit_Edit extends Fragment {
 		 */
 
 		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
-		
+
 		/** Layout items **/
 		//TODO: read actual content from model
 		EditText content = (EditText) rootView.findViewById(R.id.content);
@@ -77,7 +71,7 @@ public class AuthorEdit_Edit extends Fragment {
 				"umpy Cat for Forbes, released March 25.";
 		content.setText(tempText);
 
-		
+
 		return rootView;
 	}
 }

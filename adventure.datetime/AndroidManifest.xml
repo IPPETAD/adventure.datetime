@@ -40,8 +40,7 @@
             android:parentActivityName=".view.AuthorStories"/>
         <activity
             android:name=".view.AuthorEdit"
-            android:label="@string/app_name"
-            android:parentActivityName=".view.AuthorStories" />
+            android:label="@string/app_name"/>
         
     </application>
 
