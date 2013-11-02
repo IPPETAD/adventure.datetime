@@ -45,7 +45,7 @@ public class AuthorEdit_Preview extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) {
-		
+
 		/* TODO : This is all pretty much copy-paste from FragmentView.java. 
 		 * Should probs not do that.
 		 */
@@ -84,37 +84,37 @@ public class AuthorEdit_Preview extends Fragment {
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
 		content.setText(tempText);
-		
-		
-		
-		
+
+
+
+
 		// TODO : Not use Bitmap, but proper object. Load illustrations from model
-				Bitmap[] frags = new Bitmap[10];
-				
-				// 1) Create new ImageView and add to the LinearLayout
-				// 2) Set appropriate Layout Params to ImageView
-				// 3) Give onClickListener for going to fullscreen
-				LinearLayout.LayoutParams lp;
-				for (int i=0; i<frags.length; i++) {
-					
-					ImageView li = new ImageView(getActivity());
-					li.setScaleType(ScaleType.CENTER_INSIDE);
-					li.setImageResource(R.drawable.grumpy_cat2);
-					filmLayout.addView(li);
-					
-					lp = (LinearLayout.LayoutParams) li.getLayoutParams();
-					lp.setMargins(10, 10, 10, 10);
-					lp.width = LayoutParams.WRAP_CONTENT;
-					lp.gravity = Gravity.CENTER_VERTICAL;
-					li.setLayoutParams(lp);
-					
-					li.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							// TODO: Open image in fullscreen
-						}
-					});
+		Bitmap[] frags = new Bitmap[10];
+
+		// 1) Create new ImageView and add to the LinearLayout
+		// 2) Set appropriate Layout Params to ImageView
+		// 3) Give onClickListener for going to fullscreen
+		LinearLayout.LayoutParams lp;
+		for (int i=0; i<frags.length; i++) {
+
+			ImageView li = new ImageView(getActivity());
+			li.setScaleType(ScaleType.CENTER_INSIDE);
+			li.setImageResource(R.drawable.grumpy_cat2);
+			filmLayout.addView(li);
+
+			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
+			lp.setMargins(10, 10, 10, 10);
+			lp.width = LayoutParams.WRAP_CONTENT;
+			lp.gravity = Gravity.CENTER_VERTICAL;
+			li.setLayoutParams(lp);
+
+			li.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO: Open image in fullscreen
 				}
+			});
+		}
 
 
 		return rootView;
