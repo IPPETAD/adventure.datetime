@@ -67,7 +67,7 @@ public class MainView extends Activity {
 		authorBrowse.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainView.this, AuthorList.class);
+				Intent intent = new Intent(MainView.this, AuthorStories.class);
 				startActivity(intent);
 			}
 		});

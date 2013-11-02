@@ -22,84 +22,86 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import android.app.Activity;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
-/** Called when activity is first created */
-public class AuthorList extends Activity {
-	private static final String TAG = "AuthorList";
+public class AuthorStories extends FragmentActivity {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.browse_authored);
-
-		// TODO : Load shit from the model
 
 		_listView = (ListView) findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// TODO : Launch activity from item click
-			}
+			}			
 		});
-
 	}
-
+	
 	@Override
 	public void onResume() {
 		
 		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++)
-			stories[i] = new Story();
+		for (int i=0; i<stories.length; i++) stories[i] = new Story();
 		
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		_listView.setAdapter(_adapter);
 		
+		_listView.setAdapter(_adapter);
+		_listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				// Get selected item
+				ListView listView = (ListView) parent;
+				Story item = (Story) listView.getItemAtPosition(position);
+				
+				// TODO: Send story id
+				
+				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
+				intent.putExtra(AuthorStoryDescription.ARG_ITEM_NUM, 
+						position);
+				startActivity(intent);
+		
+				
+			}
+		});
 		
 		super.onResume();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
+		// Inflate the menu; this adds items to the action bar if it is present.
+
 		getMenuInflater().inflate(R.menu.authorlist, menu);
 		return true;
 	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		String title = (String) item.getTitle();
-		
-		// TODO : Verify if using item title is best way. It works without
-		// issue, but is it standard?
-		
-		if (title.equals("New")) {
-			// TODO : Create new story on click
-			Log.v(TAG, "New click");
-			return true;
-		}
-		
-		return super.onOptionsItemSelected(item);
-	}
+
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
 
@@ -133,14 +135,13 @@ public class AuthorList extends Activity {
 				status.setImageResource(R.drawable.ic_action_sync);
 			else
 				; // no icon if not uploaded
-			
+
 			fragments.setText("Fragments: 69");
 			lastModified.setText("Last Modified: 01/01/1969");
-			
+
 
 			return rowView;
 		}
 	}
-
 
 }
