@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -35,12 +36,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import ca.cmput301f13t03.adventure_datetime.R;
 
 
 public class AuthorStoryDescription extends FragmentActivity {
 	private static final String TAG = "AuthorStoryDescription";
-	
+
 	private AuthorStoriesPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
 
@@ -48,7 +50,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.author_descripts);
-		
+
 		_pageAdapter = new AuthorStoriesPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
@@ -65,14 +67,23 @@ public class AuthorStoryDescription extends FragmentActivity {
 		public Fragment getItem(int i) {
 
 			Fragment fragment = new AuthorStoryDescriptionFragment();
-			
-			// TODO : Send story id through to fragment
-			
-			/*Bundle args = new Bundle();
 
-				args.putInt(AuthorStoryDescriptionFragment.ARG_OBJECT, i + 1);
-				fragment.setArguments(args);*/
+			// TODO : Send story info through to fragment
 
+			/* Sending through status of the story */
+			Bundle args = new Bundle();
+			if (i == 1)
+			args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
+					AuthorStoryDescriptionFragment.STATUS_UNPUBLISHED);
+			else if (i == 2)
+				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
+						AuthorStoryDescriptionFragment.STATUS_UNSYNC);
+			else
+				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
+						AuthorStoryDescriptionFragment.STATUS_SYNCED);
+			
+
+			fragment.setArguments(args);
 			return fragment;
 
 		}
@@ -89,7 +100,12 @@ public class AuthorStoryDescription extends FragmentActivity {
 	}
 
 	public static class AuthorStoryDescriptionFragment extends Fragment {
-		public static final String ARG_OBJECT = "object";
+		public static final String ARG_STATUS = "status";
+		public static final int STATUS_UNPUBLISHED = 0;
+		public static final int STATUS_UNSYNC = 1;
+		public static final int STATUS_SYNCED = 2;
+
+		private int _status;
 
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
@@ -101,10 +117,26 @@ public class AuthorStoryDescription extends FragmentActivity {
 
 			View rootView = inflater.inflate(R.layout.author_descript, container, false);
 			Bundle args = getArguments();
-
-			//TextView content = (TextView) rootView.findViewById(R.id.content);
-			//content.setText(Integer.toString(args.getInt(ARG_OBJECT)));
 			
+			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
+
+			switch (args.getInt(ARG_STATUS)) {
+			case STATUS_UNPUBLISHED:
+				/* Light Blue */
+				header.setBackgroundColor(Color.parseColor("#d4eef8"));
+				break;
+			case STATUS_UNSYNC:
+				/* Light Orange */
+				header.setBackgroundColor(Color.parseColor("#f8e7d4"));
+				break;
+			case STATUS_SYNCED:
+				/* Light Green */
+				header.setBackgroundColor(Color.parseColor("#d4f8e1"));
+				break;
+			default:
+				Log.e(TAG, "Status unknown.");
+			}
+
 
 			return rootView;
 		}
