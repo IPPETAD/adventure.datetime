@@ -42,6 +42,7 @@ import ca.cmput301f13t03.adventure_datetime.R;
 
 public class AuthorStoryDescription extends FragmentActivity {
 	private static final String TAG = "AuthorStoryDescription";
+	public static final String ARG_ITEM_NUM = ".view.AuthorStoryDescription.item_num";
 
 	private AuthorStoriesPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
@@ -51,10 +52,13 @@ public class AuthorStoryDescription extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.author_descripts);
 
+		int item = getIntent().getIntExtra(ARG_ITEM_NUM, 0);
+
 		_pageAdapter = new AuthorStoriesPagerAdapter(getSupportFragmentManager());
+		
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
-
+		_viewPager.setCurrentItem(item);
 	}
 
 	private class AuthorStoriesPagerAdapter extends FragmentStatePagerAdapter {
@@ -72,16 +76,16 @@ public class AuthorStoryDescription extends FragmentActivity {
 
 			/* Sending through status of the story */
 			Bundle args = new Bundle();
-			if (i == 1)
-			args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
-					AuthorStoryDescriptionFragment.STATUS_UNPUBLISHED);
-			else if (i == 2)
+			if (i == 3)
+				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
+						AuthorStoryDescriptionFragment.STATUS_SYNCED);
+			else if (i == 5)
 				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
 						AuthorStoryDescriptionFragment.STATUS_UNSYNC);
 			else
 				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
-						AuthorStoryDescriptionFragment.STATUS_SYNCED);
-			
+						AuthorStoryDescriptionFragment.STATUS_UNPUBLISHED);
+
 
 			fragment.setArguments(args);
 			return fragment;
@@ -90,7 +94,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 
 		@Override
 		public int getCount() {
-			return 100;
+			return 10;
 		}
 
 		@Override
@@ -105,8 +109,6 @@ public class AuthorStoryDescription extends FragmentActivity {
 		public static final int STATUS_UNSYNC = 1;
 		public static final int STATUS_SYNCED = 2;
 
-		private int _status;
-
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 			setHasOptionsMenu(true);
@@ -117,7 +119,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 
 			View rootView = inflater.inflate(R.layout.author_descript, container, false);
 			Bundle args = getArguments();
-			
+
 			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
 
 			switch (args.getInt(ARG_STATUS)) {
@@ -144,6 +146,23 @@ public class AuthorStoryDescription extends FragmentActivity {
 		@Override
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 			inflater.inflate(R.menu.authordesc, menu);
+
+			/* Disable 'Upload' if sync'd */
+			switch (getArguments().getInt(ARG_STATUS)) {
+			case STATUS_UNPUBLISHED:
+				break;
+			case STATUS_UNSYNC:
+				menu.findItem(R.id.action_upload).setIcon(R.drawable.ic_action_refresh);
+				break;
+			case STATUS_SYNCED:
+				menu.findItem(R.id.action_upload)
+					.setEnabled(false)
+					.setVisible(false);
+				break;
+			default:
+				Log.e(TAG, "Status unknown.");
+			}
+			menu.findItem(R.id.action_upload);
 		}
 
 		@Override

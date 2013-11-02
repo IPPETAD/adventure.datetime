@@ -83,7 +83,11 @@ public class AuthorStories extends FragmentActivity {
 				// TODO: Send story id
 				
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
+				intent.putExtra(AuthorStoryDescription.ARG_ITEM_NUM, 
+						position);
 				startActivity(intent);
+		
+				
 			}
 		});
 		
