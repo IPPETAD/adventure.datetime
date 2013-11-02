@@ -22,7 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -179,6 +182,26 @@ public class AuthorStoryDescription extends FragmentActivity {
 			case R.id.action_upload:
 				break;
 			case R.id.action_discard:
+				/* Ensure user is not retarded and actually wants to do this */
+				new AlertDialog.Builder(getActivity())
+				.setTitle("Delete Story")
+				.setMessage("This will delete the story. You cannot undo.")
+				.setCancelable(true)
+				.setPositiveButton("Kill the fucker!", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						/* TODO::JTF Delete the story */
+						getActivity().finish();
+					}
+				})
+				.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				})
+				.create().show();
 				break;
 			default:
 				Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");
