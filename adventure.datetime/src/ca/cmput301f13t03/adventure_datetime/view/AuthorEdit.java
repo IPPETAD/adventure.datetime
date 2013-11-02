@@ -136,7 +136,12 @@ public class AuthorEdit extends FragmentActivity {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			return "YARR!";
+			switch (position) {
+			case 0: return "Edit";
+			case 1: return "Overview";
+			case 2: return "Preview";
+			default: return "It be a Pirate!";
+			}
 		}
 	}
 }
