@@ -25,7 +25,10 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import ca.cmput301f13t03.adventure_datetime.R;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -99,6 +102,25 @@ public class AuthorEdit extends FragmentActivity {
 		case R.id.action_save:
 			break;
 		case R.id.action_discard:
+			/* Ensure user is not retarded and actually wants to do this */
+			new AlertDialog.Builder(this)
+			.setTitle("Delete Story Fragment")
+			.setMessage("This will only delete the current story fragment. You cannot undo.")
+			.setCancelable(true)
+			.setPositiveButton("Kill the fucker!", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO::JTF Kill the node. If last node, kill story
+					finish();
+				}
+			})
+			.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			})
+			.create().show();
 			break;
 		default:
 		}
