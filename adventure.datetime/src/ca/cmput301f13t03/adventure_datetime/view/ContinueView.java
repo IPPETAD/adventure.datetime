@@ -50,7 +50,7 @@ public class ContinueView extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.browse_bookmarks);
+		setContentView(R.layout.list_view);
 
 		_listView = (ListView) findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
