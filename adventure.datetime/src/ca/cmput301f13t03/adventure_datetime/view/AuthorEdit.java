@@ -66,15 +66,15 @@ public class AuthorEdit extends FragmentActivity {
 		};
 
 		actionBar.addTab(actionBar.newTab()
-				.setText("Preview")
-				.setTabListener(tabListener));
-		actionBar.addTab(actionBar.newTab()
 				.setText("Edit")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
 				.setText("Overview")
 				.setTabListener(tabListener));
-		
+		actionBar.addTab(actionBar.newTab()
+				.setText("Preview")
+				.setTabListener(tabListener));
+
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
@@ -92,7 +92,20 @@ public class AuthorEdit extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int i) {
-			Fragment fragment = new AuthorEdit_Preview();
+			Fragment fragment = null;
+
+			switch (i) {
+			case 0:
+				fragment = new AuthorEdit_Edit();
+				break;
+			case 1:
+				fragment = new AuthorEdit_Overview();
+				break;
+			case 2:
+				fragment = new AuthorEdit_Preview();
+				break;
+			default:
+			}
 			return fragment;
 		}
 
