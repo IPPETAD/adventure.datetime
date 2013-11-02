@@ -51,17 +51,7 @@ public class AuthorEdit_Edit extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 		
-		
-		
-		
 		/** Layout items **/
-		LinearLayout filmLayout = (LinearLayout) rootView.findViewById(R.id.filmstrip);
-		HorizontalScrollView filmstrip = (HorizontalScrollView) rootView.findViewById(R.id.filmstrip_wrapper);
-
-		/** Programmatically set filmstrip height **/
-		// TODO : Unshitify this, aka not static value
-		filmstrip.getLayoutParams().height = 300;
-
 		//TODO: read actual content from model
 		EditText content = (EditText) rootView.findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
@@ -87,38 +77,6 @@ public class AuthorEdit_Edit extends Fragment {
 				"umpy Cat for Forbes, released March 25.";
 		content.setText(tempText);
 
-
-
-
-		// TODO : Not use Bitmap, but proper object. Load illustrations from model
-		Bitmap[] frags = new Bitmap[10];
-
-		// 1) Create new ImageView and add to the LinearLayout
-		// 2) Set appropriate Layout Params to ImageView
-		// 3) Give onClickListener for going to fullscreen
-		LinearLayout.LayoutParams lp;
-		for (int i=0; i<frags.length; i++) {
-
-			ImageView li = new ImageView(getActivity());
-			li.setScaleType(ScaleType.CENTER_INSIDE);
-			li.setImageResource(R.drawable.grumpy_cat2);
-			filmLayout.addView(li);
-
-			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
-			lp.setMargins(10, 10, 10, 10);
-			lp.width = LayoutParams.WRAP_CONTENT;
-			lp.gravity = Gravity.CENTER_VERTICAL;
-			li.setLayoutParams(lp);
-
-			li.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// TODO: Open image in fullscreen
-				}
-			});
-		}
-
-		
 		
 		return rootView;
 	}
