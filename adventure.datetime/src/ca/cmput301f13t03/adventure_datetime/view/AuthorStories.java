@@ -35,6 +35,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -48,29 +49,23 @@ public class AuthorStories extends FragmentActivity {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.browse_authored);
 
 		_listView = (ListView) findViewById(R.id.list_view);
-		_listView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// TODO : Launch activity from item click
-			}			
-		});
 	}
-	
+
 	@Override
 	public void onResume() {
-		
+
 		Story[] stories = new Story[10];
 		for (int i=0; i<stories.length; i++) stories[i] = new Story();
-		
+
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		
+
 		_listView.setAdapter(_adapter);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -79,27 +74,37 @@ public class AuthorStories extends FragmentActivity {
 				// Get selected item
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
-				
+
 				// TODO: Send story id
-				
+
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				intent.putExtra(AuthorStoryDescription.ARG_ITEM_NUM, 
 						position);
-				startActivity(intent);
-		
-				
+				startActivity(intent);	
 			}
 		});
-		
+
 		super.onResume();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 
 		getMenuInflater().inflate(R.menu.authorlist, menu);
 		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.action_new:
+			Intent intent = new Intent(AuthorStories.this, AuthorEdit.class);
+			startActivityForResult(intent, 0);
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 

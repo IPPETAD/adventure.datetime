@@ -22,9 +22,88 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import ca.cmput301f13t03.adventure_datetime.R;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 public class AuthorEdit extends FragmentActivity {
 	private static final String TAG = "AuthorEdit";
 
+	private ViewPager _viewPager;
+	private ViewPagerAdapter _adapter;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.viewpager);
+
+		/* Set up View Pager */
+		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
+		_viewPager = (ViewPager) findViewById(R.id.pager);
+		_viewPager.setAdapter(_adapter);
+
+		/* Set up Tabs */
+		final ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+			@Override
+			public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+
+			@Override
+			public void onTabSelected(Tab tab, FragmentTransaction ft) {
+				_viewPager.setCurrentItem(tab.getPosition());
+			}
+			@Override
+			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
+		};
+
+		actionBar.addTab(actionBar.newTab()
+				.setText("Preview")
+				.setTabListener(tabListener));
+		actionBar.addTab(actionBar.newTab()
+				.setText("Edit")
+				.setTabListener(tabListener));
+		actionBar.addTab(actionBar.newTab()
+				.setText("Overview")
+				.setTabListener(tabListener));
+		
+		/* Change tabs when View Pager swiped */
+		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				getActionBar().setSelectedNavigationItem(position);
+			}
+		});
+
+	}
+
+	public class ViewPagerAdapter extends FragmentPagerAdapter {
+		public ViewPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int i) {
+			Fragment fragment = new AuthorEdit_Preview();
+			return fragment;
+		}
+
+		@Override
+		public int getCount() {
+			return 3;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "YARR!";
+		}
+	}
 }

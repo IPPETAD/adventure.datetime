@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,7 +51,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.author_descripts);
+		setContentView(R.layout.viewpager);
 
 		int item = getIntent().getIntExtra(ARG_ITEM_NUM, 0);
 
@@ -163,13 +164,17 @@ public class AuthorStoryDescription extends FragmentActivity {
 				Log.e(TAG, "Status unknown.");
 			}
 			menu.findItem(R.id.action_upload);
+			
 		}
+		
 
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
 
 			switch (item.getItemId()) {
 			case R.id.action_edit:
+				Intent intent = new Intent(getActivity(), AuthorEdit.class);
+				startActivity(intent);				
 				break;
 			case R.id.action_upload:
 				break;
