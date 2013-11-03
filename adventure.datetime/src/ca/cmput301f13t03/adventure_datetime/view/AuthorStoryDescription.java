@@ -151,7 +151,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 			
 			// TODO::JF Load data from Model
 			
-			EditText content = (EditText) rootView.findViewById(R.id.content);
+			TextView content = (TextView) rootView.findViewById(R.id.content);
 			String text = "It is a truth universally acknowledged, "+
 			"that a single man in possession of a good fortune must"+
 			" be in want of a wife.\nHowever little known the feelin"+
@@ -197,7 +197,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 
 			switch (item.getItemId()) {
-			case R.id.action_edit:
+			case R.id.action_editfragments:
 				Intent intent = new Intent(getActivity(), AuthorEdit.class);
 				startActivity(intent);				
 				break;
