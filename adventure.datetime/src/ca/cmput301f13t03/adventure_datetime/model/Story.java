@@ -31,15 +31,15 @@ import java.util.Collection;
 
 public class Story {
 
-	private long headFragmentId;
-	private long id;
-	private long timestamp;
-	private String author;
-	private String title;
-	private String synopsis;
-	private Bitmap thumbnail;
-	private Collection<String> tags;
-	private Collection<Long> fragmentIDs;
+	private long headFragmentId; /** The _ID of the head fragment of the Story */
+	private long id; /** The _ID of the story, -1 if there is no _ID */
+	private long timestamp; /** The UNIX time of the last time the Story was updated/downloaded */
+	private String author; /** The author of the Story */
+	private String title; /** The title of the Story */
+	private String synopsis; /** The synopsis of the Story */
+	private Bitmap thumbnail; /** The bitmap image of the Story */
+	private Collection<String> tags; /** A collection of Tags for the Story */
+	private Collection<Long> fragmentIDs; /** The collection of fragment _IDs attached to the story */
 
 	public Story() {
 		id = -1;
