@@ -98,6 +98,12 @@ public class StoryDescription extends FragmentActivity {
 			View rootView = inflater.inflate(R.layout.story_descript, container, false);
 			Bundle args = getArguments();
 			
+
+			/** Action bar **/
+			getActivity().getActionBar().setTitle("Story Name");
+
+			/** Layout items **/
+			
 			// TODO::JF Load data from model
 			
 			return rootView;			

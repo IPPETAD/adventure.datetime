@@ -126,6 +126,10 @@ public class AuthorStoryDescription extends FragmentActivity {
 			View rootView = inflater.inflate(R.layout.author_descript, container, false);
 			Bundle args = getArguments();
 
+			/** Action bar **/
+			getActivity().getActionBar().setTitle("Story Name");
+			
+			/** Layout items **/
 			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
 
 			switch (args.getInt(ARG_STATUS)) {
