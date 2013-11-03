@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -69,10 +70,8 @@ public class Browse_Authored extends Fragment {
 			ListView listView = (ListView) parent;
 			Story item = (Story) listView.getItemAtPosition(position);
 			
-			// TODO : Another description class..
-			
-			//Intent intent = new Intent(getActivity(), <activity_name>.class);
-			//startActivity(intent);
+			Intent intent = new Intent(getActivity(), StoryDescription.class);
+			startActivity(intent);
 			}
 		});
 		
