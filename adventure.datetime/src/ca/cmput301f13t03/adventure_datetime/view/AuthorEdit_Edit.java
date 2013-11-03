@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AuthorEdit_Edit extends Fragment {
 
@@ -47,7 +48,7 @@ public class AuthorEdit_Edit extends Fragment {
 
 		/** Layout items **/
 		//TODO: read actual content from model
-		EditText content = (EditText) rootView.findViewById(R.id.content);
+		TextView content = (TextView) rootView.findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
 				"appears grumpy because of feline dwarfism and an under bite." +
 				"She and her brother Pokey were born to normal parents with " +
