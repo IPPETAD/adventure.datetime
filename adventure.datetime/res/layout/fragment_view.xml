@@ -10,14 +10,18 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <!-- TODO: Change to 'CustomView' -->
-
-        <ImageView
-            android:id="@+id/filmstrip"
+        <HorizontalScrollView
+            android:id="@+id/filmstrip_wrapper"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="#333333"
-            android:contentDescription="Filmstrip" />
+            android:layout_height="fill_parent"
+            android:background="#333333" >
+
+            <LinearLayout
+                android:id="@+id/filmstrip"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
         <TextView
             android:id="@+id/content"
