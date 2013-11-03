@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 
 
@@ -142,8 +143,24 @@ public class AuthorStoryDescription extends FragmentActivity {
 			default:
 				Log.e(TAG, "Status unknown.");
 			}
-
-
+			
+			// TODO::JF Load data from Model
+			
+			TextView content = (TextView) rootView.findViewById(R.id.content);
+			String text = "It is a truth universally acknowledged, "+
+			"that a single man in possession of a good fortune must"+
+			" be in want of a wife.\nHowever little known the feelin"+
+			"gs or views of such a man may be on his first entering"+
+			" a neighbourhood, this truth is so well fixed in the mi"+
+			"nds of the surrounding families, that he is considered"+
+			"as the rightful property of some one or other of their"+
+			" daughters.\n''My dear Mr. Bennet,'' said his lady to h"+
+			"im one day, ''have you heard that Netherfield Park is "+
+			"let at last?''\nMr. Bennet replied that he had not.\n'"+
+			"'But it is,'' returned she; ''for Mrs. Long has just b"+
+			"een here, and she told me all about it.''";
+			content.setText(text);
+			
 			return rootView;
 		}
 
