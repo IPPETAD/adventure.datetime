@@ -28,7 +28,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -38,6 +40,8 @@ import java.util.Collection;
  * @since 28/10/13
  */
 public class StoryDB implements BaseColumns {
+
+	private static final String TAG = "StoryDB";
 
 	public static final String STORY_TABLE_NAME = "Story";
 	public static final String STORY_COLUMN_AUTHOR = "Author";
@@ -280,7 +284,7 @@ public class StoryDB implements BaseColumns {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
-		values.put(BOOKMARK_COLUMN_DATE, System.currentTimeMillis()/1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime()/1000);
 
 		long updated;
 		if(cursor.moveToFirst()) {
@@ -288,18 +292,94 @@ public class StoryDB implements BaseColumns {
 			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
+				cursor.close();
+				db.close();
 				return updated == 3;
 			}
+			cursor.close();
+			db.close();
 			return false;
 		}
 		updated = db.insert(BOOKMARK_TABLE_NAME, null, values);
+		cursor.close();
+		db.close();
 		return updated != -1;
+	}
+
+	public boolean setStory(Story story) {
+		int size = story.getThumbnail().getByteCount();
+		ByteBuffer b = ByteBuffer.allocate(size);
+		story.getThumbnail().copyPixelsToBuffer(b);
+		byte[] bytes = new byte[size];
+		b.get(bytes,0, bytes.length);
+
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(STORY_COLUMN_TITLE, story.getTitle());
+		values.put(STORY_COLUMN_AUTHOR, story.getAuthor());
+		values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId());
+		values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
+		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
+		values.put(STORY_COLUMN_THUMBNAIL, bytes);
+		if(story.getId() != -1) {
+			Cursor cursor = db.query(STORY_TABLE_NAME,
+					new String[] {_ID},
+					_ID + " = ?",
+					new String[] {String.valueOf(story.getId())},
+					null,
+					null,
+					null);
+			if(cursor.moveToFirst()) {
+				int updated;
+				updated = db.update(STORY_TABLE_NAME, values, _ID + " = ?",
+						new String [] {String.valueOf(story.getId())});
+				cursor.close();
+				db.close();
+				return updated == 6;
+			}
+			 cursor.close();
+		}
+		long inserted;
+		inserted = db.insert(STORY_TABLE_NAME, null, values);
+		db.close();
+		return inserted != -1;
+	}
+
+	public boolean setStoryFragment(StoryFragment frag) {
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID());
+		values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
+		values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
+
+		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
+				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
+				_ID + " = ?, " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())},
+				null,
+				null,
+				null);
+		if(cursor.moveToFirst()) {
+			int updated;
+			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, _ID + " = ?, " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+					new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())});
+			cursor.close();
+			db.close();
+			return updated == 3;
+		}
+		long inserted;
+		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+		db.close();
+		return inserted != -1;
+
 	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
 		public static final int DATABASE_VERSION = 1;
 		public static final String DATABASE_NAME = "adventure.database";
+
+		private static final String TAG = "StoryDBHelper";
 
 		private static final String CREATE_STORY_TABLE =
 				"CREATE TABLE " + STORY_TABLE_NAME + " ("
@@ -352,6 +432,7 @@ public class StoryDB implements BaseColumns {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			Log.v(TAG, "Creating DB");
 			db.execSQL(CREATE_STORY_TABLE);
 			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
 			db.execSQL(CREATE_BOOKMARK_TABLE);

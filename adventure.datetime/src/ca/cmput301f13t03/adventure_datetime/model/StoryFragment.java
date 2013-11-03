@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.database.Cursor;
+import com.google.gson.Gson;
 
 import java.util.Collection;
 
@@ -87,6 +88,11 @@ public class StoryFragment {
 
 	public Collection<Choice> getChoices() {
 		return choices;
+	}
+
+	public String getChoicesInJson() {
+		Gson gson = new Gson();
+		return gson.toJson(choices);
 	}
 
 	public void setChoices(Collection<Choice> choices) {
