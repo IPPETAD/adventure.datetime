@@ -34,9 +34,26 @@ public class StoryFragment {
 
 	private long storyID;
 	private long fragmentID;
-	private Collection<String> storyMedia;
+	private ArrayList<String> storyMedia;
 	private String storyText;
-	private Collection<Choice> choices;
+	private ArrayList<Choice> choices;
+
+	public StoryFragment(long storyID, long fragmentID, String storyText,
+	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
+		this.storyText = storyText;
+		this.storyMedia = storyMedia;
+		this.choices = choices;
+	}
+
+	public StoryFragment(long storyID, String storyText, Choice choice) {
+		this.storyID = storyID;
+		this.fragmentID = -1;
+		this.choices = new ArrayList<Choice>();
+		this.choices.add(choice);
+		this.storyText = storyText;
+	}
 
 	public StoryFragment(Cursor cursor) {
 		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
@@ -65,11 +82,11 @@ public class StoryFragment {
 		this.fragmentID = fragmentID;
 	}
 
-	public Collection<String> getStoryMedia() {
+	public ArrayList<String> getStoryMedia() {
 		return storyMedia;
 	}
 
-	public void setStoryMedia(Collection<String> storyMedia) {
+	public void setStoryMedia(ArrayList<String> storyMedia) {
 		this.storyMedia = storyMedia;
 	}
 
@@ -102,7 +119,7 @@ public class StoryFragment {
 		return gson.toJson(choices);
 	}
 
-	public void setChoices(Collection<Choice> choices) {
+	public void setChoices(ArrayList<Choice> choices) {
 		this.choices = choices;
 	}
 

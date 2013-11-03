@@ -23,7 +23,6 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.database.Cursor;
-
 import java.util.Calendar;
 import java.util.Date;
 
