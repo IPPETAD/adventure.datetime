@@ -86,6 +86,9 @@ public class AuthorEdit extends FragmentActivity {
 				getActionBar().setSelectedNavigationItem(position);
 			}
 		});
+		
+		// Select 'Overview' at start
+		getActionBar().setSelectedNavigationItem(1);
 
 	}
 
