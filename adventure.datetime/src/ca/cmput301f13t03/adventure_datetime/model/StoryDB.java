@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -236,7 +237,7 @@ public class StoryDB implements BaseColumns {
 	 * @param storyid The _ID of the story
 	 * @return The Bookmark object
 	 */
-	public Bookmark getBookMark(long storyid) {
+	public Bookmark getBookmark(long storyid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
@@ -257,6 +258,42 @@ public class StoryDB implements BaseColumns {
 		cursor.close();
 		db.close();
 		return bookmark;
+	}
+
+	/**
+	 * Inserts or updates a bookmark into the Database
+	 * @param bookmark The updated bookmark to be inserted
+	 * @return True if successful, false if not.
+	 */
+	public boolean setBookmark(Bookmark bookmark) {
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
+				new String[] {_ID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
+				BOOKMARK_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(bookmark.getStoryID())},
+				null,
+				null,
+				null);
+
+		ContentValues values = new ContentValues();
+
+		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
+		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
+		values.put(BOOKMARK_COLUMN_DATE, System.currentTimeMillis()/1000);
+
+		long updated;
+		if(cursor.moveToFirst()) {
+			Bookmark bookmark1 = new Bookmark(cursor);
+			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
+				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
+						new String[] {BOOKMARK_COLUMN_STORYID});
+				return updated == 3;
+			}
+			return false;
+		}
+		updated = db.insert(BOOKMARK_TABLE_NAME, null, values);
+		return updated != -1;
 	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
