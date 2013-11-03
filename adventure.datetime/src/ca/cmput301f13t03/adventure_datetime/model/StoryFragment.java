@@ -24,7 +24,10 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.database.Cursor;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class StoryFragment {
@@ -40,6 +43,10 @@ public class StoryFragment {
 		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB._ID));
 		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
 		/* TODO figure out JSON serialization for choices and media */
+		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
+		Gson gson = new Gson();
+		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
+		choices = gson.fromJson(json, collectionType);
 	}
 
 	public long getStoryID() {

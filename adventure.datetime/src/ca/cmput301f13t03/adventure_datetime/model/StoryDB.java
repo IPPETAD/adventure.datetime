@@ -306,6 +306,11 @@ public class StoryDB implements BaseColumns {
 		return updated != -1;
 	}
 
+	/**
+	 * Inserts or Updates a Story in the Database
+	 * @param story The story to push into the Database
+	 * @return True if successful, false if not
+	 */
 	public boolean setStory(Story story) {
 		int size = story.getThumbnail().getByteCount();
 		ByteBuffer b = ByteBuffer.allocate(size);
@@ -345,6 +350,11 @@ public class StoryDB implements BaseColumns {
 		return inserted != -1;
 	}
 
+	/**
+	 * Inserts or pushes a story fragment to the database
+	 * @param frag The fragment to insert or update
+	 * @return True if successful, false if not
+	 */
 	public boolean setStoryFragment(StoryFragment frag) {
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
