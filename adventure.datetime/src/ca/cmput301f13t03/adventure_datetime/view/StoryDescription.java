@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,7 +31,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import ca.cmput301f13t03.adventure_datetime.R;
 
@@ -103,8 +106,17 @@ public class StoryDescription extends FragmentActivity {
 			getActivity().getActionBar().setTitle("Story Name");
 
 			/** Layout items **/
+			Button play = (Button) rootView.findViewById(R.id.play); 
 			
 			// TODO::JF Load data from model
+			play.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch Story
+					Intent intent = new Intent(getActivity(), FragmentView.class);
+					startActivity(intent);
+				}
+			});
 			
 			return rootView;			
 		}

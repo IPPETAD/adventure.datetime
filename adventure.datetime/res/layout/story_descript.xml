@@ -72,5 +72,12 @@
         android:singleLine="false"
         android:text="I am watching you, Jesse.."
         android:textSize="18sp" />
+    
+    <Button 
+        android:id="@+id/play"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Start your Adventure!"/>
 
 </RelativeLayout>
