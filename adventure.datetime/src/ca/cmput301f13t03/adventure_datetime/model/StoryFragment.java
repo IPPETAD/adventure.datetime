@@ -29,16 +29,17 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 public class StoryFragment {
 
-	private long storyID;
-	private long fragmentID;
+	private String storyID;
+	private String fragmentID;
 	private ArrayList<String> storyMedia;
 	private String storyText;
 	private ArrayList<Choice> choices;
 
-	public StoryFragment(long storyID, long fragmentID, String storyText,
+	public StoryFragment(String storyID, String fragmentID, String storyText,
 	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
@@ -47,34 +48,34 @@ public class StoryFragment {
 		this.choices = choices;
 	}
 
-	public StoryFragment(long storyID, String storyText, Choice choice) {
+	public StoryFragment(String storyID, String storyText, Choice choice) {
 		this.storyID = storyID;
-		this.fragmentID = -1;
+		this.fragmentID = UUID.randomUUID().toString();
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
 	}
 
-	public StoryFragment(ArrayList<Choice> choices, long storyID, long fragmentID, String storyText) {
+	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
 		this.choices = choices;
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
 	}
 
-	public long getStoryID() {
+	public String getStoryID() {
 		return storyID;
 	}
 
-	public void setStoryID(long storyID) {
+	public void setStoryID(String storyID) {
 		this.storyID = storyID;
 	}
 
-	public long getFragmentID() {
+	public String getFragmentID() {
 		return fragmentID;
 	}
 
-	public void setFragmentID(long fragmentID) {
+	public void setFragmentID(String fragmentID) {
 		this.fragmentID = fragmentID;
 	}
 
