@@ -24,33 +24,36 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 
-/** Called when activity is first created */
-public class BrowseView extends FragmentActivity {
-	private static final String TAG = "BrowseView";
-	
+public class AuthorEdit extends FragmentActivity {
+	private static final String TAG = "AuthorEdit";
+
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager);
-		
+
 		/* Set up View Pager */
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
-		
+
 		/* Set up Tabs */
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -67,15 +70,15 @@ public class BrowseView extends FragmentActivity {
 		};
 
 		actionBar.addTab(actionBar.newTab()
-				.setText("Saved")
+				.setText("Edit")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
-				.setText("My Stories")
+				.setText("Overview")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
-				.setText("Online")
+				.setText("Preview")
 				.setTabListener(tabListener));
-		
+
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
@@ -85,7 +88,44 @@ public class BrowseView extends FragmentActivity {
 		});
 
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.authoredit, menu);
+		return true;		
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.action_save:
+			break;
+		case R.id.action_discard:
+			/* Ensure user is not retarded and actually wants to do this */
+			new AlertDialog.Builder(this)
+			.setTitle("Delete Story Fragment")
+			.setMessage("This will only delete the current story fragment. You cannot undo.")
+			.setCancelable(true)
+			.setPositiveButton("Kill the fucker!", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO::JTF Kill the node. If last node, kill story
+					finish();
+				}
+			})
+			.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			})
+			.create().show();
+			break;
+		default:
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
 		public ViewPagerAdapter(FragmentManager fm) {
@@ -98,13 +138,13 @@ public class BrowseView extends FragmentActivity {
 
 			switch (i) {
 			case 0:
-				fragment = new Browse_Cached();
+				fragment = new AuthorEdit_Edit();
 				break;
 			case 1:
-				fragment = new Browse_Authored();
+				fragment = new AuthorEdit_Overview();
 				break;
 			case 2:
-				fragment = new Browse_Online();
+				fragment = new AuthorEdit_Preview();
 				break;
 			default:
 			}
@@ -119,9 +159,9 @@ public class BrowseView extends FragmentActivity {
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
-			case 0: return "Saved";
-			case 1: return "My Stories";
-			case 2: return "Online";
+			case 0: return "Edit";
+			case 1: return "Overview";
+			case 2: return "Preview";
 			default: return "It be a Pirate!";
 			}
 		}
