@@ -85,7 +85,7 @@ public class AuthorEdit_Edit extends Fragment {
 			public void onClick(View v) {
 				getActivity().getActionBar().setSelectedNavigationItem(1);
 				
-				// TODO::JF Have Fragment Editing here 
+				// TODO::JF Have Choice Editing here 
 				
 				final String[] sChoices = 
 					{"Dance and Sing", "Cry a lot", "Go to RATT", 
