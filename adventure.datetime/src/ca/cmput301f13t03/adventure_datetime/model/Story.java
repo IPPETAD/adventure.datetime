@@ -22,7 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 

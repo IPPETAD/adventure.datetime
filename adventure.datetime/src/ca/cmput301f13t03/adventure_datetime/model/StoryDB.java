@@ -26,6 +26,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -344,8 +345,9 @@ public class StoryDB implements BaseColumns {
 		int size = story.getThumbnail().getByteCount();
 		ByteBuffer b = ByteBuffer.allocate(size);
 		story.getThumbnail().copyPixelsToBuffer(b);
+		b.rewind();
 		byte[] bytes = new byte[size];
-		b.get(bytes,0, bytes.length);
+		b.get(bytes, 0, bytes.length);
 
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -487,7 +489,7 @@ public class StoryDB implements BaseColumns {
 				+ _ID + " INTEGER PRIMARY KEY, "
 				+ STORY_COLUMN_TITLE + " TEXT, "
 				+ STORY_COLUMN_AUTHOR + " TEXT, "
-				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
+				+ STORY_COLUMN_SYNOPSIS + " TEXT, "
 				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
 				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
 				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
