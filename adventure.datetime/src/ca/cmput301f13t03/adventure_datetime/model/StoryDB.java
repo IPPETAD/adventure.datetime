@@ -37,7 +37,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * @author Andrew Fontaine
@@ -232,7 +234,7 @@ public class StoryDB implements BaseColumns {
 		Bookmark bookmark;
 
 		if(cursor.moveToFirst())
-			bookmark = new Bookmark(cursor);
+			bookmark = createBookmark(cursor);
 		else
 			bookmark = null;
 
@@ -260,7 +262,7 @@ public class StoryDB implements BaseColumns {
 		Bookmark bookmark;
 
 		if(cursor.moveToFirst())
-			bookmark = new Bookmark(cursor);
+			bookmark = createBookmark(cursor);
 		else
 			bookmark = null;
 
@@ -293,7 +295,7 @@ public class StoryDB implements BaseColumns {
 
 		long updated;
 		if(cursor.moveToFirst()) {
-			Bookmark bookmark1 = new Bookmark(cursor);
+			Bookmark bookmark1 = createBookmark(cursor);
 			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
@@ -412,7 +414,7 @@ public class StoryDB implements BaseColumns {
 	}
 
 	/**
-	 * Creates a story fragment from a cursor
+	 * Creates a StoryFragment from a cursor
 	 * @param cursor A Cursor pointing to a StoryFragment
 	 * @return A StoryFragment instance from the Database
 	 */
@@ -430,6 +432,25 @@ public class StoryDB implements BaseColumns {
 		choices = gson.fromJson(json, collectionType);
 
 		return new StoryFragment(choices, storyID, fragmentID, storyText);
+	}
+
+	/**
+	 * Creates a Bookmark from a cursor
+	 * @param cursor A Cursor pointing to a Bookmark
+	 * @return A Bookmark instance from the Database
+	 */
+	private Bookmark createBookmark(Cursor cursor) {
+		long fragmentID, storyID;
+		Date date;
+
+		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_FRAGMENTID));
+		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_STORYID));
+		long unix = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_DATE));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(unix);
+		date = cal.getTime();
+
+		return new Bookmark(fragmentID, storyID, date);
 	}
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
