@@ -55,15 +55,11 @@ public class StoryFragment {
 		this.storyText = storyText;
 	}
 
-	public StoryFragment(Cursor cursor) {
-		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
-		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB._ID));
-		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
-		/* TODO figure out JSON serialization for choices and media */
-		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
-		Gson gson = new Gson();
-		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
-		choices = gson.fromJson(json, collectionType);
+	public StoryFragment(ArrayList<Choice> choices, long storyID, long fragmentID, String storyText) {
+		this.choices = choices;
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
+		this.storyText = storyText;
 	}
 
 	public long getStoryID() {

@@ -31,7 +31,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.BaseColumns;
 import android.util.Log;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -173,7 +176,7 @@ public class StoryDB implements BaseColumns {
 
 		StoryFragment frag;
 		if(cursor.moveToFirst())
-			frag = new StoryFragment(cursor);
+			frag = createStoryFragment(cursor);
 		else
 			frag = null;
 		cursor.close();
@@ -201,7 +204,7 @@ public class StoryDB implements BaseColumns {
 
 		cursor.moveToFirst();
 		do {
-			fragments.add(new StoryFragment(cursor));
+			fragments.add(createStoryFragment(cursor));
 		} while(cursor.moveToNext());
 
 		cursor.close();
@@ -388,7 +391,7 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Creates story from a cursor
-	 * @param cursor A Cursor pointing to a current Story
+	 * @param cursor A Cursor pointing to a Story
 	 * @return A Story instance from the Database
 	 */
 	private Story createStory(Cursor cursor) {
@@ -407,7 +410,28 @@ public class StoryDB implements BaseColumns {
 
 		return new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 	}
-	
+
+	/**
+	 * Creates a story fragment from a cursor
+	 * @param cursor A Cursor pointing to a StoryFragment
+	 * @return A StoryFragment instance from the Database
+	 */
+	private StoryFragment createStoryFragment(Cursor cursor) {
+		long storyID, fragmentID;
+		String storyText;
+		ArrayList<Choice> choices;
+		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
+		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB._ID));
+		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
+		/* TODO figure out JSON serialization for choices and media */
+		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
+		Gson gson = new Gson();
+		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
+		choices = gson.fromJson(json, collectionType);
+
+		return new StoryFragment(choices, storyID, fragmentID, storyText);
+	}
+
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
 		public static final int DATABASE_VERSION = 1;
