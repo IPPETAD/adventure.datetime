@@ -50,6 +50,8 @@ public class StoryDB implements BaseColumns {
 
 	private static final String TAG = "StoryDB";
 
+	public static final String COLUMN_GUID = "GUID";
+
 	public static final String STORY_TABLE_NAME = "Story";
 	public static final String STORY_COLUMN_AUTHOR = "Author";
 	public static final String STORY_COLUMN_HEAD_FRAGMENT = "HeadFragment";
@@ -477,7 +479,7 @@ public class StoryDB implements BaseColumns {
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 1;
+		public static final int DATABASE_VERSION = 2;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -485,6 +487,7 @@ public class StoryDB implements BaseColumns {
 		private static final String CREATE_STORY_TABLE =
 				"CREATE TABLE " + STORY_TABLE_NAME + " ("
 				+ _ID + " INTEGER PRIMARY KEY, "
+				+ COLUMN_GUID + " TEXT, "
 				+ STORY_COLUMN_TITLE + " TEXT, "
 				+ STORY_COLUMN_AUTHOR + " TEXT, "
 				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
@@ -493,17 +496,18 @@ public class StoryDB implements BaseColumns {
 				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
 				+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
 				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
-				+ "(" +  _ID + ") )";
+				+ "(" +  COLUMN_GUID + ") )";
 
 		private static final String CREATE_STORYFRAGMENT_TABLE =
 				"CREATE TABLE " + STORYFRAGMENT_TABLE_NAME + " ("
 				+ _ID + " INTEGER PRIMARY KEY, "
+				+ COLUMN_GUID + " TEXT, "
 				+ STORYFRAGMENT_COLUMN_STORYID + " INTEGER, "
 				+ STORYFRAGMENT_COLUMN_CONTENT + " TEXT, "
 				+ STORYFRAGMENT_COLUMN_CHOICES + " BLOB, "
 				+ "FOREIGN KEY(" + STORYFRAGMENT_COLUMN_STORYID
 				+ ") REFERENCES " + STORY_TABLE_NAME + "("
-				+ _ID + "))";
+				+ COLUMN_GUID + "))";
 
 		private static final String CREATE_BOOKMARK_TABLE =
 				"CREATE TABLE " + BOOKMARK_TABLE_NAME + " ("
@@ -513,8 +517,8 @@ public class StoryDB implements BaseColumns {
 				+ BOOKMARK_COLUMN_DATE + " INTEGER, "
 				+ "FOREIGN KEY(" + BOOKMARK_COLUMN_FRAGMENTID
 				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
-				+ "(" + _ID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
-				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + BOOKMARK_COLUMN_STORYID
+				+ "(" + COLUMN_GUID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
+				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
 				+ "))";
 
 		private static final String DELETE_STORY_TABLE =
