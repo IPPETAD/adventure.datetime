@@ -23,14 +23,19 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -47,8 +52,10 @@ public class AuthorEdit_Edit extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
 		/** Layout items **/
-		//TODO: read actual content from model
+		Button choices = (Button) rootView.findViewById(R.id.choices);
 		TextView content = (TextView) rootView.findViewById(R.id.content);
+		
+		//TODO: read actual content from model
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
 				"appears grumpy because of feline dwarfism and an under bite." +
 				"She and her brother Pokey were born to normal parents with " +
@@ -71,8 +78,32 @@ public class AuthorEdit_Edit extends Fragment {
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
 		content.setText(tempText);
-
-
+		
+		/* Choices */
+		choices.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().getActionBar().setSelectedNavigationItem(1);
+				
+				// TODO::JF Have Fragment Editing here 
+				
+				final String[] sChoices = 
+					{"Dance and Sing", "Cry a lot", "Go to RATT", 
+						"Grade this app 100%", "Eat a gold brick wrapped in lettuce"};
+				new AlertDialog.Builder(v.getContext())
+				.setTitle("Actions")
+				.setCancelable(true)
+				.setItems(sChoices, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						//TODO::JF Set new fragment
+					}
+				})
+				.create().show();
+			}			
+		});
+		
+		
 		return rootView;
 	}
 }
