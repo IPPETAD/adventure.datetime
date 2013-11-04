@@ -22,9 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Collection;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.os.Bundle;
@@ -35,11 +38,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 /** Called when activity is first created */
-public class BrowseView extends FragmentActivity {
+public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private static final String TAG = "BrowseView";
 	
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
+	
+	@Override
+	public void OnCurrentStoryListChange(Collection<Story> newStories) {
+		// Stories received from Model. Kill everything & remake the world
+		
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,4 +135,6 @@ public class BrowseView extends FragmentActivity {
 			}
 		}
 	}
+
+
 }
