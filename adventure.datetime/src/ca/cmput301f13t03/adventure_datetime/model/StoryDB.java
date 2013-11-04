@@ -226,7 +226,7 @@ public class StoryDB implements BaseColumns {
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
 				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
-				BOOKMARK_COLUMN_FRAGMENTID + " = ?, " + BOOKMARK_COLUMN_STORYID + " = ?",
+				BOOKMARK_COLUMN_FRAGMENTID + " = ? AND " + BOOKMARK_COLUMN_STORYID + " = ?",
 				new String[] {String.valueOf(fragmentid), String.valueOf(storyid)},
 				null,
 				null,
@@ -393,14 +393,14 @@ public class StoryDB implements BaseColumns {
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
-				_ID + " = ?, " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+				_ID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
 				new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())},
 				null,
 				null,
 				null);
 		if(cursor.moveToFirst()) {
 			int updated;
-			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, _ID + " = ?, " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, _ID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
 					new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())});
 			cursor.close();
 			db.close();
@@ -490,7 +490,6 @@ public class StoryDB implements BaseColumns {
 				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
 				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
 				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
-				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
 				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
 				+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
 				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME

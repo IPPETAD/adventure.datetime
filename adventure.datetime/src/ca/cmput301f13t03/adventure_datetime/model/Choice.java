@@ -32,6 +32,11 @@ public class Choice {
 	private String text;
 	private long target;
 
+	public Choice(String text, long target) {
+		this.text = text;
+		this.target = target;
+	}
+
 	public String getText() {
 		return text;
 	}
