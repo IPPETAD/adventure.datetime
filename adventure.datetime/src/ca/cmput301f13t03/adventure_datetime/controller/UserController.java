@@ -23,5 +23,41 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-public class UserController {
+import ca.cmput301f13t03.adventure_datetime.model.*;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
+public class UserController
+{
+	private IStoryModelDirector m_storyDirector = null;
+	
+    public UserController(IStoryModelDirector director)
+    {
+    	m_storyDirector = director;
+    }
+
+    public void StartStory(long storyId)
+    {
+    	m_storyDirector.SelectStory(storyId);
+    	/* TODO::JT also select head fragment and create save*/
+    }
+
+    public void ResumeStory(long bookmarkId)
+    {
+    	/* TODO::JT find the bookmark, select its story and its fragment */
+    }
+
+    public void SetBookmark()
+    {
+    	/* TODO::JT Create a bookmark for the current story and fragment */
+    }
+
+    public void AddComment(Comment comment)
+    {
+    	/* TODO::JT */
+    }
+
+    public void MakeChoice(long choiceId)
+    {
+    	/* TODO::JT map choice to fragment then set that fragment */
+    }
 }
