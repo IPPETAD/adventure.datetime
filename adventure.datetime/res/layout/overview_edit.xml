@@ -11,12 +11,13 @@
         android:weightSum="2">
 
         <Button
-            android:id="@+id/choices"
+            android:id="@+id/add"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Add Node" />
         <Button 
+            android:id="@+id/other"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
