@@ -104,8 +104,12 @@ public class Browse_Cached extends Fragment {
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
+			// 3 - Bookmark / Continue Story
+			// 5 - Completed / Play Again
 			if (position == 3) 
 				status.setImageResource(R.drawable.ic_action_labels);
+			else if (position == 5)
+				status.setImageResource(R.drawable.ic_action_accept);
 			
 			author.setText("Author: Jane Austen");
 			lastPlayed.setText("Last Played: 01/01/1812");
