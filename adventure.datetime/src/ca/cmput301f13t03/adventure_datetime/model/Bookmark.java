@@ -37,7 +37,7 @@ public class Bookmark {
 	private String storyID;
 	private Date date;
 
-	public Bookmark(String fragmentID, String storyID) {
+	public Bookmark(String storyID, String fragmentID) {
 		this.fragmentID = fragmentID;
 		this.storyID = storyID;
 		this.date = Calendar.getInstance().getTime();
