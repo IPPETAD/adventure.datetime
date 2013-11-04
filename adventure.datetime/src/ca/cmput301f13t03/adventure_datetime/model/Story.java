@@ -56,12 +56,24 @@ public class Story {
 		fragmentIDs.add(headFragmentId);
 	}
 
+	public Story(String author, String title, String synopsis) {
+		this.author = author;
+		this.title = title;
+		this.synopsis = synopsis;
+		this.thumbnail = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565); /* for testing purposes */
+		id = UUID.randomUUID().toString();
+		headFragmentId = new UUID(0,0).toString();
+		fragmentIDs = new HashSet<String>();
+		tags = new ArrayList<String>();
+		tags.add("new");
+		timestamp = System.currentTimeMillis() / 1000L;
+	}
+
 	public Story() {
 		id = UUID.randomUUID().toString();
 		title = "";
 		headFragmentId = new UUID(0,0).toString();
 		fragmentIDs = new HashSet<String>();
-		fragmentIDs.add(headFragmentId);
 		tags = new ArrayList<String>();
 		tags.add("new");
 		timestamp = System.currentTimeMillis() / 1000L;

@@ -60,6 +60,17 @@ public class StoryDBTest extends AndroidTestCase {
 
 	}
 
+	public void testSetStory() throws Exception {
+		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
+		String uuid = story.getId();
+
+		Assert.assertTrue("Error inserting story", database.setStory(story));
+		Story story2 = database.getStory(story.getId());
+
+		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
+		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
+	}
+
 
 	@Override
 	public void tearDown() throws Exception {

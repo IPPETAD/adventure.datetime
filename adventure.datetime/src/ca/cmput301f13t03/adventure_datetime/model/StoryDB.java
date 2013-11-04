@@ -432,7 +432,7 @@ public class StoryDB implements BaseColumns {
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
 		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
-		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
+		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TIMESTAMP));
 
 		return new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 	}
