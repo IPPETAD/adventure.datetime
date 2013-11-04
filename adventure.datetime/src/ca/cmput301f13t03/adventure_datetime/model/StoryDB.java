@@ -26,6 +26,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,10 +37,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author Andrew Fontaine
@@ -78,17 +76,17 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Grabs a story with the given id from the local database
-	 * @param id The _ID of the story
+	 * @param id The GUID of the story
 	 * @return The Story object or null if the id doesn't exist in the database
 	 */
-	public Story getStory(long id) {
+	public Story getStory(String id) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
-						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
-				_ID + " = ?",
-				new String[] {String.valueOf(id)},
+				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR,
+						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				COLUMN_GUID + " = ?",
+				new String[] {id},
 				null,
 				null,
 				null,
@@ -115,8 +113,8 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
-						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
+						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				null,
 				null,
 				null,
@@ -144,8 +142,8 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {_ID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,
-						STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
+				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
+						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS,STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				STORY_COLUMN_AUTHOR + " = ?",
 				new String[] {author},
 				null,
@@ -166,16 +164,16 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves story fragments by specific ID from local storage
-	 * @param id The _ID of the fragment
+	 * @param id The GUID of the fragment
 	 * @return StoryFragment instance or null
 	 */
-	public StoryFragment getStoryFragment(long id) {
+	public StoryFragment getStoryFragment(String id) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
-				_ID + " = ?",
-				new String[] {String.valueOf(id)},
+				new String[] {_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				COLUMN_GUID + " = ?",
+				new String[] {id},
 				null,
 				null,
 				"1");
@@ -195,13 +193,13 @@ public class StoryDB implements BaseColumns {
 	 * @param storyid The _ID for a story
 	 * @return A Collection of StoryFragments. Empty if none exist.
 	 */
-	public ArrayList<StoryFragment> getStoryFragments(long storyid) {
+	public ArrayList<StoryFragment> getStoryFragments(String storyid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
-				STORYFRAGMENT_COLUMN_STORYID + " = ?",
-				new String[] {String.valueOf(storyid)},
+				new String[] {_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				COLUMN_GUID + " = ?",
+				new String[] {storyid},
 				null,
 				null,
 				null);
@@ -222,7 +220,6 @@ public class StoryDB implements BaseColumns {
 	 * @param storyid The _ID of the story
 	 * @param fragmentid The _ID of the story fragment
 	 * @return a Bookmark object from the database
-	 */
 	public Bookmark getBookmark(long storyid, long fragmentid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -244,20 +241,20 @@ public class StoryDB implements BaseColumns {
 		cursor.close();
 		db.close();
 		return bookmark;
-	}
+	}*/
 
 	/**
 	 * Gets the Bookmark from the story ID
 	 * @param storyid The _ID of the story
 	 * @return The Bookmark object
 	 */
-	public Bookmark getBookmark(long storyid) {
+	public Bookmark getBookmark(String storyid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
+				new String[] {_ID, COLUMN_GUID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
 				BOOKMARK_COLUMN_STORYID + " = ?",
-				new String[] {String.valueOf(storyid)},
+				new String[] {storyid},
 				null,
 				null,
 				null);
@@ -304,9 +301,9 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[] {_ID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
+				new String[] {_ID, COLUMN_GUID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
 				BOOKMARK_COLUMN_STORYID + " = ?",
-				new String[] {String.valueOf(bookmark.getStoryID())},
+				new String[] {bookmark.getStoryID()},
 				null,
 				null,
 				null);
@@ -346,8 +343,9 @@ public class StoryDB implements BaseColumns {
 		int size = story.getThumbnail().getByteCount();
 		ByteBuffer b = ByteBuffer.allocate(size);
 		story.getThumbnail().copyPixelsToBuffer(b);
+		b.rewind();
 		byte[] bytes = new byte[size];
-		b.get(bytes,0, bytes.length);
+		b.get(bytes, 0, bytes.length);
 
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -357,26 +355,28 @@ public class StoryDB implements BaseColumns {
 		values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
 		values.put(STORY_COLUMN_THUMBNAIL, bytes);
-		if(story.getId() != -1) {
+		values.put(COLUMN_GUID, story.getId());
+		if(!story.getId().equals(new UUID(0,0).toString())) {
 			Cursor cursor = db.query(STORY_TABLE_NAME,
 					new String[] {_ID},
-					_ID + " = ?",
-					new String[] {String.valueOf(story.getId())},
+					COLUMN_GUID + " = ?",
+					new String[] {story.getId()},
 					null,
 					null,
 					null);
 			if(cursor.moveToFirst()) {
 				int updated;
-				updated = db.update(STORY_TABLE_NAME, values, _ID + " = ?",
-						new String [] {String.valueOf(story.getId())});
+				updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
+						new String [] {story.getId()});
 				cursor.close();
 				db.close();
-				return updated == 6;
+				return updated == 1;
 			}
 			 cursor.close();
 		}
 		long inserted;
 		inserted = db.insert(STORY_TABLE_NAME, null, values);
+		story.setId(UUID.randomUUID().toString());
 		db.close();
 		return inserted != -1;
 	}
@@ -395,21 +395,22 @@ public class StoryDB implements BaseColumns {
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
-				_ID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
-				new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())},
+				COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+				new String[] {frag.getFragmentID(), frag.getStoryID()},
 				null,
 				null,
 				null);
 		if(cursor.moveToFirst()) {
 			int updated;
-			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, _ID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
-					new String[] {String.valueOf(frag.getFragmentID()), String.valueOf(frag.getStoryID())});
+			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
+					new String[] {frag.getFragmentID(), frag.getStoryID()});
 			cursor.close();
 			db.close();
-			return updated == 3;
+			return updated == 1;
 		}
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+		frag.setFragmentID(UUID.randomUUID().toString());
 		db.close();
 		return inserted != -1;
 
@@ -422,12 +423,13 @@ public class StoryDB implements BaseColumns {
 	 */
 	private Story createStory(Cursor cursor) {
 		String title, author, synopsis;
-		long headFragmentId, id, timestamp;
+		String headFragmentId, id;
+		long timestamp;
 		Bitmap thumbnail;
 
-		id = cursor.getInt(cursor.getColumnIndex(StoryDB._ID));
+		id = cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID));
 		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
-		headFragmentId = cursor.getInt(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
+		headFragmentId = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
 		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
 		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
@@ -443,11 +445,11 @@ public class StoryDB implements BaseColumns {
 	 * @return A StoryFragment instance from the Database
 	 */
 	private StoryFragment createStoryFragment(Cursor cursor) {
-		long storyID, fragmentID;
+		String storyID, fragmentID;
 		String storyText;
 		ArrayList<Choice> choices;
-		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
-		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB._ID));
+		storyID = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID));
+		fragmentID = cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID));
 		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
 		/* TODO figure out JSON serialization for choices and media */
 		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
@@ -464,11 +466,11 @@ public class StoryDB implements BaseColumns {
 	 * @return A Bookmark instance from the Database
 	 */
 	private Bookmark createBookmark(Cursor cursor) {
-		long fragmentID, storyID;
+		String fragmentID, storyID;
 		Date date;
 
-		fragmentID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_FRAGMENTID));
-		storyID = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_STORYID));
+		fragmentID = cursor.getString(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_FRAGMENTID));
+		storyID = cursor.getString(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_STORYID));
 		long unix = cursor.getLong(cursor.getColumnIndex(StoryDB.BOOKMARK_COLUMN_DATE));
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(unix);
@@ -490,7 +492,7 @@ public class StoryDB implements BaseColumns {
 				+ COLUMN_GUID + " TEXT, "
 				+ STORY_COLUMN_TITLE + " TEXT, "
 				+ STORY_COLUMN_AUTHOR + " TEXT, "
-				+ STORY_COLUMN_SYNOPSIS + "TEXT, "
+				+ STORY_COLUMN_SYNOPSIS + " TEXT, "
 				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
 				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
 				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
