@@ -1,4 +1,4 @@
-package ca.cmput301f13t03.adventure_datetime.model;/*
+/*
  * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
  *
@@ -20,9 +20,14 @@ package ca.cmput301f13t03.adventure_datetime.model;/*
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package ca.cmput301f13t03.adventure_datetime.model;
+
+import android.graphics.Bitmap;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import junit.framework.Assert;
+
+import java.util.Calendar;
 
 /**
  * @author Andrew Fontaine
@@ -32,6 +37,8 @@ import junit.framework.Assert;
 public class StoryDBTest extends AndroidTestCase {
 
 	private StoryDB database;
+	private Story story;
+	private StoryFragment frag;
 
 	@Override
 	public void setUp() throws Exception {
@@ -42,10 +49,17 @@ public class StoryDBTest extends AndroidTestCase {
 
 	public void testSetStoryFragment() throws Exception {
 		Choice choice = new Choice("test", 5);
-		StoryFragment frag = new StoryFragment(3, "testing", choice);
+		frag = new StoryFragment(3, "testing", choice);
 
 		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
 
+	}
+
+	public void testSetStory() throws Exception {
+
+		story = new Story(-1, 1, "TestName", Calendar.getInstance().getTimeInMillis()/1000,
+				"TestSynop", Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565), "Title");
+		Assert.assertTrue("Error inserting story", database.setStory(story));
 	}
 
 
