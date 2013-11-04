@@ -48,11 +48,15 @@ public class StoryDBTest extends AndroidTestCase {
 		Choice choice = new Choice("test", 5);
 		StoryFragment frag = new StoryFragment(uuid, "testing", choice);
 
+		String fragUuid = frag.getFragmentID();
+
 		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
 		StoryFragment frag2 = database.getStoryFragment(frag.getFragmentID());
 
 		Assert.assertEquals("Not equivalent fragment ids", frag.getFragmentID(), frag2.getFragmentID());
 		Assert.assertEquals("Not equivalent story ids", frag.getStoryID(), frag2.getStoryID());
+
+		Assert.assertEquals("Not equivalent UUIDs", fragUuid, frag.getFragmentID());
 
 	}
 

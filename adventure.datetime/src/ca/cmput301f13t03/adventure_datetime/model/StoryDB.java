@@ -407,8 +407,6 @@ public class StoryDB implements BaseColumns {
 			db.close();
 			return updated == 1;
 		}
-		frag.setFragmentID(UUID.randomUUID().toString());
-		values.put(COLUMN_GUID, frag.getFragmentID());
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
 		db.close();
