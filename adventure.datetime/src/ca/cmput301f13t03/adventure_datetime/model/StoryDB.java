@@ -109,7 +109,7 @@ public class StoryDB implements BaseColumns {
 	 * Retrieves all stories located on local storage
 	 * @return Collection of all stories on local storage. Collection is empty if there are no stories
 	 */
-	public Collection<Story> getStories() {
+	public ArrayList<Story> getStories() {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -120,12 +120,13 @@ public class StoryDB implements BaseColumns {
 				null,
 				null,
 				null);
-		Collection<Story> stories = new ArrayList<Story>();
+		ArrayList<Story> stories = new ArrayList<Story>();
 
-		cursor.moveToFirst();
-		do {
-			stories.add(createStory(cursor));
-		} while(cursor.moveToNext());
+		if(cursor.moveToFirst()) {
+			do {
+				stories.add(createStory(cursor));
+			} while(cursor.moveToNext());
+		}
 
 		cursor.close();
 		db.close();
@@ -137,7 +138,7 @@ public class StoryDB implements BaseColumns {
 	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories
 	 * by author.
 	 */
-	public Collection<Story> getStoriesAuthoredBy(String author) {
+	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -148,12 +149,13 @@ public class StoryDB implements BaseColumns {
 				null,
 				null,
 				null);
-		Collection<Story> stories = new ArrayList<Story>();
+		ArrayList<Story> stories = new ArrayList<Story>();
 
-		cursor.moveToFirst();
-		do {
-			stories.add(createStory(cursor));
-		} while(cursor.moveToNext());
+		if(cursor.moveToFirst()) {
+			do {
+				stories.add(createStory(cursor));
+			} while(cursor.moveToNext());
+		}
 
 		cursor.close();
 		db.close();
@@ -191,7 +193,7 @@ public class StoryDB implements BaseColumns {
 	 * @param storyid The _ID for a story
 	 * @return A Collection of StoryFragments. Empty if none exist.
 	 */
-	public Collection<StoryFragment> getStoryFragments(long storyid) {
+	public ArrayList<StoryFragment> getStoryFragments(long storyid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
@@ -202,12 +204,11 @@ public class StoryDB implements BaseColumns {
 				null,
 				null);
 
-		Collection<StoryFragment> fragments = new ArrayList<StoryFragment>();
+		ArrayList<StoryFragment> fragments = new ArrayList<StoryFragment>();
 
-		cursor.moveToFirst();
-		do {
+		while( cursor.moveToFirst() || cursor.moveToNext()) {
 			fragments.add(createStoryFragment(cursor));
-		} while(cursor.moveToNext());
+		}
 
 		cursor.close();
 		db.close();
@@ -220,7 +221,7 @@ public class StoryDB implements BaseColumns {
 	 * @param fragmentid The _ID of the story fragment
 	 * @return a Bookmark object from the database
 	 */
-	public Bookmark getBookMark(long storyid, long fragmentid) {
+	public Bookmark getBookmark(long storyid, long fragmentid) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
@@ -269,6 +270,27 @@ public class StoryDB implements BaseColumns {
 		cursor.close();
 		db.close();
 		return bookmark;
+	}
+
+
+	public ArrayList<Bookmark> getAllBookmarks() {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
+				new String[] {BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
+				null,
+				null,
+				null,
+				null,
+				null);
+
+		ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
+		if(cursor.moveToFirst()) {
+			do {
+				bookmarks.add(createBookmark(cursor));
+			} while(cursor.moveToNext());
+		}
+
+		return bookmarks;
 	}
 
 	/**
