@@ -20,18 +20,32 @@ package ca.cmput301f13t03.adventure_datetime.model;/*
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
+import android.test.RenamingDelegatingContext;
+import junit.framework.Assert;
 
 /**
  * @author Andrew Fontaine
  * @version 1.0
  * @since 31/10/13
  */
-public class StoryDBTest extends TestCase {
+public class StoryDBTest extends AndroidTestCase {
+
+	private StoryDB database;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();    //TODO Implement
+		RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+		database = new StoryDB(context);
+	}
+
+	public void testSetStoryFragment() throws Exception {
+		Choice choice = new Choice("test", 5);
+		StoryFragment frag = new StoryFragment(3, "testing", choice);
+
+		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
+
 	}
 
 
