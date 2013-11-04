@@ -41,6 +41,19 @@ public class Story {
 	private Collection<String> tags; /** A collection of Tags for the Story */
 	private Collection<Long> fragmentIDs; /** The collection of fragment _IDs attached to the story */
 
+	public Story(long headFragmentId, long id, String author, long timestamp, String synopsis,
+	             Bitmap thumbnail, String title) {
+		this.headFragmentId = headFragmentId;
+		this.id = id;
+		this.author = author;
+		this.timestamp = timestamp;
+		this.synopsis = synopsis;
+		this.thumbnail = thumbnail;
+		this.title = title;
+		fragmentIDs = new ArrayList<Long>();
+		fragmentIDs.add(headFragmentId);
+	}
+
 	public Story() {
 		id = -1;
 		title = "";
@@ -50,19 +63,6 @@ public class Story {
 		tags = new ArrayList<String>();
 		tags.add("new");
 		timestamp = System.currentTimeMillis() / 1000L;
-	}
-
-	public Story(Cursor cursor) {
-		id = cursor.getInt(cursor.getColumnIndex(StoryDB._ID));
-		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
-		headFragmentId = cursor.getInt(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
-		fragmentIDs = new ArrayList<Long>();
-		fragmentIDs.add(headFragmentId);
-		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
-		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
-		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
-		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
-		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 	}
 
 	public long getId() {

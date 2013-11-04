@@ -27,6 +27,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -88,7 +90,7 @@ public class StoryDB implements BaseColumns {
 		Story story;
 
 		if (cursor.moveToFirst()) {
-			story = new Story(cursor);
+			story = createStory(cursor);
 		}
 		else
 			story = null;
@@ -117,7 +119,7 @@ public class StoryDB implements BaseColumns {
 
 		cursor.moveToFirst();
 		do {
-			stories.add(new Story(cursor));
+			stories.add(createStory(cursor));
 		} while(cursor.moveToNext());
 
 		cursor.close();
@@ -145,7 +147,7 @@ public class StoryDB implements BaseColumns {
 
 		cursor.moveToFirst();
 		do {
-			stories.add(new Story(cursor));
+			stories.add(createStory(cursor));
 		} while(cursor.moveToNext());
 
 		cursor.close();
@@ -384,6 +386,28 @@ public class StoryDB implements BaseColumns {
 
 	}
 
+	/**
+	 * Creates story from a cursor
+	 * @param cursor A Cursor pointing to a current Story
+	 * @return A Story instance from the Database
+	 */
+	private Story createStory(Cursor cursor) {
+		String title, author, synopsis;
+		long headFragmentId, id, timestamp;
+		Bitmap thumbnail;
+
+		id = cursor.getInt(cursor.getColumnIndex(StoryDB._ID));
+		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
+		headFragmentId = cursor.getInt(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT));
+		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
+		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
+		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
+		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
+		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
+
+		return new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
+	}
+	
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
 		public static final int DATABASE_VERSION = 1;
