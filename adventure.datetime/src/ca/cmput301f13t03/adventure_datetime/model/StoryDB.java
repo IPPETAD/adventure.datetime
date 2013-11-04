@@ -392,6 +392,7 @@ public class StoryDB implements BaseColumns {
 		values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID());
 		values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
 		values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
+		values.put(COLUMN_GUID, frag.getFragmentID());
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
@@ -410,7 +411,6 @@ public class StoryDB implements BaseColumns {
 		}
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
-		frag.setFragmentID(UUID.randomUUID().toString());
 		db.close();
 		return inserted != -1;
 
