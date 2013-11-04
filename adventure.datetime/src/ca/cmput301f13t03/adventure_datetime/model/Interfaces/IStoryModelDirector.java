@@ -22,19 +22,33 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
+import java.net.URI;
+import java.util.Collection;
+
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+
 /**
  * Class provides an interface for controllers to interact with the
  * model and to direct its behaviour
  * 
- * @author Jesse Tucker
+ * @author Jesse Tucker Evan DeGraff
  *
  * AKA : IModelSet
  */
 public interface IStoryModelDirector 
 {
-	void SelectStory(long storyId);
-	void SelectFragment(long fragmentId);
+	public void selectStory(long storyId);
+	public void selectFragment(long fragmentId);
 	// void AddComment(Comment comment); 
 	/* Commenting out as I don't want to deal with this right now*/
 	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
+	
+	public long createStory();
+	public void deleteStory(long storyID);
+	public void updateStory(String title, String summary, URI thumbnail);
+	public long createFragment();
+	public void saveFragmentContent(String content);
+	public void saveFragmentChoices(Collection<Choice> choices);
+	public void deleteFragment(long fragmentID);
+	public void publish(long storyID);
 }

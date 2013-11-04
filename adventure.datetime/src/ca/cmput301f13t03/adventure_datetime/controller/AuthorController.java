@@ -21,43 +21,57 @@
  */
 
 
+
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
+import java.net.URI;
+import java.util.Collection;
+
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
-public class UserController
-{
+/**
+ * Controller for all aspects of authoring a story
+ * 
+ * @author Evan DeGraff
+ *
+ */
+public class AuthorController {
 	private IStoryModelDirector m_storyDirector = null;
+
+	public AuthorController(IStoryModelDirector director) {
+		m_storyDirector = director;
+	}
 	
-    public UserController(IStoryModelDirector director)
-    {
-    	m_storyDirector = director;
-    }
-
-    public void StartStory(long storyId)
-    {
-    	m_storyDirector.selectStory(storyId);
-    	/* TODO::JT also select head fragment and create save*/
-    }
-
-    public void ResumeStory(long bookmarkId)
-    {
-    	/* TODO::JT find the bookmark, select its story and its fragment */
-    }
-
-    public void SetBookmark()
-    {
-    	/* TODO::JT Create a bookmark for the current story and fragment */
-    }
-
-    public void AddComment(Comment comment)
-    {
-    	/* TODO::JT */
-    }
-
-    public void MakeChoice(long choiceId)
-    {
-    	/* TODO::JT map choice to fragment then set that fragment */
-    }
+	public long newStory(){
+		return m_storyDirector.createStory();
+	}
+	
+	public void saveStory(String title, String summary, URI thumbnail){
+		m_storyDirector.updateStory(title, summary, thumbnail);
+	}
+	
+	public void deleteStory(long storyID){
+		m_storyDirector.deleteStory(storyID);
+	}
+	
+	public long createFragment(){
+		return m_storyDirector.createFragment();
+	}
+	
+	public void saveFragmentContent(String content){
+		m_storyDirector.saveFragmentContent(content);
+	}
+	
+	public void saveFragmentChoices(Collection<Choice> choices){
+		m_storyDirector.saveFragmentChoices(choices);
+	}
+	
+	public void deleteFragment(long fragmentID){
+		m_storyDirector.deleteFragment(fragmentID);
+	}
+	
+	public void publish(long storyID){
+		m_storyDirector.publish(storyID);
+	}
 }
