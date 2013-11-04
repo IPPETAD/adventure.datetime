@@ -252,7 +252,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[] {_ID, COLUMN_GUID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
+				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
 				BOOKMARK_COLUMN_STORYID + " = ?",
 				new String[] {storyid},
 				null,
@@ -301,7 +301,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[] {_ID, COLUMN_GUID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
+				new String[] {_ID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
 				BOOKMARK_COLUMN_STORYID + " = ?",
 				new String[] {bookmark.getStoryID()},
 				null,
@@ -322,7 +322,7 @@ public class StoryDB implements BaseColumns {
 						new String[] {BOOKMARK_COLUMN_STORYID});
 				cursor.close();
 				db.close();
-				return updated == 3;
+				return updated == 1;
 			}
 			cursor.close();
 			db.close();

@@ -71,6 +71,18 @@ public class StoryDBTest extends AndroidTestCase {
 		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
 	}
 
+	public void testSetBookmark() throws Exception {
+		String sUuid, sFUuid;
+		sUuid = UUID.randomUUID().toString();
+		sFUuid = UUID.randomUUID().toString();
+		Bookmark bookmark = new Bookmark(sUuid, sFUuid);
+		Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
+		Bookmark bookmark2 = database.getBookmark(sUuid);
+
+		Assert.assertEquals("Not equivalent story ids", bookmark.getStoryID(), bookmark2.getStoryID());
+		Assert.assertEquals("Not equivalent uuids", sUuid, bookmark.getStoryID());
+	}
+
 
 	@Override
 	public void tearDown() throws Exception {
