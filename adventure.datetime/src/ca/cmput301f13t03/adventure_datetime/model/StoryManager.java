@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -134,14 +135,64 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//	IStoryModelDirector
 	//
 	//============================================================
-	
-	public void SelectStory(long storyId) 
-	{
-		/* TODO::JT */
+
+	@Override
+	public void selectStory(long storyId) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void SelectFragment(long fragmentId) 
-	{
-		/* TODO::JT */
+	@Override
+	public void selectFragment(long fragmentId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long createStory() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void deleteStory(long storyID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateStory(String title, String summary, URI thumbnail) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long createFragment() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void saveFragmentContent(String content) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveFragmentChoices(Collection<Choice> choices) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteFragment(long fragmentID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void publish(long storyID) {
+		// TODO Auto-generated method stub
+		
 	}
 }
