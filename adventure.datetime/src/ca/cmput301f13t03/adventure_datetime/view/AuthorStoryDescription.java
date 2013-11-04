@@ -25,7 +25,6 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,8 +38,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
@@ -131,7 +131,9 @@ public class AuthorStoryDescription extends FragmentActivity {
 			
 			/** Layout items **/
 			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
-
+			ImageButton btnEditTitle = (ImageButton) rootView.findViewById(R.id.edit_title);
+			ImageButton btnEditSynopsis = (ImageButton) rootView.findViewById(R.id.edit_content);
+			
 			switch (args.getInt(ARG_STATUS)) {
 			case STATUS_UNPUBLISHED:
 				/* Light Blue */
@@ -165,6 +167,27 @@ public class AuthorStoryDescription extends FragmentActivity {
 			"'But it is,'' returned she; ''for Mrs. Long has just b"+
 			"een here, and she told me all about it.''";
 			content.setText(text);
+
+			btnEditTitle.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getActivity())
+					.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+					.setPositiveButton("OK!", null)
+					.setNegativeButton("Cancel", null)
+					.create().show();
+				}
+			});
+			btnEditSynopsis.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getActivity())
+					.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+					.setPositiveButton("OK!", null)
+					.setNegativeButton("Cancel", null)
+					.create().show();
+				}
+			});
 			
 			return rootView;
 		}
@@ -209,7 +232,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 				.setTitle("Delete Story")
 				.setMessage("This will delete the story. You cannot undo.")
 				.setCancelable(true)
-				.setPositiveButton("Kill the fucker!", new OnClickListener() {
+				.setPositiveButton("Kill the fucker!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
@@ -217,7 +240,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 						getActivity().finish();
 					}
 				})
-				.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+				.setNegativeButton("NO! Don't hurt GRAMGRAM!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.cancel();
