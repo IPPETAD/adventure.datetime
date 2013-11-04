@@ -24,6 +24,8 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import junit.framework.Assert;
 
+import java.util.UUID;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -41,10 +43,16 @@ public class StoryDBTest extends AndroidTestCase {
 	}
 
 	public void testSetStoryFragment() throws Exception {
+
+		String uuid = UUID.randomUUID().toString();
 		Choice choice = new Choice("test", 5);
-		StoryFragment frag = new StoryFragment(3, "testing", choice);
+		StoryFragment frag = new StoryFragment(uuid, "testing", choice);
 
 		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
+		StoryFragment frag2 = database.getStoryFragment(frag.getFragmentID());
+
+		Assert.assertEquals("Not equivalent fragment ids", frag.getFragmentID(), frag2.getFragmentID());
+		Assert.assertEquals("Not equivalent story ids", frag.getStoryID(), frag2.getStoryID());
 
 	}
 
