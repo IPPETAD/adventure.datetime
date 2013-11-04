@@ -33,7 +33,7 @@
                 android:textSize="22sp" />
 
             <ImageButton
-                android:id="@+id/edit_title"
+                android:id="@+id/edit_content"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_toRightOf="@id/synopsis"

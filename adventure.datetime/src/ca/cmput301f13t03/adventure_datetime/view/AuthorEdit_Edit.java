@@ -37,10 +37,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class AuthorEdit_Edit extends Fragment {
 
+	private Button _btnChoices;
+	private ImageButton _btnEditContent;
+	private TextView _content;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) {
@@ -52,8 +57,9 @@ public class AuthorEdit_Edit extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
 		/** Layout items **/
-		Button choices = (Button) rootView.findViewById(R.id.choices);
-		TextView content = (TextView) rootView.findViewById(R.id.content);
+		_btnChoices = (Button) rootView.findViewById(R.id.choices);
+		_content = (TextView) rootView.findViewById(R.id.content);
+		_btnEditContent = (ImageButton) rootView.findViewById(R.id.edit_content);
 		
 		//TODO: read actual content from model
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
@@ -77,10 +83,10 @@ public class AuthorEdit_Edit extends Fragment {
 				"w and appeared on Good Morning America and Anderson Live and"+
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
-		content.setText(tempText);
+		_content.setText(tempText);
 		
 		/* Choices */
-		choices.setOnClickListener(new OnClickListener() {
+		_btnChoices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				getActivity().getActionBar().setSelectedNavigationItem(1);
@@ -101,6 +107,18 @@ public class AuthorEdit_Edit extends Fragment {
 				})
 				.create().show();
 			}			
+		});
+		
+		/* Edit Content */
+		_btnEditContent.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(getActivity())
+				.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+				.setPositiveButton("OK!", null)
+				.setNegativeButton("Cancel", null)
+				.create().show();
+			}
 		});
 		
 		
