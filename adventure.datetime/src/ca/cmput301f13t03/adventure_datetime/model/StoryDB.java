@@ -356,27 +356,25 @@ public class StoryDB implements BaseColumns {
 		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
 		values.put(STORY_COLUMN_THUMBNAIL, bytes);
 		values.put(COLUMN_GUID, story.getId());
-		if(!story.getId().equals(new UUID(0,0).toString())) {
-			Cursor cursor = db.query(STORY_TABLE_NAME,
-					new String[] {_ID},
-					COLUMN_GUID + " = ?",
-					new String[] {story.getId()},
-					null,
-					null,
-					null);
-			if(cursor.moveToFirst()) {
-				int updated;
-				updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
-						new String [] {story.getId()});
-				cursor.close();
-				db.close();
-				return updated == 1;
-			}
-			 cursor.close();
+
+		Cursor cursor = db.query(STORY_TABLE_NAME,
+				new String[] {_ID},
+				COLUMN_GUID + " = ?",
+				new String[] {story.getId()},
+				null,
+				null,
+				null);
+		if(cursor.moveToFirst()) {
+			int updated;
+			updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
+					new String [] {story.getId()});
+			cursor.close();
+			db.close();
+			return updated == 1;
 		}
+		 cursor.close();
 		long inserted;
 		inserted = db.insert(STORY_TABLE_NAME, null, values);
-		story.setId(UUID.randomUUID().toString());
 		db.close();
 		return inserted != -1;
 	}
