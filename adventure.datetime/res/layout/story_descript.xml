@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true" >
+    android:layout_height="fill_parent" >
 
     <RelativeLayout
         android:id="@+id/header"
@@ -26,26 +24,13 @@
             android:layout_toRightOf="@id/thumbnail"
             android:orientation="vertical" >
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Story Name"
-                    android:textSize="20dp" />
-
-                <ImageButton
-                    android:id="@+id/edit_title"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_toRightOf="@id/title"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ic_action_edit" />
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Story Name"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/author"
@@ -66,26 +51,17 @@
                 android:text="Fragments: 69" />
         </LinearLayout>
     </RelativeLayout>
-
+    
     <TextView
         android:id="@+id/synopsis"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/header"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:singleLine="true"
         android:text="Synopsis:"
-        android:textSize="20sp" />
-
-    <ImageButton
-        android:id="@+id/edit_content"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/header"
-        android:layout_toRightOf="@id/synopsis"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_action_edit" />
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/content"
@@ -96,5 +72,12 @@
         android:singleLine="false"
         android:text="I am watching you, Jesse.."
         android:textSize="18sp" />
+    
+    <Button 
+        android:id="@+id/play"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Start your Adventure!"/>
 
 </RelativeLayout>

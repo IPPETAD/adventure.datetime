@@ -1,8 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_edit"
-        android:icon="@drawable/ic_action_edit"
+        android:id="@+id/action_editfragments"
+        android:icon="@drawable/ic_action_share"
         android:orderInCategory="1"
         android:showAsAction="always"
         android:title="Edit"/>
