@@ -22,24 +22,47 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Collection;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 /** Called when activity is first created */
-public class BrowseView extends FragmentActivity {
+public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private static final String TAG = "BrowseView";
-	
+
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
+	
+	@Override
+	public void OnCurrentStoryListChange(Collection<Story> newStories) {
+		_adapter.setLocalStories(newStories);	
+	}
+	
+	@Override
+	public void onResume() {
+		Locator.initializeLocator(getApplicationContext());
+		Locator.getPresenter().Subscribe(this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +73,7 @@ public class BrowseView extends FragmentActivity {
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
-		
+
 		/* Set up Tabs */
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -75,7 +98,7 @@ public class BrowseView extends FragmentActivity {
 		actionBar.addTab(actionBar.newTab()
 				.setText("Online")
 				.setTabListener(tabListener));
-		
+
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
@@ -85,30 +108,36 @@ public class BrowseView extends FragmentActivity {
 		});
 
 	}
-	
-	
+
+
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
+		
+		private BrowseFragment cached, authored, online;
+		
 		public ViewPagerAdapter(FragmentManager fm) {
 			super(fm);
+			
+			cached = new BrowseFragment();
+			authored = new BrowseFragment();
+			online = new BrowseFragment();
+		}
+		
+		public void setLocalStories(Collection<Story> stories) {
+			cached.setStories(stories);
+			authored.setStories(stories);
+		}
+		public void setOnlineStories(Collection<Story> stories) {
+			online.setStories(stories);
 		}
 
 		@Override
 		public Fragment getItem(int i) {
-			Fragment fragment = null;
-
-			switch (i) {
-			case 0:
-				fragment = new Browse_Cached();
-				break;
-			case 1:
-				fragment = new Browse_Authored();
-				break;
-			case 2:
-				fragment = new Browse_Online();
-				break;
-			default:
+			switch(i) {
+			case 0: return cached;
+			case 1: return authored;
+			case 2: return online;
+			default: return null;
 			}
-			return fragment;
 		}
 
 		@Override
@@ -126,4 +155,6 @@ public class BrowseView extends FragmentActivity {
 			}
 		}
 	}
+
+
 }
