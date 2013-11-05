@@ -20,45 +20,57 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package ca.cmput301f13t03.adventure_datetime.model;
 
-package ca.cmput301f13t03.adventure_datetime.controller;
+import android.database.Cursor;
+import java.util.Calendar;
+import java.util.Date;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+/**
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
+public class Bookmark {
 
-public class UserController
-{
-	private IStoryModelDirector m_storyDirector = null;
-	
-    public UserController(IStoryModelDirector director, IReaderStorage storage)
-    {
-    	m_storyDirector = director;
-    }
+	private String fragmentID;
+	private String storyID;
+	private Date date;
 
-    public void StartStory(long storyId)
-    {
-    	m_storyDirector.SelectStory(storyId);
-    	/* TODO::JT also select head fragment and create save*/
-    }
+	public Bookmark(String storyID, String fragmentID) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
+		this.date = Calendar.getInstance().getTime();
+	}
 
-    public void ResumeStory(long bookmarkId)
-    {
-    	/* TODO::JT find the bookmark, select its story and its fragment */
-    }
+	public Bookmark(String fragmentID, String storyID, Date date) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
+		this.date = date;
+	}
 
-    public void SetBookmark()
-    {
-    	/* TODO::JT Create a bookmark for the current story and fragment */
-    }
+	public String getFragmentID() {
+		return fragmentID;
+	}
 
-    public void AddComment(Comment comment)
-    {
-    	/* TODO::JT */
-    }
+	public void setFragmentID(String fragmentID) {
+		this.fragmentID = fragmentID;
+	}
 
-    public void MakeChoice(long choiceId)
-    {
-    	/* TODO::JT map choice to fragment then set that fragment */
-    }
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public String getStoryID() {
+
+		return storyID;
+	}
+
+	public void setStoryID(String storyID) {
+		this.storyID = storyID;
+	}
 }

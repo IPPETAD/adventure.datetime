@@ -20,45 +20,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package ca.cmput301f13t03.adventure_datetime.model;
 
-package ca.cmput301f13t03.adventure_datetime.controller;
+/**
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
+public class Choice {
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+	private String text;
+	private long target;
 
-public class UserController
-{
-	private IStoryModelDirector m_storyDirector = null;
-	
-    public UserController(IStoryModelDirector director, IReaderStorage storage)
-    {
-    	m_storyDirector = director;
-    }
+	public Choice(String text, long target) {
+		this.text = text;
+		this.target = target;
+	}
 
-    public void StartStory(long storyId)
-    {
-    	m_storyDirector.SelectStory(storyId);
-    	/* TODO::JT also select head fragment and create save*/
-    }
+	public String getText() {
+		return text;
+	}
 
-    public void ResumeStory(long bookmarkId)
-    {
-    	/* TODO::JT find the bookmark, select its story and its fragment */
-    }
+	public void setText(String text) {
+		this.text = text;
+	}
 
-    public void SetBookmark()
-    {
-    	/* TODO::JT Create a bookmark for the current story and fragment */
-    }
+	public long getTarget() {
+		return target;
+	}
 
-    public void AddComment(Comment comment)
-    {
-    	/* TODO::JT */
-    }
-
-    public void MakeChoice(long choiceId)
-    {
-    	/* TODO::JT map choice to fragment then set that fragment */
-    }
+	public void setTarget(long target) {
+		this.target = target;
+	}
 }

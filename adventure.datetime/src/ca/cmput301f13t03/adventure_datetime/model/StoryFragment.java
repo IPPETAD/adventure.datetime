@@ -22,6 +22,113 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.database.Cursor;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
 public class StoryFragment {
 
+	private String storyID;
+	private String fragmentID;
+	private ArrayList<String> storyMedia;
+	private String storyText;
+	private ArrayList<Choice> choices;
+
+	public StoryFragment(String storyID, String fragmentID, String storyText,
+	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
+		this.storyText = storyText;
+		this.storyMedia = storyMedia;
+		this.choices = choices;
+	}
+
+	public StoryFragment(String storyID, String storyText, Choice choice) {
+		this.storyID = storyID;
+		this.fragmentID = UUID.randomUUID().toString();
+		this.choices = new ArrayList<Choice>();
+		this.choices.add(choice);
+		this.storyText = storyText;
+	}
+
+	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
+		this.choices = choices;
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
+		this.storyText = storyText;
+	}
+
+	public String getStoryID() {
+		return storyID;
+	}
+
+	public void setStoryID(String storyID) {
+		this.storyID = storyID;
+	}
+
+	public String getFragmentID() {
+		return fragmentID;
+	}
+
+	public void setFragmentID(String fragmentID) {
+		this.fragmentID = fragmentID;
+	}
+
+	public ArrayList<String> getStoryMedia() {
+		return storyMedia;
+	}
+
+	public void setStoryMedia(ArrayList<String> storyMedia) {
+		this.storyMedia = storyMedia;
+	}
+
+	public void addMedia(String media) {
+		storyMedia.add(media);
+	}
+
+	public void removeMedia(String media) {
+		storyMedia.remove(media);
+	}
+
+	public String getMedia(int id) {
+		return (String) storyMedia.toArray()[id];
+	}
+
+	public String getStoryText() {
+		return storyText;
+	}
+
+	public void setStoryText(String storyText) {
+		this.storyText = storyText;
+	}
+
+	public Collection<Choice> getChoices() {
+		return choices;
+	}
+
+	public String getChoicesInJson() {
+		Gson gson = new Gson();
+		return gson.toJson(choices);
+	}
+
+	public void setChoices(ArrayList<Choice> choices) {
+		this.choices = choices;
+	}
+
+	public void addChoice(Choice choice) {
+		choices.add(choice);
+	}
+
+	public void removeChoice(Choice choice) {
+		choices.remove(choice);
+	}
+
+	public Choice getChoice(int id) {
+		return (Choice) choices.toArray()[id];
+	}
 }
