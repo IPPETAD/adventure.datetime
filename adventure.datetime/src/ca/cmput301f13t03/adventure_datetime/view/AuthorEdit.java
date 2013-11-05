@@ -86,6 +86,9 @@ public class AuthorEdit extends FragmentActivity {
 				getActionBar().setSelectedNavigationItem(position);
 			}
 		});
+		
+		// Select 'Overview' at start
+		getActionBar().setSelectedNavigationItem(1);
 
 	}
 
@@ -99,6 +102,9 @@ public class AuthorEdit extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
+		case R.id.action_back:
+			finish();
+			break;
 		case R.id.action_save:
 			break;
 		case R.id.action_discard:

@@ -23,18 +23,29 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class AuthorEdit_Edit extends Fragment {
 
+	private Button _btnChoices;
+	private ImageButton _btnEditContent;
+	private TextView _content;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) {
@@ -46,8 +57,11 @@ public class AuthorEdit_Edit extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
 		/** Layout items **/
+		_btnChoices = (Button) rootView.findViewById(R.id.choices);
+		_content = (TextView) rootView.findViewById(R.id.content);
+		_btnEditContent = (ImageButton) rootView.findViewById(R.id.edit_content);
+		
 		//TODO: read actual content from model
-		EditText content = (EditText) rootView.findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
 				"appears grumpy because of feline dwarfism and an under bite." +
 				"She and her brother Pokey were born to normal parents with " +
@@ -69,9 +83,45 @@ public class AuthorEdit_Edit extends Fragment {
 				"w and appeared on Good Morning America and Anderson Live and"+
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
-		content.setText(tempText);
-
-
+		_content.setText(tempText);
+		
+		/* Choices */
+		_btnChoices.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().getActionBar().setSelectedNavigationItem(1);
+				
+				// TODO::JF Have Choice Editing here 
+				
+				final String[] sChoices = 
+					{"Dance and Sing", "Cry a lot", "Go to RATT", 
+						"Grade this app 100%", "Eat a gold brick wrapped in lettuce"};
+				new AlertDialog.Builder(v.getContext())
+				.setTitle("Actions")
+				.setCancelable(true)
+				.setItems(sChoices, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						//TODO::JF Set new fragment
+					}
+				})
+				.create().show();
+			}			
+		});
+		
+		/* Edit Content */
+		_btnEditContent.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(getActivity())
+				.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+				.setPositiveButton("OK!", null)
+				.setNegativeButton("Cancel", null)
+				.create().show();
+			}
+		});
+		
+		
 		return rootView;
 	}
 }

@@ -1,16 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_save"
-        android:icon="@drawable/ic_action_save"
+        android:id="@+id/action_back"
+        android:icon="@drawable/ic_action_back"
         android:orderInCategory="1"
         android:showAsAction="always"
+        android:title="Back"/>
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_action_save"
+        android:orderInCategory="2"
+        android:showAsAction="always"
         android:title="Save"/>
-
     <item
         android:id="@+id/action_discard"
         android:icon="@drawable/ic_action_discard"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:showAsAction="always"
         android:title="Discard"/>
+
 </menu>
