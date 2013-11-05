@@ -24,10 +24,8 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
-import android.R.integer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,17 +33,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
@@ -169,7 +164,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		private void setUpView() {
 			if (_story == null) return;
 			if (_rootView == null) return;
-			Log.v(TAG, "Layout stuff");
+
 			/** Layout items **/
 			Button play = (Button) _rootView.findViewById(R.id.play); 
 			TextView title  = (TextView) _rootView.findViewById(R.id.title);

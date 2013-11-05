@@ -33,21 +33,12 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentLis
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -134,7 +125,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		for (Choice choice : _fragment.getChoices()) {
 			choices.add(choice.getText());
 		}
-		Log.v(TAG, "Choice count: " + choices.size());
 		_choices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
