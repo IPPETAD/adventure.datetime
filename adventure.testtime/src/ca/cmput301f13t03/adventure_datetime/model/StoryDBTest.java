@@ -1,4 +1,4 @@
-/*
+package ca.cmput301f13t03.adventure_datetime.model;/*
  * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
  *
@@ -20,36 +20,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model;
+import junit.framework.TestCase;
 
 /**
  * @author Andrew Fontaine
  * @version 1.0
- * @since 23/10/13
+ * @since 31/10/13
  */
-public class Choice {
+public class StoryDBTest extends TestCase {
 
-	private String text;
-	private long target;
-
-	public Choice(String text, long target) {
-		this.text = text;
-		this.target = target;
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();    //TODO Implement
 	}
 
-	public String getText() {
-		return text;
+
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();    //TODO Implement
 	}
 
-	public void setText(String text) {
-		this.text = text;
-	}
 
-	public long getTarget() {
-		return target;
-	}
-
-	public void setTarget(long target) {
-		this.target = target;
-	}
 }
