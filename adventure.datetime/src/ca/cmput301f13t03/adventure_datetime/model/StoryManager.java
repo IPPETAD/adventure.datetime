@@ -22,17 +22,21 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
+import android.util.Log;
 
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {
+	private static final String TAG = "StoryManager";
+	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -65,6 +69,22 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		{
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
+		Log.v(TAG,"returning fragment");
+		fragmentListener.OnCurrentFragmentChange(getFakeFragment());
+	}
+	public StoryFragment getFakeFragment() {
+		Choice choice = new Choice("Go to Ratt.", 1);
+		StoryFragment frag = new StoryFragment("sid1", 
+			"Curiously enough, the only thing that"+
+			" went through the mind of the bowl of"+
+			" petunias as it fell was Oh no, not a"+
+			"gain. Many people have speculated tha"+
+			"t if we knew exactly why the bowl of "+
+			"petunias had thought that we would kn"+
+			"ow a lot more about the nature of the"+
+			"Universe than we do now.", choice);
+		frag.setStoryMedia(new ArrayList<String>());
+		return frag;
 	}
 
 	public void Subscribe(ICurrentStoryListener storyListener) 

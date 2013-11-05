@@ -37,6 +37,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -62,7 +63,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
+		Log.v(TAG, "Received frag change");
 		_fragment = newFragment;
+		setUpView();
 	}
 	@Override
 	public void onStart() {
@@ -92,7 +95,8 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
-		_filmstrip.getLayoutParams().height = 300;
+		if (_fragment.getStoryMedia().size() > 0)
+			_filmstrip.getLayoutParams().height = 300;
 
 
 
@@ -130,7 +134,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		for (Choice choice : _fragment.getChoices()) {
 			choices.add(choice.getText());
 		}
-		
+		Log.v(TAG, "Choice count: " + choices.size());
 		_choices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
