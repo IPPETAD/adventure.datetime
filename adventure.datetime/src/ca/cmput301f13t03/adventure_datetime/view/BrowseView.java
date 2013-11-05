@@ -119,10 +119,11 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 		}
 		
 		public void setLocalStories(Collection<Story> stories) {
-			
+			cached.setStories(stories);
+			authored.setStories(stories);
 		}
 		public void setOnlineStories(Collection<Story> stories) {
-			
+			online.setStories(stories);
 		}
 
 		@Override
