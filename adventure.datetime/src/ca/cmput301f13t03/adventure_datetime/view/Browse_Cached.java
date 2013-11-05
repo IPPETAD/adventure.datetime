@@ -38,7 +38,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Browse_Cached extends BrowseFragment {
+public class Browse_Cached extends Fragment {
 	private static final String TAG = "Browse_Cached";
 	
 	private ListView _listView;

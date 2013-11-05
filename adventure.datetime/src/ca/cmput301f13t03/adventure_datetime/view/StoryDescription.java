@@ -40,6 +40,8 @@ import ca.cmput301f13t03.adventure_datetime.R;
 public class StoryDescription extends FragmentActivity {
 	private static final String TAG = "StoryDescription";
 	
+	public static final String ARG_STORYID = ".view.StoryDescription.StoryID";
+	
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
 	
