@@ -55,13 +55,13 @@ public class StoryTest extends TestCase {
 		StoryFragment frag = new StoryFragment(story.getId(), "test");
 		story.addFragment(frag);
 		Assert.assertTrue("Story doesn't contain fragment", story.getFragments().contains(frag.getFragmentID()));
-		Assert.assertTrue("Story head isn't new fragment", story.getHeadFragmentId().equals(frag.getFragmentID()));
+		Assert.assertEquals("Story head isn't new fragment", frag.getFragmentID(), story.getHeadFragmentId());
 		story.removeFragment(frag.getFragmentID());
 		Assert.assertFalse("Story contains fragment", story.getFragments().contains(frag.getFragmentID()));
 
 		story.addFragment(frag.getFragmentID());
 		Assert.assertTrue("Story doesn't contain fragment", story.getFragments().contains(frag.getFragmentID()));
-		Assert.assertTrue("Story head isn't new fragment", story.getHeadFragmentId().equals(frag.getFragmentID()));
+		Assert.assertEquals("Story head isn't new fragment", frag.getFragmentID(), story.getHeadFragmentId());
 		story.removeFragment(frag.getFragmentID());
 		Assert.assertFalse("Story contains fragment", story.getFragments().contains(frag.getFragmentID()));
 	}
@@ -69,13 +69,13 @@ public class StoryTest extends TestCase {
 	public void testAddRemoveTags() throws Exception {
 		Story story = new Story();
 		Assert.assertTrue("HashMap doesn't contain 'new'", story.getTags().contains("new"));
-		Assert.assertEquals("HashMap doesn't contain 1 value", story.getTags().size(), 1);
+		Assert.assertEquals("HashMap doesn't contain 1 value", 1, story.getTags().size());
 		story.addTag("Test");
 		Assert.assertTrue("Story doesn't contain 'test'", story.getTags().contains("Test"));
-		Assert.assertEquals("HashMap doesn't contain 2 values", story.getTags().size(), 2);
+		Assert.assertEquals("HashMap doesn't contain 2 values", 2, story.getTags().size());
 		story.removeTag("Test");
 		Assert.assertFalse("HashMap still contains 'test'", story.getTags().contains("Test"));
-		Assert.assertEquals("HashMap doesn't contain 1 value", story.getTags().size(), 1);
+		Assert.assertEquals("HashMap doesn't contain 1 value", 1, story.getTags().size());
 	}
 
 	public void testUUID() throws Exception {

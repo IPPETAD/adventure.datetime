@@ -25,7 +25,6 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 
 public class StoryFragment {
@@ -100,7 +99,7 @@ public class StoryFragment {
 	}
 
 	public String getMedia(int id) {
-		return (String) storyMedia.toArray()[id];
+		return storyMedia.get(id);
 	}
 
 	public String getStoryText() {
@@ -111,7 +110,7 @@ public class StoryFragment {
 		this.storyText = storyText;
 	}
 
-	public Collection<Choice> getChoices() {
+	public ArrayList<Choice> getChoices() {
 		return choices;
 	}
 
