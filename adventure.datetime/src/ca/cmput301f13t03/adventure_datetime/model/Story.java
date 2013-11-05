@@ -22,12 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-
 import java.util.ArrayList;
 import java.util.Collection;
+
+import android.net.Uri;
 
 public class Story {
 
