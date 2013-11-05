@@ -142,8 +142,8 @@ public class Story {
 		this.fragmentIDs.add(frag.getFragmentID());
 	}
 
-	public void removeFragment(Long id) {
-		this.fragmentIDs.remove(id);
+	public boolean removeFragment(String id) {
+		return this.fragmentIDs.remove(id);
 	}
 
 	public long getTimestamp() {
