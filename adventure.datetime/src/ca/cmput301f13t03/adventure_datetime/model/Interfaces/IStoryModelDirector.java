@@ -26,6 +26,8 @@ import java.net.URI;
 import java.util.Collection;
 
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
 /**
  * Class provides an interface for controllers to interact with the
@@ -43,12 +45,12 @@ public interface IStoryModelDirector
 	/* Commenting out as I don't want to deal with this right now*/
 	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
 	
-	public long createStory();
+	public void putStory(Story story);
 	public void deleteStory(long storyID);
-	public void updateStory(String title, String summary, URI thumbnail);
-	public long createFragment();
-	public void saveFragmentContent(String content);
-	public void saveFragmentChoices(Collection<Choice> choices);
+	public Story getStory(long storyID);
+	public void putFragment(StoryFragment fragment);
 	public void deleteFragment(long fragmentID);
-	public void publish(long storyID);
+	public StoryFragment getStoryFragment(long fragmentID); 
+	
+	//public void publish(long storyID);
 }
