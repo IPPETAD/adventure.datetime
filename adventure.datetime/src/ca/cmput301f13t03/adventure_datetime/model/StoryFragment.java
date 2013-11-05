@@ -53,6 +53,13 @@ public class StoryFragment {
 		this.storyText = storyText;
 	}
 
+	public StoryFragment(String storyID, String storyText) {
+		this.storyID = UUID.fromString(storyID);
+		this.fragmentID = UUID.randomUUID();
+		this.storyText = storyText;
+		this.choices = new ArrayList<Choice>();
+	}
+
 	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
 		this.choices = choices;
 		this.storyID = UUID.fromString(storyID);

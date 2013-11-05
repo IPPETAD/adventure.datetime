@@ -39,7 +39,7 @@ public class Story {
 	private String title; /** The title of the Story */
 	private String synopsis; /** The synopsis of the Story */
 	private Bitmap thumbnail; /** The bitmap image of the Story */
-	private Collection<String> tags; /** A collection of Tags for the Story */
+	private HashSet<String> tags; /** A collection of Tags for the Story */
 	private HashSet<UUID> fragmentIDs; /** The collection of fragment _GUIDs attached to the story */
 
 	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
@@ -63,7 +63,7 @@ public class Story {
 		id = UUID.randomUUID();
 		headFragmentId = new UUID(0,0);
 		fragmentIDs = new HashSet<UUID>();
-		tags = new ArrayList<String>();
+		tags = new HashSet<String>();
 		tags.add("new");
 		timestamp = System.currentTimeMillis() / 1000L;
 	}
@@ -73,7 +73,7 @@ public class Story {
 		title = "";
 		headFragmentId = new UUID(0,0);
 		fragmentIDs = new HashSet<UUID>();
-		tags = new ArrayList<String>();
+		tags = new HashSet<String>();
 		tags.add("new");
 		timestamp = System.currentTimeMillis() / 1000L;
 	}
@@ -126,6 +126,10 @@ public class Story {
 		this.thumbnail = bitmap;
 	}
 
+	public HashSet<String> getTags() {
+		return tags;
+	}
+
 	public void addTag(String tag) {
 		this.tags.add(tag);
 	}
@@ -134,11 +138,23 @@ public class Story {
 		this.tags.remove(tag);
 	}
 
+	public HashSet<String> getFragments() {
+		HashSet<String> fragmentIds = new HashSet<String>();
+		for(UUID uuid : this.fragmentIDs) {
+			fragmentIds.add(uuid.toString());
+		}
+		return fragmentIds;
+	}
+
 	public void addFragment(String id) {
+		if(this.fragmentIDs.isEmpty())
+			this.headFragmentId = UUID.fromString(id);
 		this.fragmentIDs.add(UUID.fromString(id));
 	}
 
 	public void addFragment(StoryFragment frag) {
+		if(this.fragmentIDs.isEmpty())
+			this.headFragmentId = UUID.fromString(frag.getFragmentID());
 		this.fragmentIDs.add(UUID.fromString(frag.getFragmentID()));
 	}
 
