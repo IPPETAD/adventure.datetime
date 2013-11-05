@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.graphics.Bitmap;
+import com.google.gson.Gson;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -89,6 +90,15 @@ public class StoryTest extends TestCase {
 		}
 		story.setHeadFragmentId(newUUID);
 		Assert.assertEquals("UUID was not set", newUUID, story.getHeadFragmentId());
+	}
+
+	public void testJSON() throws Exception {
+		Story story = new Story();
+		Gson gson = new Gson();
+		String json = gson.toJson(story);
+		Story story2;
+		story2 = gson.fromJson(json, Story.class);
+		Assert.assertEquals("UUIDs do not match", story.getId(), story2.getId());
 	}
 
 	public void tearDown() throws Exception {
