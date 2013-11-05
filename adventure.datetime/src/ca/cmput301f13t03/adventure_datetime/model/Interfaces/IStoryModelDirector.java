@@ -22,10 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.net.URI;
-import java.util.Collection;
+import java.util.ArrayList;
 
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -50,7 +48,8 @@ public interface IStoryModelDirector
 	public Story getStory(String storyId);
 	public boolean putFragment(StoryFragment fragment);
 	public void deleteFragment(String fragmentId);
-	public StoryFragment getFragment(String fragmentId); 
+	public StoryFragment getFragment(String fragmentId);
+	public ArrayList<Story> getStoriesAuthoredBy(String author); 
 	
 	//public void publish(long storyID);
 }

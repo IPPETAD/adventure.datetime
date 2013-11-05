@@ -25,6 +25,7 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import junit.framework.Assert;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
@@ -68,6 +69,17 @@ public class AuthorControllerTest extends AndroidTestCase {
             StoryFragment fragment2 = controller.getFragment(uuid);
             
             Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
+        }
+        
+        public void testGetAuthorStories() throws Exception {
+        	Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
+        	Story story2 = new Story("TestAuthor", "TestTitle2", "TestSynop2");
+        	
+        	Assert.assertTrue("Error inserting story", controller.saveStory(story));
+        	Assert.assertTrue("Error inserting story", controller.saveStory(story2));
+        	
+        	ArrayList<Story> stories = controller.getStoriesAuthoredBy("TestAuthor");
+        	Assert.assertTrue("Did not retrieve all stories", stories.size() == 2);
         }
 
         @Override

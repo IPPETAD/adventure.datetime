@@ -24,6 +24,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -41,6 +42,10 @@ public class AuthorController {
 
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
+	}
+	
+	public ArrayList<Story> getStoriesAuthoredBy(String author) {
+		return m_storyDirector.getStoriesAuthoredBy(author);
 	}
 	
 	public boolean saveStory(Story story){
