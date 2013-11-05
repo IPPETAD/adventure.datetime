@@ -26,8 +26,12 @@ package ca.cmput301f13t03.adventure_datetime.controller;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
 /**
@@ -44,18 +48,34 @@ public class AuthorController {
 	}
 	
 	public long newStory(){
-		return m_storyDirector.createStory();
+		Story newStory = new Story();
 	}
 	
-	public void saveStory(String title, String summary, URI thumbnail){
-		m_storyDirector.updateStory(title, summary, thumbnail);
+	public void saveStory(long storyId, String title, String summary, String thumbnail){
+		Story story = new Story();
+		story.setId(storyId);
+		story.setTitle(title);
+		story.setSynopsis(summary);
+		story.setThumbnail(thumbnail);
+		m_storyDirector.putStory(story);
 	}
 	
-	public void deleteStory(long storyID){
-		m_storyDirector.deleteStory(storyID);
+	public void deleteStory(long storyId){
+		Story story = m_storyDirector.getStory(storyId);
+		List<Long> fragments = (List<Long>) story.getFragmentIds();
+		Iterator<Long> iterator = fragments.iterator();
+		long fragmentId;
+		
+		while(iterator.hasNext()){
+			fragmentId = iterator.next();
+			deleteFragment(fragmentId);
+		}
+		
+		m_storyDirector.deleteStory(storyId);
 	}
 	
 	public long createFragment(){
+		StoryFragment fragment = new StoryFragment();
 		return m_storyDirector.createFragment();
 	}
 	
@@ -67,11 +87,11 @@ public class AuthorController {
 		m_storyDirector.saveFragmentChoices(choices);
 	}
 	
-	public void deleteFragment(long fragmentID){
-		m_storyDirector.deleteFragment(fragmentID);
+	public void deleteFragment(long fragmentId){
+		m_storyDirector.deleteFragment(fragmentId);
 	}
 	
-	public void publish(long storyID){
+	/*public void publish(long storyID){
 		m_storyDirector.publish(storyID);
-	}
+	}*/
 }

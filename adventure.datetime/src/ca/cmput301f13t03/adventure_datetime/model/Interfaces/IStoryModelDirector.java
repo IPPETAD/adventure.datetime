@@ -46,11 +46,11 @@ public interface IStoryModelDirector
 	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
 	
 	public void putStory(Story story);
-	public void deleteStory(long storyID);
-	public Story getStory(long storyID);
+	public void deleteStory(long storyId);
+	public Story getStory(long storyId);
 	public void putFragment(StoryFragment fragment);
-	public void deleteFragment(long fragmentID);
-	public StoryFragment getStoryFragment(long fragmentID); 
+	public void deleteFragment(long fragmentId);
+	public StoryFragment getStoryFragment(long fragmentId); 
 	
 	//public void publish(long storyID);
 }

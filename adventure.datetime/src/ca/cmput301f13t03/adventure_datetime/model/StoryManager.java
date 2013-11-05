@@ -135,64 +135,54 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//	IStoryModelDirector
 	//
 	//============================================================
-
-	@Override
+	
 	public void selectStory(long storyId) {
-		// TODO Auto-generated method stub
+		m_currentStory = getStory(storyId);
 		
 	}
 
 	@Override
 	public void selectFragment(long fragmentId) {
+		m_currentFragment = getStoryFragment(fragmentId);
+		
+	}
+
+	@Override
+	public void putStory(Story story) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public long createStory() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void deleteStory(long storyID) {
+	public void deleteStory(long storyId) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateStory(String title, String summary, URI thumbnail) {
+	public Story getStory(long storyId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void putFragment(StoryFragment fragment) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public long createFragment() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void saveFragmentContent(String content) {
+	public void deleteFragment(long fragmentId) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void saveFragmentChoices(Collection<Choice> choices) {
+	public StoryFragment getStoryFragment(long fragmentId) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
-	@Override
-	public void deleteFragment(long fragmentID) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
-	@Override
-	public void publish(long storyID) {
-		// TODO Auto-generated method stub
-		
-	}
 }

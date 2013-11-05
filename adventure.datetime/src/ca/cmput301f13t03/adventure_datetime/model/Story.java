@@ -108,5 +108,9 @@ public class Story {
 	public void removeFragment(Long id) {
 		this.fragmentIDs.remove(id);
 	}
+	
+	public Collection<Long> getFragmentIds() {
+		return fragmentIDs;
+	}
 
 }
