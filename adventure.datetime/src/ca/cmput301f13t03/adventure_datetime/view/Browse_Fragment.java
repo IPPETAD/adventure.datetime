@@ -16,19 +16,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Browse_Fragment extends Fragment {
 
-	protected ListView _listView;
-	protected RowArrayAdapter _adapter;
+	private ListView _listView;
+	private RowArrayAdapter _adapter;
+	private ProgressBar _bar;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		
-		View rootView = inflater.inflate(R.layout.list_view, container, false);
+		View rootView = inflater.inflate(R.layout.browse, container, false);
 		_listView = (ListView) rootView.findViewById(R.id.list_view);
+		_bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 		
 		return rootView;
 	}
@@ -61,6 +64,8 @@ public class Browse_Fragment extends Fragment {
 		Story[] array = (Story[]) stories.toArray();
 		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
 		_listView.setAdapter(_adapter);
+		
+		_bar.setVisibility(View.GONE);
 		
 	}
 	

@@ -103,21 +103,7 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 
 		@Override
 		public Fragment getItem(int i) {
-			Fragment fragment = null;
-
-			switch (i) {
-			case 0:
-				fragment = new Browse_Cached();
-				break;
-			case 1:
-				fragment = new Browse_Authored();
-				break;
-			case 2:
-				fragment = new Browse_Online();
-				break;
-			default:
-			}
-			return fragment;
+			return new Browse_Fragment();
 		}
 
 		@Override
