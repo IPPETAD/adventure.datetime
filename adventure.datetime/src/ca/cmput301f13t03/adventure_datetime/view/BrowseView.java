@@ -27,6 +27,7 @@ import java.util.Collection;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
@@ -54,6 +55,10 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager);
+		
+		/* Locator */
+		Locator.initializeLocator(getApplicationContext());
+		Locator.getPresenter().Subscribe(this);
 
 		/* Set up View Pager */
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
