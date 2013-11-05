@@ -63,26 +63,26 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
-		Log.v(TAG, "Received frag change");
 		_fragment = newFragment;
 		setUpView();
 	}
 	@Override
-	public void onStart() {
+	public void onResume() {
 		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe(this);
-		super.onStart();
+		super.onResume();
 	}
 	@Override
-	public void onStop() {
+	public void onPause() {
 		Locator.getPresenter().Unsubscribe(this);
-		super.onStop();
+		super.onPause();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
+		setUpView();
 	}
 	public void setUpView() {
 		if (_fragment == null) return;

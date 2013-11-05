@@ -53,21 +53,17 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	}
 	
 	@Override
-	public void onStop() {
-		/* Unsubscribe */
-		Locator.getPresenter().Unsubscribe(this);
-		super.onStop();
-	}
-	
-	@Override
-	public void onStart() {
-		/* Subscribe */
+	public void onResume() {
 		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe(this);
-
-		super.onStart();
+		super.onResume();
 	}
-
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

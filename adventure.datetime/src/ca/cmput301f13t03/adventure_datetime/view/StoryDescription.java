@@ -85,18 +85,16 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	}
 	
 	@Override
-	public void onStart() {
+	public void onResume() {
 		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe(this);
-		
-		super.onStart();
+		super.onResume();
 	}
 	
 	@Override
-	public void onStop() {
+	public void onPause() {
 		Locator.getPresenter().Unsubscribe(this);
-		
-		super.onStop();
+		super.onPause();
 	}
 	
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
