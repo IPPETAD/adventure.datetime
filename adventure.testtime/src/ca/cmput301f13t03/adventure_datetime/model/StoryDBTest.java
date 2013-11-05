@@ -45,7 +45,7 @@ public class StoryDBTest extends AndroidTestCase {
 	public void testSetStoryFragment() throws Exception {
 
 		String uuid = UUID.randomUUID().toString();
-		Choice choice = new Choice("test", 5);
+		Choice choice = new Choice("test", uuid);
 		StoryFragment frag = new StoryFragment(uuid, "testing", choice);
 
 		String fragUuid = frag.getFragmentID();

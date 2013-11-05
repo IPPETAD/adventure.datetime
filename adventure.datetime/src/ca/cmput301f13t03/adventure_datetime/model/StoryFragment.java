@@ -30,24 +30,24 @@ import java.util.UUID;
 
 public class StoryFragment {
 
-	private String storyID;
-	private String fragmentID;
+	private UUID storyID;
+	private UUID fragmentID;
 	private ArrayList<String> storyMedia;
 	private String storyText;
 	private ArrayList<Choice> choices;
 
 	public StoryFragment(String storyID, String fragmentID, String storyText,
 	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
-		this.storyID = storyID;
-		this.fragmentID = fragmentID;
+		this.storyID = UUID.fromString(storyID);
+		this.fragmentID = UUID.fromString(fragmentID);
 		this.storyText = storyText;
 		this.storyMedia = storyMedia;
 		this.choices = choices;
 	}
 
 	public StoryFragment(String storyID, String storyText, Choice choice) {
-		this.storyID = storyID;
-		this.fragmentID = UUID.randomUUID().toString();
+		this.storyID = UUID.fromString(storyID);
+		this.fragmentID = UUID.randomUUID();
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
@@ -55,25 +55,25 @@ public class StoryFragment {
 
 	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
 		this.choices = choices;
-		this.storyID = storyID;
-		this.fragmentID = fragmentID;
+		this.storyID = UUID.fromString(storyID);
+		this.fragmentID = UUID.fromString(fragmentID);
 		this.storyText = storyText;
 	}
 
 	public String getStoryID() {
-		return storyID;
+		return storyID.toString();
 	}
 
 	public void setStoryID(String storyID) {
-		this.storyID = storyID;
+		this.storyID =  UUID.fromString(storyID);
 	}
 
 	public String getFragmentID() {
-		return fragmentID;
+		return fragmentID.toString();
 	}
 
 	public void setFragmentID(String fragmentID) {
-		this.fragmentID = fragmentID;
+		this.fragmentID = UUID.fromString(fragmentID);
 	}
 
 	public ArrayList<String> getStoryMedia() {
