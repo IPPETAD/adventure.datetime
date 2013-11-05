@@ -24,13 +24,14 @@
 package ca.cmput301f13t03.adventure_datetime.controller;
 
 import ca.cmput301f13t03.adventure_datetime.model.*;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
 public class UserController
 {
 	private IStoryModelDirector m_storyDirector = null;
 	
-    public UserController(IStoryModelDirector director)
+    public UserController(IStoryModelDirector director, IReaderStorage storage)
     {
     	m_storyDirector = director;
     }
