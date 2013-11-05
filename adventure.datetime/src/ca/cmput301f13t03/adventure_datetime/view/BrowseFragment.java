@@ -5,6 +5,7 @@ import java.util.Date;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,8 +45,6 @@ public class BrowseFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// If bug here, use this first: ListView listView = (ListView) parent;
-				
-				// TODO::JF Unsubscribe from model
 				
 				// Get selected item
 				Story item = (Story) _listView.getItemAtPosition(position);

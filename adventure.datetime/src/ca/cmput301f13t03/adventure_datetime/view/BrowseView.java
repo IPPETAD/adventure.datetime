@@ -37,6 +37,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 /** Called when activity is first created */
 public class BrowseView extends FragmentActivity implements IStoryListListener {
@@ -47,8 +48,23 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 
 	@Override
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		// Stories received from Model. Kill everything & remake the world
 		_adapter.setLocalStories(newStories);
+	}
+	
+	@Override
+	public void onStop() {
+		/* Unsubscribe */
+		Locator.getPresenter().Unsubscribe(this);
+		super.onStop();
+	}
+	
+	@Override
+	public void onStart() {
+		/* Subscribe */
+		Locator.initializeLocator(getApplicationContext());
+		Locator.getPresenter().Subscribe(this);
+
+		super.onStart();
 	}
 
 	@Override
@@ -56,10 +72,6 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager);
 		
-		/* Locator */
-		Locator.initializeLocator(getApplicationContext());
-		Locator.getPresenter().Subscribe(this);
-
 		/* Set up View Pager */
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
