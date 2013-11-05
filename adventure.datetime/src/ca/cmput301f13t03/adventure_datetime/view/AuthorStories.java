@@ -24,35 +24,49 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
-/** Called when activity is first created */
-public class ContinueView extends Activity {
-	private static final String TAG = "ContinueView";
+public class AuthorStories extends FragmentActivity {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view);
+		setContentView(R.layout.browse_authored);
 
 		_listView = (ListView) findViewById(R.id.list_view);
+	}
+
+	@Override
+	public void onResume() {
+
+		Story[] stories = new Story[10];
+		for (int i=0; i<stories.length; i++) stories[i] = new Story();
+
+		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
+
+		_listView.setAdapter(_adapter);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -60,28 +74,39 @@ public class ContinueView extends Activity {
 				// Get selected item
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
-				
-				// TODO: Send fragment info to controller
-				
-				Intent intent = new Intent(ContinueView.this, FragmentView.class);
-				startActivity(intent);
+
+				// TODO: Send story id
+
+				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
+				intent.putExtra(AuthorStoryDescription.ARG_ITEM_NUM, 
+						position);
+				startActivity(intent);	
 			}
 		});
+
+		super.onResume();
 	}
 
 	@Override
-	public void onResume() {
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
 
-		// TODO: Load known bookmarks as views. For now, placeholders are set
-
-		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++)
-			stories[i] = new Story();
-
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		_listView.setAdapter(_adapter);
-		super.onResume();
+		getMenuInflater().inflate(R.menu.authorlist, menu);
+		return true;
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.action_new:
+			Intent intent = new Intent(AuthorStories.this, AuthorEdit.class);
+			startActivityForResult(intent, 0);
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
 
@@ -104,13 +129,24 @@ public class ContinueView extends Activity {
 
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
-			TextView author = (TextView) rowView.findViewById(R.id.author);
-			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
+			TextView fragments = (TextView) rowView.findViewById(R.id.author);
+			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
+			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
 			// TODO: fill out views from values[position]
+			if (position == 3)
+				status.setImageResource(R.drawable.ic_action_cloud);
+			else if (position == 5)
+				status.setImageResource(R.drawable.ic_action_sync);
+			else
+				; // no icon if not uploaded
 
-			
+			fragments.setText("Fragments: 69");
+			lastModified.setText("Last Modified: 01/01/1969");
+
+
 			return rowView;
 		}
 	}
+
 }

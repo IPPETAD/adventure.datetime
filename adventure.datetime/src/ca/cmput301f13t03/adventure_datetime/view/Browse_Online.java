@@ -22,18 +22,50 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import android.app.Activity;
-import android.os.Bundle;
 import ca.cmput301f13t03.adventure_datetime.R;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
-/** Called when activity is first created */
-public class AuthorList extends Activity {
-	private static final String TAG = "AuthorList";
+public class Browse_Online extends Fragment {
+	
+	private ProgressBar _bar;
+	private ListView _listView;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.browse_authored);
+	public View onCreateView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		
+		View rootView = inflater.inflate(R.layout.browse_online, container, false);
+		_listView = (ListView) rootView.findViewById(R.id.list_view);		
+		_bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+		
+		new ProgressTask().execute();
+		
+		return rootView;
+	}
+	
+	private class ProgressTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected void onPreExecute() {
+			_bar.setVisibility(View.VISIBLE);
+			_listView.setVisibility(View.INVISIBLE);
+		}
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			// TODO::JF Wait for server connection
+			return null;	
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			_listView.setVisibility(View.VISIBLE);
+			_bar.setVisibility(View.GONE);
+		}
 	}
 
 }
