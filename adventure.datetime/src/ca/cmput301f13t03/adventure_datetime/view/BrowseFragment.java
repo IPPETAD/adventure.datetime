@@ -111,13 +111,7 @@ public class BrowseFragment extends Fragment {
 			title.setText(story.getTitle());
 			// TODO::JF set the thumbnail
 			author.setText("Author: " + story.getAuthor());
-			// TODO::JF set the timestamp
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(story.getTimestamp());
-			time.setText("Last Modified: " + 
-					(cal.get(cal.MONTH)+1) + "/"+
-					cal.get(cal.DAY_OF_MONTH)+"/"+
-					cal.get(cal.YEAR));
+			time.setText("Last Modified: " + story.getFormattedTimestamp());
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available
