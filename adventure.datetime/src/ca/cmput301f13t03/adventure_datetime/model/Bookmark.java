@@ -27,14 +27,24 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * A Bookmark pointing to a Story and Fragment to continue where the User left off
  * @author Andrew Fontaine
  * @version 1.0
  * @since 23/10/13
  */
 public class Bookmark {
 
+	/**
+	 * The UUID of the fragment the Bookmark points to
+	 */
 	private UUID fragmentID;
+	/**
+	 * The UUID of the story the Bookmark points to
+	 */
 	private UUID storyID;
+	/**
+	 * The date of creation of the Bookmark
+	 */
 	private Date date;
 
 	public Bookmark(String storyID, String fragmentID) {

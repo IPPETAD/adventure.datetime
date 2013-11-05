@@ -28,45 +28,51 @@ import android.graphics.BitmapFactory;
 import java.util.HashSet;
 import java.util.UUID;
 
+/**
+ * A model for an entire Choose-Your-Own-Adventure story
+ *
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
 public class Story {
 
-	private UUID headFragmentId;
 	/**
 	 * The GUID of the head fragment of the Story
 	 */
-	final private UUID id;
+	private UUID headFragmentId;
 	/**
 	 * The GUID of the story, -1 if there is no _ID
 	 */
-	private long timestamp;
+	final private UUID id;
 	/**
 	 * The UNIX time of the last time the Story was updated/downloaded
 	 */
-	private String author;
+	private long timestamp;
 	/**
 	 * The author of the Story
 	 */
-	private String title;
+	private String author;
 	/**
 	 * The title of the Story
 	 */
-	private String synopsis;
+	private String title;
 	/**
 	 * The synopsis of the Story
 	 */
-	private Bitmap thumbnail;
+	private String synopsis;
 	/**
 	 * The bitmap image of the Story
 	 */
-	private HashSet<String> tags;
+	private Bitmap thumbnail;
 	/**
 	 * A collection of Tags for the Story
 	 */
-	private HashSet<UUID> fragmentIDs;
-
+	private HashSet<String> tags;
 	/**
 	 * The collection of fragment _GUIDs attached to the story
 	 */
+	private HashSet<UUID> fragmentIDs;
 
 	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {

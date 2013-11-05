@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
+ * The local database containing all stories, fragments, bookmarks, and subscriptions
  * @author Andrew Fontaine
  * @version 1.0
  * @since 28/10/13

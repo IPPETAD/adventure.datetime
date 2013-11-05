@@ -25,13 +25,21 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import java.util.UUID;
 
 /**
+ * A choice the user cna make at the end of the fragment
+ *
  * @author Andrew Fontaine
  * @version 1.0
  * @since 23/10/13
  */
 public class Choice {
 
+	/**
+	 * The text describing the choice
+	 */
 	private String text;
+	/**
+	 * The UUID of the target fragment
+	 */
 	private UUID target;
 
 	public Choice(String text, String target) {

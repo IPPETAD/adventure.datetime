@@ -27,12 +27,34 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * A model for a fragment of the Choose-Your-Own-Adventure
+ *
+ * @author Andrew Fontaine
+ * @version 1.0
+ * @since 23/10/13
+ */
 public class StoryFragment {
 
+	/**
+	 * The UUID of the story linked to the fragment
+	 */
 	final private UUID storyID;
+	/**
+	 * The UUID of the fragment
+	 */
 	final private UUID fragmentID;
+	/**
+	 * The list of all Story Media associated with the fragment
+	 */
 	private ArrayList<String> storyMedia;
+	/**
+	 * The text content of the fragment
+	 */
 	private String storyText;
+	/**
+	 * The list of choices associated with the fragment
+	 */
 	private ArrayList<Choice> choices;
 
 	public StoryFragment(String storyID, String fragmentID, String storyText,
