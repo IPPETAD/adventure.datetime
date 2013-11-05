@@ -40,6 +40,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+/**
+ * Fragment controlled by AuthorEdit view
+ * 
+ * Contains editing fields for a custom FragmentView
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorEdit_Edit extends Fragment {
 
 	private Button _btnChoices;

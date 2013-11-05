@@ -42,6 +42,17 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * View Accessed via MainView > Continue > ~Select Item~
+ * or via MainView > BrowseView > StoryDescription > ~Play / Continue item ~
+ * 
+ * Holds Horizontal filmstrip containing illustrations at top of page,
+ * story fragment text in the view, and an actions buttons at the bottom
+ * of the page.
+ * 
+ * @author James Finlay
+ *
+ */
 public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentView";
 

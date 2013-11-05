@@ -1,16 +1,12 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
-
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +18,17 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+
+/**
+ * 
+ * Fragment owned by BrowseView.
+ * 
+ * Three are used to show the cached, authored, and online
+ * stories.
+ * 
+ * @author James Finlay
+ *
+ */
 public class BrowseFragment extends Fragment {
 	private static final String TAG = "BrowseFragment";
 

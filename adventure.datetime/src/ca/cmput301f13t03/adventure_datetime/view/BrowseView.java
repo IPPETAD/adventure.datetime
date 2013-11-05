@@ -31,16 +31,22 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
-/** Called when activity is first created */
+/**
+ * View accessed via MainView > ~Browse button~
+ * 
+ * Contains three fragments/tabs where user can see list of cached stories, 
+ * authored stories, and online stories.
+ * 
+ * @author James Finlay
+ *
+ */
 public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private static final String TAG = "BrowseView";
 
