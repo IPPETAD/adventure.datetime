@@ -109,6 +109,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 					"arth to make way for a hyperspac"+
 					"e bypass.");
 			story.setTimestamp(Calendar.getInstance().getTimeInMillis());
+			story.setId("id"+i);
 			stories.add(story);
 		}
 		return stories;

@@ -76,11 +76,12 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		
 		int i=0;
 		for (Story story : newStories) {
-			if (story.getId().equals(sID))
+			if (story.getId().equals(sID)) {
 				_viewPager.setCurrentItem(i);
+				return;
+			}
 			i++;
 		}		
-		Log.v(TAG, "Current story was not found");
 	}
 	
 	@Override
@@ -120,7 +121,9 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		
 		@Override
 		public Fragment getItem(int i) {
-			return new StoryDescriptionFragment();
+			if (_fragments == null)
+				return null; 
+			return ((List<StoryDescriptionFragment>)_fragments).get(i);
 		}
 		
 		@Override
@@ -168,7 +171,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		private void setUpView() {
 			if (_story == null) return;
 			if (_rootView == null) return;
-			
+			Log.v(TAG, "Layout stuff");
 			/** Layout items **/
 			Button play = (Button) _rootView.findViewById(R.id.play); 
 			TextView title  = (TextView) _rootView.findViewById(R.id.title);
