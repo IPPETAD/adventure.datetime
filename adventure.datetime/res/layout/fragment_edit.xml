@@ -20,20 +20,34 @@
             android:layout_margin="10dp"
             android:text="Organize Media" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Content:"
-            android:textSize="22sp" />
+            android:layout_height="wrap_content" >
 
-        <EditText
+            <TextView
+                android:id="@+id/synopsis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Content:"
+                android:paddingLeft="10dp"
+                android:textSize="22sp" />
+
+            <ImageButton
+                android:id="@+id/edit_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/synopsis"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_action_edit" />
+            
+        </RelativeLayout>
+
+        <TextView
             android:id="@+id/content"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="#d4eef8"
             android:padding="10dp"
             android:singleLine="false"
-            android:text="I am watching you, Jesse.."
             android:textSize="18sp" />
 
         <RelativeLayout

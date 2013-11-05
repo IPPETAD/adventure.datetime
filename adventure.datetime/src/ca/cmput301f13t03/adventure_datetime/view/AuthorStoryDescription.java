@@ -25,7 +25,6 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,8 +38,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 
 
@@ -124,8 +126,14 @@ public class AuthorStoryDescription extends FragmentActivity {
 			View rootView = inflater.inflate(R.layout.author_descript, container, false);
 			Bundle args = getArguments();
 
+			/** Action bar **/
+			getActivity().getActionBar().setTitle("Story Name");
+			
+			/** Layout items **/
 			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
-
+			ImageButton btnEditTitle = (ImageButton) rootView.findViewById(R.id.edit_title);
+			ImageButton btnEditSynopsis = (ImageButton) rootView.findViewById(R.id.edit_content);
+			
 			switch (args.getInt(ARG_STATUS)) {
 			case STATUS_UNPUBLISHED:
 				/* Light Blue */
@@ -142,8 +150,45 @@ public class AuthorStoryDescription extends FragmentActivity {
 			default:
 				Log.e(TAG, "Status unknown.");
 			}
+			
+			// TODO::JF Load data from Model
+			
+			TextView content = (TextView) rootView.findViewById(R.id.content);
+			String text = "It is a truth universally acknowledged, "+
+			"that a single man in possession of a good fortune must"+
+			" be in want of a wife.\nHowever little known the feelin"+
+			"gs or views of such a man may be on his first entering"+
+			" a neighbourhood, this truth is so well fixed in the mi"+
+			"nds of the surrounding families, that he is considered"+
+			" as the rightful property of some one or other of their"+
+			" daughters.\n''My dear Mr. Bennet,'' said his lady to h"+
+			"im one day, ''have you heard that Netherfield Park is "+
+			"let at last?''\nMr. Bennet replied that he had not.\n'"+
+			"'But it is,'' returned she; ''for Mrs. Long has just b"+
+			"een here, and she told me all about it.''";
+			content.setText(text);
 
-
+			btnEditTitle.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getActivity())
+					.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+					.setPositiveButton("OK!", null)
+					.setNegativeButton("Cancel", null)
+					.create().show();
+				}
+			});
+			btnEditSynopsis.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getActivity())
+					.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+					.setPositiveButton("OK!", null)
+					.setNegativeButton("Cancel", null)
+					.create().show();
+				}
+			});
+			
 			return rootView;
 		}
 
@@ -175,7 +220,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 
 			switch (item.getItemId()) {
-			case R.id.action_edit:
+			case R.id.action_editfragments:
 				Intent intent = new Intent(getActivity(), AuthorEdit.class);
 				startActivity(intent);				
 				break;
@@ -187,7 +232,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 				.setTitle("Delete Story")
 				.setMessage("This will delete the story. You cannot undo.")
 				.setCancelable(true)
-				.setPositiveButton("Kill the fucker!", new OnClickListener() {
+				.setPositiveButton("Kill the fucker!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
@@ -195,7 +240,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 						getActivity().finish();
 					}
 				})
-				.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+				.setNegativeButton("NO! Don't hurt GRAMGRAM!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.cancel();
