@@ -22,11 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.database.Cursor;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;

@@ -30,9 +30,9 @@ package ca.cmput301f13t03.adventure_datetime.model;
 public class Choice {
 
 	private String text;
-	private long target;
+	private String target;
 
-	public Choice(String text, long target) {
+	public Choice(String text, String target) {
 		this.text = text;
 		this.target = target;
 	}
@@ -45,11 +45,11 @@ public class Choice {
 		this.text = text;
 	}
 
-	public long getTarget() {
+	public String getTarget() {
 		return target;
 	}
 
-	public void setTarget(long target) {
+	public void setTarget(String target) {
 		this.target = target;
 	}
 }
