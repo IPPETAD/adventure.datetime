@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.content.Context;
+
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
@@ -40,7 +42,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
 	
-	public StoryManager()
+	public StoryManager(Context context)
 	{
 		
 	}
