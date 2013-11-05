@@ -1,15 +1,16 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class BrowseFragment extends Fragment {
+	private static final String TAG = "BrowseFragment";
 
+	private Collection<Story> _stories;
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	private ProgressBar _bar;
@@ -34,6 +37,10 @@ public class BrowseFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.browse, container, false);
 		_listView = (ListView) rootView.findViewById(R.id.list_view);
 		_bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+		
+		if (_stories != null)  {
+			setStories(_stories);
+		}
 		
 		return rootView;
 	}
@@ -60,8 +67,13 @@ public class BrowseFragment extends Fragment {
 	}
 	
 	public void setStories(Collection<Story> stories) {
-
-		Story[] array = (Story[]) stories.toArray();
+		Story[] array = stories.toArray(new Story[stories.size()]);
+		
+		if (_listView == null) {
+			_stories = stories;
+			return;
+		}
+		
 		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
 		_listView.setAdapter(_adapter);
 		
@@ -99,7 +111,13 @@ public class BrowseFragment extends Fragment {
 			title.setText(story.getTitle());
 			// TODO::JF set the thumbnail
 			author.setText("Author: " + story.getAuthor());
-			time.setText("Last Modified: " + new Date(story.getTimestamp()).toString());
+			// TODO::JF set the timestamp
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(story.getTimestamp());
+			time.setText("Last Modified: " + 
+					(cal.get(cal.MONTH)+1) + "/"+
+					cal.get(cal.DAY_OF_MONTH)+"/"+
+					cal.get(cal.YEAR));
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available

@@ -31,6 +31,7 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -45,10 +46,10 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
-
+	
 	@Override
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_adapter.setLocalStories(newStories);
+		_adapter.setLocalStories(newStories);	
 	}
 	
 	@Override
@@ -124,6 +125,14 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 			authored = new BrowseFragment();
 			online = new BrowseFragment();
 		}
+		
+		public void setLocalStories(Collection<Story> stories) {
+			cached.setStories(stories);
+			authored.setStories(stories);
+		}
+		public void setOnlineStories(Collection<Story> stories) {
+			online.setStories(stories);
+		}
 
 		@Override
 		public Fragment getItem(int i) {
@@ -133,14 +142,6 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 			case 2: return online;
 			default: return null;
 			}
-		}
-		
-		public void setLocalStories(Collection<Story> stories) {
-			cached.setStories(stories);
-			authored.setStories(stories);
-		}
-		public void setOnlineStories(Collection<Story> stories) {
-			online.setStories(stories);
 		}
 
 		@Override

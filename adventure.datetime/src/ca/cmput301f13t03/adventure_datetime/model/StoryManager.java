@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,9 +82,36 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		if(m_storyList != null)
 		{
 			storyListListener.OnCurrentStoryListChange(m_storyList);
+		} else {
+			storyListListener.OnCurrentStoryListChange(
+					getClusterfuckOfStories());
 		}
 		/* This may be a good opportunity to async fetch the data from
 		 * either local storage or server*/
+	}
+	
+	public Collection<Story> getClusterfuckOfStories() {
+		Collection<Story> stories = new java.util.ArrayList<Story>();
+		for (int i=0; i<4; i++) {
+			Story story = new Story("Douglas Adams", 
+					"HitchHiker's Guide",
+					"The book begins with contractors"+ 
+					" arriving at Arthur Dent's house"+
+					", in order to demolish it to mak"+
+					"e way for a bypass. His friend, "+
+					"Ford Prefect, arrives while Arth"+
+					"ur is lying in front of the bull"+
+					"dozers, to keep them from demoli"+
+					"shing it. He tries to explain to"+
+					" Arthur that the Earth is about "+
+					"to be demolished. The Vogons, an"+
+					" alien race, intend to destroy E"+
+					"arth to make way for a hyperspac"+
+					"e bypass.");
+			story.setTimestamp(Calendar.getInstance().getTimeInMillis());
+			stories.add(story);
+		}
+		return stories;
 	}
 	
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) 
