@@ -31,27 +31,27 @@ import java.util.UUID;
  */
 public class Choice {
 
-        private String text;
-        private UUID target;
+	private String text;
+	private UUID target;
 
-        public Choice(String text, String target) {
-                this.text = text;
-                this.target = UUID.fromString(target);
-        }
+	public Choice(String text, String target) {
+		this.text = text;
+		this.target = UUID.fromString(target);
+	}
 
-        public String getText() {
-                return text;
-        }
+	public String getText() {
+		return text;
+	}
 
-        public void setText(String text) {
-                this.text = text;
-        }
+	public void setText(String text) {
+		this.text = text;
+	}
 
-        public String getTarget() {
-                return target.toString();
-        }
+	public String getTarget() {
+		return target.toString();
+	}
 
-        public void setTarget(String target) {
-                this.target = UUID.fromString(target);
-        }
+	public void setTarget(String target) {
+		this.target = UUID.fromString(target);
+	}
 }
