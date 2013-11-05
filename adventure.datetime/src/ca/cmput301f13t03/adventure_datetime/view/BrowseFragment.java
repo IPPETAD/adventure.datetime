@@ -20,7 +20,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class Browse_Fragment extends Fragment {
+public class BrowseFragment extends Fragment {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;

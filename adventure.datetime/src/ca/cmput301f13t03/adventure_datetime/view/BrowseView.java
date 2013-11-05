@@ -40,26 +40,26 @@ import android.support.v4.view.ViewPager;
 /** Called when activity is first created */
 public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private static final String TAG = "BrowseView";
-	
+
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
-	
+
 	@Override
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
 		// Stories received from Model. Kill everything & remake the world
-		
+		_adapter.setLocalStories(newStories);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager);
-		
+
 		/* Set up View Pager */
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
-		
+
 		/* Set up Tabs */
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -84,7 +84,7 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 		actionBar.addTab(actionBar.newTab()
 				.setText("Online")
 				.setTabListener(tabListener));
-		
+
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
@@ -94,16 +94,35 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 		});
 
 	}
-	
-	
+
+
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
+		
+		private BrowseFragment cached, authored, online;
+		
 		public ViewPagerAdapter(FragmentManager fm) {
 			super(fm);
+			
+			cached = new BrowseFragment();
+			authored = new BrowseFragment();
+			online = new BrowseFragment();
 		}
 
 		@Override
 		public Fragment getItem(int i) {
-			return new Browse_Fragment();
+			switch(i) {
+			case 0: return cached;
+			case 1: return authored;
+			case 2: return online;
+			default: return null;
+			}
+		}
+		
+		public void setLocalStories(Collection<Story> stories) {
+			
+		}
+		public void setOnlineStories(Collection<Story> stories) {
+			
 		}
 
 		@Override
