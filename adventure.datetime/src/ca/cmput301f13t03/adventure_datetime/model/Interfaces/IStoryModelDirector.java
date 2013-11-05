@@ -39,18 +39,18 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
  */
 public interface IStoryModelDirector 
 {
-	public void selectStory(long storyId);
-	public void selectFragment(long fragmentId);
+	public void selectStory(String storyId);
+	public void selectFragment(String fragmentId);
 	// void AddComment(Comment comment); 
 	/* Commenting out as I don't want to deal with this right now*/
 	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
 	
-	public void putStory(Story story);
-	public void deleteStory(long storyId);
-	public Story getStory(long storyId);
-	public void putFragment(StoryFragment fragment);
-	public void deleteFragment(long fragmentId);
-	public StoryFragment getStoryFragment(long fragmentId); 
+	public boolean putStory(Story story);
+	public void deleteStory(String storyId);
+	public Story getStory(String storyId);
+	public boolean putFragment(StoryFragment fragment);
+	public void deleteFragment(String fragmentId);
+	public StoryFragment getFragment(String fragmentId); 
 	
 	//public void publish(long storyID);
 }

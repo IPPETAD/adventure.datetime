@@ -155,7 +155,7 @@ public class Story {
 		this.timestamp = timestamp;
 	}
 	
-	public Collection<Long> getFragmentIds() {
+	public HashSet<String> getFragmentIds() {
 		return fragmentIDs;
 	}
 

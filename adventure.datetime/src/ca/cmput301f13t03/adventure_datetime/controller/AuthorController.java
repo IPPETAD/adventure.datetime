@@ -24,12 +24,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.net.URI;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
@@ -47,24 +43,19 @@ public class AuthorController {
 		m_storyDirector = director;
 	}
 	
-	public long newStory(){
-		Story newStory = new Story();
+	public boolean saveStory(Story story){
+		return m_storyDirector.putStory(story);
 	}
 	
-	public void saveStory(long storyId, String title, String summary, String thumbnail){
-		Story story = new Story();
-		story.setId(storyId);
-		story.setTitle(title);
-		story.setSynopsis(summary);
-		story.setThumbnail(thumbnail);
-		m_storyDirector.putStory(story);
+	public Story getStory(String storyId) {
+		return m_storyDirector.getStory(storyId);
 	}
 	
-	public void deleteStory(long storyId){
+	public void deleteStory(String storyId){
 		Story story = m_storyDirector.getStory(storyId);
-		List<Long> fragments = (List<Long>) story.getFragmentIds();
-		Iterator<Long> iterator = fragments.iterator();
-		long fragmentId;
+		HashSet<String> fragments = story.getFragmentIds();
+		Iterator<String> iterator = fragments.iterator();
+		String fragmentId;
 		
 		while(iterator.hasNext()){
 			fragmentId = iterator.next();
@@ -74,20 +65,15 @@ public class AuthorController {
 		m_storyDirector.deleteStory(storyId);
 	}
 	
-	public long createFragment(){
-		StoryFragment fragment = new StoryFragment();
-		return m_storyDirector.createFragment();
+	public boolean saveFragment(StoryFragment fragment) {
+		return m_storyDirector.putFragment(fragment);
 	}
 	
-	public void saveFragmentContent(String content){
-		m_storyDirector.saveFragmentContent(content);
+	public StoryFragment getFragment(String fragmentId) {
+		return m_storyDirector.getFragment(fragmentId);
 	}
 	
-	public void saveFragmentChoices(Collection<Choice> choices){
-		m_storyDirector.saveFragmentChoices(choices);
-	}
-	
-	public void deleteFragment(long fragmentId){
+	public void deleteFragment(String fragmentId){
 		m_storyDirector.deleteFragment(fragmentId);
 	}
 	

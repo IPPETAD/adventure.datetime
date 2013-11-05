@@ -33,6 +33,8 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {
+	private StoryDB m_db = null;
+	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -45,7 +47,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	
 	public StoryManager(Context context)
 	{
-		
+		m_db = new StoryDB(context);
 	}
 	
 	//============================================================
@@ -138,51 +140,40 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//
 	//============================================================
 	
-	public void selectStory(long storyId) {
+	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
 		
 	}
 
-	@Override
-	public void selectFragment(long fragmentId) {
-		m_currentFragment = getStoryFragment(fragmentId);
+	public void selectFragment(String fragmentId) {
+		m_currentFragment = getFragment(fragmentId);
 		
 	}
 
-	@Override
-	public void putStory(Story story) {
-		// TODO Auto-generated method stub
+	public boolean putStory(Story story) {
+		return m_db.setStory(story);
+	}
+
+	public void deleteStory(String storyId) {
+		// TODO Needs to be implemented in database.
 		
 	}
 
-	@Override
-	public void deleteStory(long storyId) {
-		// TODO Auto-generated method stub
+	public Story getStory(String storyId) {
+		return m_db.getStory(storyId);
+	}
+
+	public boolean putFragment(StoryFragment fragment) {
+		return m_db.setStoryFragment(fragment);	
+	}
+
+	public void deleteFragment(String fragmentId) {
+		// TODO Needs to be implemented in database.
 		
 	}
 
-	@Override
-	public Story getStory(long storyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void putFragment(StoryFragment fragment) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteFragment(long fragmentId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public StoryFragment getStoryFragment(long fragmentId) {
-		// TODO Auto-generated method stub
-		return null;
+	public StoryFragment getFragment(String fragmentId) {
+		return m_db.getStoryFragment(fragmentId);
 	}
 
 	
