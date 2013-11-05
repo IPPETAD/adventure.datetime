@@ -1,6 +1,7 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.Collection;
+import java.util.Date;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -98,10 +99,8 @@ public class Browse_Fragment extends Fragment {
 			
 			title.setText(story.getTitle());
 			// TODO::JF set the thumbnail
-			// TODO::JF author.setText(story.getAuthor());
-			author.setText("Author: Jane Austen");
-			// TODO::JF time.setText(story.getTimeStamp());
-			time.setText("Last Played: 01/01/1812");
+			author.setText("Author: " + story.getAuthor());
+			time.setText("Last Modified: " + new Date(story.getTimestamp()).toString());
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available

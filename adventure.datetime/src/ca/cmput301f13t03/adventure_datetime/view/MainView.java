@@ -40,10 +40,7 @@ public class MainView extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.main);
-		
-		
-		
+		setContentView(R.layout.main);		
 		
 		Button browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
 		browseBookmarks.setOnClickListener(new OnClickListener() {
