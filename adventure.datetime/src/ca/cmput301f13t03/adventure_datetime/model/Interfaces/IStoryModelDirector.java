@@ -32,7 +32,7 @@ package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
  */
 public interface IStoryModelDirector 
 {
-	void SelectStory(long storyId);
+	void SelectStory(String storyId);
 	void SelectFragment(long fragmentId);
 	// void AddComment(Comment comment); 
 	/* Commenting out as I don't want to deal with this right now*/

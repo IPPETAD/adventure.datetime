@@ -191,6 +191,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 				@Override
 				public void onClick(View v) {
 					// Launch Story
+					Locator.getUserController().StartStory(_story.getId());
 					Intent intent = new Intent(getActivity(), FragmentView.class);
 					startActivity(intent);
 				}
