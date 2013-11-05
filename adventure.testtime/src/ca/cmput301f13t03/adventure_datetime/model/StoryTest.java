@@ -45,7 +45,7 @@ public class StoryTest extends TestCase {
 		story = new Story("test", "test", "test");
 		Assert.assertNotNull("Story is null", story);
 		story = new Story(UUID.randomUUID().toString(), UUID.randomUUID().toString(), "test",
-				System.currentTimeMillis()/1000L, "test", Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565), "test");
+				System.currentTimeMillis() / 1000L, "test", Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565), "test");
 		Assert.assertNotNull("Story is null", story);
 	}
 
@@ -82,19 +82,9 @@ public class StoryTest extends TestCase {
 		Story story = new Story();
 		String newUUID = UUID.randomUUID().toString();
 		try {
-			story.setId("WRONG");
-			Assert.fail("UUID was set");
-		}
-		catch(IllegalArgumentException e) {
-
-		}
-		story.setId(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, story.getId());
-		try {
 			story.setHeadFragmentId("WRONG");
 			Assert.fail("UUID was set");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 
 		}
 		story.setHeadFragmentId(newUUID);

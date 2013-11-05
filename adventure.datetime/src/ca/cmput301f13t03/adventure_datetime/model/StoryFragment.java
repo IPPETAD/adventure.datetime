@@ -29,8 +29,8 @@ import java.util.UUID;
 
 public class StoryFragment {
 
-	private UUID storyID;
-	private UUID fragmentID;
+	final private UUID storyID;
+	final private UUID fragmentID;
 	private ArrayList<String> storyMedia;
 	private String storyText;
 	private ArrayList<Choice> choices;
@@ -70,16 +70,9 @@ public class StoryFragment {
 		return storyID.toString();
 	}
 
-	public void setStoryID(String storyID) {
-		this.storyID =  UUID.fromString(storyID);
-	}
 
 	public String getFragmentID() {
 		return fragmentID.toString();
-	}
-
-	public void setFragmentID(String fragmentID) {
-		this.fragmentID = UUID.fromString(fragmentID);
 	}
 
 	public ArrayList<String> getStoryMedia() {

@@ -25,22 +25,48 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
 public class Story {
 
-	private UUID headFragmentId; /** The GUID of the head fragment of the Story */
-	private UUID id; /** The GUID of the story, -1 if there is no _ID */
-	private long timestamp; /** The UNIX time of the last time the Story was updated/downloaded */
-	private String author; /** The author of the Story */
-	private String title; /** The title of the Story */
-	private String synopsis; /** The synopsis of the Story */
-	private Bitmap thumbnail; /** The bitmap image of the Story */
-	private HashSet<String> tags; /** A collection of Tags for the Story */
-	private HashSet<UUID> fragmentIDs; /** The collection of fragment _GUIDs attached to the story */
+	private UUID headFragmentId;
+	/**
+	 * The GUID of the head fragment of the Story
+	 */
+	final private UUID id;
+	/**
+	 * The GUID of the story, -1 if there is no _ID
+	 */
+	private long timestamp;
+	/**
+	 * The UNIX time of the last time the Story was updated/downloaded
+	 */
+	private String author;
+	/**
+	 * The author of the Story
+	 */
+	private String title;
+	/**
+	 * The title of the Story
+	 */
+	private String synopsis;
+	/**
+	 * The synopsis of the Story
+	 */
+	private Bitmap thumbnail;
+	/**
+	 * The bitmap image of the Story
+	 */
+	private HashSet<String> tags;
+	/**
+	 * A collection of Tags for the Story
+	 */
+	private HashSet<UUID> fragmentIDs;
+
+	/**
+	 * The collection of fragment _GUIDs attached to the story
+	 */
 
 	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {
@@ -61,7 +87,7 @@ public class Story {
 		this.synopsis = synopsis;
 		this.thumbnail = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565); /* for testing purposes */
 		id = UUID.randomUUID();
-		headFragmentId = new UUID(0,0);
+		headFragmentId = new UUID(0, 0);
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
 		tags.add("new");
@@ -71,7 +97,7 @@ public class Story {
 	public Story() {
 		id = UUID.randomUUID();
 		title = "";
-		headFragmentId = new UUID(0,0);
+		headFragmentId = new UUID(0, 0);
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
 		tags.add("new");
@@ -80,10 +106,6 @@ public class Story {
 
 	public String getId() {
 		return id.toString();
-	}
-
-	public void setId(String id) {
-		this.id = UUID.fromString(id);
 	}
 
 	public String getTitle() {
@@ -111,7 +133,7 @@ public class Story {
 	}
 
 	public void setHeadFragmentId(StoryFragment frag) {
-		this.headFragmentId =   UUID.fromString(frag.getFragmentID());
+		this.headFragmentId = UUID.fromString(frag.getFragmentID());
 	}
 
 	public Bitmap getThumbnail() {
@@ -140,20 +162,20 @@ public class Story {
 
 	public HashSet<String> getFragments() {
 		HashSet<String> fragmentIds = new HashSet<String>();
-		for(UUID uuid : this.fragmentIDs) {
+		for (UUID uuid : this.fragmentIDs) {
 			fragmentIds.add(uuid.toString());
 		}
 		return fragmentIds;
 	}
 
 	public void addFragment(String id) {
-		if(this.fragmentIDs.isEmpty())
+		if (this.fragmentIDs.isEmpty())
 			this.headFragmentId = UUID.fromString(id);
 		this.fragmentIDs.add(UUID.fromString(id));
 	}
 
 	public void addFragment(StoryFragment frag) {
-		if(this.fragmentIDs.isEmpty())
+		if (this.fragmentIDs.isEmpty())
 			this.headFragmentId = UUID.fromString(frag.getFragmentID());
 		this.fragmentIDs.add(UUID.fromString(frag.getFragmentID()));
 	}
