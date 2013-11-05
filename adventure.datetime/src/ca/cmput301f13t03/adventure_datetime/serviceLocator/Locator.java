@@ -14,7 +14,7 @@ public final class Locator
 	private static UserController s_userController = null;
 	//private static AuthorController s_authorController = null;
 	
-	public static void InitializeLocator(Context applicationContext)
+	public static void initializeLocator(Context applicationContext)
 	{
 		StoryManager manager = new StoryManager(applicationContext);
 		IReaderStorage localDatabase = null; // todo::jt fill this in
@@ -24,7 +24,7 @@ public final class Locator
 		s_userController = new UserController(s_director, localDatabase);
 	}
 	
-	public static IStoryModelDirector GetDirector()
+	public static IStoryModelDirector getDirector()
 	{
 		if(s_director != null)
 		{
@@ -36,7 +36,7 @@ public final class Locator
 		}
 	}
 	
-	public static IStoryModelPresenter GetPresenter()
+	public static IStoryModelPresenter getPresenter()
 	{
 		if(s_presenter != null)
 		{
@@ -48,7 +48,7 @@ public final class Locator
 		}
 	}
 	
-	public static UserController GetUserController()
+	public static UserController getUserController()
 	{
 		if(s_presenter != null)
 		{
