@@ -149,7 +149,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 						Choice choice = null;
 						for (int i=0; i<=which; i++)
 							choice = ite.next();
-						Locator.getUserController().MakeChoice(choice.getTarget());
+						Locator.getUserController().MakeChoice(choice);
 					}
 				})
 				.create().show();
