@@ -31,6 +31,17 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
 
+/**
+ * The first and main activity of the application.
+ * 
+ * Contains three buttons:
+ *  - ContinueView (list of bookmarks)
+ *  - BrowseView (list of stories)
+ *  - Author (create & edit stories)
+ * 
+ * @author James Finlay
+ *
+ */
 public class MainView extends Activity {
 	private static final String TAG = "MainView";
 	
@@ -40,10 +51,7 @@ public class MainView extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.main);
-		
-		
-		
+		setContentView(R.layout.main);		
 		
 		Button browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
 		browseBookmarks.setOnClickListener(new OnClickListener() {

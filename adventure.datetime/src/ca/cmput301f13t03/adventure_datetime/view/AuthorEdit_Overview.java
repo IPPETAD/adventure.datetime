@@ -30,9 +30,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * 
+ * Fragment owned by the AuthorEdit view
+ * 
+ * Shows a dynamically-created tree represetning
+ * the nodes of the current story.
+ * 
+ * TODO : Everything.
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorEdit_Overview extends Fragment{
 	
-	Button _btnAdd, _btnOther;
+	private Button _btnAdd, _btnOther;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater,

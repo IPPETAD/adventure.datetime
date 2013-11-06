@@ -141,7 +141,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	@Override
 	public void selectStory(long storyId) {
 		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override

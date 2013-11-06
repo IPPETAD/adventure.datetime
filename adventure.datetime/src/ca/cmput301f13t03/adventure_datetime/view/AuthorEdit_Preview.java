@@ -39,6 +39,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
 
+/**
+ * 
+ * Fragment owned by the AuthorEdit view.
+ * 
+ * Shows a preview identical to the FragmentView for the author
+ * to see expected fragment format.
+ * 
+ * TODO : Link with model
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorEdit_Preview extends Fragment {
 	private static final String TAG = "AuthorEdit";
 

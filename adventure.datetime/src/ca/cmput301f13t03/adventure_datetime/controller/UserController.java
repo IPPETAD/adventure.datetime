@@ -36,7 +36,7 @@ public class UserController
     	m_storyDirector = director;
     }
 
-    public void StartStory(long storyId)
+    public void StartStory(String storyId)
     {
     	m_storyDirector.selectStory(storyId);
     	/* TODO::JT also select head fragment and create save*/
