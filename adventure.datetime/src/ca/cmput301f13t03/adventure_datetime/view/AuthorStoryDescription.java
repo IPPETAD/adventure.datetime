@@ -44,6 +44,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
  * View containing description of story create by author.
@@ -71,10 +74,16 @@ public class AuthorStoryDescription extends FragmentActivity {
 		int item = getIntent().getIntExtra(ARG_ITEM_NUM, 0);
 
 		_pageAdapter = new AuthorStoriesPagerAdapter(getSupportFragmentManager());
-		
+
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
 		_viewPager.setCurrentItem(item);
+	}
+
+	@Override
+	public void onResume() {
+		Locator.initializeLocator(getApplicationContext());
+		super.onResume();
 	}
 
 	private class AuthorStoriesPagerAdapter extends FragmentStatePagerAdapter {
@@ -119,64 +128,44 @@ public class AuthorStoryDescription extends FragmentActivity {
 		}
 	}
 
-	public static class AuthorStoryDescriptionFragment extends Fragment {
+	public static class AuthorStoryDescriptionFragment extends Fragment implements ICurrentStoryListener {
 		public static final String ARG_STATUS = "status";
 		public static final int STATUS_UNPUBLISHED = 0;
 		public static final int STATUS_UNSYNC = 1;
 		public static final int STATUS_SYNCED = 2;
+
+		private Story _story;
+		private View _rootView;
+
 
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 			setHasOptionsMenu(true);
 		}
 
+		public void OnCurrentStoryChange(Story newStory) {
+			_story = newStory;
+			setUpView();
+		}
+
+		@Override
+		public void onResume() {
+			Locator.getPresenter().Subscribe(this);
+			super.onResume();
+		}
+		public void onPause() {
+			Locator.getPresenter().Unsubscribe(this);
+			super.onPause();
+		}
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-			View rootView = inflater.inflate(R.layout.author_descript, container, false);
-			Bundle args = getArguments();
+			_rootView = inflater.inflate(R.layout.author_descript, container, false);
 
-			/** Action bar **/
-			getActivity().getActionBar().setTitle("Story Name");
-			
 			/** Layout items **/
-			RelativeLayout header = (RelativeLayout) rootView.findViewById(R.id.header);
-			ImageButton btnEditTitle = (ImageButton) rootView.findViewById(R.id.edit_title);
-			ImageButton btnEditSynopsis = (ImageButton) rootView.findViewById(R.id.edit_content);
-			
-			switch (args.getInt(ARG_STATUS)) {
-			case STATUS_UNPUBLISHED:
-				/* Light Blue */
-				header.setBackgroundColor(Color.parseColor("#d4eef8"));
-				break;
-			case STATUS_UNSYNC:
-				/* Light Orange */
-				header.setBackgroundColor(Color.parseColor("#f8e7d4"));
-				break;
-			case STATUS_SYNCED:
-				/* Light Green */
-				header.setBackgroundColor(Color.parseColor("#d4f8e1"));
-				break;
-			default:
-				Log.e(TAG, "Status unknown.");
-			}
-			
-			// TODO::JF Load data from Model
-			
-			TextView content = (TextView) rootView.findViewById(R.id.content);
-			String text = "It is a truth universally acknowledged, "+
-			"that a single man in possession of a good fortune must"+
-			" be in want of a wife.\nHowever little known the feelin"+
-			"gs or views of such a man may be on his first entering"+
-			" a neighbourhood, this truth is so well fixed in the mi"+
-			"nds of the surrounding families, that he is considered"+
-			" as the rightful property of some one or other of their"+
-			" daughters.\n''My dear Mr. Bennet,'' said his lady to h"+
-			"im one day, ''have you heard that Netherfield Park is "+
-			"let at last?''\nMr. Bennet replied that he had not.\n'"+
-			"'But it is,'' returned she; ''for Mrs. Long has just b"+
-			"een here, and she told me all about it.''";
-			content.setText(text);
+			ImageButton btnEditTitle = (ImageButton) _rootView.findViewById(R.id.edit_title);
+			ImageButton btnEditSynopsis = (ImageButton) _rootView.findViewById(R.id.edit_content);
 
 			btnEditTitle.setOnClickListener(new OnClickListener() {
 				@Override
@@ -198,8 +187,53 @@ public class AuthorStoryDescription extends FragmentActivity {
 					.create().show();
 				}
 			});
-			
-			return rootView;
+
+			setUpView();
+
+			return _rootView;
+		}
+
+		public void setUpView() {
+			if (_story == null) return;
+			if (_rootView == null) return;
+
+			/** Action bar **/
+			getActivity().getActionBar().setTitle("Story Name");
+
+			/** Layout items **/
+			TextView title = (TextView) _rootView.findViewById(R.id.title);
+			TextView author = (TextView) _rootView.findViewById(R.id.author);
+			TextView content = (TextView) _rootView.findViewById(R.id.content);
+			TextView datetime = (TextView) _rootView.findViewById(R.id.datetime);
+			TextView fragments = (TextView) _rootView.findViewById(R.id.fragments);
+			RelativeLayout header = (RelativeLayout) _rootView.findViewById(R.id.header);
+
+			/* Text */
+			title.setText(_story.getTitle());
+			author.setText("Creator: " + _story.getAuthor());
+			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
+			fragments.setText("Fragments: " + "idk..");
+			content.setText(_story.getSynopsis());
+
+
+			/*	switch (_story.) {
+			case STATUS_UNPUBLISHED:
+				// Light blue
+				header.setBackgroundColor(Color.parseColor("#d4eef8"));
+				break;
+			case STATUS_UNSYNC:
+				// Light orange
+				header.setBackgroundColor(Color.parseColor("#f8e7d4"));
+				break;
+			case STATUS_SYNCED:
+				// Light green
+				header.setBackgroundColor(Color.parseColor("#d4f8e1"));
+				break;
+			default:
+				Log.e(TAG, "Status unknown.");
+			}
+			 */
+
 		}
 
 		@Override
@@ -215,16 +249,15 @@ public class AuthorStoryDescription extends FragmentActivity {
 				break;
 			case STATUS_SYNCED:
 				menu.findItem(R.id.action_upload)
-					.setEnabled(false)
-					.setVisible(false);
+				.setEnabled(false)
+				.setVisible(false);
 				break;
 			default:
 				Log.e(TAG, "Status unknown.");
 			}
 			menu.findItem(R.id.action_upload);
-			
+
 		}
-		
 
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
@@ -245,7 +278,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 				.setPositiveButton("Kill the fucker!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
+
 						/* TODO::JTF Delete the story */
 						getActivity().finish();
 					}
