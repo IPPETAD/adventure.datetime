@@ -147,7 +147,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 					public void onClick(DialogInterface dialog, int which) {
 						Iterator<Choice> ite = _fragment.getChoices().iterator();
 						Choice choice = null;
-						for (int i=0; i<which; i++)
+						for (int i=0; i<=which; i++)
 							choice = ite.next();
 						Locator.getUserController().MakeChoice(choice.getTarget());
 					}
