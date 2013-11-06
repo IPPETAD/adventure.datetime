@@ -35,6 +35,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -60,9 +61,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private TextView _content;
 	private LinearLayout _filmLayout;
 	private Button _choices;
-	
+
 	private StoryFragment _fragment;
-	
+
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_fragment = newFragment;
@@ -87,13 +88,16 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	}
 	public void setUpView() {
 		if (_fragment == null) return;
-		
+
 		/** Layout items **/
 		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
 		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
 		_choices = (Button) findViewById(R.id.choices);
 		_content = (TextView) findViewById(R.id.content);
 
+		if (_fragment.getStoryMedia() == null)
+			_fragment.setStoryMedia(new ArrayList<String>());
+		
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
 		if (_fragment.getStoryMedia().size() > 0)
@@ -110,7 +114,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		LinearLayout.LayoutParams lp;
 		for (int i=0; i<_fragment.getStoryMedia().size(); i++) {
 			// TODO::JF Get images from fragment
-		/*	ImageView li = new ImageView(this);
+			/*	ImageView li = new ImageView(this);
 			li.setScaleType(ScaleType.CENTER_INSIDE);
 			li.setImageResource(R.drawable.grumpy_cat2);
 			_filmLayout.addView(li);
@@ -147,7 +151,8 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 					public void onClick(DialogInterface dialog, int which) {
 						Iterator<Choice> ite = _fragment.getChoices().iterator();
 						Choice choice = null;
-						for (int i=0; i<which; i++)
+						
+						for (int i=0; i<=which; i++)
 							choice = ite.next();
 						Locator.getUserController().MakeChoice(choice);
 					}
