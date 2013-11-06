@@ -85,7 +85,7 @@ public class AuthorStories extends FragmentActivity {
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				Locator.getDirector().SelectStory(item.getId());
+				Locator.getDirector().selectStory(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				startActivity(intent);	

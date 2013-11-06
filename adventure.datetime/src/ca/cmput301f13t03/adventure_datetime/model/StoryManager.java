@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 
 import android.content.Context;
+import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 import java.net.URI;
@@ -31,9 +32,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {	
+	private static final String TAG = "StoryManager";
+	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -44,6 +48,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
+	
 	public StoryManager(Context context)
 	{
 		m_db = new StoryDB(context);
@@ -129,7 +134,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
-
 	}
 
 	public void selectFragment(String fragmentId) {
@@ -154,7 +158,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		return m_db.setStoryFragment(fragment);	
 	}
 
-	public void deleteFragment(String fragmentId) {
+	public void deleteFragment(UUID fragmentId) {
 		// TODO Needs to be implemented in database.
 		
 	}

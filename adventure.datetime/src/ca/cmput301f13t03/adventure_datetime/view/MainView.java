@@ -34,6 +34,7 @@ import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
  * The first and main activity of the application.
@@ -50,7 +51,7 @@ public class MainView extends Activity implements IBookmarkListListener {
 	private static final String TAG = "MainView";
 	
 	private Button _browseBookmarks, _browseStories, _authorBrowse;
-	
+
 	@Override
 	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
 		if (newBookmarks.size() > 0)
@@ -60,6 +61,8 @@ public class MainView extends Activity implements IBookmarkListListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Locator.initializeLocator(getApplicationContext());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);		

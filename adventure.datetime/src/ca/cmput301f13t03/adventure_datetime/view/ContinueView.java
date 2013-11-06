@@ -116,7 +116,6 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	}
 	@Override
 	public void onResume() {
-		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
 		Locator.getPresenter().Subscribe((IStoryListListener)this);
 		super.onResume();

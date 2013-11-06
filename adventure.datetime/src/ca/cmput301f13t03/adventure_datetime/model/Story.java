@@ -201,7 +201,7 @@ public class Story {
 		this.timestamp = timestamp;
 	}
 	
-	public HashSet<String> getFragmentIds() {
+	public HashSet<UUID> getFragmentIds() {
 		return fragmentIDs;
 	}
 

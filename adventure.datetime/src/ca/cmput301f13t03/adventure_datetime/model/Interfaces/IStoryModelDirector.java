@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -49,7 +50,7 @@ public interface IStoryModelDirector
 	public boolean putStory(Story story);
 	public void deleteStory(String storyId);
 	public boolean putFragment(StoryFragment fragment);
-	public void deleteFragment(String fragmentId);
+	public void deleteFragment(UUID fragmentId);
 	public Story getStory(String storyId);
 	public void setBookmark(Bookmark bookmark);
 	public Bookmark getBookmark(String bookmarkId);
