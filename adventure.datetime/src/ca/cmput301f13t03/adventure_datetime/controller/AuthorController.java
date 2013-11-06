@@ -56,13 +56,14 @@ public class AuthorController {
 	
 	public void deleteStory(String storyId){
 		Story story = m_storyDirector.getStory(storyId);
+		if (story == null) return;
+		
 		HashSet<UUID> fragments = story.getFragmentIds();
 		Iterator<UUID> iterator = fragments.iterator();
 		UUID fragmentId;
-		
-		while(iterator.hasNext()){
-			fragmentId = iterator.next();
-			deleteFragment(fragmentId);
+
+		for(UUID fragment : fragments) {
+			deleteFragment(fragment);
 		}
 		
 		m_storyDirector.deleteStory(storyId);
