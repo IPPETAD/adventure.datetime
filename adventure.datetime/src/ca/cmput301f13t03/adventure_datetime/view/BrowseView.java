@@ -56,7 +56,6 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	
 	@Override
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		Log.v(TAG, "OnCurrentStoryListChange");
 		_adapter.setLocalStories(newStories);	
 	}
 	

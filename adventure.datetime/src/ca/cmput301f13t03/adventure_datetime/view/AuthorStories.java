@@ -22,8 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Collection;
+import java.util.List;
+
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
@@ -55,10 +59,11 @@ import android.widget.ListView;
  * @author James Finlay
  *
  */
-public class AuthorStories extends FragmentActivity {
+public class AuthorStories extends FragmentActivity implements IStoryListListener {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
+	private List<Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +71,6 @@ public class AuthorStories extends FragmentActivity {
 		setContentView(R.layout.browse_authored);
 
 		_listView = (ListView) findViewById(R.id.list_view);
-	}
-
-	@Override
-	public void onResume() {
-
-		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++) stories[i] = new Story();
-
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-
-		_listView.setAdapter(_adapter);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,8 +85,32 @@ public class AuthorStories extends FragmentActivity {
 				startActivity(intent);	
 			}
 		});
-
+		setUpView();
+	}
+	@Override
+	public void OnCurrentStoryListChange(Collection<Story> stories) {
+		_stories = (List<Story>) stories;
+		setUpView();
+	}
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe(this);
 		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
+	private void setUpView() {
+		if (_listView == null) return;
+		if (_stories == null) return;
+
+
+		_adapter = new RowArrayAdapter(this, R.layout.listviewitem,
+				_stories.toArray(new Story[_stories.size()]));
+
+		_listView.setAdapter(_adapter);
 	}
 
 	@Override
@@ -135,23 +153,24 @@ public class AuthorStories extends FragmentActivity {
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
 
+			Story item = values[position];
+			
+			/** Layout Items **/
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView fragments = (TextView) rowView.findViewById(R.id.author);
 			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
-			// TODO: fill out views from values[position]
-			if (position == 3)
-				status.setImageResource(R.drawable.ic_action_cloud);
-			else if (position == 5)
-				status.setImageResource(R.drawable.ic_action_sync);
-			else
-				; // no icon if not uploaded
-
-			fragments.setText("Fragments: 69");
-			lastModified.setText("Last Modified: 01/01/1969");
-
+			title.setText(item.getTitle());
+			fragments.setText("Fragments: " + "idk");
+			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());
+			
+			/*
+			 *  TODO: set status icon depending on server sync
+			 *  status.setImageResource(R.drawable.ic_action_cloud);
+			 *	status.setImageResource(R.drawable.ic_action_sync);
+			 */
 
 			return rowView;
 		}
