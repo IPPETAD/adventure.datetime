@@ -57,7 +57,7 @@ public class UserController
     	/* TODO::JT */
     }
 
-    public void MakeChoice(long choiceId)
+    public void MakeChoice(String choiceId)
     {
     	/* TODO::JT map choice to fragment then set that fragment */
     }
