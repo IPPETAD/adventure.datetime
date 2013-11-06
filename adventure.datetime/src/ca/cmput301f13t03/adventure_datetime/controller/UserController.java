@@ -36,29 +36,30 @@ public class UserController
     	m_storyDirector = director;
     }
 
-    public void StartStory(String storyId)
+    public void startStory(String storyId)
     {
     	m_storyDirector.selectStory(storyId);
     	/* TODO::JT also select head fragment and create save*/
     }
 
-    public void ResumeStory(String bookmarkId)
+    public void resumeStory(String bookmarkId)
     {
-    	/* TODO::JT find the bookmark, select its story and its fragment */
+    	Bookmark bookmark = m_storyDirector.getBookmark(bookmarkId);
+    	m_storyDirector.selectStory(bookmark.getStoryID());
+    	m_storyDirector.selectFragment(bookmark.getFragmentID());
     }
 
-    public void SetBookmark()
+    public void setBookmark(Bookmark bookmark)
     {
-    	/* TODO::JT Create a bookmark for the current story and fragment */
+    	m_storyDirector.setBookmark(bookmark);
     }
 
-    public void AddComment(Comment comment)
+    public void addComment(Comment comment)
     {
     	/* TODO::JT */
     }
 
-    public void MakeChoice(long choiceId)
-    {
-    	/* TODO::JT map choice to fragment then set that fragment */
+    public void makeChoice(Choice choice){
+    	m_storyDirector.selectFragment(choice.getTarget());
     }
 }

@@ -180,6 +180,14 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
 	}
+	
+	public Bookmark getBookmark(String id) {
+		return m_db.getBookmark(id);
+	}
+
+	public void setBookmark(Bookmark bookmark) {
+		m_db.setBookmark(bookmark);
+	}
 
 	
 
