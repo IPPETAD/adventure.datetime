@@ -111,7 +111,6 @@ public class AuthorStoryDescription extends FragmentActivity implements IStoryLi
 	}
 	@Override
 	public void onResume() {
-		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe((IStoryListListener)this);
 		Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		super.onResume();

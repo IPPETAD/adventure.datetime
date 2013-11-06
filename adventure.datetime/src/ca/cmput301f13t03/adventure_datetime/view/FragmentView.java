@@ -70,7 +70,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	}
 	@Override
 	public void onResume() {
-		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe(this);
 		super.onResume();
 	}

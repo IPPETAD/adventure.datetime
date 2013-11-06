@@ -146,4 +146,16 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	{
 		/* TODO::JT */
 	}
+
+	@Override
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+		
+	}
 }
