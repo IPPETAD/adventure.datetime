@@ -51,7 +51,7 @@ import android.widget.TextView;
  * @author James Finlay
  *
  */
-public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListener{
+public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListener {
 
 	private View _rootView;
 	private StoryFragment _sFragment;
