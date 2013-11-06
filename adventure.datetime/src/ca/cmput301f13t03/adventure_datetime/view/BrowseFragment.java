@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,33 @@ public class BrowseFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		
+		Log.v(TAG, "onCreateView");
+		
 		View rootView = inflater.inflate(R.layout.browse, container, false);
 		_listView = (ListView) rootView.findViewById(R.id.list_view);
 		_bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 		
-		if (_stories != null)  {
-			setStories(_stories);
-		}
+		setUpView();
 		
 		return rootView;
+	}
+	public void setStories(Collection<Story> stories) {
+		_stories = stories;
+		setUpView();
+	}
+	
+	private void setUpView() {
+		Log.v(TAG, "setUpView");
+		if (_stories == null) return;
+		Log.v(TAG, "stories valid");
+		if (_listView == null) return;
+		Log.v(TAG, "listView valid");
+		
+		Story[] array = _stories.toArray(new Story[_stories.size()]);
+		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
+		_listView.setAdapter(_adapter);
+		
+		_bar.setVisibility(View.GONE);
 	}
 	
 	@Override
@@ -74,22 +93,8 @@ public class BrowseFragment extends Fragment {
 		super.onResume();
 	}
 	
-	public void setStories(Collection<Story> stories) {
-		Story[] array = stories.toArray(new Story[stories.size()]);
-		
-		if (_listView == null) {
-			_stories = stories;
-			return;
-		}
-		
-		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
-		_listView.setAdapter(_adapter);
-		
-		_bar.setVisibility(View.GONE);
-		
-	}
-	
 	protected class RowArrayAdapter extends ArrayAdapter<Story> {
+		private static final String TAG = "RowArrayAdapter";
 		
 		private Context context;
 		private int layoutResourceID;
@@ -104,6 +109,7 @@ public class BrowseFragment extends Fragment {
 		}
 		
 		public View getView(int position, View convertView, ViewGroup parent) {
+			Log.v(TAG, "getView");
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
