@@ -22,6 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +34,8 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {
+	private StoryDB m_db = null;
+	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -44,7 +48,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	
 	public StoryManager(Context context)
 	{
-		
+		m_db = new StoryDB(context);
 	}
 	
 	//============================================================
@@ -137,13 +141,55 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//
 	//============================================================
 	
-	public void SelectStory(String storyId) 
-	{
-		/* TODO::JT */
+
+	public void selectStory(String storyId) {
+		m_currentStory = getStory(storyId);
+
 	}
 
-	public void SelectFragment(long fragmentId) 
-	{
-		/* TODO::JT */
+	public void selectFragment(String fragmentId) {
+		m_currentFragment = getFragment(fragmentId);
+		
 	}
+
+	public boolean putStory(Story story) {
+		return m_db.setStory(story);
+	}
+
+	public void deleteStory(String storyId) {
+		// TODO Needs to be implemented in database.
+		
+	}
+
+	public Story getStory(String storyId) {
+		return m_db.getStory(storyId);
+	}
+
+	public boolean putFragment(StoryFragment fragment) {
+		return m_db.setStoryFragment(fragment);	
+	}
+
+	public void deleteFragment(String fragmentId) {
+		// TODO Needs to be implemented in database.
+		
+	}
+
+	public StoryFragment getFragment(String fragmentId) {
+		return m_db.getStoryFragment(fragmentId);
+	}
+
+	public ArrayList<Story> getStoriesAuthoredBy(String author) {
+		return m_db.getStoriesAuthoredBy(author);
+	}
+	
+	public Bookmark getBookmark(String id) {
+		return m_db.getBookmark(id);
+	}
+
+	public void setBookmark(Bookmark bookmark) {
+		m_db.setBookmark(bookmark);
+	}
+
+	
+
 }

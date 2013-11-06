@@ -201,6 +201,10 @@ public class Story {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	
+	public HashSet<String> getFragmentIds() {
+		return fragmentIDs;
+	}
 
 	public String getAuthor() {
 		return author;
