@@ -38,6 +38,19 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * 
+ * View containing three fragments/tabs:
+ *  - AuthorEdit_Preview
+ *  - AuthorEdit_Overview
+ *  - AuthorEdit_Edit
+ * 
+ * TODO: Load data from the model
+ * TODO: Send changes to the controller
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorEdit extends FragmentActivity {
 	private static final String TAG = "AuthorEdit";
 

@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Andrew Fontaine
@@ -32,23 +33,28 @@ import java.util.Date;
  */
 public class Bookmark {
 
-	private long fragmentID;
-	private long storyID;
+	private UUID fragmentID;
+	private UUID storyID;
 	private Date date;
 
-	public Bookmark(long fragmentID, long storyID) {
-		this.fragmentID = fragmentID;
-		this.storyID = storyID;
+	public Bookmark(String storyID, String fragmentID) {
+		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = UUID.fromString(storyID);
 		this.date = Calendar.getInstance().getTime();
 	}
 
-
-	public long getFragmentID() {
-		return fragmentID;
+	public Bookmark(String fragmentID, String storyID, Date date) {
+		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = UUID.fromString(storyID);
+		this.date = date;
 	}
 
-	public void setFragmentID(long fragmentID) {
-		this.fragmentID = fragmentID;
+	public String getFragmentID() {
+		return fragmentID.toString();
+	}
+
+	public void setFragmentID(String fragmentID) {
+		this.fragmentID = UUID.fromString(fragmentID);
 	}
 
 	public Date getDate() {
@@ -59,12 +65,12 @@ public class Bookmark {
 		this.date = date;
 	}
 
-	public long getStoryID() {
+	public String getStoryID() {
 
-		return storyID;
+		return storyID.toString();
 	}
 
-	public void setStoryID(long storyID) {
-		this.storyID = storyID;
+	public void setStoryID(String storyID) {
+		this.storyID = UUID.fromString(storyID);
 	}
 }

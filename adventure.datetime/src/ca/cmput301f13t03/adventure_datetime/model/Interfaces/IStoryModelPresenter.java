@@ -33,8 +33,10 @@ public interface IStoryModelPresenter
     void Subscribe(ICurrentFragmentListener fragmentListener);
     void Subscribe(ICurrentStoryListener storyListener);
     void Subscribe(IStoryListListener storyListListener);
+    void Subscribe(IBookmarkListListener bookmarkListListener);
     
     void Unsubscribe(ICurrentFragmentListener fragmentListener);
     void Unsubscribe(ICurrentStoryListener storyListener);
     void Unsubscribe(IStoryListListener storyListListener);
+    void Unsubscribe(IBookmarkListListener bookmarkListListener);
 }

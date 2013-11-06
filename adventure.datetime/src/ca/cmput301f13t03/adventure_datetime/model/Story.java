@@ -24,37 +24,89 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class Story {
 
-	private long headFragmentId;
-	private long id;
+	private UUID headFragmentId;
+	/**
+	 * The GUID of the head fragment of the Story
+	 */
+	final private UUID id;
+	/**
+	 * The GUID of the story, -1 if there is no _ID
+	 */
+	private long timestamp;
+	/**
+	 * The UNIX time of the last time the Story was updated/downloaded
+	 */
+	private String author;
+	/**
+	 * The author of the Story
+	 */
 	private String title;
+	/**
+	 * The title of the Story
+	 */
 	private String synopsis;
-	private Uri thumbnail;
-	private Collection<String> tags;
-	private Collection<Long> fragmentIDs;
+	/**
+	 * The synopsis of the Story
+	 */
+	private Bitmap thumbnail;
+	/**
+	 * The bitmap image of the Story
+	 */
+	private HashSet<String> tags;
+	/**
+	 * A collection of Tags for the Story
+	 */
+	private HashSet<UUID> fragmentIDs;
+
+	/**
+	 * The collection of fragment _GUIDs attached to the story
+	 */
+
+	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
+	             Bitmap thumbnail, String title) {
+		this.headFragmentId = UUID.fromString(headFragmentId);
+		this.id = UUID.fromString(id);
+		this.author = author;
+		this.timestamp = timestamp;
+		this.synopsis = synopsis;
+		this.thumbnail = thumbnail;
+		this.title = title;
+		fragmentIDs = new HashSet<UUID>();
+		fragmentIDs.add(this.headFragmentId);
+	}
+
+	public Story(String author, String title, String synopsis) {
+		this.author = author;
+		this.title = title;
+		this.synopsis = synopsis;
+		this.thumbnail = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565); /* for testing purposes */
+		id = UUID.randomUUID();
+		headFragmentId = new UUID(0, 0);
+		fragmentIDs = new HashSet<UUID>();
+		tags = new HashSet<String>();
+		tags.add("new");
+		timestamp = System.currentTimeMillis() / 1000L;
+	}
 
 	public Story() {
-		id = -1;
+		id = UUID.randomUUID();
 		title = "";
-		headFragmentId = -1;
-		fragmentIDs = new ArrayList<Long>();
-		fragmentIDs.add(headFragmentId);
-		tags = new ArrayList<String>();
+		headFragmentId = new UUID(0, 0);
+		fragmentIDs = new HashSet<UUID>();
+		tags = new HashSet<String>();
 		tags.add("new");
+		timestamp = System.currentTimeMillis() / 1000L;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
+	public String getId() {
+		return id.toString();
 	}
 
 	public String getTitle() {
@@ -73,24 +125,32 @@ public class Story {
 		this.synopsis = synopsis;
 	}
 
-	public long getHeadFragmentId() {
-		return headFragmentId;
+	public String getHeadFragmentId() {
+		return headFragmentId.toString();
 	}
 
-	public void setHeadFragmentId(long headFragmentId) {
-		this.headFragmentId = headFragmentId;
+	public void setHeadFragmentId(String headFragmentId) {
+		this.headFragmentId = UUID.fromString(headFragmentId);
 	}
 
-	public Uri getThumbnail() {
+	public void setHeadFragmentId(StoryFragment frag) {
+		this.headFragmentId = UUID.fromString(frag.getFragmentID());
+	}
+
+	public Bitmap getThumbnail() {
 		return thumbnail;
 	}
 
-	public void setThumbnail(String uri) {
-		this.thumbnail = new Uri.Builder().path(uri).build();
+	public void setThumbnail(String bitmap) {
+		this.thumbnail = BitmapFactory.decodeFile(bitmap);
 	}
 
-	public void setThumbnail(Uri uri) {
-		this.thumbnail = uri;
+	public void setThumbnail(Bitmap bitmap) {
+		this.thumbnail = bitmap;
+	}
+
+	public HashSet<String> getTags() {
+		return tags;
 	}
 
 	public void addTag(String tag) {
@@ -101,12 +161,55 @@ public class Story {
 		this.tags.remove(tag);
 	}
 
-	public void addFragment(Long id) {
-		this.fragmentIDs.add(id);
+	public HashSet<String> getFragments() {
+		HashSet<String> fragmentIds = new HashSet<String>();
+		for (UUID uuid : this.fragmentIDs) {
+			fragmentIds.add(uuid.toString());
+		}
+		return fragmentIds;
 	}
 
-	public void removeFragment(Long id) {
-		this.fragmentIDs.remove(id);
+	public void addFragment(String id) {
+		if (this.fragmentIDs.isEmpty())
+			this.headFragmentId = UUID.fromString(id);
+		this.fragmentIDs.add(UUID.fromString(id));
 	}
 
+	public void addFragment(StoryFragment frag) {
+		if (this.fragmentIDs.isEmpty())
+			this.headFragmentId = UUID.fromString(frag.getFragmentID());
+		this.fragmentIDs.add(UUID.fromString(frag.getFragmentID()));
+	}
+
+	public boolean removeFragment(String id) {
+		return this.fragmentIDs.remove(UUID.fromString(id));
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public String getFormattedTimestamp() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp * 1000);
+		return (cal.get(cal.MONTH) + 1) + "/" +
+				cal.get(cal.DAY_OF_MONTH) + "/" +
+				cal.get(cal.YEAR);
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	public HashSet<UUID> getFragmentIds() {
+		return fragmentIDs;
+
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 }

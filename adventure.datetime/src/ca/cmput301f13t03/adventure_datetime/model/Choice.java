@@ -22,6 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.util.UUID;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -30,7 +32,12 @@ package ca.cmput301f13t03.adventure_datetime.model;
 public class Choice {
 
 	private String text;
-	private long target;
+	private UUID target;
+
+	public Choice(String text, String target) {
+		this.text = text;
+		this.target = UUID.fromString(target);
+	}
 
 	public String getText() {
 		return text;
@@ -40,11 +47,11 @@ public class Choice {
 		this.text = text;
 	}
 
-	public long getTarget() {
-		return target;
+	public String getTarget() {
+		return target.toString();
 	}
 
-	public void setTarget(long target) {
-		this.target = target;
+	public void setTarget(String target) {
+		this.target = UUID.fromString(target);
 	}
 }
