@@ -105,7 +105,7 @@ public class AuthorStoryDescription extends FragmentActivity implements IStoryLi
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
-				Locator.getDirector().SelectStory(_stories.get(position).getId());
+				Locator.getDirector().selectStory(_stories.get(position).getId());
 			}
 		});
 	}

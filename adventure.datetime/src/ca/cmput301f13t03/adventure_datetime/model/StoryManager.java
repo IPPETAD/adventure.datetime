@@ -22,28 +22,31 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+
 import android.content.Context;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector {
+public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
+{	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
-	private StoryDB m_storyDb;
-
+	private StoryDB m_db = null;
+	
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
-
-	public StoryManager(Context context) {
-		m_storyDb = new StoryDB(context.getApplicationContext());
+	public StoryManager(Context context)
+	{
+		m_db = new StoryDB(context);
 	}
 
 	//============================================================
@@ -78,7 +81,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		/* This may be a good opportunity to async fetch the data from
 		 * either local storage or server*/
 		m_storyList = new ArrayList<Story>();
-		m_storyList.addAll(m_storyDb.getStories());
+		m_storyList.addAll(m_db.getStories());
 		PublishStoryListChange();
 	}
 
@@ -124,11 +127,66 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//
 	//============================================================
 
-	public void SelectStory(String storyId) {
-		/* TODO::JT */
+	public void selectStory(String storyId) {
+		m_currentStory = getStory(storyId);
+
 	}
 
-	public void SelectFragment(long fragmentId) {
-		/* TODO::JT */
+	public void selectFragment(String fragmentId) {
+		m_currentFragment = getFragment(fragmentId);
+		
 	}
+
+	public boolean putStory(Story story) {
+		return m_db.setStory(story);
+	}
+
+	public void deleteStory(String storyId) {
+		// TODO Needs to be implemented in database.
+		
+	}
+
+	public Story getStory(String storyId) {
+		return m_db.getStory(storyId);
+	}
+
+	public boolean putFragment(StoryFragment fragment) {
+		return m_db.setStoryFragment(fragment);	
+	}
+
+	public void deleteFragment(String fragmentId) {
+		// TODO Needs to be implemented in database.
+		
+	}
+
+	public StoryFragment getFragment(String fragmentId) {
+		return m_db.getStoryFragment(fragmentId);
+	}
+
+	public ArrayList<Story> getStoriesAuthoredBy(String author) {
+		return m_db.getStoriesAuthoredBy(author);
+	}
+	
+	public Bookmark getBookmark(String id) {
+		return m_db.getBookmark(id);
+	}
+
+	public void setBookmark(Bookmark bookmark) {
+		m_db.setBookmark(bookmark);
+	}
+
+	@Override
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
 }

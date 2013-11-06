@@ -21,45 +21,60 @@
  */
 
 
+
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
-public class UserController
-{
+/**
+ * Controller for aspects of authoring a story
+ * 
+ * @author Evan DeGraff
+ *
+ */
+public class AuthorController {
 	private IStoryModelDirector m_storyDirector = null;
+
+	public AuthorController(IStoryModelDirector director) {
+		m_storyDirector = director;
+	}
 	
-    public UserController(IStoryModelDirector director, IReaderStorage storage)
-    {
-    	m_storyDirector = director;
-    }
-
-    public void StartStory(String storyId)
-    {
-    	m_storyDirector.selectStory(storyId);
-    	/* TODO::JT also select head fragment and create save*/
-    }
-
-    public void ResumeStory(String bookmarkId)
-    {
-    	Bookmark bookmark = m_storyDirector.getBookmark(bookmarkId);
-    	m_storyDirector.selectStory(bookmark.getStoryID());
-    	m_storyDirector.selectFragment(bookmark.getFragmentID());
-    }
-
-    public void SetBookmark(Bookmark bookmark)
-    {
-    	m_storyDirector.setBookmark(bookmark);
-    }
-
-    public void AddComment(Comment comment)
-    {
-    	/* TODO::JT */
-    }
-
-    public void MakeChoice(Choice choice){
-    	m_storyDirector.selectFragment(choice.getTarget());
-    }
+	public boolean saveStory(Story story){
+		return m_storyDirector.putStory(story);
+	}
+	
+	public Story getStory(String storyId) {
+		return m_storyDirector.getStory(storyId);
+	}
+	
+	public void deleteStory(String storyId){
+		Story story = m_storyDirector.getStory(storyId);
+		HashSet<String> fragments = story.getFragmentIds();
+		Iterator<String> iterator = fragments.iterator();
+		String fragmentId;
+		
+		while(iterator.hasNext()){
+			fragmentId = iterator.next();
+			deleteFragment(fragmentId);
+		}
+		
+		m_storyDirector.deleteStory(storyId);
+	}
+	
+	public boolean saveFragment(StoryFragment fragment) {
+		return m_storyDirector.putFragment(fragment);
+	}
+	
+	public void deleteFragment(String fragmentId){
+		m_storyDirector.deleteFragment(fragmentId);
+	}
+	
+	/*public void publish(long storyID){
+		m_storyDirector.publish(storyID);
+	}*/
 }
