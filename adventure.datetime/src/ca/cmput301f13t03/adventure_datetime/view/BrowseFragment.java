@@ -3,6 +3,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.Collection;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,9 +64,9 @@ public class BrowseFragment extends Fragment {
 				// Get selected item
 				Story item = (Story) _listView.getItemAtPosition(position);
 				
-				// Launch StoryDescription & send Story ID
+				Locator.getDirector().SelectStory(item.getId());
+				
 				Intent intent = new Intent(getActivity(), StoryDescription.class);
-				intent.putExtra(StoryDescription.ARG_STORYID, item.getId());
 				startActivity(intent);
 			}
 		});
