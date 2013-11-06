@@ -22,35 +22,31 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.net.URI;
+import android.content.Context;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import android.content.Context;
-
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
-
-public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
-{
+public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector {
 	private StoryDB m_db = null;
-	
+
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
-	
+
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
-	
-	public StoryManager(Context context)
-	{
+
+	public StoryManager(Context context) {
 		m_db = new StoryDB(context);
 	}
-	
+
 	//============================================================
 	//
 	//	IStoryModelPresenter
@@ -60,77 +56,62 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//	be supplied later once it is available.
 	//
 	//============================================================
-	
-	public void Subscribe(ICurrentFragmentListener fragmentListener) 
-	{
+
+	public void Subscribe(ICurrentFragmentListener fragmentListener) {
 		m_fragmentListeners.add(fragmentListener);
-		if(m_currentFragment != null)
-		{
+		if (m_currentFragment != null) {
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
 	}
 
-	public void Subscribe(ICurrentStoryListener storyListener) 
-	{
+	public void Subscribe(ICurrentStoryListener storyListener) {
 		m_storyListeners.add(storyListener);
-		if(m_currentStory != null)
-		{
+		if (m_currentStory != null) {
 			storyListener.OnCurrentStoryChange(m_currentStory);
 		}
 	}
 
-	public void Subscribe(IStoryListListener storyListListener) 
-	{
+	public void Subscribe(IStoryListListener storyListListener) {
 		m_storyListListeners.add(storyListListener);
-		if(m_storyList != null)
-		{
+		if (m_storyList != null) {
 			storyListListener.OnCurrentStoryListChange(m_storyList);
 		}
 		/* This may be a good opportunity to async fetch the data from
 		 * either local storage or server*/
 	}
-	
-	public void Unsubscribe(ICurrentFragmentListener fragmentListener) 
-	{
+
+	public void Unsubscribe(ICurrentFragmentListener fragmentListener) {
 		m_fragmentListeners.remove(fragmentListener);
 	}
 
-	public void Unsubscribe(ICurrentStoryListener storyListener) 
-	{
+	public void Unsubscribe(ICurrentStoryListener storyListener) {
 		m_storyListeners.remove(storyListener);
 	}
 
-	public void Unsubscribe(IStoryListListener storyListListener) 
-	{
+	public void Unsubscribe(IStoryListListener storyListListener) {
 		m_storyListListeners.remove(storyListListener);
 	}
-	
+
 	//============================================================
 	//
 	//	Publish
 	//
 	//============================================================
-	
-	private void PublishCurrentStoryChange()
-	{
-		for(ICurrentStoryListener storyListener : m_storyListeners)
-		{
+
+	private void PublishCurrentStoryChange() {
+		for (ICurrentStoryListener storyListener : m_storyListeners) {
 			storyListener.OnCurrentStoryChange(m_currentStory);
 		}
 	}
-	
-	private void PublishCurrentFragmentChange()
-	{
-		for(ICurrentFragmentListener fragmentListener : m_fragmentListeners)
-		{
+
+	private void PublishCurrentFragmentChange() {
+		for (ICurrentFragmentListener fragmentListener : m_fragmentListeners) {
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
 	}
-	
-	private void PublishStoryListChange()
-	{
-		for(IStoryListListener listListener : m_storyListListeners)
-		{
+
+	private void PublishStoryListChange() {
+		for (IStoryListListener listListener : m_storyListListeners) {
 			listListener.OnCurrentStoryListChange(m_storyList);
 		}
 	}
@@ -140,7 +121,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//	IStoryModelDirector
 	//
 	//============================================================
-	
+
 
 	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
@@ -149,7 +130,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void selectFragment(String fragmentId) {
 		m_currentFragment = getFragment(fragmentId);
-		
+
 	}
 
 	public boolean putStory(Story story) {
@@ -158,7 +139,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void deleteStory(String storyId) {
 		// TODO Needs to be implemented in database.
-		
+
 	}
 
 	public Story getStory(String storyId) {
@@ -166,12 +147,12 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	}
 
 	public boolean putFragment(StoryFragment fragment) {
-		return m_db.setStoryFragment(fragment);	
+		return m_db.setStoryFragment(fragment);
 	}
 
 	public void deleteFragment(String fragmentId) {
 		// TODO Needs to be implemented in database.
-		
+
 	}
 
 	public StoryFragment getFragment(String fragmentId) {
@@ -181,7 +162,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
 	}
-	
+
 	public Bookmark getBookmark(String id) {
 		return m_db.getBookmark(id);
 	}
@@ -190,6 +171,5 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_db.setBookmark(bookmark);
 	}
 
-	
 
 }
