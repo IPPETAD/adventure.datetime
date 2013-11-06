@@ -188,7 +188,7 @@ public class WebStorage {
 	 * when it succeeds.
 	 * @return The latest error message, if any
 	 */
-	public String getErrorMessagge() {
+	public String getErrorMessage() {
 		return this.errorMessage;
 	}
 	

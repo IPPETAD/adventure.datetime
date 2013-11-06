@@ -29,7 +29,7 @@ public class Comment {
 	
 	@JestId
 	private UUID webId;
-	private UUID tagretId;
+	private UUID targetId;
 	private String author;
 	private String content;
 	
@@ -48,7 +48,7 @@ public class Comment {
 	 */
 	public Comment(UUID webId, UUID targetId, String author, String content) {
 		this.webId = webId;
-		this.tagretId = targetId;
+		this.targetId = targetId;
 		this.author = author;
 		this.content = content;
 	}
@@ -61,12 +61,12 @@ public class Comment {
 		this.webId = webId;
 	}
 
-	public UUID getTagretId() {
-		return tagretId;
+	public UUID getTargetId() {
+		return targetId;
 	}
 
-	public void setTagretId(UUID tagretId) {
-		this.tagretId = tagretId;
+	public void setTargetId(UUID targetId) {
+		this.targetId = targetId;
 	}
 
 	public String getAuthor() {
