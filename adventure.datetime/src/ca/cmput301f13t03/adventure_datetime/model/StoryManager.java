@@ -31,8 +31,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector {
-	private StoryDB m_db = null;
 
+	private StoryDB m_db = null;
+	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
