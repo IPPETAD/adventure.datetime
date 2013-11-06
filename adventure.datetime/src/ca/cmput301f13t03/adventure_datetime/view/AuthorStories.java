@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -84,11 +85,9 @@ public class AuthorStories extends FragmentActivity {
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				// TODO: Send story id
+				Locator.getDirector().selectStory(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
-				intent.putExtra(AuthorStoryDescription.ARG_ITEM_NUM, 
-						position);
 				startActivity(intent);	
 			}
 		});

@@ -37,6 +37,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 /**
  * View accessed via MainView > ~Browse button~
@@ -55,12 +56,14 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	
 	@Override
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
+		Log.v(TAG, "OnCurrentStoryListChange");
 		_adapter.setLocalStories(newStories);	
 	}
 	
+	// TODO::JF Listen for Server stories
+	
 	@Override
 	public void onResume() {
-		Locator.initializeLocator(getApplicationContext());
 		Locator.getPresenter().Subscribe(this);
 		super.onResume();
 	}
