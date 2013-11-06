@@ -635,7 +635,7 @@ public class StoryDB implements BaseColumns {
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
-			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000);
+			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
