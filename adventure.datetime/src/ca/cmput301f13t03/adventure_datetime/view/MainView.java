@@ -61,6 +61,8 @@ public class MainView extends Activity implements IBookmarkListListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Locator.initializeLocator(getApplicationContext());
 		
 		Locator.initializeLocator(getApplicationContext());
 		

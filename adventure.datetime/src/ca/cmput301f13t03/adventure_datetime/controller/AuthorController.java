@@ -21,23 +21,22 @@
  */
 
 
-
 package ca.cmput301f13t03.adventure_datetime.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
-
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
+import java.util.HashSet;
 
 /**
  * Controller for aspects of authoring a story
- * 
- * @author Evan DeGraff
  *
+ * @author Evan DeGraff
  */
 public class AuthorController {
 	private IStoryModelDirector m_storyDirector = null;
@@ -45,16 +44,16 @@ public class AuthorController {
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
 	}
-	
-	public boolean saveStory(Story story){
+
+	public boolean saveStory(Story story) {
 		return m_storyDirector.putStory(story);
 	}
-	
+
 	public Story getStory(String storyId) {
 		return m_storyDirector.getStory(storyId);
 	}
-	
-	public void deleteStory(String storyId){
+
+	public void deleteStory(String storyId) {
 		Story story = m_storyDirector.getStory(storyId);
 		if (story == null) return;
 		
@@ -65,15 +64,15 @@ public class AuthorController {
 		for(UUID fragment : fragments) {
 			deleteFragment(fragment);
 		}
-		
+
 		m_storyDirector.deleteStory(storyId);
 	}
-	
+
 	public boolean saveFragment(StoryFragment fragment) {
 		return m_storyDirector.putFragment(fragment);
 	}
-	
-	public void deleteFragment(UUID fragmentId){
+
+	public void deleteFragment(UUID fragmentId) {
 		m_storyDirector.deleteFragment(fragmentId);
 	}
 	

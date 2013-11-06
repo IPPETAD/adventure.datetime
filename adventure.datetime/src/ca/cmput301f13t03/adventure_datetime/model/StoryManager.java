@@ -22,12 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-
 import android.content.Context;
-import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
-import java.net.URI;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,18 +35,19 @@ import java.util.UUID;
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {	
 	private static final String TAG = "StoryManager";
-	
+
+	private StoryDB m_db = null;
+
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
-	private StoryDB m_db = null;
-	
+
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
-	
+
 	public StoryManager(Context context)
 	{
 		m_db = new StoryDB(context);
@@ -83,8 +82,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		if (m_storyList != null) {
 			storyListListener.OnCurrentStoryListChange(m_storyList);
 		}
-		/* This may be a good opportunity to async fetch the data from
-		 * either local storage or server*/
 		m_storyList = new ArrayList<Story>();
 		m_storyList.addAll(m_db.getStories());
 		PublishStoryListChange();
@@ -134,6 +131,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
+		PublishCurrentStoryChange();
 	}
 
 	public void selectFragment(String fragmentId) {
@@ -147,7 +145,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void deleteStory(String storyId) {
 		// TODO Needs to be implemented in database.
-		
+
 	}
 
 	public Story getStory(String storyId) {
@@ -155,12 +153,12 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	}
 
 	public boolean putFragment(StoryFragment fragment) {
-		return m_db.setStoryFragment(fragment);	
+		return m_db.setStoryFragment(fragment);
 	}
 
 	public void deleteFragment(UUID fragmentId) {
 		// TODO Needs to be implemented in database.
-		
+
 	}
 
 	public StoryFragment getFragment(String fragmentId) {
@@ -170,7 +168,20 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
 	}
-	
+
+
+	@Override
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
+		// TODO Auto-generated method stub
+
+	}
+
 	public Bookmark getBookmark(String id) {
 		return m_db.getBookmark(id);
 	}
@@ -178,19 +189,4 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public void setBookmark(Bookmark bookmark) {
 		m_db.setBookmark(bookmark);
 	}
-
-	@Override
-	public void Subscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-
 }
