@@ -285,6 +285,7 @@ public class AuthorStoryDescription extends FragmentActivity implements IStoryLi
 
 			switch (item.getItemId()) {
 			case R.id.action_editfragments:
+				Locator.getDirector().selectFragment(_story.getHeadFragmentId());
 				Intent intent = new Intent(getActivity(), AuthorEdit.class);
 				startActivity(intent);				
 				break;
@@ -300,7 +301,7 @@ public class AuthorStoryDescription extends FragmentActivity implements IStoryLi
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						
+						// TODO::JF Delete story once possible
 						getActivity().finish();
 					}
 				})
