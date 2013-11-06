@@ -26,6 +26,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import io.searchbox.annotations.JestId;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,6 +44,9 @@ public class Story {
 	private Bitmap thumbnail; /** The bitmap image of the Story */
 	private Collection<String> tags; /** A collection of Tags for the Story */
 	private HashSet<String> fragmentIDs; /** The collection of fragment _GUIDs attached to the story */
+	
+	@JestId
+	private UUID webId; /** The GUID used in web storage */
 
 	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {
@@ -54,7 +59,7 @@ public class Story {
 		this.title = title;
 		fragmentIDs = new HashSet<String>();
 		fragmentIDs.add(headFragmentId);
-	}
+	} 
 
 	public Story(String author, String title, String synopsis) {
 		this.author = author;
