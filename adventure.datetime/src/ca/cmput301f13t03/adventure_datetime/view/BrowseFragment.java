@@ -43,8 +43,6 @@ public class BrowseFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater,
 			ViewGroup container, Bundle savedInstanceState) {
 		
-		Log.v(TAG, "onCreateView");
-		
 		View rootView = inflater.inflate(R.layout.browse, container, false);
 		_listView = (ListView) rootView.findViewById(R.id.list_view);
 		_bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
@@ -59,11 +57,8 @@ public class BrowseFragment extends Fragment {
 	}
 	
 	private void setUpView() {
-		Log.v(TAG, "setUpView");
 		if (_stories == null) return;
-		Log.v(TAG, "stories valid");
 		if (_listView == null) return;
-		Log.v(TAG, "listView valid");
 		
 		Story[] array = _stories.toArray(new Story[_stories.size()]);
 		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
@@ -109,7 +104,6 @@ public class BrowseFragment extends Fragment {
 		}
 		
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Log.v(TAG, "getView");
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);

@@ -69,7 +69,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		{
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
-		Log.v(TAG,"returning fragment");
 		fragmentListener.OnCurrentFragmentChange(getFakeFragment());
 	}
 	public StoryFragment getFakeFragment() {
@@ -92,8 +91,9 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_storyListeners.add(storyListener);
 		if(m_currentStory != null)
 		{
-			storyListener.OnCurrentStoryChange(m_currentStory);
-		}
+			storyListener.OnCurrentStoryChange(getClusterfuckOfStories().iterator().next());
+		} else
+			storyListener.OnCurrentStoryChange(getClusterfuckOfStories().iterator().next());
 	}
 
 	public void Subscribe(IStoryListListener storyListListener) 
@@ -188,7 +188,12 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	
 	public void SelectStory(String storyId) 
 	{
-		/* TODO::JT */
+		for (Story story : getClusterfuckOfStories()) {
+			if (story.getId().equals(storyId)) {
+				m_currentStory = story;
+				return;
+			}
+		}			
 	}
 
 	public void SelectFragment(long fragmentId) 
