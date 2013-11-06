@@ -36,7 +36,7 @@ public class UserController
     	m_storyDirector = director;
     }
 
-    public void StartStory(long storyId)
+    public void StartStory(String storyId)
     {
     	m_storyDirector.SelectStory(storyId);
     	/* TODO::JT also select head fragment and create save*/
@@ -57,7 +57,7 @@ public class UserController
     	/* TODO::JT */
     }
 
-    public void MakeChoice(long choiceId)
+    public void MakeChoice(String choiceId)
     {
     	/* TODO::JT map choice to fragment then set that fragment */
     }

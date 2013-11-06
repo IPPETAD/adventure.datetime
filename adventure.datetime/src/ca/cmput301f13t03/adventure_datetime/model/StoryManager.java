@@ -137,7 +137,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	//
 	//============================================================
 	
-	public void SelectStory(long storyId) 
+	public void SelectStory(String storyId) 
 	{
 		/* TODO::JT */
 	}
