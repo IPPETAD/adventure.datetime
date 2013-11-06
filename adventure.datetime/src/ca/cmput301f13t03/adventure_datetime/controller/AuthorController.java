@@ -21,20 +21,18 @@
  */
 
 
-
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.net.URI;
-import java.util.Collection;
-
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+
+import java.util.HashSet;
 
 /**
- * Controller for all aspects of authoring a story
- * 
- * @author Evan DeGraff
+ * Controller for aspects of authoring a story
  *
+ * @author Evan DeGraff
  */
 public class AuthorController {
 	private IStoryModelDirector m_storyDirector = null;
@@ -42,36 +40,38 @@ public class AuthorController {
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
 	}
-	
-	public long newStory(){
-		return m_storyDirector.createStory();
+
+	public boolean saveStory(Story story) {
+		return m_storyDirector.putStory(story);
+	}
+
+	public Story getStory(String storyId) {
+		return m_storyDirector.getStory(storyId);
+	}
+
+	public void deleteStory(String storyId) {
+		Story story = m_storyDirector.getStory(storyId);
+		// If story is not in database, no reason to delete it.
+		if (story == null)
+			return;
+		HashSet<String> fragments = story.getFragmentIds();
+
+		for (String fragment : fragments) {
+			deleteFragment(fragment);
+		}
+
+		m_storyDirector.deleteStory(storyId);
+	}
+
+	public boolean saveFragment(StoryFragment fragment) {
+		return m_storyDirector.putFragment(fragment);
+	}
+
+	public void deleteFragment(String fragmentId) {
+		m_storyDirector.deleteFragment(fragmentId);
 	}
 	
-	public void saveStory(String title, String summary, URI thumbnail){
-		m_storyDirector.updateStory(title, summary, thumbnail);
-	}
-	
-	public void deleteStory(long storyID){
-		m_storyDirector.deleteStory(storyID);
-	}
-	
-	public long createFragment(){
-		return m_storyDirector.createFragment();
-	}
-	
-	public void saveFragmentContent(String content){
-		m_storyDirector.saveFragmentContent(content);
-	}
-	
-	public void saveFragmentChoices(Collection<Choice> choices){
-		m_storyDirector.saveFragmentChoices(choices);
-	}
-	
-	public void deleteFragment(long fragmentID){
-		m_storyDirector.deleteFragment(fragmentID);
-	}
-	
-	public void publish(long storyID){
+	/*public void publish(long storyID){
 		m_storyDirector.publish(storyID);
-	}
+	}*/
 }

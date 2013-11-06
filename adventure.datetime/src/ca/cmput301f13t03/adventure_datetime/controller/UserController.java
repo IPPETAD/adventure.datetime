@@ -23,42 +23,64 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
+import android.util.Log;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
-public class UserController
-{
+public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
-	
-    public UserController(IStoryModelDirector director, IReaderStorage storage)
-    {
-    	m_storyDirector = director;
-    }
 
-    public void StartStory(String storyId)
-    {
-    	m_storyDirector.selectStory(storyId);
-    	/* TODO::JT also select head fragment and create save*/
-    }
 
-    public void ResumeStory(long bookmarkId)
-    {
-    	/* TODO::JT find the bookmark, select its story and its fragment */
-    }
+	public UserController(IStoryModelDirector director, IReaderStorage storage) {
+		m_storyDirector = director;
+	}
 
-    public void SetBookmark()
-    {
-    	/* TODO::JT Create a bookmark for the current story and fragment */
-    }
+	/**
+	 * @param storyId
+	 *
+	 * @return true if the story was successfully selected, false if it doesn't exist
+	 */
+	public boolean StartStory(String storyId) {
+		try {
+			m_storyDirector.selectStory(storyId);
+			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
+			return true;
+		} catch (NullPointerException e) {
+			Log.e("UserController", e.getMessage());
+			return false;
+		}
+		/* TODO::JT also select head fragment and create save */
+	}
 
-    public void AddComment(Comment comment)
-    {
-    	/* TODO::JT */
-    }
+	/**
+	 * @param id
+	 *
+	 * @return true if story was successfully selected, false if it doesn't exist
+	 */
+	public boolean ResumeStory(String id) {
+		Bookmark bookmark = m_storyDirector.getBookmark(id);
+		try {
+			m_storyDirector.selectStory(bookmark.getStoryID());
+			m_storyDirector.selectFragment(bookmark.getFragmentID());
+			return true;
+		} catch (NullPointerException e) {
+			Log.e("UserController", e.getMessage());
+			return false;
+		}
+	}
 
-    public void MakeChoice(long choiceId)
-    {
-    	/* TODO::JT map choice to fragment then set that fragment */
-    }
+	public void SetBookmark(Bookmark bookmark) {
+		m_storyDirector.setBookmark(bookmark);
+	}
+
+	public void AddComment(Comment comment) {
+		/* TODO::JT */
+	}
+
+	public void MakeChoice(Choice choice) {
+		m_storyDirector.selectFragment(choice.getTarget());
+	}
 }
