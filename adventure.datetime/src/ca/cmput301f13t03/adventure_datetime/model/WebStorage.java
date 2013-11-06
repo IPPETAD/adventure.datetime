@@ -31,7 +31,7 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.elasticsearch.index.query.QueryBuilders;
@@ -67,10 +67,10 @@ public class WebStorage {
 	
 	/**
 	 * Gets all stories from ES
-	 * @return Collection of stories
+	 * @return List of stories
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public Collection<Story> getAllStories() throws Exception {
+	public List<Story> getAllStories() throws Exception {
 		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchAllQuery());
 		Search search = new Search.Builder(ssb.toString())
@@ -98,10 +98,10 @@ public class WebStorage {
 	/**
 	 * Gets all fragments for a given story
 	 * @param storyId ID of the story to retrieve all fragments for
-	 * @return Collection of StoryFragments
+	 * @return List of StoryFragments
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public Collection<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
+	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
 		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchQuery("storyId", storyId.toString()));
 		Search search = new Search.Builder(ssb.toString())
@@ -116,10 +116,10 @@ public class WebStorage {
 	/**
 	 * Gets a comment for the targetId. May be a StoryId or FragmentId.
 	 * @param targetId. The Story or StoryFragment to retrieve comments for.
-	 * @return A collection of comments
+	 * @return A List of comments
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public Collection<Comment> getComments(UUID targetId) throws Exception {
+	public List<Comment> getComments(UUID targetId) throws Exception {
 		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchQuery("targetId", targetId.toString()));
 		Search search = new Search.Builder(ssb.toString())
@@ -138,7 +138,11 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public boolean putComment(Comment comment) throws Exception {
-		Index index = new Index.Builder(comment).index("comments").type("comment").build();
+		Index index = new Index.Builder(comment)
+			.index("comments")
+			.type("comment")
+			.id(comment.getWebId().toString())
+			.build();
 		JestResult result = execute(index);
 		return result.isSucceeded();
 	}
@@ -158,16 +162,21 @@ public class WebStorage {
 	 * Publishes a Story to ES. Overwrites if already exists.
 	 * Note: this does NOT check if the StoryFragments actually belong to the Story
 	 * @param story the Story object to publish
-	 * @param fragments Collection of StoryFragments to publish
+	 * @param fragments List of StoryFragments to publish
 	 * @return True if succeeded, false otherwise
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public boolean publishStory(Story story, Collection<StoryFragment> fragments) throws Exception {
+	public boolean publishStory(Story story, List<StoryFragment> fragments) throws Exception {
 		// TODO: make this more clear on what part failed if it does fail
+		// TODO: change getId and getFragmentId to getWebId when it is implemented
 		
 		// I am not cleaning up old fragments because I am assuming we do not support
 		// deleting fragments. If we do support that, then I will have to clean them up.
-		Index index = new Index.Builder(story).index("stories").type("story").build();
+		Index index = new Index.Builder(story)
+			.index("stories")
+			.type("story")
+			.id(story.getId())
+			.build();
 		JestResult resultStory = execute(index);
 		
 		Bulk.Builder bulkBuilder = new Bulk.Builder()
@@ -175,7 +184,7 @@ public class WebStorage {
 			.defaultType("fragment");
 		
 		for (StoryFragment f : fragments) {
-			bulkBuilder.addAction(new Index.Builder(f).build());
+			bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID()).build());
 		}
 		
 		JestResult resultFragments = execute(bulkBuilder.build());
