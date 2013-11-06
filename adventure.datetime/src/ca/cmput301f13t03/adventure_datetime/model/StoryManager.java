@@ -22,21 +22,16 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
-import android.util.Log;
 
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
 {
-	private static final String TAG = "StoryManager";
-	
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -69,21 +64,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		{
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
-		fragmentListener.OnCurrentFragmentChange(getFakeFragment());
-	}
-	public StoryFragment getFakeFragment() {
-		Choice choice = new Choice("Go to Ratt.", 1);
-		StoryFragment frag = new StoryFragment("sid1", 
-			"Curiously enough, the only thing that"+
-			" went through the mind of the bowl of"+
-			" petunias as it fell was Oh no, not a"+
-			"gain. Many people have speculated tha"+
-			"t if we knew exactly why the bowl of "+
-			"petunias had thought that we would kn"+
-			"ow a lot more about the nature of the"+
-			"Universe than we do now.", choice);
-		frag.setStoryMedia(new ArrayList<String>());
-		return frag;
 	}
 
 	public void Subscribe(ICurrentStoryListener storyListener) 
@@ -91,9 +71,8 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_storyListeners.add(storyListener);
 		if(m_currentStory != null)
 		{
-			storyListener.OnCurrentStoryChange(getClusterfuckOfStories().iterator().next());
-		} else
-			storyListener.OnCurrentStoryChange(getClusterfuckOfStories().iterator().next());
+			storyListener.OnCurrentStoryChange(m_currentStory);
+		}
 	}
 
 	public void Subscribe(IStoryListListener storyListListener) 
@@ -102,37 +81,9 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		if(m_storyList != null)
 		{
 			storyListListener.OnCurrentStoryListChange(m_storyList);
-		} else {
-			storyListListener.OnCurrentStoryListChange(
-					getClusterfuckOfStories());
 		}
 		/* This may be a good opportunity to async fetch the data from
 		 * either local storage or server*/
-	}
-	
-	public Collection<Story> getClusterfuckOfStories() {
-		Collection<Story> stories = new java.util.ArrayList<Story>();
-		for (int i=0; i<4; i++) {
-			Story story = new Story("Douglas Adams", 
-					"HitchHiker's Guide",
-					"The book begins with contractors"+ 
-					" arriving at Arthur Dent's house"+
-					", in order to demolish it to mak"+
-					"e way for a bypass. His friend, "+
-					"Ford Prefect, arrives while Arth"+
-					"ur is lying in front of the bull"+
-					"dozers, to keep them from demoli"+
-					"shing it. He tries to explain to"+
-					" Arthur that the Earth is about "+
-					"to be demolished. The Vogons, an"+
-					" alien race, intend to destroy E"+
-					"arth to make way for a hyperspac"+
-					"e bypass.");
-			story.setTimestamp(Calendar.getInstance().getTimeInMillis());
-			story.setId("id"+i);
-			stories.add(story);
-		}
-		return stories;
 	}
 	
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) 
@@ -188,28 +139,11 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	
 	public void SelectStory(String storyId) 
 	{
-		for (Story story : getClusterfuckOfStories()) {
-			if (story.getId().equals(storyId)) {
-				m_currentStory = story;
-				return;
-			}
-		}			
+		/* TODO::JT */
 	}
 
 	public void SelectFragment(long fragmentId) 
 	{
 		/* TODO::JT */
-	}
-
-	@Override
-	public void Subscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-		
 	}
 }
