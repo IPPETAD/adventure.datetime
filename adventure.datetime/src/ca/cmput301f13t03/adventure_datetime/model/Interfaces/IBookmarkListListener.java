@@ -22,21 +22,17 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
+import java.util.Collection;
+
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+
 /**
- * Presents the model information to an external package such as a view. Only supplies data
- * in a readonly format.
+ * 
+ * Interface for listeners to subscribe to bookmark changes.
+ * 
+ * @author James Finlay
  *
- * AKA : IModelGet
  */
-public interface IStoryModelPresenter
-{
-    void Subscribe(ICurrentFragmentListener fragmentListener);
-    void Subscribe(ICurrentStoryListener storyListener);
-    void Subscribe(IStoryListListener storyListListener);
-    void Subscribe(IBookmarkListListener bookmarkListListener);
-    
-    void Unsubscribe(ICurrentFragmentListener fragmentListener);
-    void Unsubscribe(ICurrentStoryListener storyListener);
-    void Unsubscribe(IStoryListListener storyListListener);
-    void Unsubscribe(IBookmarkListListener bookmarkListListener);
+public interface IBookmarkListListener {
+	void OnBookmarkListChange(Collection<Bookmark> newBookmarks);
 }

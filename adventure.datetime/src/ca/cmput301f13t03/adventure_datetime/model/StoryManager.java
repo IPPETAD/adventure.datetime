@@ -36,11 +36,13 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
+	private Collection<Bookmark> m_bookmarkList = null;
 	
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
+	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 	
 	public StoryManager(Context context)
 	{
@@ -86,6 +88,14 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		 * either local storage or server*/
 	}
 	
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.add(bookmarkListListener);
+		if (m_bookmarkList != null)
+		{
+			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
+		}
+	}
+	
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) 
 	{
 		m_fragmentListeners.remove(fragmentListener);
@@ -99,6 +109,11 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public void Unsubscribe(IStoryListListener storyListListener) 
 	{
 		m_storyListListeners.remove(storyListListener);
+	}
+	
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener)
+	{
+		m_bookmarkListListeners.remove(bookmarkListListener);
 	}
 	
 	//============================================================
