@@ -22,15 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -41,17 +32,24 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * View Accessed via MainView > Continue > ~Select Item~
- * or via MainView > BrowseView > StoryDescription > ~Play / Continue item ~
- * 
- * Holds Horizontal filmstrip containing illustrations at top of page,
- * story fragment text in the view, and an actions buttons at the bottom
- * of the page.
- * 
- * @author James Finlay
+ * View Accessed via MainView > Continue > ~Select Item~ or via MainView > BrowseView > StoryDescription > ~Play /
+ * Continue item ~
+ * <p/>
+ * Holds Horizontal filmstrip containing illustrations at top of page, story fragment text in the view, and an actions
+ * buttons at the bottom of the page.
  *
+ * @author James Finlay
  */
 public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentView";
@@ -60,19 +58,21 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private TextView _content;
 	private LinearLayout _filmLayout;
 	private Button _choices;
-	
+
 	private StoryFragment _fragment;
-	
+
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_fragment = newFragment;
 		setUpView();
 	}
+
 	@Override
 	public void onResume() {
 		Locator.getPresenter().Subscribe(this);
 		super.onResume();
 	}
+
 	@Override
 	public void onPause() {
 		Locator.getPresenter().Unsubscribe(this);
@@ -85,9 +85,10 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		setContentView(R.layout.fragment_view);
 		setUpView();
 	}
+
 	public void setUpView() {
 		if (_fragment == null) return;
-		
+
 		/** Layout items **/
 		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
 		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
@@ -100,7 +101,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			_filmstrip.getLayoutParams().height = 300;
 
 
-
 		_content.setText(_fragment.getStoryText());
 
 
@@ -108,7 +108,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		// 2) Set appropriate Layout Params to ImageView
 		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
-		for (int i=0; i<_fragment.getStoryMedia().size(); i++) {
+		for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
 			// TODO::JF Get images from fragment
 		/*	ImageView li = new ImageView(this);
 			li.setScaleType(ScaleType.CENTER_INSIDE);
@@ -155,7 +155,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 				.create().show();
 			}
 		});
-
 
 
 	}

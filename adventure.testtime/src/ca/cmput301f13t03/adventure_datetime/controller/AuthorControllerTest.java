@@ -23,15 +23,13 @@ package ca.cmput301f13t03.adventure_datetime.controller;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
-import junit.framework.Assert;
-
-import java.util.ArrayList;
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
+import junit.framework.Assert;
+
+import java.util.UUID;
 
 /**
  * @author Evan DeGraff
@@ -40,41 +38,41 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
  */
 public class AuthorControllerTest extends AndroidTestCase {
 
-        private AuthorController controller;
-        private StoryManager manager;
+	private AuthorController controller;
+	private StoryManager manager;
 
-        @Override
-        public void setUp() throws Exception {
-                super.setUp();    //TODO Implement
-                RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
-                manager = new StoryManager(context);
-                controller = new AuthorController(manager);
-        }
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();    //TODO Implement
+		RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+		manager = new StoryManager(context);
+		controller = new AuthorController(manager);
+	}
 
-        public void testSaveStory() throws Exception {
-        	Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
-        	
-        	Assert.assertTrue("Error inserting story", controller.saveStory(story));
-            Story story2 = controller.getStory(story.getId());
+	public void testSaveStory() throws Exception {
+		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
 
-            Assert.assertEquals("Not equivalent stories", story.getId(), story2.getId());
-        }
+		Assert.assertTrue("Error inserting story", controller.saveStory(story));
+		Story story2 = controller.getStory(story.getId());
 
-        public void testSaveFragment() throws Exception {
-        	String uuid = UUID.randomUUID().toString();
-            Choice choice = new Choice("test", uuid);
-            StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
-            
-            Assert.assertTrue("Error inserting fragment", controller.saveFragment(fragment));
-            StoryFragment fragment2 = manager.getFragment(uuid);
-            
-            Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
-        }
+		Assert.assertEquals("Not equivalent stories", story.getId(), story2.getId());
+	}
 
-        @Override
-        public void tearDown() throws Exception {
-                super.tearDown();    //TODO Implement
-        }
+	public void testSaveFragment() throws Exception {
+		String uuid = UUID.randomUUID().toString();
+		Choice choice = new Choice("test", uuid);
+		StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
+
+		Assert.assertTrue("Error inserting fragment", controller.saveFragment(fragment));
+		StoryFragment fragment2 = manager.getFragment(uuid);
+
+		Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
+	}
+
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();    //TODO Implement
+	}
 
 
 }

@@ -20,25 +20,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
 package ca.cmput301f13t03.adventure_datetime.controller;
 
 import android.util.Log;
-import ca.cmput301f13t03.adventure_datetime.model.*;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
 public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
 
+
 	public UserController(IStoryModelDirector director, IReaderStorage storage) {
 		m_storyDirector = director;
 	}
 
 	/**
-	 * 
 	 * @param storyId
-	 * @return true if the story was successfully selected, false if it doesn't
-	 *         exist
+	 *
+	 * @return true if the story was successfully selected, false if it doesn't exist
 	 */
 	public boolean StartStory(String storyId) {
 		try {
@@ -53,10 +56,9 @@ public class UserController {
 	}
 
 	/**
-	 * 
 	 * @param id
-	 * @return true if story was successfully selected, false if it doesn't
-	 *         exist
+	 *
+	 * @return true if story was successfully selected, false if it doesn't exist
 	 */
 	public boolean ResumeStory(String id) {
 		Bookmark bookmark = m_storyDirector.getBookmark(id);
