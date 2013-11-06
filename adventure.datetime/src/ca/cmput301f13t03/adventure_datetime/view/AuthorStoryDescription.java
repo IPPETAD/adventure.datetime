@@ -300,7 +300,7 @@ public class AuthorStoryDescription extends FragmentActivity implements IStoryLi
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						/* TODO::JTF Delete the story */
+						
 						getActivity().finish();
 					}
 				})

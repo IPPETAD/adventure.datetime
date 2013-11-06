@@ -1,6 +1,7 @@
 package ca.cmput301f13t03.adventure_datetime.serviceLocator;
 
 import android.content.Context;
+import ca.cmput301f13t03.adventure_datetime.controller.AuthorController;
 import ca.cmput301f13t03.adventure_datetime.controller.UserController;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
@@ -12,7 +13,7 @@ public final class Locator
 	private static IStoryModelDirector s_director = null;
 	private static IStoryModelPresenter s_presenter = null;
 	private static UserController s_userController = null;
-	//private static AuthorController s_authorController = null;
+	private static AuthorController s_authorController = null;
 	
 	public static void initializeLocator(Context applicationContext)
 	{
@@ -22,6 +23,7 @@ public final class Locator
 		s_director = manager;
 		s_presenter = manager;
 		s_userController = new UserController(s_director, localDatabase);
+		s_authorController = new AuthorController(s_director);
 	}
 	
 	public static IStoryModelDirector getDirector()
@@ -58,5 +60,11 @@ public final class Locator
 		{
 			throw new RuntimeException("You fucked up and forgot to initialize the locator!");
 		}
+	}
+	public static AuthorController getAuthorController() {
+		if (s_presenter != null)
+			return s_authorController;
+		else
+			throw new RuntimeException("You fucked up and forgot to initialize the locator!");
 	}
 }
