@@ -23,50 +23,45 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.MotionEvent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class FragmentView extends Activity {
-	private static final String TAG = "FragmentView";
+public class AuthorEdit_Edit extends Fragment {
 
-	private HorizontalScrollView _filmstrip;
+	private Button _btnChoices;
+	private ImageButton _btnEditContent;
 	private TextView _content;
-	private LinearLayout _filmLayout;
-	private Button _choices;
-
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_view);
+	public View onCreateView(LayoutInflater inflater, 
+			ViewGroup container, Bundle savedInstanceState) {
 
+		/* TODO : This is all pretty much copy-paste from FragmentView.java. 
+		 * Should probs not do that.
+		 */
+
+		View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
 		/** Layout items **/
-		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
-		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
-		_choices = (Button) findViewById(R.id.choices);
-
-		/** Programmatically set filmstrip height **/
-		// TODO::JF Unshitify this, aka not static value
-		_filmstrip.getLayoutParams().height = 300;
-
-		//TODO::JF read actual content from model
-		_content = (TextView) findViewById(R.id.content);
+		_btnChoices = (Button) rootView.findViewById(R.id.choices);
+		_content = (TextView) rootView.findViewById(R.id.content);
+		_btnEditContent = (ImageButton) rootView.findViewById(R.id.edit_content);
+		
+		//TODO: read actual content from model
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
 				"appears grumpy because of feline dwarfism and an under bite." +
 				"She and her brother Pokey were born to normal parents with " +
@@ -89,43 +84,18 @@ public class FragmentView extends Activity {
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
 		_content.setText(tempText);
-
-		// TODO : Not use Bitmap, but proper object. Load illustrations from model
-		Bitmap[] frags = new Bitmap[10];
-
-		// 1) Create new ImageView and add to the LinearLayout
-		// 2) Set appropriate Layout Params to ImageView
-		// 3) Give onClickListener for going to fullscreen
-		LinearLayout.LayoutParams lp;
-		for (int i=0; i<frags.length; i++) {
-
-			ImageView li = new ImageView(this);
-			li.setScaleType(ScaleType.CENTER_INSIDE);
-			li.setImageResource(R.drawable.grumpy_cat2);
-			_filmLayout.addView(li);
-
-			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
-			lp.setMargins(10, 10, 10, 10);
-			lp.width = LayoutParams.WRAP_CONTENT;
-			lp.gravity = Gravity.CENTER_VERTICAL;
-			li.setLayoutParams(lp);
-
-			li.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// TODO: Open image in fullscreen
-				}
-			});
-		}
-
-		/** Choices **/
-		final String[] sChoices = 
-			{"Dance and Sing", "Cry a lot", "Go to RATT", 
-				"Grade this app 100%", "Eat a gold brick wrapped in lettuce"};
-
-		_choices.setOnClickListener(new OnClickListener() {
+		
+		/* Choices */
+		_btnChoices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				getActivity().getActionBar().setSelectedNavigationItem(1);
+				
+				// TODO::JF Have Choice Editing here 
+				
+				final String[] sChoices = 
+					{"Dance and Sing", "Cry a lot", "Go to RATT", 
+						"Grade this app 100%", "Eat a gold brick wrapped in lettuce"};
 				new AlertDialog.Builder(v.getContext())
 				.setTitle("Actions")
 				.setCancelable(true)
@@ -136,11 +106,22 @@ public class FragmentView extends Activity {
 					}
 				})
 				.create().show();
+			}			
+		});
+		
+		/* Edit Content */
+		_btnEditContent.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(getActivity())
+				.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
+				.setPositiveButton("OK!", null)
+				.setNegativeButton("Cancel", null)
+				.create().show();
 			}
 		});
-
-
-
+		
+		
+		return rootView;
 	}
-
 }

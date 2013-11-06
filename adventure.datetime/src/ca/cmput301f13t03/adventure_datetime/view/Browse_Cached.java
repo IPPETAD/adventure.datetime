@@ -24,65 +24,61 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/** Called when activity is first created */
-public class ContinueView extends Activity {
-	private static final String TAG = "ContinueView";
-
+public class Browse_Cached extends Fragment {
+	private static final String TAG = "Browse_Cached";
+	
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view);
-
-		_listView = (ListView) findViewById(R.id.list_view);
+	public View onCreateView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		
+		View rootView = inflater.inflate(R.layout.list_view, container, false);
+		_listView = (ListView) rootView.findViewById(R.id.list_view);		
+		
+		return rootView;
+	}
+	
+	@Override
+	public void onResume() {
+		
+		Story[] stories = new Story[10];
+		for (int i=0; i<stories.length; i++) stories[i] = new Story();
+		
+		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, stories);
+		
+		_listView.setAdapter(_adapter);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				// Get selected item
-				ListView listView = (ListView) parent;
-				Story item = (Story) listView.getItemAtPosition(position);
-				
-				// TODO: Send fragment info to controller
-				
-				Intent intent = new Intent(ContinueView.this, FragmentView.class);
-				startActivity(intent);
+			// Get selected item
+			ListView listView = (ListView) parent;
+			Story item = (Story) listView.getItemAtPosition(position);
+			
+			Intent intent = new Intent(getActivity(), StoryDescription.class);
+			startActivity(intent);
 			}
 		});
-	}
-
-	@Override
-	public void onResume() {
-
-		// TODO: Load known bookmarks as views. For now, placeholders are set
-
-		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++)
-			stories[i] = new Story();
-
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		_listView.setAdapter(_adapter);
+		
 		super.onResume();
 	}
-
+	
+	
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
 
 		private Context context;
@@ -106,11 +102,21 @@ public class ContinueView extends Activity {
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
+			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
-			// TODO: fill out views from values[position]
-
+			// 3 - Bookmark / Continue Story
+			// 5 - Completed / Play Again
+			if (position == 3) 
+				status.setImageResource(R.drawable.ic_action_labels);
+			else if (position == 5)
+				status.setImageResource(R.drawable.ic_action_accept);
 			
+			author.setText("Author: Jane Austen");
+			lastPlayed.setText("Last Played: 01/01/1812");
+
+
 			return rowView;
 		}
 	}
+
 }

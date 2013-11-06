@@ -23,50 +23,45 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
-public class FragmentView extends Activity {
-	private static final String TAG = "FragmentView";
-
-	private HorizontalScrollView _filmstrip;
-	private TextView _content;
-	private LinearLayout _filmLayout;
-	private Button _choices;
+public class AuthorEdit_Preview extends Fragment {
+	private static final String TAG = "AuthorEdit";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_view);
+	public View onCreateView(LayoutInflater inflater, 
+			ViewGroup container, Bundle savedInstanceState) {
 
+		/* TODO : This is all pretty much copy-paste from FragmentView.java. 
+		 * Should probs not do that.
+		 */
+
+		View rootView = inflater.inflate(R.layout.fragment_view, container, false);
 
 		/** Layout items **/
-		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
-		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
-		_choices = (Button) findViewById(R.id.choices);
+		LinearLayout filmLayout = (LinearLayout) rootView.findViewById(R.id.filmstrip);
+		HorizontalScrollView filmstrip = (HorizontalScrollView) rootView.findViewById(R.id.filmstrip_wrapper);
 
 		/** Programmatically set filmstrip height **/
-		// TODO::JF Unshitify this, aka not static value
-		_filmstrip.getLayoutParams().height = 300;
+		// TODO : Unshitify this, aka not static value
+		filmstrip.getLayoutParams().height = 300;
 
-		//TODO::JF read actual content from model
-		_content = (TextView) findViewById(R.id.content);
+		//TODO: read actual content from model
+		TextView content = (TextView) rootView.findViewById(R.id.content);
 		String tempText = ("The Bundesens say that Tardar Sauce's face " +
 				"appears grumpy because of feline dwarfism and an under bite." +
 				"She and her brother Pokey were born to normal parents with " +
@@ -88,7 +83,10 @@ public class FragmentView extends Activity {
 				"w and appeared on Good Morning America and Anderson Live and"+
 				"visited Time for a photoshoot. Michael Noer 'interviewed' Gr"+
 				"umpy Cat for Forbes, released March 25.";
-		_content.setText(tempText);
+		content.setText(tempText);
+
+
+
 
 		// TODO : Not use Bitmap, but proper object. Load illustrations from model
 		Bitmap[] frags = new Bitmap[10];
@@ -99,10 +97,10 @@ public class FragmentView extends Activity {
 		LinearLayout.LayoutParams lp;
 		for (int i=0; i<frags.length; i++) {
 
-			ImageView li = new ImageView(this);
+			ImageView li = new ImageView(getActivity());
 			li.setScaleType(ScaleType.CENTER_INSIDE);
 			li.setImageResource(R.drawable.grumpy_cat2);
-			_filmLayout.addView(li);
+			filmLayout.addView(li);
 
 			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
 			lp.setMargins(10, 10, 10, 10);
@@ -118,29 +116,8 @@ public class FragmentView extends Activity {
 			});
 		}
 
-		/** Choices **/
-		final String[] sChoices = 
-			{"Dance and Sing", "Cry a lot", "Go to RATT", 
-				"Grade this app 100%", "Eat a gold brick wrapped in lettuce"};
 
-		_choices.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(v.getContext())
-				.setTitle("Actions")
-				.setCancelable(true)
-				.setItems(sChoices, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						//TODO::JF Set new fragment
-					}
-				})
-				.create().show();
-			}
-		});
-
-
-
+		return rootView;
 	}
 
 }

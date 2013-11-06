@@ -22,55 +22,28 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
-public class MainView extends Activity {
-	private static final String TAG = "MainView";
+public class AuthorEdit_Overview extends Fragment{
 	
-	/** Called when activity is first created */
+	Button _btnAdd, _btnOther;
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public View onCreateView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.main);
+		View rootView = inflater.inflate(R.layout.overview_edit, container, false);
 		
+		_btnAdd = (Button) rootView.findViewById(R.id.add);
+		_btnOther = (Button) rootView.findViewById(R.id.other);
 		
-		
-		
-		Button browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
-		browseBookmarks.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainView.this, ContinueView.class);
-				startActivity(intent);
-			}
-		});
-		
-		Button browseStories = (Button) findViewById(R.id.btn_browseStories);
-		browseStories.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainView.this, BrowseView.class);
-				startActivity(intent);
-			}
-		});
-		
-		Button authorBrowse = (Button) findViewById(R.id.btn_authorList);
-		authorBrowse.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainView.this, AuthorStories.class);
-				startActivity(intent);
-			}
-		});
-			
+		return rootView;
 	}
+
 }
