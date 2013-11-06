@@ -25,9 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -190,20 +188,24 @@ public class Story {
 	public long getTimestamp() {
 		return timestamp;
 	}
+
 	public String getFormattedTimestamp() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(timestamp);
-		return (cal.get(cal.MONTH)+1) + "/"+
-				cal.get(cal.DAY_OF_MONTH)+"/"+
+		return (cal.get(cal.MONTH) + 1) + "/" +
+				cal.get(cal.DAY_OF_MONTH) + "/" +
 				cal.get(cal.YEAR);
 	}
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	
+
 	public HashSet<String> getFragmentIds() {
-		return fragmentIDs;
+		HashSet<String> uuids = new HashSet<String>();
+		for (UUID u : fragmentIDs)
+			uuids.add(u.toString());
+		return uuids;
 	}
 
 	public String getAuthor() {
