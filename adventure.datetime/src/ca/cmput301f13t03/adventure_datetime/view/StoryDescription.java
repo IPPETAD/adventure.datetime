@@ -161,7 +161,6 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			
 			_rootView = inflater.inflate(R.layout.story_descript, container, false);
-			Bundle args = getArguments();
 			
 			/** Action bar **/
 			getActivity().getActionBar().setTitle("Story Name");

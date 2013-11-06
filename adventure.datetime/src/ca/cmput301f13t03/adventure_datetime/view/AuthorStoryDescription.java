@@ -22,6 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +37,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,6 +52,7 @@ import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
@@ -59,67 +66,84 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
  * @author James Finlay
  *
  */
-public class AuthorStoryDescription extends FragmentActivity {
+public class AuthorStoryDescription extends FragmentActivity implements IStoryListListener, ICurrentStoryListener {
 	private static final String TAG = "AuthorStoryDescription";
-	public static final String ARG_ITEM_NUM = ".view.AuthorStoryDescription.item_num";
 
 	private AuthorStoriesPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
-
+	private List<Story> _stories;
+	private Story _story;
+	
+	@Override
+	public void OnCurrentStoryListChange(Collection<Story> newStories) {
+		_stories = (List<Story>) newStories;
+		setUpView();
+	}
+	@Override
+	public void OnCurrentStoryChange(Story story) {
+		_story = story;
+		setUpView();
+	}
+	private void setUpView() {
+		if (_stories == null) return;
+		if (_story == null) return;
+		
+		_pageAdapter.setCount(_stories.size());
+		_viewPager.setCurrentItem(_stories.indexOf(_story));		
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager);
 
-		int item = getIntent().getIntExtra(ARG_ITEM_NUM, 0);
-
 		_pageAdapter = new AuthorStoriesPagerAdapter(getSupportFragmentManager());
 
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
-		_viewPager.setCurrentItem(item);
+		
+		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				Locator.getDirector().SelectStory(_stories.get(position).getId());
+			}
+		});
 	}
-
 	@Override
 	public void onResume() {
 		Locator.initializeLocator(getApplicationContext());
+		Locator.getPresenter().Subscribe((IStoryListListener)this);
+		Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
+		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
+		super.onPause();
 	}
 
 	private class AuthorStoriesPagerAdapter extends FragmentStatePagerAdapter {
 
+		private int count = 0;
+		
 		public AuthorStoriesPagerAdapter(FragmentManager fm) {
 			super(fm);
+		}
+		
+		public void setCount(int c) {
+			count = c;
+			notifyDataSetChanged();
 		}
 
 		@Override
 		public Fragment getItem(int i) {
-
-			Fragment fragment = new AuthorStoryDescriptionFragment();
-
-			// TODO : Send story info through to fragment
-
-			/* Sending through status of the story */
-			Bundle args = new Bundle();
-			if (i == 3)
-				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
-						AuthorStoryDescriptionFragment.STATUS_SYNCED);
-			else if (i == 5)
-				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
-						AuthorStoryDescriptionFragment.STATUS_UNSYNC);
-			else
-				args.putInt(AuthorStoryDescriptionFragment.ARG_STATUS, 
-						AuthorStoryDescriptionFragment.STATUS_UNPUBLISHED);
-
-
-			fragment.setArguments(args);
-			return fragment;
-
+			return new AuthorStoryDescriptionFragment();
 		}
 
 		@Override
 		public int getCount() {
-			return 10;
+			return count;
 		}
 
 		@Override
@@ -129,7 +153,6 @@ public class AuthorStoryDescription extends FragmentActivity {
 	}
 
 	public static class AuthorStoryDescriptionFragment extends Fragment implements ICurrentStoryListener {
-		public static final String ARG_STATUS = "status";
 		public static final int STATUS_UNPUBLISHED = 0;
 		public static final int STATUS_UNSYNC = 1;
 		public static final int STATUS_SYNCED = 2;
@@ -240,8 +263,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 			inflater.inflate(R.menu.authordesc, menu);
 
-			/* Disable 'Upload' if sync'd */
-			switch (getArguments().getInt(ARG_STATUS)) {
+			/*	switch (getArguments().getInt(ARG_STATUS)) {
 			case STATUS_UNPUBLISHED:
 				break;
 			case STATUS_UNSYNC:
@@ -254,7 +276,7 @@ public class AuthorStoryDescription extends FragmentActivity {
 				break;
 			default:
 				Log.e(TAG, "Status unknown.");
-			}
+			}*/
 			menu.findItem(R.id.action_upload);
 
 		}
