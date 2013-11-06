@@ -29,13 +29,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.provider.BaseColumns;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -117,7 +118,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
+				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR, STORY_COLUMN_TITLE,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				null,
 				null,
@@ -356,11 +357,9 @@ public class StoryDB implements BaseColumns {
 	 */
 	public boolean setStory(Story story) {
 		int size = story.getThumbnail().getByteCount();
-		ByteBuffer b = ByteBuffer.allocate(size);
-		story.getThumbnail().copyPixelsToBuffer(b);
-		b.rewind();
-		byte[] bytes = new byte[size];
-		b.get(bytes, 0, bytes.length);
+		ByteArrayOutputStream blob = new ByteArrayOutputStream();
+		story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
+		byte[] bytes = blob.toByteArray();
 
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -581,9 +580,10 @@ public class StoryDB implements BaseColumns {
 		}
 
 		private void populateDB(SQLiteDatabase db) {
+			Bitmap bit = Bitmap.createBitmap(new int[]{Color.BLACK}, 1, 1, Bitmap.Config.ARGB_8888);
 			Story story = new Story("5582f797-29b8-4d9d-83bf-88c434c1944a", "fc662870-5d6a-4ae2-98f6-0cdfe36013bb",
 					"Andrew", 706232100, "A tale of romance and might",
-					Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565), "Super Kewl Story, GUIZ");
+					bit, "Super Kewl Story, GUIZ");
 			String storyText = "You wake up. The room is spinning very gently round your head. Or at least it would be "
 					+ "if you could see it which you can't";
 			StoryFragment frag = new StoryFragment(story.getId(), "5582f797-29b8-4d9d-83bf-88c434c1944a", storyText,
@@ -601,11 +601,9 @@ public class StoryDB implements BaseColumns {
 			db.beginTransaction();
 			long inserted = 0;
 			int size = story.getThumbnail().getByteCount();
-			ByteBuffer b = ByteBuffer.allocate(size);
-			story.getThumbnail().copyPixelsToBuffer(b);
-			b.rewind();
-			byte[] bytes = new byte[size];
-			b.get(bytes, 0, bytes.length);
+			ByteArrayOutputStream blob = new ByteArrayOutputStream();
+			story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
+			byte[] bytes = blob.toByteArray();
 
 			ContentValues values = new ContentValues();
 			values.put(STORY_COLUMN_TITLE, story.getTitle());
