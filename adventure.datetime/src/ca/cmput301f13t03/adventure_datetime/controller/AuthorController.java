@@ -54,13 +54,13 @@ public class AuthorController {
 	
 	public void deleteStory(String storyId){
 		Story story = m_storyDirector.getStory(storyId);
+		// If story is not in database, no reason to delete it.
+		if(story == null)
+			return;
 		HashSet<String> fragments = story.getFragmentIds();
-		Iterator<String> iterator = fragments.iterator();
-		String fragmentId;
 		
-		while(iterator.hasNext()){
-			fragmentId = iterator.next();
-			deleteFragment(fragmentId);
+		for(String fragment : fragments) {
+			deleteFragment(fragment);
 		}
 		
 		m_storyDirector.deleteStory(storyId);
