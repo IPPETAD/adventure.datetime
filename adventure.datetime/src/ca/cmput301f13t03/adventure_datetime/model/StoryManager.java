@@ -138,7 +138,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void selectFragment(String fragmentId) {
 		m_currentFragment = getFragment(fragmentId);
-		
+		PublishCurrentFragmentChange();
 	}
 
 	public boolean putStory(Story story) {
