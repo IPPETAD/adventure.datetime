@@ -51,7 +51,7 @@ public class AuthorControllerTest extends AndroidTestCase {
                 controller = new AuthorController(manager);
         }
 
-        public void testSaveAndGetStory() throws Exception {
+        public void testSaveStory() throws Exception {
         	Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
         	
         	Assert.assertTrue("Error inserting story", controller.saveStory(story));
@@ -60,26 +60,15 @@ public class AuthorControllerTest extends AndroidTestCase {
             Assert.assertEquals("Not equivalent stories", story.getId(), story2.getId());
         }
 
-        public void testSaveAndGetFragment() throws Exception {
+        public void testSaveFragment() throws Exception {
         	String uuid = UUID.randomUUID().toString();
             Choice choice = new Choice("test", uuid);
             StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
             
             Assert.assertTrue("Error inserting fragment", controller.saveFragment(fragment));
-            StoryFragment fragment2 = controller.getFragment(uuid);
+            StoryFragment fragment2 = manager.getFragment(uuid);
             
             Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
-        }
-        
-        public void testGetAuthorStories() throws Exception {
-        	Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
-        	Story story2 = new Story("TestAuthor", "TestTitle2", "TestSynop2");
-        	
-        	Assert.assertTrue("Error inserting story", controller.saveStory(story));
-        	Assert.assertTrue("Error inserting story", controller.saveStory(story2));
-        	
-        	ArrayList<Story> stories = controller.getStoriesAuthoredBy("TestAuthor");
-        	Assert.assertTrue("Did not retrieve all stories", stories.size() == 2);
         }
 
         @Override
