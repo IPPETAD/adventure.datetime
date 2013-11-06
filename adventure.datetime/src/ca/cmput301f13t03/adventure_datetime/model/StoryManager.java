@@ -177,7 +177,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		return m_db.getStoryFragment(fragmentId);
 	}
 
-	@Override
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
 	}

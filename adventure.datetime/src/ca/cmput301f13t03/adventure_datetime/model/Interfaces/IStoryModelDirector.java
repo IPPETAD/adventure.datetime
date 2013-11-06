@@ -45,11 +45,9 @@ public interface IStoryModelDirector
 	
 	public boolean putStory(Story story);
 	public void deleteStory(String storyId);
-	public Story getStory(String storyId);
 	public boolean putFragment(StoryFragment fragment);
 	public void deleteFragment(String fragmentId);
-	public StoryFragment getFragment(String fragmentId);
-	public ArrayList<Story> getStoriesAuthoredBy(String author); 
+	public Story getStory(String storyId);
 	
 	//public void publish(long storyID);
 }

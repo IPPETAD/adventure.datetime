@@ -32,7 +32,7 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
 /**
- * Controller for all aspects of authoring a story
+ * Controller for aspects of authoring a story
  * 
  * @author Evan DeGraff
  *
@@ -42,10 +42,6 @@ public class AuthorController {
 
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
-	}
-	
-	public ArrayList<Story> getStoriesAuthoredBy(String author) {
-		return m_storyDirector.getStoriesAuthoredBy(author);
 	}
 	
 	public boolean saveStory(Story story){
@@ -72,10 +68,6 @@ public class AuthorController {
 	
 	public boolean saveFragment(StoryFragment fragment) {
 		return m_storyDirector.putFragment(fragment);
-	}
-	
-	public StoryFragment getFragment(String fragmentId) {
-		return m_storyDirector.getFragment(fragmentId);
 	}
 	
 	public void deleteFragment(String fragmentId){
