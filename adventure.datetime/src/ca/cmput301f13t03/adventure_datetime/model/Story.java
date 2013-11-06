@@ -200,12 +200,9 @@ public class Story {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	public HashSet<UUID> getFragmentIds() {
+		return fragmentIDs;
 
-	public HashSet<String> getFragmentIds() {
-		HashSet<String> uuids = new HashSet<String>();
-		for (UUID u : fragmentIDs)
-			uuids.add(u.toString());
-		return uuids;
 	}
 
 	public String getAuthor() {

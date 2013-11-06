@@ -23,6 +23,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.UUID;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -51,12 +55,13 @@ public class AuthorController {
 
 	public void deleteStory(String storyId) {
 		Story story = m_storyDirector.getStory(storyId);
-		// If story is not in database, no reason to delete it.
-		if (story == null)
-			return;
-		HashSet<String> fragments = story.getFragmentIds();
+		if (story == null) return;
+		
+		HashSet<UUID> fragments = story.getFragmentIds();
+		Iterator<UUID> iterator = fragments.iterator();
+		UUID fragmentId;
 
-		for (String fragment : fragments) {
+		for(UUID fragment : fragments) {
 			deleteFragment(fragment);
 		}
 
@@ -67,7 +72,7 @@ public class AuthorController {
 		return m_storyDirector.putFragment(fragment);
 	}
 
-	public void deleteFragment(String fragmentId) {
+	public void deleteFragment(UUID fragmentId) {
 		m_storyDirector.deleteFragment(fragmentId);
 	}
 	

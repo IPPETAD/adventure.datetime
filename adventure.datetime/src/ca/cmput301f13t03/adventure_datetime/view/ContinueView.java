@@ -22,8 +22,17 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -48,11 +57,15 @@ import android.widget.TextView;
  * @author James Finlay
  *
  */
-public class ContinueView extends Activity {
+public class ContinueView extends Activity implements IBookmarkListListener,
+														IStoryListListener {
 	private static final String TAG = "ContinueView";
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
+	
+	private List<Bookmark> _bookmarks;
+	private List<Story> _stories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,19 +88,43 @@ public class ContinueView extends Activity {
 			}
 		});
 	}
-
+	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
+		_bookmarks = (List<Bookmark>) newBookmarks;
+		setUpView();
+	}
+	public void OnCurrentStoryListChange(Collection<Story> newStories) {
+		_stories = (List<Story>) newStories;
+		setUpView();
+	}
+	private void setUpView() {
+		if (_bookmarks == null) return;
+		if (_stories == null) return;
+		
+		HashMap<String, Story> hStories = new HashMap<String, Story>();
+		for (Story story : _stories)
+			hStories.put(story.getId(), story);
+		
+		List<Story> relevants = new ArrayList<Story>();
+		for (Bookmark bookmark : _bookmarks) {
+			if (hStories.containsKey(bookmark.getStoryID()))
+				relevants.add(hStories.get(bookmark.getStoryID()));
+		}
+		
+		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, 
+				relevants.toArray(new Story[relevants.size()]));
+		_listView.setAdapter(_adapter);
+	}
 	@Override
 	public void onResume() {
-
-		// TODO: Load known bookmarks as views. For now, placeholders are set
-
-		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++)
-			stories[i] = new Story();
-
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		_listView.setAdapter(_adapter);
+		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
+		Locator.getPresenter().Subscribe((IStoryListListener)this);
 		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
+		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
+		super.onPause();
 	}
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
