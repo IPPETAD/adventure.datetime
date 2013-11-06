@@ -45,7 +45,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 
-
+/**
+ * View containing description of story create by author.
+ * 
+ * User can swipe between the fragments to view other stories
+ * in list.
+ * 
+ * TODO: Link with model, controller
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorStoryDescription extends FragmentActivity {
 	private static final String TAG = "AuthorStoryDescription";
 	public static final String ARG_ITEM_NUM = ".view.AuthorStoryDescription.item_num";

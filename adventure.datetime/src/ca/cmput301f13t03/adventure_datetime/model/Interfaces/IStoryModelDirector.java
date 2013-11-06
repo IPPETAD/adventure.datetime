@@ -40,6 +40,7 @@ public interface IStoryModelDirector
 {
 	public void selectStory(String storyId);
 	public void selectFragment(String fragmentId);
+
 	// void AddComment(Comment comment); 
 	//public void publish(long storyID);
 	/* Commenting out as I don't want to deal with this right now*/

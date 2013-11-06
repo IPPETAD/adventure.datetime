@@ -45,6 +45,15 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+/**
+ * 
+ * View containing list of stories created by the author
+ * 
+ * TODO: Link with Model
+ * 
+ * @author James Finlay
+ *
+ */
 public class AuthorStories extends FragmentActivity {
 
 	private ListView _listView;

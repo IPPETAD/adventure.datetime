@@ -40,7 +40,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/** Called when activity is first created */
+/**
+ * View holding list of bookmarks. Accessed from MainView
+ * 
+ * TODO: Load from model
+ * 
+ * @author James Finlay
+ *
+ */
 public class ContinueView extends Activity {
 	private static final String TAG = "ContinueView";
 
