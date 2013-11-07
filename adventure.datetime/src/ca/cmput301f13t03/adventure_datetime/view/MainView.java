@@ -27,7 +27,6 @@ import java.util.Collection;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -35,7 +34,6 @@ import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**

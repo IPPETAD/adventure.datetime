@@ -36,8 +36,7 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
  *         <p/>
  *         AKA : IModelSet
  */
-public interface IStoryModelDirector 
-{
+public interface IStoryModelDirector {
 	public void selectStory(String storyId);
 
 	public void selectFragment(String fragmentId);
