@@ -23,7 +23,9 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 
@@ -38,6 +40,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private static final String TAG = "StoryManager";
 
 	private StoryDB m_db = null;
+	private Context m_context = null;
 
 	// Current focus
 	private Story m_currentStory = null;
@@ -53,6 +56,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public StoryManager(Context context)
 	{
+		m_context = context;
 		m_db = new StoryDB(context);
 		m_bookmarkList = m_db.getAllBookmarks();
 		PublishBookmarkListChange();
@@ -168,6 +172,9 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	}
 
 	public boolean putStory(Story story) {
+		// Set default image if needed
+		if(story.getThumbnail() == null)
+			story.setThumbnail(BitmapFactory.decodeResource(m_context.getResources(), R.drawable.logo));
 		return m_db.setStory(story);
 	}
 
