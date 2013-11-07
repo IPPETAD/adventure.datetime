@@ -84,7 +84,7 @@ public class WebStorageTest extends TestCase {
 		}
 		
 		for (Comment c : returned) {
-			assertTrue(ids.contains(c.getWebId()));
+			assertTrue("Id found in returned, but not in original", ids.contains(c.getWebId()));
 		}
 		
 	}
