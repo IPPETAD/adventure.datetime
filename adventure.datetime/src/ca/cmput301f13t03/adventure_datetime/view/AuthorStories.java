@@ -125,7 +125,11 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 		switch (item.getItemId()) {
 		case R.id.action_new:
-			Intent intent = new Intent(AuthorStories.this, AuthorEdit.class);
+			Story story = new Story();
+			Locator.getAuthorController().saveStory(story);
+			Locator.getDirector().selectStory(story.getId());
+			
+			Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 			startActivityForResult(intent, 0);
 			break;
 		}

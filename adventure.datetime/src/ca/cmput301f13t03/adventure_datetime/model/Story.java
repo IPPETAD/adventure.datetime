@@ -97,7 +97,7 @@ public class Story {
 
 	public Story() {
 		id = UUID.randomUUID();
-		title = "";
+		title = "Untitled";
 		headFragmentId = new UUID(0, 0);
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
