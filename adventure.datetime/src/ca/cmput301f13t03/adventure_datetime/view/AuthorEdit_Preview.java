@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -61,6 +62,16 @@ public class AuthorEdit_Preview extends Fragment implements ICurrentFragmentList
 	private View _rootView;
 	private StoryFragment _sFragment;
 	
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe(this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment fragment) {
 		_sFragment = fragment;

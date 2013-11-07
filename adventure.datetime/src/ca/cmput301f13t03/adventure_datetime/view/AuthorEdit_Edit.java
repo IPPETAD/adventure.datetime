@@ -22,7 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -91,7 +95,11 @@ public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListene
 		
 		content.setText(_sFragment.getStoryText());
 
-		/* Choices */
+		/** Choices **/
+		final List<String> lchoices = new ArrayList<String>();
+		for (Choice choice : _sFragment.getChoices())
+			lchoices.add(choice.getText());
+		
 		choices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -102,7 +110,7 @@ public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListene
 				new AlertDialog.Builder(v.getContext())
 				.setTitle("Actions")
 				.setCancelable(true)
-				.setItems(_sFragment.getChoices().toArray(new String[_sFragment.getChoices().size()]), 
+				.setItems(lchoices.toArray(new String[lchoices.size()]), 
 						new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
