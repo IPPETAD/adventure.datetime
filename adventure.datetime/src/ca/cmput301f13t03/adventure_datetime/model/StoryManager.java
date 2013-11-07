@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
+import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 
@@ -42,15 +43,21 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
+	private Collection<Bookmark>m_bookmarkList = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
+	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 
 	public StoryManager(Context context)
 	{
 		m_db = new StoryDB(context);
+		m_bookmarkList = m_db.getAllBookmarks();
+		PublishBookmarkListChange();
+		Log.v("StoryManager", "There are this many Bookmarks: " + m_bookmarkList.size());
+		
 	}
 
 	//============================================================
@@ -86,6 +93,17 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_storyList.addAll(m_db.getStories());
 		PublishStoryListChange();
 	}
+	
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.add(bookmarkListListener);
+		if(m_bookmarkList != null) {
+			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
+		}
+		m_bookmarkList = new ArrayList<Bookmark>();
+		m_bookmarkList.addAll(m_db.getAllBookmarks());
+		PublishBookmarkListChange();
+
+	}
 
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) {
 		m_fragmentListeners.remove(fragmentListener);
@@ -97,6 +115,10 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public void Unsubscribe(IStoryListListener storyListListener) {
 		m_storyListListeners.remove(storyListListener);
+	}
+	
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.remove(bookmarkListListener);
 	}
 
 	//============================================================
@@ -120,6 +142,12 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	private void PublishStoryListChange() {
 		for (IStoryListListener listListener : m_storyListListeners) {
 			listListener.OnCurrentStoryListChange(m_storyList);
+		}
+	}
+	
+	private void PublishBookmarkListChange() {
+		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
+			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
 		}
 	}
 
@@ -167,19 +195,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
-	}
-
-
-	@Override
-	public void Subscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Bookmark getBookmark(String id) {

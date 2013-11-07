@@ -27,6 +27,7 @@ import java.util.Collection;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -34,6 +35,7 @@ import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
@@ -97,5 +99,16 @@ public class MainView extends Activity implements IBookmarkListListener {
 			}
 		});
 			
+	}
+	
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
+		super.onPause();
 	}
 }
