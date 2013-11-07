@@ -38,7 +38,7 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
  * @since 31/10/13
  */
 public class UserControllerTest extends AndroidTestCase {
-	private AuthorController controller;
+	private UserController controller;
     private StoryManager manager;
 
     @Override
@@ -46,27 +46,6 @@ public class UserControllerTest extends AndroidTestCase {
             super.setUp();    //TODO Implement
             RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
             manager = new StoryManager(context);
-            controller = new AuthorController(manager);
-    }
-
-    public void testSaveStory() throws Exception {
-    	Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
-    	
-    	Assert.assertTrue("Error inserting story", controller.saveStory(story));
-        Story story2 = controller.getStory(story.getId());
-
-        Assert.assertEquals("Not equivalent stories", story.getId(), story2.getId());
-    }
-
-    public void testSaveFragment() throws Exception {
-    	String uuid = UUID.randomUUID().toString();
-        Choice choice = new Choice("test", uuid);
-        StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
-        
-        Assert.assertTrue("Error inserting fragment", controller.saveFragment(fragment));
-        StoryFragment fragment2 = manager.getFragment(uuid);
-        
-        Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
     }
 
     @Override
