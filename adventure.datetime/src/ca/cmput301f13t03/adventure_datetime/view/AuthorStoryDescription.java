@@ -108,6 +108,11 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			}
 		});
 	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.authordesc, menu);
+		return true;
+	}
 	private void setUpView() {
 		if (_story == null) return;
 
