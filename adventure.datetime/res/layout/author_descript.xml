@@ -26,26 +26,13 @@
             android:layout_toRightOf="@id/thumbnail"
             android:orientation="vertical" >
 
-            <RelativeLayout
+            <EditText
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Story Name"
-                    android:textSize="20dp" />
-
-                <ImageButton
-                    android:id="@+id/edit_title"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_toRightOf="@id/title"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ic_action_edit" />
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Story Name"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/author"
@@ -78,16 +65,7 @@
         android:text="Synopsis:"
         android:textSize="20sp" />
 
-    <ImageButton
-        android:id="@+id/edit_content"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/header"
-        android:layout_toRightOf="@id/synopsis"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_action_edit" />
-
-    <TextView
+    <EditText
         android:id="@+id/content"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

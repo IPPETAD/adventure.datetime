@@ -3,12 +3,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
+<!--          <ListView
+            android:id="@+id/list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+-->
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="3" >
 
         <Button
             android:id="@+id/add"
@@ -16,12 +22,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Add Node" />
-        <Button 
+
+        <Button
             android:id="@+id/other"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Other action"/>
+            android:text="Other action" />
     </LinearLayout>
 
 </RelativeLayout>
