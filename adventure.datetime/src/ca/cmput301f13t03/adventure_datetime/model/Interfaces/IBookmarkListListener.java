@@ -22,7 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.Collection;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 
@@ -34,5 +34,5 @@ import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
  *
  */
 public interface IBookmarkListListener {
-	void OnBookmarkListChange(Collection<Bookmark> newBookmarks);
+	void OnBookmarkListChange(Map<String, Bookmark> newBookmarks);
 }

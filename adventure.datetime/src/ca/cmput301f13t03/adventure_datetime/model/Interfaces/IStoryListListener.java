@@ -22,7 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.Collection;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
@@ -31,5 +31,5 @@ import ca.cmput301f13t03.adventure_datetime.model.Story;
  */
 public interface IStoryListListener
 {
-    void OnCurrentStoryListChange(Collection<Story> newStories);
+    void OnCurrentStoryListChange(Map<String, Story> newStories);
 }

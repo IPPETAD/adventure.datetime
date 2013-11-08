@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
-	private List<Story> _stories;
+	private Map<String, Story> _stories;
 	private Story _story;
 	
 	@Override
@@ -86,22 +87,32 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_stories = (List<Story>) newStories;	
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_stories = newStories;	
 		setUpView();
 	}
 	private void setUpView() {
 		if (_story == null) return;
 		if (_stories == null) return;
 		
+		Collection<Story> stories = _stories.values();
+		String title = null;
+		
 		/* Get index of story in list */
-		int i;
-		for (i=0; i<_stories.size(); i++)
-			if (_story.isEqual(_stories.get(i))) break;
+		int index = 0;
+		for (Story story : stories)
+		{
+			if (_story.isEqual(story))
+			{
+				title = story.getTitle();
+				break;
+			}
+			index++;
+		}
 				
-		_pageAdapter.setStories(_stories);
-		_viewPager.setCurrentItem(i);
-		getActionBar().setTitle(_stories.get(i).getTitle());
+		_pageAdapter.setStories(new ArrayList<Story>(stories));
+		_viewPager.setCurrentItem(index);
+		getActionBar().setTitle(title);
 	}
 	
 	@Override

@@ -24,18 +24,19 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public final class StoryManager implements IStoryModelPresenter,
 		IStoryModelDirector {
+	final String DEFAULT_FRAGMENT_TEXT = "<insert content here...>";
 	private static final String TAG = "StoryManager";
 
 	private StoryDB m_db = null;
@@ -44,8 +45,10 @@ public final class StoryManager implements IStoryModelPresenter,
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
-	private Collection<Story> m_storyList = null;
-	private Collection<Bookmark> m_bookmarkList = null;
+	
+	private Map<String, Story> m_storyList = null;
+	private Map<String, Bookmark> m_bookmarkList = null;
+	private Map<String, StoryFragment> m_fragmentList = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
@@ -56,9 +59,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	public StoryManager(Context context) {
 		m_context = context;
 		m_db = new StoryDB(context);
-		m_bookmarkList = m_db.getAllBookmarks();
-		PublishBookmarkListChange();
-
+		
+		m_fragmentList = new HashMap<String, StoryFragment>();
 	}
 
 	// ============================================================
@@ -90,8 +92,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		if (m_storyList != null) {
 			storyListListener.OnCurrentStoryListChange(m_storyList);
 		} else {
-			m_storyList = new ArrayList<Story>();
-			m_storyList.addAll(m_db.getStories());
+			LoadStories();
 			PublishStoryListChange();
 		}
 	}
@@ -101,8 +102,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		if (m_bookmarkList != null) {
 			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
 		} else {
-			m_bookmarkList = new ArrayList<Bookmark>();
-			m_bookmarkList.addAll(m_db.getAllBookmarks());
+			LoadBookmarks();
 			PublishBookmarkListChange();
 		}
 	}
@@ -168,6 +168,21 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_currentFragment = getFragment(fragmentId);
 		PublishCurrentFragmentChange();
 	}
+	
+	public Story CreateNewStory()
+	{
+		Story newStory = new Story();
+		StoryFragment headFragment = new StoryFragment(newStory.getId(), DEFAULT_FRAGMENT_TEXT);
+		
+		newStory.setHeadFragmentId(headFragment);
+		
+		m_storyList.put(newStory.getId(), newStory);
+		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
+		
+		PublishCurrentStoryChange();
+		
+		return newStory;
+	}
 
 	public boolean putStory(Story story) {
 		// Set default image if needed
@@ -183,11 +198,25 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 
 	public Story getStory(String storyId) {
-		return m_db.getStory(storyId);
+		if(m_storyList == null)
+		{
+			LoadStories();
+		}
+		
+		// returns null if there isn't one
+		return m_storyList.get(storyId);
 	}
 
 	public boolean putFragment(StoryFragment fragment) {
-		return m_db.setStoryFragment(fragment);
+		
+		// this really should be transactional...
+		boolean result = m_db.setStoryFragment(fragment);
+		if(result)
+		{
+			result = m_db.setStory(m_currentStory);
+		}
+		
+		return result;
 	}
 
 	public void deleteFragment(UUID fragmentId) {
@@ -196,18 +225,108 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 
 	public StoryFragment getFragment(String fragmentId) {
-		return m_db.getStoryFragment(fragmentId);
+		// The fragment should be part of the current story
+		HashSet<String> fragmentIds = m_currentStory.getFragments();
+		String theId = null;
+		StoryFragment result = null;
+		
+		// verify that the id is indeed part of the current story!
+		for(String id : fragmentIds)
+		{
+			if(fragmentId.equalsIgnoreCase(id))
+			{
+				theId = id;
+			}
+		}
+		
+		if(theId == null)
+		{
+			// Then you requested an id not attached to the current story!
+			throw new RuntimeException("Requested Fragment Id not attached to current story!");
+		}
+		
+		if(m_fragmentList.containsKey(theId))
+		{
+			// great we have it cached!
+			result = m_fragmentList.get(theId);
+		}
+		else
+		{
+			// shit, gotta load, may be in DB or online
+			// attempt DB first
+			result = m_db.getStoryFragment(theId);
+			if(result == null)
+			{
+				// then it wasn't in the database
+				// TODO try fetch from online!
+			}
+			else
+			{
+				// add it to the cache
+				m_fragmentList.put(result.getFragmentID(), result);
+			}
+		}
+		
+		return result;
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
-		return m_db.getStoriesAuthoredBy(author);
+		if(m_storyList == null)
+		{
+			LoadStories();
+		}
+		
+		ArrayList<Story> results = new ArrayList<Story>();
+		
+		for(Story story : m_storyList.values())
+		{
+			if(author.equalsIgnoreCase(story.getAuthor()))
+			{
+				results.add(story);
+			}
+		}
+		
+		return results;
 	}
 
 	public Bookmark getBookmark(String id) {
-		return m_db.getBookmark(id);
+		if(m_bookmarkList == null)
+		{
+			LoadBookmarks();
+		}
+		
+		return m_bookmarkList.get(id);
 	}
 
-	public void setBookmark(Bookmark bookmark) {
-		m_db.setBookmark(bookmark);
+	public void setBookmark() {
+		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
+		m_db.setBookmark(newBookmark);
+		PublishBookmarkListChange();
+	}
+	
+	private void LoadStories()
+	{
+		m_storyList = new HashMap<String, Story>();
+		ArrayList<Story> localStories = m_db.getStories();
+		
+		for(Story story : localStories)
+		{
+			m_storyList.put(story.getId(), story);
+		}
+		
+		// TODO load from online
+	}
+	
+	private void LoadBookmarks()
+	{
+		m_bookmarkList = new HashMap<String, Bookmark>();
+		ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
+		
+		for(Bookmark bookmark : bookmarks)
+		{
+			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
+		}
+		
+		// TODO load from online
 	}
 }

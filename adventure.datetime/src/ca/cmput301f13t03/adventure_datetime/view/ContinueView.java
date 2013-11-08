@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -64,8 +65,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	
-	private List<Bookmark> _bookmarks;
-	private List<Story> _stories;
+	private Map<String, Bookmark> _bookmarks;
+	private Map<String, Story> _stories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,24 +89,22 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 			}
 		});
 	}
-	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
-		_bookmarks = (List<Bookmark>) newBookmarks;
+	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+		_bookmarks = newBookmarks;
 		setUpView();
 	}
-	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_stories = (List<Story>) newStories;
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_stories = newStories;
 		setUpView();
 	}
 	private void setUpView() {
 		if (_bookmarks == null) return;
 		if (_stories == null) return;
 		
-		HashMap<String, Story> hStories = new HashMap<String, Story>();
-		for (Story story : _stories)
-			hStories.put(story.getId(), story);
+		Map<String, Story> hStories = _stories;
 		
 		List<Story> relevants = new ArrayList<Story>();
-		for (Bookmark bookmark : _bookmarks) {
+		for (Bookmark bookmark : _bookmarks.values()) {
 			if (hStories.containsKey(bookmark.getStoryID()))
 				relevants.add(hStories.get(bookmark.getStoryID()));
 		}

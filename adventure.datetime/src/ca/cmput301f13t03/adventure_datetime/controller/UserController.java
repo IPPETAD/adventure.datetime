@@ -52,7 +52,6 @@ public class UserController {
 			Log.e("UserController", e.getMessage());
 			return false;
 		}
-		/* TODO::JT also select head fragment and create save */
 	}
 
 	/**
@@ -72,8 +71,8 @@ public class UserController {
 		}
 	}
 
-	public void SetBookmark(Bookmark bookmark) {
-		m_storyDirector.setBookmark(bookmark);
+	public void SetBookmark() {
+		m_storyDirector.setBookmark();
 	}
 
 	public void AddComment(Comment comment) {

@@ -22,7 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -46,6 +45,8 @@ public interface IStoryModelDirector {
 	/* Commenting out as I don't want to deal with this right now*/
 	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
 
+	public Story CreateNewStory();
+	
 	public boolean putStory(Story story);
 
 	public void deleteStory(String storyId);
@@ -56,7 +57,7 @@ public interface IStoryModelDirector {
 
 	public Story getStory(String storyId);
 
-	public void setBookmark(Bookmark bookmark);
+	public void setBookmark();
 
 	public Bookmark getBookmark(String bookmarkId);
 }
