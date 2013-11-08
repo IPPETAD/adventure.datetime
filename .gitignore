@@ -90,3 +90,6 @@ local.properties
 *.iws
 .idea/
 out/
+
+#Diffing
+*.orig
