@@ -37,12 +37,15 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
 /**
+ * The local database containing all stories, fragments, bookmarks, and subscriptions
+ *
  * @author Andrew Fontaine
  * @version 1.0
  * @since 28/10/13
@@ -91,7 +94,7 @@ public class StoryDB implements BaseColumns {
 				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				COLUMN_GUID + " = ?",
-				new String[]{id},
+				new String[] {id},
 				null,
 				null,
 				null,
@@ -101,7 +104,8 @@ public class StoryDB implements BaseColumns {
 
 		if (cursor.moveToFirst()) {
 			story = createStory(cursor);
-		} else
+		}
+		else
 			story = null;
 
 		cursor.close();
@@ -118,7 +122,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR, STORY_COLUMN_TITLE,
+				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				null,
 				null,
@@ -127,10 +131,10 @@ public class StoryDB implements BaseColumns {
 				null);
 		ArrayList<Story> stories = new ArrayList<Story>();
 
-		if (cursor.moveToFirst()) {
+		if(cursor.moveToFirst()) {
 			do {
 				stories.add(createStory(cursor));
-			} while (cursor.moveToNext());
+			} while(cursor.moveToNext());
 		}
 
 		cursor.close();
@@ -143,6 +147,9 @@ public class StoryDB implements BaseColumns {
 	 *
 	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories by
 	 *         author.
+	 *
+	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories by
+	 *         author.
 	 */
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -151,7 +158,7 @@ public class StoryDB implements BaseColumns {
 				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				STORY_COLUMN_AUTHOR + " = ?",
-				new String[]{author},
+				new String[] {author},
 				null,
 				null,
 				null);
@@ -179,15 +186,15 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[]{_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				new String[] {_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
 				COLUMN_GUID + " = ?",
-				new String[]{id},
+				new String[] {id},
 				null,
 				null,
 				"1");
 
 		StoryFragment frag;
-		if (cursor.moveToFirst())
+		if(cursor.moveToFirst())
 			frag = createStoryFragment(cursor);
 		else
 			frag = null;
@@ -235,26 +242,26 @@ public class StoryDB implements BaseColumns {
 	 * @param fragmentid The _ID of the story fragment
 	 * @return a Bookmark object from the database
 	public Bookmark getBookmark(long storyid, long fragmentid) {
-	SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-	Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-	new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
-	BOOKMARK_COLUMN_FRAGMENTID + " = ? AND " + BOOKMARK_COLUMN_STORYID + " = ?",
-	new String[] {String.valueOf(fragmentid), String.valueOf(storyid)},
-	null,
-	null,
-	null);
+		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
+				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
+				BOOKMARK_COLUMN_FRAGMENTID + " = ? AND " + BOOKMARK_COLUMN_STORYID + " = ?",
+				new String[] {String.valueOf(fragmentid), String.valueOf(storyid)},
+				null,
+				null,
+				null);
 
-	Bookmark bookmark;
+		Bookmark bookmark;
 
-	if(cursor.moveToFirst())
-	bookmark = createBookmark(cursor);
-	else
-	bookmark = null;
+		if(cursor.moveToFirst())
+			bookmark = createBookmark(cursor);
+		else
+			bookmark = null;
 
-	cursor.close();
-	db.close();
-	return bookmark;
+		cursor.close();
+		db.close();
+		return bookmark;
 	}*/
 
 	/**
@@ -268,16 +275,16 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[]{_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
+				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
 				BOOKMARK_COLUMN_STORYID + " = ?",
-				new String[]{storyid},
+				new String[] {storyid},
 				null,
 				null,
 				null);
 
 		Bookmark bookmark;
 
-		if (cursor.moveToFirst())
+		if(cursor.moveToFirst())
 			bookmark = createBookmark(cursor);
 		else
 			bookmark = null;
@@ -287,11 +294,15 @@ public class StoryDB implements BaseColumns {
 		return bookmark;
 	}
 
-
+	/**
+	 * Gets all Bookmarks in the database
+	 *
+	 * @return An ArrayList containing all bookmarks
+	 */
 	public ArrayList<Bookmark> getAllBookmarks() {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[]{BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
+				new String[] {BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_DATE},
 				null,
 				null,
 				null,
@@ -299,10 +310,10 @@ public class StoryDB implements BaseColumns {
 				null);
 
 		ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
-		if (cursor.moveToFirst()) {
+		if(cursor.moveToFirst()) {
 			do {
 				bookmarks.add(createBookmark(cursor));
-			} while (cursor.moveToNext());
+			} while(cursor.moveToNext());
 		}
 
 		return bookmarks;
@@ -319,9 +330,9 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[]{_ID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
+				new String[] {_ID, BOOKMARK_COLUMN_FRAGMENTID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_DATE},
 				BOOKMARK_COLUMN_STORYID + " = ?",
-				new String[]{bookmark.getStoryID()},
+				new String[] {bookmark.getStoryID()},
 				null,
 				null,
 				null);
@@ -330,14 +341,14 @@ public class StoryDB implements BaseColumns {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
-		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime()/1000);
 
 		long updated;
-		if (cursor.moveToFirst()) {
+		if(cursor.moveToFirst()) {
 			Bookmark bookmark1 = createBookmark(cursor);
-			if (bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
-				updated = db.update(BOOKMARK_TABLE_NAME, values, BOOKMARK_COLUMN_STORYID + " = ?",
-						new String[]{BOOKMARK_COLUMN_STORYID});
+			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
+				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
+						new String[] {BOOKMARK_COLUMN_STORYID});
 				cursor.close();
 				db.close();
 				return updated == 1;
@@ -360,9 +371,9 @@ public class StoryDB implements BaseColumns {
 	 * @return True if successful, false if not
 	 */
 	public boolean setStory(Story story) {
-	//	int size = story.getThumbnail().getByteCount();
+		int size = story.getThumbnail().getByteCount();
 		ByteArrayOutputStream blob = new ByteArrayOutputStream();
-		//story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
+		story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
 		byte[] bytes = blob.toByteArray();
 
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -376,16 +387,16 @@ public class StoryDB implements BaseColumns {
 		values.put(COLUMN_GUID, story.getId());
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[]{_ID},
+				new String[] {_ID},
 				COLUMN_GUID + " = ?",
-				new String[]{story.getId()},
+				new String[] {story.getId()},
 				null,
 				null,
 				null);
-		if (cursor.moveToFirst()) {
+		if(cursor.moveToFirst()) {
 			int updated;
 			updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
-					new String[]{story.getId()});
+					new String [] {story.getId()});
 			cursor.close();
 			db.close();
 			return updated == 1;
@@ -413,16 +424,16 @@ public class StoryDB implements BaseColumns {
 		values.put(COLUMN_GUID, frag.getFragmentID());
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[]{_ID, STORYFRAGMENT_COLUMN_STORYID},
+				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
 				COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
-				new String[]{frag.getFragmentID(), frag.getStoryID()},
+				new String[] {frag.getFragmentID(), frag.getStoryID()},
 				null,
 				null,
 				null);
-		if (cursor.moveToFirst()) {
+		if(cursor.moveToFirst()) {
 			int updated;
 			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
-					new String[]{frag.getFragmentID(), frag.getStoryID()});
+					new String[] {frag.getFragmentID(), frag.getStoryID()});
 			cursor.close();
 			db.close();
 			return updated == 1;
@@ -485,8 +496,7 @@ public class StoryDB implements BaseColumns {
 		/* TODO figure out JSON serialization for choices and media */
 		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
 		Gson gson = new Gson();
-		Type collectionType = new TypeToken<Collection<Choice>>() {
-		}.getType();
+		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
 		choices = gson.fromJson(json, collectionType);
 
 		return new StoryFragment(choices, storyID, fragmentID, storyText);
@@ -522,40 +532,40 @@ public class StoryDB implements BaseColumns {
 
 		private static final String CREATE_STORY_TABLE =
 				"CREATE TABLE " + STORY_TABLE_NAME + " ("
-						+ _ID + " INTEGER PRIMARY KEY, "
-						+ COLUMN_GUID + " TEXT, "
-						+ STORY_COLUMN_TITLE + " TEXT, "
-						+ STORY_COLUMN_AUTHOR + " TEXT, "
-						+ STORY_COLUMN_SYNOPSIS + " TEXT, "
-						+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
-						+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
-						+ STORY_COLUMN_THUMBNAIL + " BLOB, "
-						+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
-						+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
-						+ "(" + COLUMN_GUID + ") )";
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ COLUMN_GUID + " TEXT, "
+				+ STORY_COLUMN_TITLE + " TEXT, "
+				+ STORY_COLUMN_AUTHOR + " TEXT, "
+				+ STORY_COLUMN_SYNOPSIS + " TEXT, "
+				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
+				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
+				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
+				+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
+				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
+				+ "(" +  COLUMN_GUID + ") )";
 
 		private static final String CREATE_STORYFRAGMENT_TABLE =
 				"CREATE TABLE " + STORYFRAGMENT_TABLE_NAME + " ("
-						+ _ID + " INTEGER PRIMARY KEY, "
-						+ COLUMN_GUID + " TEXT, "
-						+ STORYFRAGMENT_COLUMN_STORYID + " INTEGER, "
-						+ STORYFRAGMENT_COLUMN_CONTENT + " TEXT, "
-						+ STORYFRAGMENT_COLUMN_CHOICES + " BLOB, "
-						+ "FOREIGN KEY(" + STORYFRAGMENT_COLUMN_STORYID
-						+ ") REFERENCES " + STORY_TABLE_NAME + "("
-						+ COLUMN_GUID + "))";
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ COLUMN_GUID + " TEXT, "
+				+ STORYFRAGMENT_COLUMN_STORYID + " INTEGER, "
+				+ STORYFRAGMENT_COLUMN_CONTENT + " TEXT, "
+				+ STORYFRAGMENT_COLUMN_CHOICES + " BLOB, "
+				+ "FOREIGN KEY(" + STORYFRAGMENT_COLUMN_STORYID
+				+ ") REFERENCES " + STORY_TABLE_NAME + "("
+				+ COLUMN_GUID + "))";
 
 		private static final String CREATE_BOOKMARK_TABLE =
 				"CREATE TABLE " + BOOKMARK_TABLE_NAME + " ("
-						+ _ID + " INTEGER PRIMARY KEY, "
-						+ BOOKMARK_COLUMN_FRAGMENTID + " INTEGER, "
-						+ BOOKMARK_COLUMN_STORYID + " INTEGER, "
-						+ BOOKMARK_COLUMN_DATE + " INTEGER, "
-						+ "FOREIGN KEY(" + BOOKMARK_COLUMN_FRAGMENTID
-						+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
-						+ "(" + COLUMN_GUID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
-						+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
-						+ "))";
+				+ _ID + " INTEGER PRIMARY KEY, "
+				+ BOOKMARK_COLUMN_FRAGMENTID + " INTEGER, "
+				+ BOOKMARK_COLUMN_STORYID + " INTEGER, "
+				+ BOOKMARK_COLUMN_DATE + " INTEGER, "
+				+ "FOREIGN KEY(" + BOOKMARK_COLUMN_FRAGMENTID
+				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
+				+ "(" + COLUMN_GUID + "), FOREIGN KEY (" + BOOKMARK_COLUMN_STORYID
+				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
+				+ "))";
 
 		private static final String DELETE_STORY_TABLE =
 				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
