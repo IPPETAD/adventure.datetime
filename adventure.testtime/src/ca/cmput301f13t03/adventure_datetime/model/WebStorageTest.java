@@ -28,11 +28,13 @@ public class WebStorageTest extends TestCase {
 		c.setTargetId(UUID.randomUUID());
 		c.setWebId(UUID.randomUUID());
 		
-		assertTrue(es.getErrorMessage(), es.putComment(c));
+		boolean result = es.putComment(c);
+		assertTrue(es.getErrorMessage(), result);
 		
 		System.out.println("Comment ID: " + c.getWebId());
 		
-		assertTrue(es.getErrorMessage(), es.deleteComment(c.getWebId()));
+		result = es.deleteComment(c.getWebId());
+		assertTrue(es.getErrorMessage(), result);
 	}
 	
 	public void testGetComments() throws Exception {
@@ -50,7 +52,8 @@ public class WebStorageTest extends TestCase {
 		}
 
 		for (Comment c : comments) {
-			assertTrue(es.getErrorMessage(), es.putComment(c));
+			boolean result = es.putComment(c);
+			assertTrue(es.getErrorMessage(), result);
 		}
 		
 		returned = es.getComments(targetId);
@@ -67,4 +70,5 @@ public class WebStorageTest extends TestCase {
 		}
 		
 	}
+
 }

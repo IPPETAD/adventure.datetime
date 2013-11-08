@@ -22,12 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import io.searchbox.annotations.JestId;
 import java.util.UUID;
 
 public class Comment {
-	
-	@JestId
+
 	private UUID webId;
 	private UUID targetId;
 	private String author;

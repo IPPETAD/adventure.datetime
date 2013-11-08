@@ -78,7 +78,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public Story getStory(UUID storyId) throws Exception {
-		Get get = new Get.Builder("stories", storyId.toString()).build();
+		Get get = new Get.Builder("cmput301f13t03/stories", storyId.toString()).build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(Story.class);
 	}
