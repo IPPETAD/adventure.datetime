@@ -100,38 +100,7 @@ public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListene
 		for (Choice choice : _sFragment.getChoices())
 			lchoices.add(choice.getText());
 		
-		choices.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				getActivity().getActionBar().setSelectedNavigationItem(1);
-				
-				// TODO::JF Have Choice Editing here 
-
-				new AlertDialog.Builder(v.getContext())
-				.setTitle("Actions")
-				.setCancelable(true)
-				.setItems(lchoices.toArray(new String[lchoices.size()]), 
-						new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						//TODO::JF Set new fragment
-					}
-				})
-				.create().show();
-			}			
-		});
 		
-		/* Edit Content */
-		editContent.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(getActivity())
-				.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_edit, null))
-				.setPositiveButton("OK!", null)
-				.setNegativeButton("Cancel", null)
-				.create().show();
-			}
-		});
 		
 		
 	}

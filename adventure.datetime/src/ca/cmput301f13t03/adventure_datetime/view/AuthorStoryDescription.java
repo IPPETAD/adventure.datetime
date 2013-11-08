@@ -47,9 +47,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
@@ -71,6 +73,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 	private static final String TAG = "AuthorStoryDescription";
 
 	private Story _story;
+	private EditText _title, _content;
 
 	@Override
 	public void OnCurrentStoryChange(Story story) {
@@ -82,31 +85,6 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.author_descript);
-
-		/** Layout items **/
-		ImageButton btnEditTitle = (ImageButton) findViewById(R.id.edit_title);
-		ImageButton btnEditSynopsis = (ImageButton) findViewById(R.id.edit_content);
-
-		btnEditTitle.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(AuthorStoryDescription.this)
-				.setView(AuthorStoryDescription.this.getLayoutInflater().inflate(R.layout.dialog_edit, null))
-				.setPositiveButton("OK!", null)
-				.setNegativeButton("Cancel", null)
-				.create().show();
-			}
-		});
-		btnEditSynopsis.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(AuthorStoryDescription.this)
-				.setView(AuthorStoryDescription.this.getLayoutInflater().inflate(R.layout.dialog_edit, null))
-				.setPositiveButton("OK!", null)
-				.setNegativeButton("Cancel", null)
-				.create().show();
-			}
-		});
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,19 +98,20 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		getActionBar().setTitle(_story.getTitle());
 
 		/** Layout items **/
-		TextView title = (TextView) findViewById(R.id.title);
+		_title = (EditText) findViewById(R.id.title);
 		TextView author = (TextView) findViewById(R.id.author);
-		TextView content = (TextView) findViewById(R.id.content);
+		_content = (EditText) findViewById(R.id.content);
 		TextView datetime = (TextView) findViewById(R.id.datetime);
 		TextView fragments = (TextView) findViewById(R.id.fragments);
 		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
+		ImageButton btnEditSynopsis = (ImageButton) findViewById(R.id.edit_content);
 
 		/* Text */
-		title.setText(_story.getTitle());
+		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 		fragments.setText("Fragments: " + "idk..");
-		content.setText(_story.getSynopsis());
+		_content.setText(_story.getSynopsis());
 
 
 		/*	switch (_story.) {
@@ -155,6 +134,8 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			Log.e(TAG, "Status unknown.");
 		}
 		 */
+		
+		
 	}
 	@Override
 	public void onResume() {
@@ -198,6 +179,12 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 				}
 			})
 			.create().show();
+			break;
+		case R.id.action_save:
+			_story.setTitle(_title.getText().toString());
+			_story.setSynopsis(_content.getText().toString());
+			Locator.getAuthorController().saveStory(_story);
+			Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
 			break;
 		default:
 			Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");

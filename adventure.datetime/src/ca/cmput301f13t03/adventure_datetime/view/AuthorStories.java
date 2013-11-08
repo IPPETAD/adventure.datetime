@@ -31,6 +31,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -126,6 +127,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 		switch (item.getItemId()) {
 		case R.id.action_new:
 			Story story = new Story();
+			
 			Locator.getAuthorController().saveStory(story);
 			Locator.getDirector().selectStory(story.getId());
 			
