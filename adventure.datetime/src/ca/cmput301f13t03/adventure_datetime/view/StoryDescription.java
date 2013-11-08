@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
-	private List<Story> _stories;
+	private Map<String, Story> _stories;
 	private Story _story;
 	
 	@Override
@@ -73,6 +74,13 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
+		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				List<Story> storyList = new ArrayList<Story>(_stories.values());
+				StoryDescription.this.getActionBar().setTitle(storyList.get(position).getTitle());
+			}
+		});
 	}
 	@Override
 	public void OnCurrentStoryChange(Story story) {
@@ -80,16 +88,32 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_stories = (List<Story>) newStories;	
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_stories = newStories;	
 		setUpView();
 	}
 	private void setUpView() {
 		if (_story == null) return;
 		if (_stories == null) return;
 		
-		_pageAdapter.setCount(_stories.size());
-		_viewPager.setCurrentItem(_stories.indexOf(_story));
+		Collection<Story> stories = _stories.values();
+		String title = null;
+		
+		/* Get index of story in list */
+		int index = 0;
+		for (Story story : stories)
+		{
+			if (_story.isEqual(story))
+			{
+				title = story.getTitle();
+				break;
+			}
+			index++;
+		}
+				
+		_pageAdapter.setStories(new ArrayList<Story>(stories));
+		_viewPager.setCurrentItem(index);
+		getActionBar().setTitle(title);
 	}
 	
 	@Override
@@ -108,23 +132,30 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 		
-		private int count = 0;
+		private List<StoryDescriptionFragment> _fragments;
 		
 		public StoryPagerAdapter(FragmentManager fm) {
 			super(fm);
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+		}
+		public void setStories(List<Story> newStories) {
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+			for (Story story : newStories) {
+				StoryDescriptionFragment fragment = new StoryDescriptionFragment();
+				fragment.setStory(story);
+				_fragments.add(fragment);
+			}
+			Log.v(TAG, "setStories");
+			this.notifyDataSetChanged();
 		}
 		
 		@Override
 		public Fragment getItem(int i) {
-			return new StoryDescriptionFragment();
-		}
-		public void setCount(int c) {
-			count = c;
-			this.notifyDataSetChanged();
+			return _fragments.get(i);
 		}
 		@Override
 		public int getCount() {
-			return count;
+			return _fragments.size();
 		}
 		
 		@Override
@@ -133,7 +164,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		}
 	}
 	
-	public static class StoryDescriptionFragment extends Fragment implements ICurrentStoryListener {
+	public static class StoryDescriptionFragment extends Fragment {
 		
 		private Story _story;
 		private View _rootView;
@@ -142,28 +173,14 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 			super.onCreate(bundle);
 			setHasOptionsMenu(true);
 		}
-		@Override
-		public void onResume() {
-			Locator.getPresenter().Subscribe(this);
-			super.onResume();
-		}
-		@Override
-		public void onPause() {
-			Locator.getPresenter().Unsubscribe(this);
-			super.onPause();
-		}
-		@Override
-		public void OnCurrentStoryChange(Story newStory) {
-			_story = newStory;
+		public void setStory(Story story) {
+			_story = story;
 			setUpView();
 		}
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			
 			_rootView = inflater.inflate(R.layout.story_descript, container, false);
-			
-			/** Action bar **/
-			getActivity().getActionBar().setTitle("Story Name");
 			
 			setUpView();
 			
@@ -173,6 +190,9 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		private void setUpView() {
 			if (_story == null) return;
 			if (_rootView == null) return;
+			
+			/** Action bar **/
+		//	getActivity().getActionBar().setTitle(_story.getTitle());
 
 			/** Layout items **/
 			Button play = (Button) _rootView.findViewById(R.id.play); 

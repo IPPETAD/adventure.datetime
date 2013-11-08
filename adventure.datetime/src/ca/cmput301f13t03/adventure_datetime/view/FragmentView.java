@@ -136,9 +136,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 		/** Choices **/
 		final List<String> choices = new ArrayList<String>();
-		for (Choice choice : _fragment.getChoices()) {
+		for (Choice choice : _fragment.getChoices())
 			choices.add(choice.getText());
-		}
+		
 		_choices.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

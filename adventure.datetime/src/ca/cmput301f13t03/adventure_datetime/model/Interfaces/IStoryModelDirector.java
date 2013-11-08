@@ -94,7 +94,6 @@ public interface IStoryModelDirector
 	 * 
 	 * @param bookmark
 	 */
-	public void setBookmark(Bookmark bookmark);
 
 	/**
 	 * Fetch a bookmark ID by its ID

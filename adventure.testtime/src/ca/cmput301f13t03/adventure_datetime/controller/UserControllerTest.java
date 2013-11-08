@@ -1,3 +1,4 @@
+package ca.cmput301f13t03.adventure_datetime.controller;
 /*
  * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
@@ -21,62 +22,34 @@
  */
 
 
-package ca.cmput301f13t03.adventure_datetime.controller;
-
-import java.util.HashSet;
 import java.util.UUID;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
+import junit.framework.Assert;
+import android.test.AndroidTestCase;
+import android.test.RenamingDelegatingContext;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 
 /**
- * Controller for aspects of authoring a story
- *
  * @author Evan DeGraff
+ * @version 1.0
+ * @since 31/10/13
  */
-public class AuthorController {
-	
-	private IStoryModelDirector m_storyDirector = null;
+public class UserControllerTest extends AndroidTestCase {
+	private UserController controller;
+    private StoryManager manager;
 
-	public AuthorController(IStoryModelDirector director) {
-		m_storyDirector = director;
-	}
-	
-	public Story CreateStory()
-	{
-		return m_storyDirector.CreateNewStory();
-	}
+    @Override
+    public void setUp() throws Exception {
+            super.setUp();    //TODO Implement
+            RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+            manager = new StoryManager(context);
+    }
 
-	public boolean saveStory(Story story) {
-		return m_storyDirector.putStory(story);
-	}
-
-	public Story getStory(String storyId) {
-		return m_storyDirector.getStory(storyId);
-	}
-
-	public void deleteStory(String storyId) {
-		Story story = m_storyDirector.getStory(storyId);
-		if (story == null) return;
-		
-		HashSet<UUID> fragments = story.getFragmentIds();
-
-		for(UUID fragment : fragments) {
-			deleteFragment(fragment);
-		}
-
-		m_storyDirector.deleteStory(storyId);
-	}
-
-	public boolean saveFragment(StoryFragment fragment) {
-		return m_storyDirector.putFragment(fragment);
-	}
-
-	public void deleteFragment(UUID fragmentId) {
-		m_storyDirector.deleteFragment(fragmentId);
-	}
-	
-	/*public void publish(long storyID){
-		m_storyDirector.publish(storyID);
-	}*/
+    @Override
+    public void tearDown() throws Exception {
+            super.tearDown();    //TODO Implement
+    }
 }

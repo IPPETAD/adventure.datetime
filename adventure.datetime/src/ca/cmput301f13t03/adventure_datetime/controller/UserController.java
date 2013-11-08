@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+] * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -53,7 +53,6 @@ public class UserController {
 			Log.e("UserController", e.getMessage());
 			return false;
 		}
-		/* TODO::JT also select head fragment and create save */
 	}
 
 	/**
@@ -73,8 +72,8 @@ public class UserController {
 		}
 	}
 
-	public void SetBookmark(Bookmark bookmark) {
-		m_storyDirector.setBookmark(bookmark);
+	public void SetBookmark() {
+		m_storyDirector.setBookmark();
 	}
 
 	public void AddComment(Comment comment) {
