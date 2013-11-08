@@ -90,6 +90,17 @@ public class AuthorEdit_Overview extends Fragment {
 						"Created fragment!", Toast.LENGTH_SHORT).show();
 			}
 		});
+		_btnOther.setText("Add Choice");
+		_btnOther.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Choice choice = new Choice("Unset", _fragment.getFragmentID());
+				_fragment.addChoice(choice);
+				Locator.getAuthorController().saveFragment(_fragment);
+				Toast.makeText(getActivity().getApplicationContext(),
+						"Choice created!", Toast.LENGTH_SHORT).show();
+			}
+		});
 		
 		setUpView();
 		
