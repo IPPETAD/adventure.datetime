@@ -1,6 +1,6 @@
 adventure.datetime
 ==================
-An android app involving the creating and consumption of Choose-Your-Own-
+An android app involving the creating and consumption of Choose Your Own 
 Adventure stories.
 
 Authors

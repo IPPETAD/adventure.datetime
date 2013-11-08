@@ -60,20 +60,6 @@ public interface IReaderStorage {
 	Collection<StoryFragment> getAllFragmentsForStory(long storyId); 
 	
 	/**
-	 * Subscribe to a story to receive updates
-	 * @param storyId the story id
-	 * @return True if subscribed, false if it fails
-	 */
-	boolean subsribe(long storyId);
-	
-	/**
-	 * Unsubscribe from a story
-	 * @param storyId the story id
-	 * @return True if unsubscribed, false otherwise
-	 */
-	boolean unsubscribe(long storyId);
-	
-	/**
 	 * Put a story in local storage
 	 * @param storyId the story id
 	 * @return True is saved locally, false otherwise

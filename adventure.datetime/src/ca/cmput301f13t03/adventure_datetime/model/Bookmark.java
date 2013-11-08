@@ -22,9 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.database.Cursor;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Andrew Fontaine
@@ -33,28 +34,28 @@ import java.util.Date;
  */
 public class Bookmark {
 
-	private String fragmentID;
-	private String storyID;
+	private UUID fragmentID;
+	private UUID storyID;
 	private Date date;
 
 	public Bookmark(String storyID, String fragmentID) {
-		this.fragmentID = fragmentID;
-		this.storyID = storyID;
+		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = UUID.fromString(storyID);
 		this.date = Calendar.getInstance().getTime();
 	}
 
 	public Bookmark(String fragmentID, String storyID, Date date) {
-		this.fragmentID = fragmentID;
-		this.storyID = storyID;
+		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = UUID.fromString(storyID);
 		this.date = date;
 	}
 
 	public String getFragmentID() {
-		return fragmentID;
+		return fragmentID.toString();
 	}
 
 	public void setFragmentID(String fragmentID) {
-		this.fragmentID = fragmentID;
+		this.fragmentID = UUID.fromString(fragmentID);
 	}
 
 	public Date getDate() {
@@ -67,10 +68,14 @@ public class Bookmark {
 
 	public String getStoryID() {
 
-		return storyID;
+		return storyID.toString();
 	}
 
 	public void setStoryID(String storyID) {
-		this.storyID = storyID;
+		this.storyID = UUID.fromString(storyID);
+	}
+	public String getFormattedTimestamp() {
+		SimpleDateFormat format = new SimpleDateFormat("mm/dd/yyyy");
+		return format.format(date);
 	}
 }

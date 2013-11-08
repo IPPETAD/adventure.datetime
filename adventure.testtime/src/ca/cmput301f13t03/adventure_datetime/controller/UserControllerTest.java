@@ -1,3 +1,4 @@
+package ca.cmput301f13t03.adventure_datetime.controller;
 /*
  * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
@@ -20,38 +21,35 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model;
 
 import java.util.UUID;
 
+import junit.framework.Assert;
+import android.test.AndroidTestCase;
+import android.test.RenamingDelegatingContext;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
+
 /**
- * @author Andrew Fontaine
+ * @author Evan DeGraff
  * @version 1.0
- * @since 23/10/13
+ * @since 31/10/13
  */
-public class Choice {
+public class UserControllerTest extends AndroidTestCase {
+	private UserController controller;
+    private StoryManager manager;
 
-	private String text;
-	private UUID target;
+    @Override
+    public void setUp() throws Exception {
+            super.setUp();    //TODO Implement
+            RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+            manager = new StoryManager(context);
+    }
 
-	public Choice(String text, String target) {
-		this.text = text;
-		this.target = UUID.fromString(target);
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public String getTarget() {
-		return target.toString();
-	}
-
-	public void setTarget(String target) {
-		this.target = UUID.fromString(target);
-	}
+    @Override
+    public void tearDown() throws Exception {
+            super.tearDown();    //TODO Implement
+    }
 }

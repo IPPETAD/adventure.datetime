@@ -13,7 +13,7 @@
         <HorizontalScrollView
             android:id="@+id/filmstrip_wrapper"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:background="#333333" >
 
             <LinearLayout
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:singleLine="false"
-            android:text="I am watching you, Jesse.."
+            android:text="Content placeholder.."
             android:textSize="18sp" />
 
         <RelativeLayout

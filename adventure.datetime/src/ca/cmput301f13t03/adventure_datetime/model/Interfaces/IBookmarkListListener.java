@@ -22,17 +22,22 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import ca.cmput301f13t03.adventure_datetime.model.Story;
+import java.util.Map;
+
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 
 /**
-*   Interface for listening for changes to the currently selected story
-*   @author Jesse
-*/
-public interface ICurrentStoryListener
+ * 
+ * Interface for listeners to subscribe to bookmark changes.
+ * 
+ * @author James Finlay
+ *
+ */
+public interface IBookmarkListListener 
 {
 	/**
-	 * Callback for when the currently selected story changes
-	 * @param newStory The newly selected story
+	 * Callback for when the bookmark list changes
+	 * @param newBookmarks The new bookmark list
 	 */
-    void OnCurrentStoryChange(Story newStory);
+	 void OnBookmarkListChange(Map<String, Bookmark> newBookmarks);
 }
