@@ -91,7 +91,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR,
+				new String[]{_ID, COLUMN_GUID, STORY_COLUMN_TITLE, STORY_COLUMN_AUTHOR, STORY_COLUMN_TITLE,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				COLUMN_GUID + " = ?",
 				new String[] {id},
@@ -122,7 +122,7 @@ public class StoryDB implements BaseColumns {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
-				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR,
+				new String[] {_ID, COLUMN_GUID, STORY_COLUMN_AUTHOR, STORY_COLUMN_TITLE,
 						STORY_COLUMN_HEAD_FRAGMENT, STORY_COLUMN_SYNOPSIS, STORY_COLUMN_TIMESTAMP, STORY_COLUMN_THUMBNAIL},
 				null,
 				null,
