@@ -34,8 +34,8 @@ import io.searchbox.core.Search;
 import java.util.List;
 import java.util.UUID;
 
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+/*import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;*/
 
 /**
  * Class for interacting with the ES service
@@ -71,7 +71,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<Story> getAllStories() throws Exception {
-		SearchSourceBuilder ssb = new SearchSourceBuilder();
+		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchAllQuery());
 		Search search = new Search.Builder(ssb.toString())
 			.addIndex("stories")
@@ -79,7 +79,8 @@ public class WebStorage {
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Story.class);
+		return result.getSourceAsObjectList(Story.class);*/
+		return null;
 	}
 	
 	/**
@@ -102,7 +103,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
-		SearchSourceBuilder ssb = new SearchSourceBuilder();
+		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchQuery("storyId", storyId.toString()));
 		Search search = new Search.Builder(ssb.toString())
 			.addIndex("fragments")
@@ -110,7 +111,8 @@ public class WebStorage {
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(StoryFragment.class);
+		return result.getSourceAsObjectList(StoryFragment.class);*/
+		return null;
 	}
 	
 	/**
@@ -120,7 +122,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<Comment> getComments(UUID targetId) throws Exception {
-		SearchSourceBuilder ssb = new SearchSourceBuilder();
+		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
 		ssb.query(QueryBuilders.matchQuery("targetId", targetId.toString()));
 		Search search = new Search.Builder(ssb.toString())
 			.addIndex("comments")
@@ -128,7 +130,8 @@ public class WebStorage {
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Comment.class);
+		return result.getSourceAsObjectList(Comment.class);*/
+		return null;
 	}
 
 	/**
@@ -154,7 +157,9 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public boolean deleteComment(UUID commentId) throws Exception {
-		JestResult result = execute(new Delete.Builder("comments", "comment", commentId.toString()).build());
+		JestResult result = execute(new Delete.Builder(commentId.toString())
+			.index("comments")
+			.type("comment").build());
 		return result.isSucceeded();
 	}
 	

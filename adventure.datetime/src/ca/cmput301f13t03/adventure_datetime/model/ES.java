@@ -47,7 +47,7 @@ public class ES {
 		 */
 		public static JestClient getClient() {
 			if (jestClient == null) {
-				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(true).build();
+				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(false).build();
 				JestClientFactory factory = new JestClientFactory();
 				factory.setClientConfig(clientConfig);
 				jestClient = factory.getObject();
