@@ -23,10 +23,12 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -59,12 +61,17 @@ public class AuthorEdit_Edit extends Fragment {
 
 	private View _rootView;
 	private StoryFragment _fragment;
+	private Story _story;
 	
 	private Button _media, _choices;
 	private EditText _content;
 	
 	public void setFragment(StoryFragment sf) {
 		_fragment = sf;
+		setUpView();
+	}
+	public void setStory(Story st) {
+		_story = st;
 		setUpView();
 	}
 	@Override
@@ -78,6 +85,7 @@ public class AuthorEdit_Edit extends Fragment {
 	private void setUpView() {
 		if (_rootView == null) return;
 		if (_fragment == null) return;
+		//if (_story == null) return;
 		
 
 		/** Layout items **/
@@ -95,6 +103,8 @@ public class AuthorEdit_Edit extends Fragment {
 	}
 	public void saveFragment() {
 		_fragment.setStoryText(_content.getText().toString());
+		_story.updateTimestamp();
 		Locator.getAuthorController().saveFragment(_fragment);
+		Locator.getAuthorController().saveStory(_story);
 	}
 }

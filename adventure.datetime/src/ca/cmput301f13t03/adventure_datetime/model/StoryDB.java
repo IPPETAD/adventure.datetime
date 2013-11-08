@@ -596,7 +596,7 @@ public class StoryDB implements BaseColumns {
 			story.addFragment(frag2);
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(1383652800 * 1000);
-			Bookmark bookmark = new Bookmark(story.getId(), frag.getFragmentID(), cal.getTime());
+			Bookmark bookmark = new Bookmark(frag2.getFragmentID(), story.getId(), cal.getTime());
 
 			db.beginTransaction();
 			long inserted = 0;

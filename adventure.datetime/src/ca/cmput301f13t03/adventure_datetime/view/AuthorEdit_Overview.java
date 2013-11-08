@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -53,6 +54,9 @@ public class AuthorEdit_Overview extends Fragment{
 	//	setUpView();
 	}
 	public void saveFragment() {
+		
+	}
+	public void setStory(Story st) {
 		
 	}
 	

@@ -23,8 +23,10 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -56,11 +58,12 @@ import android.widget.Toast;
  * @author James Finlay
  *
  */
-public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener {
+public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener, ICurrentStoryListener {
 	private static final String TAG = "AuthorEdit";
 
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
+	private Story _story;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,17 +114,24 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 	}
 	@Override
 	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
+		Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		super.onResume();
 	}
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
+		Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		super.onPause();
 	}
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_adapter.setFragment(newFragment);
+	}
+	@Override
+	public void OnCurrentStoryChange(Story newStory) {
+		_adapter.setStory(newStory);
+		_story = newStory;
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,6 +202,11 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 				Log.e(TAG, "invalid item #");
 				return null;
 			}
+		}
+		public void setStory(Story st) {
+			_edit.setStory(st);
+			_overview.setStory(st);
+			_preview.setStory(st);
 		}
 		public void setFragment(StoryFragment sf) {
 			_edit.setFragment(sf);

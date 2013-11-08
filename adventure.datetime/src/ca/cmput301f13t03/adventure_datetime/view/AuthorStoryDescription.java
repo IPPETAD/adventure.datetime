@@ -182,8 +182,9 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		case R.id.action_save:
 			_story.setTitle(_title.getText().toString());
 			_story.setSynopsis(_content.getText().toString());
+			_story.updateTimestamp();
 			Locator.getAuthorController().saveStory(_story);
-			Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Story saved!", Toast.LENGTH_SHORT).show();
 			break;
 		default:
 			Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");
