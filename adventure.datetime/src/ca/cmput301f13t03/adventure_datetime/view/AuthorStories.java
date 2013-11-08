@@ -75,7 +75,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				Locator.getDirector().selectStory(item.getId());
+				Locator.getAuthorController().selectStory(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				startActivity(intent);	
@@ -121,10 +121,10 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 		switch (item.getItemId()) {
 		case R.id.action_new:
-			Story story = Locator.getDirector().CreateNewStory();
+			Story story = Locator.getAuthorController().CreateStory();
 			
 			Locator.getAuthorController().saveStory(story);
-			Locator.getDirector().selectStory(story.getId());
+			Locator.getAuthorController().selectStory(story.getId());
 			
 			Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 			startActivityForResult(intent, 0);

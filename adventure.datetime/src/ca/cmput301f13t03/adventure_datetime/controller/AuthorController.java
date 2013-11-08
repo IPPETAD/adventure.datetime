@@ -76,6 +76,16 @@ public class AuthorController {
 		m_storyDirector.deleteFragment(fragmentId);
 	}
 	
+	public void selectStory(String storyId)
+	{
+		m_storyDirector.selectStory(storyId);
+	}
+	
+	public void selectFragment(String fragmentId)
+	{
+		m_storyDirector.selectFragment(fragmentId);
+	}
+	
 	/*public void publish(long storyID){
 		m_storyDirector.publish(storyID);
 	}*/

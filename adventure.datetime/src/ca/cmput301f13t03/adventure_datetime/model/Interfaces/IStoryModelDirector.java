@@ -60,6 +60,11 @@ public interface IStoryModelDirector
 	 * @return Success value
 	 */
 	public boolean putStory(Story story);
+	
+	/**
+	 * Creates a new story with a head fragment
+	 */
+	public Story CreateNewStory();
 
 	/**
 	 * Delete a story from the database

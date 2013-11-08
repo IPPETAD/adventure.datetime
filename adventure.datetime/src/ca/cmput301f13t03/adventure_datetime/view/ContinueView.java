@@ -82,8 +82,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 				
-				Locator.getDirector().selectStory(item.getId());
-				Locator.getDirector().selectFragment(_bookmarks.get(item.getId()).getFragmentID());
+				Locator.getUserController().ResumeStory(item.getId());
 				
 				Intent intent = new Intent(ContinueView.this, FragmentView.class);
 				startActivity(intent);
@@ -92,8 +91,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	}
 	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
-		for (Bookmark mark : newBookmarks)
-			_bookmarks.put(mark.getStoryID(), mark);
+
 		setUpView();
 	}
 	public void OnCurrentStoryListChange(Map<String, Story> newStories) {

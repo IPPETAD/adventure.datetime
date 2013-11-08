@@ -151,7 +151,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 
 		switch (item.getItemId()) {
 		case R.id.action_editfragments:
-			Locator.getDirector().selectFragment(_story.getHeadFragmentId());
+			Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
 			Intent intent = new Intent(this, AuthorEdit.class);
 			startActivity(intent);				
 			break;
