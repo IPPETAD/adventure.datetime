@@ -64,7 +64,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	
-	private List<Bookmark> _bookmarks;
+	private HashMap<String, Bookmark> _bookmarks;
 	private List<Story> _stories;
 
 	@Override
@@ -89,7 +89,9 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 		});
 	}
 	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
-		_bookmarks = (List<Bookmark>) newBookmarks;
+		_bookmarks = new HashMap<String, Bookmark>();
+		for (Bookmark mark : newBookmarks)
+			_bookmarks.put(mark.getStoryID(), mark);
 		setUpView();
 	}
 	public void OnCurrentStoryListChange(Collection<Story> newStories) {
@@ -105,7 +107,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 			hStories.put(story.getId(), story);
 		
 		List<Story> relevants = new ArrayList<Story>();
-		for (Bookmark bookmark : _bookmarks) {
+		for (Bookmark bookmark : _bookmarks.values()) {
 			if (hStories.containsKey(bookmark.getStoryID()))
 				relevants.add(hStories.get(bookmark.getStoryID()));
 		}
@@ -146,12 +148,17 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
 
+			Story item = values[position];
+			
+			/** Layout items **/
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
 
-			// TODO: fill out views from values[position]
+			title.setText(item.getTitle());
+			author.setText("Author: " + item.getAuthor());
+			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getDate());
 
 			
 			return rowView;
