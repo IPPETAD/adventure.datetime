@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.ArrayList;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -61,6 +62,9 @@ public class AuthorEdit_Preview extends Fragment {
 		setUpView();
 	}
 	public void saveFragment() {
+		
+	}
+	public void setStory(Story st) {
 		
 	}
 	@Override

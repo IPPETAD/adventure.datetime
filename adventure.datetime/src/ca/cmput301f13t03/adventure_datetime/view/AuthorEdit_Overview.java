@@ -22,14 +22,22 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.UUID;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * 
@@ -43,17 +51,21 @@ import android.widget.Button;
  * @author James Finlay
  *
  */
-public class AuthorEdit_Overview extends Fragment{
+public class AuthorEdit_Overview extends Fragment {
 	
 	private Button _btnAdd, _btnOther;
 	private StoryFragment _fragment;
+	private ListView _listView;
+	private Story _story;
 	
 	public void setFragment(StoryFragment sf) {
 		_fragment = sf;
-	//	setUpView();
+		setUpView();
 	}
-	public void saveFragment() {
-		
+	public void saveFragment() {}
+	public void setStory(Story st) {
+		_story = st;
+		setUpView();
 	}
 	
 	@Override
@@ -64,8 +76,34 @@ public class AuthorEdit_Overview extends Fragment{
 		
 		_btnAdd = (Button) rootView.findViewById(R.id.add);
 		_btnOther = (Button) rootView.findViewById(R.id.other);
+		_listView = (ListView) rootView.findViewById(R.id.list_view);
+		
+		_btnAdd.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				StoryFragment frag = new StoryFragment(_story.getId(),
+						"", null);
+				_story.addFragment(frag);
+				Locator.getAuthorController().saveFragment(frag);
+				Locator.getAuthorController().saveStory(_story);
+				Toast.makeText(getActivity().getApplicationContext(),
+						"Created fragment!", Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+		setUpView();
 		
 		return rootView;
+	}
+	
+	private void setUpView() {
+		if (_listView ==  null) return;
+		if (_story == null) return;
+		if (_fragment == null) return;
+		
+	/*	for (UUID fragId : _story.) {
+			
+		} */
 	}
 
 }

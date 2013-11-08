@@ -201,6 +201,9 @@ public class Story {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	public void updateTimestamp() {
+		this.timestamp = Calendar.getInstance().getTimeInMillis()/1000;
+	}
 	public HashSet<UUID> getFragmentIds() {
 		return fragmentIDs;
 

@@ -2,7 +2,7 @@
 
     <item
         android:id="@+id/action_editfragments"
-        android:icon="@drawable/ic_action_share"
+        android:icon="@drawable/ic_action_edit"
         android:orderInCategory="1"
         android:showAsAction="always"
         android:title="Edit"/>

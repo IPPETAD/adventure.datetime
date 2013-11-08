@@ -82,7 +82,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 				
-				// TODO: Send fragment info to controller
+				Locator.getDirector().selectStory(item.getId());
+				Locator.getDirector().selectFragment(_bookmarks.get(item.getId()).getFragmentID());
 				
 				Intent intent = new Intent(ContinueView.this, FragmentView.class);
 				startActivity(intent);
@@ -91,6 +92,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	}
 	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
+		for (Bookmark mark : newBookmarks)
+			_bookmarks.put(mark.getStoryID(), mark);
 		setUpView();
 	}
 	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
@@ -145,12 +148,17 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
 
+			Story item = values[position];
+			
+			/** Layout items **/
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
 
-			// TODO: fill out views from values[position]
+			title.setText(item.getTitle());
+			author.setText("Author: " + item.getAuthor());
+			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getFormattedTimestamp());
 
 			
 			return rowView;
