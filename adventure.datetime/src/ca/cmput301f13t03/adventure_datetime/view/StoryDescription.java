@@ -77,7 +77,8 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
-				StoryDescription.this.getActionBar().setTitle(_stories.get(position).getTitle());
+				List<Story> storyList = new ArrayList<Story>(_stories.values());
+				StoryDescription.this.getActionBar().setTitle(storyList.get(position).getTitle());
 			}
 		});
 	}
