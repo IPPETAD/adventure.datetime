@@ -33,6 +33,11 @@ import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
  * @author James Finlay
  *
  */
-public interface IBookmarkListListener {
+public interface IBookmarkListListener 
+{
+	/**
+	 * Callback for when the bookmark list changes
+	 * @param newBookmarks The new bookmark list
+	 */
 	void OnBookmarkListChange(Collection<Bookmark> newBookmarks);
 }
