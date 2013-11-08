@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -58,7 +59,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	private List<Story> _stories;
+	private Map<String, Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				Locator.getDirector().selectStory(item.getId());
+				Locator.getAuthorController().selectStory(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				startActivity(intent);	
@@ -83,8 +84,8 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Collection<Story> stories) {
-		_stories = (List<Story>) stories;
+	public void OnCurrentStoryListChange(Map<String, Story> stories) {
+		_stories = stories;
 		setUpView();
 	}
 	@Override
@@ -103,7 +104,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem,
-				_stories.toArray(new Story[_stories.size()]));
+				_stories.values().toArray(new Story[_stories.size()]));
 
 		_listView.setAdapter(_adapter);
 	}
@@ -120,10 +121,10 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 		switch (item.getItemId()) {
 		case R.id.action_new:
-			Story story = new Story();
+			Story story = Locator.getAuthorController().CreateStory();
 			
 			Locator.getAuthorController().saveStory(story);
-			Locator.getDirector().selectStory(story.getId());
+			Locator.getAuthorController().selectStory(story.getId());
 			
 			Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 			startActivityForResult(intent, 0);

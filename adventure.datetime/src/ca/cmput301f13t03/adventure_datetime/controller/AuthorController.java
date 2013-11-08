@@ -23,15 +23,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.UUID;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-
-import java.util.HashSet;
 
 /**
  * Controller for aspects of authoring a story
@@ -39,10 +35,16 @@ import java.util.HashSet;
  * @author Evan DeGraff
  */
 public class AuthorController {
+	
 	private IStoryModelDirector m_storyDirector = null;
 
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
+	}
+	
+	public Story CreateStory()
+	{
+		return m_storyDirector.CreateNewStory();
 	}
 
 	public boolean saveStory(Story story) {
@@ -58,8 +60,6 @@ public class AuthorController {
 		if (story == null) return;
 		
 		HashSet<UUID> fragments = story.getFragmentIds();
-		Iterator<UUID> iterator = fragments.iterator();
-		UUID fragmentId;
 
 		for(UUID fragment : fragments) {
 			deleteFragment(fragment);
@@ -74,6 +74,16 @@ public class AuthorController {
 
 	public void deleteFragment(UUID fragmentId) {
 		m_storyDirector.deleteFragment(fragmentId);
+	}
+	
+	public void selectStory(String storyId)
+	{
+		m_storyDirector.selectStory(storyId);
+	}
+	
+	public void selectFragment(String fragmentId)
+	{
+		m_storyDirector.selectFragment(fragmentId);
 	}
 	
 	/*public void publish(long storyID){

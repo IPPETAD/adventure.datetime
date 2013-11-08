@@ -208,7 +208,7 @@ public class StoryDB implements BaseColumns {
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[]{_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
-				COLUMN_GUID + " = ?",
+				STORYFRAGMENT_COLUMN_STORYID + " = ?",
 				new String[]{storyid},
 				null,
 				null,
@@ -216,8 +216,12 @@ public class StoryDB implements BaseColumns {
 
 		ArrayList<StoryFragment> fragments = new ArrayList<StoryFragment>();
 
-		while (cursor.moveToFirst() || cursor.moveToNext()) {
-			fragments.add(createStoryFragment(cursor));
+		if(cursor.moveToFirst())
+		{
+			do
+			{
+				fragments.add(createStoryFragment(cursor));
+			}while(cursor.moveToNext());
 		}
 
 		cursor.close();
@@ -451,8 +455,17 @@ public class StoryDB implements BaseColumns {
 		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
 		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TIMESTAMP));
-
-		return new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
+		
+		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
+		
+		ArrayList<StoryFragment> referencedFragments = this.getStoryFragments(id);
+		
+		for(StoryFragment frag : referencedFragments)
+		{
+			newStory.addFragment(frag);
+		}
+		
+		return newStory;
 	}
 
 	/**

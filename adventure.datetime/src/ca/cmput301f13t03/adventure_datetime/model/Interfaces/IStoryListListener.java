@@ -22,14 +22,19 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.Collection;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
  *   Interface for listening for changes to the currently selected story
+ *   @author Jesse
  */
 public interface IStoryListListener
 {
-    void OnCurrentStoryListChange(Collection<Story> newStories);
+	/**
+	 * Callback for when the list of stories changes
+	 * @param newStories The new list of stories
+	 */
+	 void OnCurrentStoryListChange(Map<String, Story> newStories);
 }
