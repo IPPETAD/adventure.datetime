@@ -23,6 +23,9 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.AlertDialog;
@@ -35,8 +38,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * 
@@ -51,7 +56,7 @@ import android.view.MenuItem;
  * @author James Finlay
  *
  */
-public class AuthorEdit extends FragmentActivity {
+public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener {
 	private static final String TAG = "AuthorEdit";
 
 	private ViewPager _viewPager;
@@ -104,7 +109,20 @@ public class AuthorEdit extends FragmentActivity {
 		getActionBar().setSelectedNavigationItem(1);
 
 	}
-
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe(this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
+	@Override
+	public void OnCurrentFragmentChange(StoryFragment newFragment) {
+		_adapter.setFragment(newFragment);
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.authoredit, menu);
@@ -119,6 +137,8 @@ public class AuthorEdit extends FragmentActivity {
 			finish();
 			break;
 		case R.id.action_save:
+			_adapter.saveFragment();
+			Toast.makeText(getApplicationContext(), "Saved Fragment!", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.action_discard:
 			/* Ensure user is not retarded and actually wants to do this */
@@ -147,27 +167,41 @@ public class AuthorEdit extends FragmentActivity {
 	}
 	
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
+		
+		private AuthorEdit_Edit _edit;
+		private AuthorEdit_Overview _overview;
+		private AuthorEdit_Preview _preview;
+		
 		public ViewPagerAdapter(FragmentManager fm) {
 			super(fm);
+			_edit = new AuthorEdit_Edit();
+			_overview = new AuthorEdit_Overview();
+			_preview = new AuthorEdit_Preview();
 		}
 
 		@Override
 		public Fragment getItem(int i) {
-			Fragment fragment = null;
-
 			switch (i) {
 			case 0:
-				fragment = new AuthorEdit_Edit();
-				break;
+				return _edit;
 			case 1:
-				fragment = new AuthorEdit_Overview();
-				break;
+				return _overview;
 			case 2:
-				fragment = new AuthorEdit_Preview();
-				break;
+				return _preview;
 			default:
+				Log.e(TAG, "invalid item #");
+				return null;
 			}
-			return fragment;
+		}
+		public void setFragment(StoryFragment sf) {
+			_edit.setFragment(sf);
+			_overview.setFragment(sf);
+			_preview.setFragment(sf);
+		}
+		public void saveFragment() {
+			_edit.saveFragment();
+			_overview.saveFragment();
+			_preview.saveFragment();
 		}
 
 		@Override

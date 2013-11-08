@@ -50,28 +50,19 @@ import android.widget.TextView;
  * @author James Finlay
  *
  */
-public class AuthorEdit_Preview extends Fragment implements ICurrentFragmentListener {
+public class AuthorEdit_Preview extends Fragment {
 	private static final String TAG = "AuthorEdit";
 	
 	private View _rootView;
-	private StoryFragment _sFragment;
+	private StoryFragment _fragment;
 	
-	@Override
-	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
-		super.onResume();
-	}
-	@Override
-	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
-	}
-	@Override
-	public void OnCurrentFragmentChange(StoryFragment fragment) {
-		_sFragment = fragment;
+	public void setFragment(StoryFragment sf) {
+		_fragment = sf;
 		setUpView();
 	}
-
+	public void saveFragment() {
+		
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) {
@@ -82,22 +73,22 @@ public class AuthorEdit_Preview extends Fragment implements ICurrentFragmentList
 	}
 	private void setUpView() {
 		if (_rootView == null) return;
-		if (_sFragment == null) return;
+		if (_fragment == null) return;
 		
 		/** Layout items **/
 		LinearLayout filmLayout = (LinearLayout) _rootView.findViewById(R.id.filmstrip);
 		HorizontalScrollView filmstrip = (HorizontalScrollView) _rootView.findViewById(R.id.filmstrip_wrapper);
 		TextView content = (TextView) _rootView.findViewById(R.id.content);
 
-		if (_sFragment.getStoryMedia() == null)
-			_sFragment.setStoryMedia(new ArrayList<String>());
+		if (_fragment.getStoryMedia() == null)
+			_fragment.setStoryMedia(new ArrayList<String>());
 		
 		/** Programmatically set filmstrip height **/
 		// TODO : Unshitify this, aka not static value
-		if (_sFragment.getStoryMedia().size() > 0)
+		if (_fragment.getStoryMedia().size() > 0)
 			filmstrip.getLayoutParams().height = 300;
 		
-		content.setText(_sFragment.getStoryText());
+		content.setText(_fragment.getStoryText());
 
 		
 
@@ -105,7 +96,7 @@ public class AuthorEdit_Preview extends Fragment implements ICurrentFragmentList
 		// 2) Set appropriate Layout Params to ImageView
 		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
-		for (int i=0; i<_sFragment.getStoryMedia().size(); i++) {
+		for (int i=0; i<_fragment.getStoryMedia().size(); i++) {
 			//TODO::JF Get images from fragment
 			/*ImageView li = new ImageView(getActivity());
 			li.setScaleType(ScaleType.CENTER_INSIDE);

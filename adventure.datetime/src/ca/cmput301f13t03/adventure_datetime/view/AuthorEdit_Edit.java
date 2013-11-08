@@ -55,25 +55,17 @@ import android.widget.TextView;
  * @author James Finlay
  *
  */
-public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListener {
+public class AuthorEdit_Edit extends Fragment {
 
 	private View _rootView;
-	private StoryFragment _sFragment;
+	private StoryFragment _fragment;
 	
-	@Override
-	public void OnCurrentFragmentChange(StoryFragment newFragment) {
-		_sFragment = newFragment;
+	private Button _media, _choices;
+	private EditText _content;
+	
+	public void setFragment(StoryFragment sf) {
+		_fragment = sf;
 		setUpView();
-	}
-	@Override
-	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
-		super.onResume();
-	}
-	@Override
-	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
@@ -85,23 +77,24 @@ public class AuthorEdit_Edit extends Fragment implements ICurrentFragmentListene
 	}
 	private void setUpView() {
 		if (_rootView == null) return;
-		if (_sFragment == null) return;
+		if (_fragment == null) return;
 		
 
 		/** Layout items **/
-		Button choices = (Button) _rootView.findViewById(R.id.choices);
-		TextView content = (TextView) _rootView.findViewById(R.id.content);
-		ImageButton editContent = (ImageButton) _rootView.findViewById(R.id.edit_content);
+		_media = (Button) _rootView.findViewById(R.id.btn_addMedia);
+		_choices = (Button) _rootView.findViewById(R.id.choices);
+		_content = (EditText) _rootView.findViewById(R.id.content);
 		
-		content.setText(_sFragment.getStoryText());
+		_content.setText(_fragment.getStoryText());
 
 		/** Choices **/
 		final List<String> lchoices = new ArrayList<String>();
-		for (Choice choice : _sFragment.getChoices())
+		for (Choice choice : _fragment.getChoices())
 			lchoices.add(choice.getText());
-		
-		
-		
-		
+	
+	}
+	public void saveFragment() {
+		_fragment.setStoryText(_content.getText().toString());
+		Locator.getAuthorController().saveFragment(_fragment);
 	}
 }

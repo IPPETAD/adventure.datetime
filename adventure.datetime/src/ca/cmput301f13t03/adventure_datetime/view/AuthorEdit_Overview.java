@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -45,6 +46,15 @@ import android.widget.Button;
 public class AuthorEdit_Overview extends Fragment{
 	
 	private Button _btnAdd, _btnOther;
+	private StoryFragment _fragment;
+	
+	public void setFragment(StoryFragment sf) {
+		_fragment = sf;
+	//	setUpView();
+	}
+	public void saveFragment() {
+		
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater,

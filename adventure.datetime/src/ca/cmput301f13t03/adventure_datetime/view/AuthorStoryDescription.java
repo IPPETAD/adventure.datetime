@@ -104,7 +104,6 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		TextView datetime = (TextView) findViewById(R.id.datetime);
 		TextView fragments = (TextView) findViewById(R.id.fragments);
 		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
-		ImageButton btnEditSynopsis = (ImageButton) findViewById(R.id.edit_content);
 
 		/* Text */
 		_title.setText(_story.getTitle());
