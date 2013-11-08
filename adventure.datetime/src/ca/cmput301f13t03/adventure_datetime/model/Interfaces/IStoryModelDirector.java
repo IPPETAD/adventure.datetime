@@ -88,12 +88,9 @@ public interface IStoryModelDirector
 	public Story getStory(String storyId);
 
 	/**
-	 * Save a bookmark to the database
-	 * 
-	 * Why does this take a bookmark???
-	 * 
-	 * @param bookmark
-	 */
+	*	Save a bookmark to the database
+	*/
+	public void setBookmark();
 
 	/**
 	 * Fetch a bookmark ID by its ID

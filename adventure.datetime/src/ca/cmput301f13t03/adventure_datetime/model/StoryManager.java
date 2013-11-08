@@ -120,6 +120,16 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 	}
 
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.add(bookmarkListListener);
+		if (m_bookmarkList != null) {
+			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
+		} else {
+			LoadBookmarks();
+			PublishBookmarkListChange();
+		}
+	}
+
 	/**
 	 * Unsubscribe from callbacks when the current fragment changes
 	 */
@@ -207,8 +217,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 	
 	/**
-	 * Save a story to the database
-	 */
+	* Create a new story and head fragment and insert them into the local database
+	*/
 	public Story CreateNewStory()
 	{
 		Story newStory = new Story();
