@@ -22,3 +22,10 @@ UAlberta. Application is an interactive adventure, similar to the Adventure
 books that were popular in the 1970s and 1980s. This application allows users
 to create, collaborate, play, and build their own choose your own adventure
 story.
+
+3rd Party Libraries
+===================
+Jest 0.0.5 - Apache 2.0 - https://github.com/jviau/Jest (forked from https://github.com/searchbox-io/Jest)
+Gson 2.2.3 - Apache 2.0 - https://code.google.com/p/google-gson/
+Guava 14.0.1 - Apache 2.0 - https://code.google.com/p/guava-libraries/
+Apache Commons Lang 3.0 - Apache 2.0 - http://commons.apache.org/proper/commons-lang/
