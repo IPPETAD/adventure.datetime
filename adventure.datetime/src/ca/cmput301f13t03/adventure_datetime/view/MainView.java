@@ -22,7 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.Collection;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -53,7 +53,7 @@ public class MainView extends Activity implements IBookmarkListListener {
 	private Button _browseBookmarks, _browseStories, _authorBrowse;
 
 	@Override
-	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
+	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
 		if (newBookmarks.size() > 0)
 			_browseBookmarks.setVisibility(View.VISIBLE);
 	}

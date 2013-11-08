@@ -78,7 +78,7 @@ public class BrowseFragment extends Fragment {
 				// Get selected item
 				Story item = (Story) _listView.getItemAtPosition(position);
 				
-				Locator.getDirector().selectStory(item.getId());
+				Locator.getAuthorController().selectStory(item.getId());
 				
 				Intent intent = new Intent(getActivity(), StoryDescription.class);
 				startActivity(intent);

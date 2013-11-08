@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -64,8 +65,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	
-	private HashMap<String, Bookmark> _bookmarks;
-	private List<Story> _stories;
+	private Map<String, Bookmark> _bookmarks;
+	private Map<String, Story> _stories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,31 +82,27 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 				
-				Locator.getDirector().selectStory(item.getId());
-				Locator.getDirector().selectFragment(_bookmarks.get(item.getId()).getFragmentID());
+				Locator.getUserController().ResumeStory(item.getId());
 				
 				Intent intent = new Intent(ContinueView.this, FragmentView.class);
 				startActivity(intent);
 			}
 		});
 	}
-	public void OnBookmarkListChange(Collection<Bookmark> newBookmarks) {
-		_bookmarks = new HashMap<String, Bookmark>();
-		for (Bookmark mark : newBookmarks)
-			_bookmarks.put(mark.getStoryID(), mark);
+	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+		_bookmarks = newBookmarks;
+
 		setUpView();
 	}
-	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_stories = (List<Story>) newStories;
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_stories = newStories;
 		setUpView();
 	}
 	private void setUpView() {
 		if (_bookmarks == null) return;
 		if (_stories == null) return;
 		
-		HashMap<String, Story> hStories = new HashMap<String, Story>();
-		for (Story story : _stories)
-			hStories.put(story.getId(), story);
+		Map<String, Story> hStories = _stories;
 		
 		List<Story> relevants = new ArrayList<Story>();
 		for (Bookmark bookmark : _bookmarks.values()) {
