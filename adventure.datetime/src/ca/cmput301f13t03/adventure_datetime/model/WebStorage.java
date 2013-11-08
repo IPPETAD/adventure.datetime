@@ -34,14 +34,32 @@ import io.searchbox.core.Search;
 import java.util.List;
 import java.util.UUID;
 
-/*import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;*/
-
 /**
  * Class for interacting with the ES service
  * The latest error string can be retrieved via getErrorString
  */
 public class WebStorage {
+	
+	private static final String MATCH_ALL = 
+		"{\n" +
+		"  \"query\" : {\n" +
+		"    \"match_all\" : { }\n" +
+		"  }\n" +
+		"}";
+	
+	private static final String MATCH_ID =
+		"{\n" +
+		"  \"query\" : {\n" +
+		"    \"match\" : {\n" +
+		"      \"%s\" : {\n" +
+		"        \"query\" : \"%s\",\n" +
+		"        \"type\" : \"boolean\"\n" +
+		"      }\n" +
+		"    }\n" +
+		"  }\n" +
+		"}";
+	
+	
 	
 	private JestClient client;
 	private String errorMessage;
@@ -71,16 +89,13 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<Story> getAllStories() throws Exception {
-		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
-		ssb.query(QueryBuilders.matchAllQuery());
-		Search search = new Search.Builder(ssb.toString())
+		Search search = new Search.Builder(MATCH_ALL)
 			.addIndex("stories")
 			.addType("story")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Story.class);*/
-		return null;
+		return result.getSourceAsObjectList(Story.class);
 	}
 	
 	/**
@@ -103,16 +118,14 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
-		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
-		ssb.query(QueryBuilders.matchQuery("storyId", storyId.toString()));
-		Search search = new Search.Builder(ssb.toString())
+		Search search = new Search.Builder(
+				String.format(MATCH_ID, "storyId", storyId.toString()))
 			.addIndex("fragments")
 			.addType("fragment")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(StoryFragment.class);*/
-		return null;
+		return result.getSourceAsObjectList(StoryFragment.class);
 	}
 	
 	/**
@@ -122,16 +135,14 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public List<Comment> getComments(UUID targetId) throws Exception {
-		/*SearchSourceBuilder ssb = new SearchSourceBuilder();
-		ssb.query(QueryBuilders.matchQuery("targetId", targetId.toString()));
-		Search search = new Search.Builder(ssb.toString())
+		Search search = new Search.Builder(
+				String.format(MATCH_ID, "targetId", targetId.toString()))
 			.addIndex("comments")
 			.addType("comment")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Comment.class);*/
-		return null;
+		return result.getSourceAsObjectList(Comment.class);
 	}
 
 	/**
