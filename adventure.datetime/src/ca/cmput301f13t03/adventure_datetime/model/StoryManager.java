@@ -23,8 +23,10 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,36 +34,42 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public final class StoryManager implements IStoryModelPresenter, IStoryModelDirector
-{	
+public final class StoryManager implements IStoryModelPresenter,
+		IStoryModelDirector {
 	private static final String TAG = "StoryManager";
 
 	private StoryDB m_db = null;
+	private Context m_context = null;
 
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	private Collection<Story> m_storyList = null;
+	private Collection<Bookmark> m_bookmarkList = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
+	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 
-	public StoryManager(Context context)
-	{
+	public StoryManager(Context context) {
+		m_context = context;
 		m_db = new StoryDB(context);
+		m_bookmarkList = m_db.getAllBookmarks();
+		PublishBookmarkListChange();
+
 	}
 
-	//============================================================
+	// ============================================================
 	//
-	//	IStoryModelPresenter
+	// IStoryModelPresenter
 	//
-	//	The design is such that a publish will to the subscriber will
-	//	occur immediately if data is available. If not the data will
-	//	be supplied later once it is available.
+	// The design is such that a publish will to the subscriber will
+	// occur immediately if data is available. If not the data will
+	// be supplied later once it is available.
 	//
-	//============================================================
+	// ============================================================
 
 	public void Subscribe(ICurrentFragmentListener fragmentListener) {
 		m_fragmentListeners.add(fragmentListener);
@@ -81,10 +89,22 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_storyListListeners.add(storyListListener);
 		if (m_storyList != null) {
 			storyListListener.OnCurrentStoryListChange(m_storyList);
+		} else {
+			m_storyList = new ArrayList<Story>();
+			m_storyList.addAll(m_db.getStories());
+			PublishStoryListChange();
 		}
-		m_storyList = new ArrayList<Story>();
-		m_storyList.addAll(m_db.getStories());
-		PublishStoryListChange();
+	}
+
+	public void Subscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.add(bookmarkListListener);
+		if (m_bookmarkList != null) {
+			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
+		} else {
+			m_bookmarkList = new ArrayList<Bookmark>();
+			m_bookmarkList.addAll(m_db.getAllBookmarks());
+			PublishBookmarkListChange();
+		}
 	}
 
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) {
@@ -99,11 +119,15 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		m_storyListListeners.remove(storyListListener);
 	}
 
-	//============================================================
+	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
+		m_bookmarkListListeners.remove(bookmarkListListener);
+	}
+
+	// ============================================================
 	//
-	//	Publish
+	// Publish
 	//
-	//============================================================
+	// ============================================================
 
 	private void PublishCurrentStoryChange() {
 		for (ICurrentStoryListener storyListener : m_storyListeners) {
@@ -123,11 +147,17 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 		}
 	}
 
-	//============================================================
+	private void PublishBookmarkListChange() {
+		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
+			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
+		}
+	}
+
+	// ============================================================
 	//
-	//	IStoryModelDirector
+	// IStoryModelDirector
 	//
-	//============================================================
+	// ============================================================
 
 	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
@@ -140,6 +170,10 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	}
 
 	public boolean putStory(Story story) {
+		// Set default image if needed
+		if (story.getThumbnail() == null)
+			story.setThumbnail(BitmapFactory.decodeResource(
+					m_context.getResources(), R.drawable.logo));
 		return m_db.setStory(story);
 	}
 
@@ -167,19 +201,6 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
 		return m_db.getStoriesAuthoredBy(author);
-	}
-
-
-	@Override
-	public void Subscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Bookmark getBookmark(String id) {
