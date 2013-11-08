@@ -22,6 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,23 +32,46 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
-public class MainView extends Activity {
+/**
+ * The first and main activity of the application.
+ * 
+ * Contains three buttons:
+ *  - ContinueView (list of bookmarks)
+ *  - BrowseView (list of stories)
+ *  - Author (create & edit stories)
+ * 
+ * @author James Finlay
+ *
+ */
+public class MainView extends Activity implements IBookmarkListListener {
 	private static final String TAG = "MainView";
 	
+	private Button _browseBookmarks, _browseStories, _authorBrowse;
+
+	@Override
+	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+		if (newBookmarks.size() > 0)
+			_browseBookmarks.setVisibility(View.VISIBLE);
+	}
 	/** Called when activity is first created */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Locator.initializeLocator(getApplicationContext());
+		
+		Locator.initializeLocator(getApplicationContext());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.main);
+		setContentView(R.layout.main);		
 		
-		
-		
-		
-		Button browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
-		browseBookmarks.setOnClickListener(new OnClickListener() {
+		_browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
+		_browseBookmarks.setVisibility(View.INVISIBLE);
+		_browseBookmarks.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MainView.this, ContinueView.class);
@@ -54,8 +79,8 @@ public class MainView extends Activity {
 			}
 		});
 		
-		Button browseStories = (Button) findViewById(R.id.btn_browseStories);
-		browseStories.setOnClickListener(new OnClickListener() {
+		_browseStories = (Button) findViewById(R.id.btn_browseStories);
+		_browseStories.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MainView.this, BrowseView.class);
@@ -63,14 +88,25 @@ public class MainView extends Activity {
 			}
 		});
 		
-		Button authorBrowse = (Button) findViewById(R.id.btn_authorList);
-		authorBrowse.setOnClickListener(new OnClickListener() {
+		_authorBrowse = (Button) findViewById(R.id.btn_authorList);
+		_authorBrowse.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainView.this, AuthorList.class);
+				Intent intent = new Intent(MainView.this, AuthorStories.class);
 				startActivity(intent);
 			}
 		});
 			
+	}
+	
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
+		super.onPause();
 	}
 }

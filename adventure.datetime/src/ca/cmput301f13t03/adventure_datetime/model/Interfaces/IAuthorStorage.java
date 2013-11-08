@@ -20,7 +20,9 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model;
+package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
+
+import ca.cmput301f13t03.adventure_datetime.model.*;
 
 import java.util.Collection;
 

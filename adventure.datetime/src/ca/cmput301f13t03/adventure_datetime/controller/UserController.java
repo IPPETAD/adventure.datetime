@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+] * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
  * Evan DeGraff
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,5 +23,65 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+import android.util.Log;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
+
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
 public class UserController {
+	private IStoryModelDirector m_storyDirector = null;
+
+
+	public UserController(IStoryModelDirector director, IReaderStorage storage) {
+		m_storyDirector = director;
+	}
+
+	/**
+	 * @param storyId
+	 *
+	 * @return true if the story was successfully selected, false if it doesn't exist
+	 */
+	public boolean StartStory(String storyId) {
+		try {
+			m_storyDirector.selectStory(storyId);
+			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
+			return true;
+		} catch (NullPointerException e) {
+			Log.e("UserController", e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * @param id
+	 *
+	 * @return true if story was successfully selected, false if it doesn't exist
+	 */
+	public boolean ResumeStory(String id) {
+		Bookmark bookmark = m_storyDirector.getBookmark(id);
+		try {
+			m_storyDirector.selectStory(bookmark.getStoryID());
+			m_storyDirector.selectFragment(bookmark.getFragmentID());
+			return true;
+		} catch (NullPointerException e) {
+			Log.e("UserController", e.getMessage());
+			return false;
+		}
+	}
+
+	public void SetBookmark() {
+		m_storyDirector.setBookmark();
+	}
+
+	public void AddComment(Comment comment) {
+		/* TODO::JT */
+	}
+
+	public void MakeChoice(Choice choice) {
+		m_storyDirector.selectFragment(choice.getTarget());
+	}
+
 }

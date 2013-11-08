@@ -8,29 +8,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         android:orientation="vertical" >
 
-        <HorizontalScrollView
-            android:id="@+id/filmstrip_wrapper"
+        <Button
+            android:id="@+id/btn_addMedia"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="#333333" >
-
-            <LinearLayout
-                android:id="@+id/filmstrip"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:text="Organize Media" />
 
         <TextView
+            android:id="@+id/synopsis"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="Content:"
+            android:textSize="22sp" />
+
+        <EditText
             android:id="@+id/content"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:padding="10dp"
             android:singleLine="false"
-            android:text="Content placeholder.."
-            android:textSize="18sp" />
+            android:textSize="18sp" 
+            android:hint="Content..."/>
 
         <RelativeLayout
             android:layout_width="match_parent"

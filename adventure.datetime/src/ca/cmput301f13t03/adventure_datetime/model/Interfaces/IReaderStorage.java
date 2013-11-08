@@ -20,9 +20,11 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model;
+package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
 import java.util.Collection;
+
+import ca.cmput301f13t03.adventure_datetime.model.*;
 
 /**
  * Interface for user storage transactions
@@ -56,20 +58,6 @@ public interface IReaderStorage {
 	 * @return A collection of StoryFragment objects
 	 */
 	Collection<StoryFragment> getAllFragmentsForStory(long storyId); 
-	
-	/**
-	 * Subscribe to a story to receive updates
-	 * @param storyId the story id
-	 * @return True if subscribed, false if it fails
-	 */
-	boolean subsribe(long storyId);
-	
-	/**
-	 * Unsubscribe from a story
-	 * @param storyId the story id
-	 * @return True if unsubscribed, false otherwise
-	 */
-	boolean unsubscribe(long storyId);
 	
 	/**
 	 * Put a story in local storage

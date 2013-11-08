@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -74,7 +75,7 @@ public class Story {
 	 */
 	private HashSet<UUID> fragmentIDs;
 
-	public Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
+	protected Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {
 		this.headFragmentId = UUID.fromString(headFragmentId);
 		this.id = UUID.fromString(id);
@@ -87,23 +88,23 @@ public class Story {
 		fragmentIDs.add(this.headFragmentId);
 	}
 
-	public Story(String author, String title, String synopsis) {
+	protected Story(String author, String title, String synopsis) {
 		this.author = author;
 		this.title = title;
 		this.synopsis = synopsis;
 		this.thumbnail = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565); /* for testing purposes */
 		id = UUID.randomUUID();
-		headFragmentId = new UUID(0, 0);
+		headFragmentId = null;
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
 		tags.add("new");
 		timestamp = System.currentTimeMillis() / 1000L;
 	}
 
-	public Story() {
+	protected Story() {
 		id = UUID.randomUUID();
-		title = "";
-		headFragmentId = new UUID(0, 0);
+		title = "Untitled";
+		headFragmentId = null;
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
 		tags.add("new");
@@ -136,10 +137,11 @@ public class Story {
 
 	public void setHeadFragmentId(String headFragmentId) {
 		this.headFragmentId = UUID.fromString(headFragmentId);
+		addFragment(headFragmentId);
 	}
 
 	public void setHeadFragmentId(StoryFragment frag) {
-		this.headFragmentId = UUID.fromString(frag.getFragmentID());
+		setHeadFragmentId(frag.getFragmentID());
 	}
 
 	public Bitmap getThumbnail() {
@@ -194,8 +196,23 @@ public class Story {
 		return timestamp;
 	}
 
+	public String getFormattedTimestamp() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp * 1000);
+		return (cal.get(Calendar.MONTH) + 1) + "/" +
+				cal.get(Calendar.DAY_OF_MONTH) + "/" +
+				cal.get(Calendar.YEAR);
+	}
+
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+	public void updateTimestamp() {
+		this.timestamp = Calendar.getInstance().getTimeInMillis()/1000;
+	}
+	public HashSet<UUID> getFragmentIds() {
+		return fragmentIDs;
+
 	}
 
 	public String getAuthor() {
@@ -204,5 +221,8 @@ public class Story {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	public boolean isEqual(Story other) {
+		return other.getId().equals(this.getId());
 	}
 }

@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -82,5 +83,9 @@ public class Bookmark {
 
 	public void setStoryID(String storyID) {
 		this.storyID = UUID.fromString(storyID);
+	}
+	public String getFormattedTimestamp() {
+		SimpleDateFormat format = new SimpleDateFormat("mm/dd/yyyy");
+		return format.format(date);
 	}
 }

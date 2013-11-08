@@ -22,8 +22,18 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,17 +50,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/** Called when activity is first created */
-public class ContinueView extends Activity {
+/**
+ * View holding list of bookmarks. Accessed from MainView
+ * 
+ * TODO: Load from model
+ * 
+ * @author James Finlay
+ *
+ */
+public class ContinueView extends Activity implements IBookmarkListListener,
+														IStoryListListener {
 	private static final String TAG = "ContinueView";
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
+	
+	private Map<String, Bookmark> _bookmarks;
+	private Map<String, Story> _stories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.browse_bookmarks);
+		setContentView(R.layout.list_view);
 
 		_listView = (ListView) findViewById(R.id.list_view);
 		_listView.setOnItemClickListener(new OnItemClickListener() {
@@ -61,26 +82,48 @@ public class ContinueView extends Activity {
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 				
-				// TODO: Send fragment info to controller
+				Locator.getUserController().ResumeStory(item.getId());
 				
 				Intent intent = new Intent(ContinueView.this, FragmentView.class);
 				startActivity(intent);
 			}
 		});
 	}
+	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+		_bookmarks = newBookmarks;
 
+		setUpView();
+	}
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_stories = newStories;
+		setUpView();
+	}
+	private void setUpView() {
+		if (_bookmarks == null) return;
+		if (_stories == null) return;
+		
+		Map<String, Story> hStories = _stories;
+		
+		List<Story> relevants = new ArrayList<Story>();
+		for (Bookmark bookmark : _bookmarks.values()) {
+			if (hStories.containsKey(bookmark.getStoryID()))
+				relevants.add(hStories.get(bookmark.getStoryID()));
+		}
+		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, 
+				relevants.toArray(new Story[relevants.size()]));
+		_listView.setAdapter(_adapter);
+	}
 	@Override
 	public void onResume() {
-
-		// TODO: Load known bookmarks as views. For now, placeholders are set
-
-		Story[] stories = new Story[10];
-		for (int i=0; i<stories.length; i++)
-			stories[i] = new Story();
-
-		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, stories);
-		_listView.setAdapter(_adapter);
+		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
+		Locator.getPresenter().Subscribe((IStoryListListener)this);
 		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
+		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
+		super.onPause();
 	}
 
 	private class RowArrayAdapter extends ArrayAdapter<Story> {
@@ -102,12 +145,17 @@ public class ContinueView extends Activity {
 
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
 
+			Story item = values[position];
+			
+			/** Layout items **/
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
 			TextView title = (TextView) rowView.findViewById(R.id.title);
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
 
-			// TODO: fill out views from values[position]
+			title.setText(item.getTitle());
+			author.setText("Author: " + item.getAuthor());
+			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getFormattedTimestamp());
 
 			
 			return rowView;

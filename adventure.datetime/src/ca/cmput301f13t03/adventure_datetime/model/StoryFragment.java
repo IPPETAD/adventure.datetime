@@ -72,6 +72,7 @@ public class StoryFragment {
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
+		this.storyMedia = new ArrayList<String>();
 	}
 
 	public StoryFragment(String storyID, String storyText) {
@@ -79,6 +80,7 @@ public class StoryFragment {
 		this.fragmentID = UUID.randomUUID();
 		this.storyText = storyText;
 		this.choices = new ArrayList<Choice>();
+		this.storyMedia = new ArrayList<String>();
 	}
 
 	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
@@ -86,6 +88,7 @@ public class StoryFragment {
 		this.storyID = UUID.fromString(storyID);
 		this.fragmentID = UUID.fromString(fragmentID);
 		this.storyText = storyText;
+		this.storyMedia = new ArrayList<String>();
 	}
 
 	public String getStoryID() {

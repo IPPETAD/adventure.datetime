@@ -70,6 +70,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+.properties
 
 # External tool builders
 .externalToolBuilders/
@@ -89,3 +90,6 @@ local.properties
 *.iws
 .idea/
 out/
+
+#Diffing
+*.orig
