@@ -97,7 +97,7 @@ public class Story {
 
 	public Story() {
 		id = UUID.randomUUID();
-		title = "";
+		title = "Untitled";
 		headFragmentId = new UUID(0, 0);
 		fragmentIDs = new HashSet<UUID>();
 		tags = new HashSet<String>();
@@ -200,6 +200,9 @@ public class Story {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	public void updateTimestamp() {
+		this.timestamp = Calendar.getInstance().getTimeInMillis()/1000;
+	}
 	public HashSet<UUID> getFragmentIds() {
 		return fragmentIDs;
 
@@ -211,5 +214,8 @@ public class Story {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	public boolean isEqual(Story other) {
+		return other.getId().equals(this.getId());
 	}
 }
