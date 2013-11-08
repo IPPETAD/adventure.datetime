@@ -58,8 +58,6 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_db = new StoryDB(context);
 		m_bookmarkList = m_db.getAllBookmarks();
 		PublishBookmarkListChange();
-		Log.v("StoryManager", "There are this many Bookmarks: "
-				+ m_bookmarkList.size());
 
 	}
 
