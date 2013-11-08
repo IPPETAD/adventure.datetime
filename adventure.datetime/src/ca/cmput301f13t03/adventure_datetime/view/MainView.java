@@ -98,4 +98,15 @@ public class MainView extends Activity implements IBookmarkListListener {
 		});
 			
 	}
+	
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
+		super.onPause();
+	}
 }
