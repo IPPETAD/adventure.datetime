@@ -21,33 +21,21 @@ public class WebStorageTest extends TestCase {
 		super.tearDown();
 	}
 
-	public void testDeleteComment() {
+	public void testDeleteComment() throws Exception {
 		Comment c = new Comment();
 		c.setAuthor("lolcat");
 		c.setContent("Can I haz ID?");
 		c.setTargetId(UUID.randomUUID());
 		c.setWebId(UUID.randomUUID());
 		
-		try {
-			es.putComment(c);
-		}
-		catch (Exception ex) {
-			fail("Exception return: " + es.getErrorMessage());
-			ex.printStackTrace();
-		}
+		assertTrue(es.getErrorMessage(), es.putComment(c));
 		
 		System.out.println("Comment ID: " + c.getWebId());
 		
-		try {
-			es.deleteComment(c.getWebId());
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			fail("Exception return: " + es.getErrorMessage());
-		}
+		assertTrue(es.getErrorMessage(), es.deleteComment(c.getWebId()));
 	}
 	
-	public void testGetComments() {
+	public void testGetComments() throws Exception {
 		List<Comment> comments = new ArrayList<Comment>();
 		List<Comment> returned = new ArrayList<Comment>(); // so it compiles
 		UUID targetId = UUID.randomUUID();
@@ -60,23 +48,14 @@ public class WebStorageTest extends TestCase {
 			c.setWebId(UUID.randomUUID());
 			comments.add(c);
 		}
-		
-		String state = "";
-		
-		try {
-			for (Comment c : comments) {
-				state = "putting " + c.getAuthor();
-				es.putComment(c);
-			}
-			state = "getting comments";
-			returned = es.getComments(targetId);		
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			fail(String.format("Exception from client during %s: %s", state, es.getErrorMessage()));
+
+		for (Comment c : comments) {
+			assertTrue(es.getErrorMessage(), es.putComment(c));
 		}
 		
-		assertEquals("Lists different size!", comments.size(), returned.size());
+		returned = es.getComments(targetId);
+		
+		assertEquals("Lists different size!, " + es.getErrorMessage(), comments.size(), returned.size());
 		Set<UUID> ids = new HashSet<UUID>();
 		
 		for (Comment c : comments) {
