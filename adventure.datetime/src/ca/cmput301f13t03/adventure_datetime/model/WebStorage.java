@@ -59,16 +59,19 @@ public class WebStorage {
 		"  }\n" +
 		"}";
 	
-	
+	private static final String defaultIndex = "cmput301f13t03";;
 	
 	private JestClient client;
 	private String errorMessage;
+	private String jsonString;
+	private String _index;
 	
 	/**
 	 * Construct a basic WebStorage object
 	 */
 	public WebStorage() {
 		client = ES.Client.getClient();
+		_index = defaultIndex;
 	}
 
 	/**
@@ -78,7 +81,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public Story getStory(UUID storyId) throws Exception {
-		Get get = new Get.Builder("cmput301f13t03/stories", storyId.toString()).build();
+		Get get = new Get.Builder(_index, storyId.toString()).type("story").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(Story.class);
 	}
@@ -90,7 +93,7 @@ public class WebStorage {
 	 */
 	public List<Story> getAllStories() throws Exception {
 		Search search = new Search.Builder(MATCH_ALL)
-			.addIndex("stories")
+			.addIndex(_index)
 			.addType("story")
 			.build();
 		
@@ -106,7 +109,7 @@ public class WebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public StoryFragment getFragment(UUID fragmentId) throws Exception {
-		Get get = new Get.Builder("fragments", fragmentId.toString()).build();
+		Get get = new Get.Builder(_index, fragmentId.toString()).type("fragment").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(StoryFragment.class);
 	}
@@ -120,7 +123,7 @@ public class WebStorage {
 	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
 		Search search = new Search.Builder(
 				String.format(MATCH_ID, "storyId", storyId.toString()))
-			.addIndex("fragments")
+			.addIndex(_index)
 			.addType("fragment")
 			.build();
 		
@@ -137,7 +140,7 @@ public class WebStorage {
 	public List<Comment> getComments(UUID targetId) throws Exception {
 		Search search = new Search.Builder(
 				String.format(MATCH_ID, "targetId", targetId.toString()))
-			.addIndex("comments")
+			.addIndex(_index)
 			.addType("comment")
 			.build();
 		
@@ -153,7 +156,7 @@ public class WebStorage {
 	 */
 	public boolean putComment(Comment comment) throws Exception {
 		Index index = new Index.Builder(comment)
-			.index("comments")
+			.index(_index)
 			.type("comment")
 			.id(comment.getWebId().toString())
 			.build();
@@ -169,7 +172,7 @@ public class WebStorage {
 	 */
 	public boolean deleteComment(UUID commentId) throws Exception {
 		JestResult result = execute(new Delete.Builder(commentId.toString())
-			.index("comments")
+			.index(_index)
 			.type("comment").build());
 		return result.isSucceeded();
 	}
@@ -189,14 +192,14 @@ public class WebStorage {
 		// I am not cleaning up old fragments because I am assuming we do not support
 		// deleting fragments. If we do support that, then I will have to clean them up.
 		Index index = new Index.Builder(story)
-			.index("stories")
+			.index(_index)
 			.type("story")
 			.id(story.getId())
 			.build();
 		JestResult resultStory = execute(index);
 		
 		Bulk.Builder bulkBuilder = new Bulk.Builder()
-			.defaultIndex("fragments")
+			.defaultIndex(_index)
 			.defaultType("fragment");
 		
 		for (StoryFragment f : fragments) {
@@ -208,14 +211,47 @@ public class WebStorage {
 	}
 
 	/**
-	 * Returns the latest ErrorMessage, or null if none exist.
-	 * ...I think. Not sure how JestClient sets error message
-	 * when it succeeds.
-	 * @return The latest error message, if any
+	 * The latest ErrorMessage, or null if none exist.
+	 * @return The latest error message, or null if none
 	 */
 	public String getErrorMessage() {
 		return this.errorMessage;
 	}
+	
+	/**
+	 * The latest pure JSON result from the ES server
+	 * @return a JSON string returned from the server
+	 */
+	public String getJsonString() {
+		return jsonString;
+	}
+	
+
+	/**
+	 * Gets the current index being used
+	 * @return The index in ES we are using
+	 */
+	public String getIndex() {
+		return this._index;
+	}
+	
+	/**
+	 * Sets the index to run against
+	 * For production use "setDefaultIndex()"
+	 * For test, put "test" in here.
+	 * @return
+	 */
+	public void setIndex(String index) {
+		this._index = index;
+	}
+	
+	/**
+	 * Sets the index to the default production index
+	 */
+	public void setDefaultIndex() {
+		this._index = defaultIndex;
+	}
+
 	
 	/**
 	 * Execute a client action and set this WebRequester's error message
@@ -226,6 +262,7 @@ public class WebStorage {
 	private JestResult execute(Action clientRequest) throws Exception {
 		JestResult result = client.execute(clientRequest);
 		this.errorMessage = result.getErrorMessage();
+		this.jsonString = result.getJsonString();
 		return result;
 	}
 }

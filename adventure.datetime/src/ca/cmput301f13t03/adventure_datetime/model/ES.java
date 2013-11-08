@@ -37,7 +37,7 @@ public class ES {
 	public static class Client {
 		
 		private static final String CON_URL = 
-			"http://cmput301.softwareprocess.es:8080/cmput301f13t03/";
+			"http://cmput301.softwareprocess.es:8080";
 		private static JestClient jestClient;
 		
 		/**
