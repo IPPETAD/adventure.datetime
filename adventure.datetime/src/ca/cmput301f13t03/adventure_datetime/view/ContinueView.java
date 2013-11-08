@@ -158,7 +158,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 
 			title.setText(item.getTitle());
 			author.setText("Author: " + item.getAuthor());
-			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getDate());
+			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getFormattedTimestamp());
 
 			
 			return rowView;
