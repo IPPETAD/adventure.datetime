@@ -81,7 +81,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 				
-				// TODO: Send fragment info to controller
+				Locator.getDirector().selectStory(item.getId());
+				Locator.getDirector().selectFragment(_bookmarks.get(item.getId()).getFragmentID());
 				
 				Intent intent = new Intent(ContinueView.this, FragmentView.class);
 				startActivity(intent);
