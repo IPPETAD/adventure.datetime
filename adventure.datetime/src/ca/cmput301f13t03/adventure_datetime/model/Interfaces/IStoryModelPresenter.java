@@ -30,13 +30,45 @@ package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
  */
 public interface IStoryModelPresenter
 {
+	/**
+	 * Listens for change on the current fragment
+	 */
     void Subscribe(ICurrentFragmentListener fragmentListener);
+    
+    /**
+	 * Listens for change on the current story
+	 */
     void Subscribe(ICurrentStoryListener storyListener);
+    
+    /**
+	 * Listens for change on the current list of stories
+	 */
     void Subscribe(IStoryListListener storyListListener);
+    
+    /**
+	 * Listens for change on the bookmark list
+	 */
     void Subscribe(IBookmarkListListener bookmarkListListener);
     
+    //===========================================================
+    
+    /**
+	 * Stop listening for changes on the current fragment
+	 */
     void Unsubscribe(ICurrentFragmentListener fragmentListener);
+    
+    /**
+	 * Stop listening for changes on the current story
+	 */
     void Unsubscribe(ICurrentStoryListener storyListener);
+    
+    /**
+	 * Stop listening for changes on the current story list
+	 */
     void Unsubscribe(IStoryListListener storyListListener);
+    
+    /**
+	 * Stop listening for changes on the current bookmark list
+	 */
     void Unsubscribe(IBookmarkListListener bookmarkListListener);
 }

@@ -26,8 +26,13 @@ import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
 *   Interface for listening for changes to the currently selected story
+*   @author Jesse
 */
 public interface ICurrentStoryListener
 {
+	/**
+	 * Callback for when the currently selected story changes
+	 * @param newStory The newly selected story
+	 */
     void OnCurrentStoryChange(Story newStory);
 }

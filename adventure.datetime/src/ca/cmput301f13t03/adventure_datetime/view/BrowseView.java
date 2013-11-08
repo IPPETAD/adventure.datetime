@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.Collection;
+import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -55,8 +56,8 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private ViewPagerAdapter _adapter;
 	
 	@Override
-	public void OnCurrentStoryListChange(Collection<Story> newStories) {
-		_adapter.setLocalStories(newStories);	
+	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+		_adapter.setLocalStories(newStories.values());	
 	}
 	
 	// TODO::JF Listen for Server stories

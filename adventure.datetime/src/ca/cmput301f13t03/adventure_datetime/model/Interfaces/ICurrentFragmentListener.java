@@ -26,8 +26,13 @@ import ca.cmput301f13t03.adventure_datetime.model.*;
 
 /**
  *   Interface for listening for changes to the currently selected story
+ *   @author Jesse
  */
 public interface ICurrentFragmentListener
 {
+	/**
+	 * Callback for when the currently selected fragment changed.
+	 * @param newFragment The newly selected fragment
+	 */
     void OnCurrentFragmentChange(StoryFragment newFragment);
 }
