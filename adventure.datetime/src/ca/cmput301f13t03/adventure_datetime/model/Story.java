@@ -212,4 +212,7 @@ public class Story {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	public boolean isEqual(Story other) {
+		return other.getId().equals(this.getId());
+	}
 }
