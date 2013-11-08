@@ -109,7 +109,6 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 			if (hStories.containsKey(bookmark.getStoryID()))
 				relevants.add(hStories.get(bookmark.getStoryID()));
 		}
-		
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, 
 				relevants.toArray(new Story[relevants.size()]));
 		_listView.setAdapter(_adapter);
