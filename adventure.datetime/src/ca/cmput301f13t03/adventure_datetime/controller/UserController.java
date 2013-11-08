@@ -27,6 +27,7 @@ import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
+
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
@@ -83,4 +84,5 @@ public class UserController {
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
 	}
+
 }

@@ -38,6 +38,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 
 	private StoryDB m_db = null;
 
+
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
@@ -51,6 +52,7 @@ public final class StoryManager implements IStoryModelPresenter, IStoryModelDire
 	public StoryManager(Context context)
 	{
 		m_db = new StoryDB(context);
+
 	}
 
 	//============================================================
