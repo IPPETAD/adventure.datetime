@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
@@ -138,6 +139,8 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		final List<String> choices = new ArrayList<String>();
 		for (Choice choice : _fragment.getChoices())
 			choices.add(choice.getText());
+		choices.add("I'm feeling lucky.");
+		
 		
 		_choices.setOnClickListener(new OnClickListener() {
 			@Override
@@ -149,11 +152,15 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 						new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Iterator<Choice> ite = _fragment.getChoices().iterator();
-						Choice choice = null;
-
-						for (int i=0; i<=which; i++)
-							choice = ite.next();
+					
+						/** You feeling lucky, punk? **/
+						if (which == _fragment.getChoices().size())
+							which = (int) (Math.random() * _fragment.getChoices().size());
+						
+						Choice choice = _fragment.getChoices().get(which);
+						
+						Toast.makeText(getApplicationContext(), 
+								choice.getText(), Toast.LENGTH_LONG).show();
 						Locator.getUserController().MakeChoice(choice);
 					}
 				})
