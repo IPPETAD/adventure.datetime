@@ -99,7 +99,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 		if (_fragment.getStoryMedia() == null)
 			_fragment.setStoryMedia(new ArrayList<String>());
-		
+
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
 		if (_fragment.getStoryMedia().size() > 0)
@@ -134,40 +134,65 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});*/
 		}
 
+		if (_fragment.getChoices().size() > 0) {
+			/** Choices **/
+			final List<String> choices = new ArrayList<String>();
+			for (Choice choice : _fragment.getChoices())
+				choices.add(choice.getText());
+			choices.add("I'm feeling lucky.");
 
-		/** Choices **/
-		final List<String> choices = new ArrayList<String>();
-		for (Choice choice : _fragment.getChoices())
-			choices.add(choice.getText());
-		choices.add("I'm feeling lucky.");
-		
-		
-		_choices.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(v.getContext())
-				.setTitle("Actions")
-				.setCancelable(true)
-				.setItems(choices.toArray(new String[choices.size()]), 
-						new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("Actions")
+					.setCancelable(true)
+					.setItems(choices.toArray(new String[choices.size()]), 
+							new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+							/** You feeling lucky, punk? **/
+							if (which == _fragment.getChoices().size())
+								which = (int) (Math.random() * _fragment.getChoices().size());
+
+							Choice choice = _fragment.getChoices().get(which);
+
+							Toast.makeText(getApplicationContext(), 
+									choice.getText(), Toast.LENGTH_LONG).show();
+							Locator.getUserController().MakeChoice(choice);
+						}
+					})
+					.create().show();
+				}
+			});
+		} else {
+			/** End of story **/
+			_choices.setText("The End.");
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("La Fin")
+					.setCancelable(false)
+					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Locator.getUserController().StartStory(_fragment.getStoryID());							
+						}
+					})
+					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+					.create().show();
 					
-						/** You feeling lucky, punk? **/
-						if (which == _fragment.getChoices().size())
-							which = (int) (Math.random() * _fragment.getChoices().size());
-						
-						Choice choice = _fragment.getChoices().get(which);
-						
-						Toast.makeText(getApplicationContext(), 
-								choice.getText(), Toast.LENGTH_LONG).show();
-						Locator.getUserController().MakeChoice(choice);
-					}
-				})
-				.create().show();
-			}
-		});
-
+				}
+			});
+		}
 
 	}
 
