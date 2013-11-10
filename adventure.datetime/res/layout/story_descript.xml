@@ -79,5 +79,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="Start your Adventure!"/>
+    
+    <Button
+        android:id="@+id/restart"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/play"
+        android:text="Continue your Adventure!"/>
+    
 
 </RelativeLayout>
