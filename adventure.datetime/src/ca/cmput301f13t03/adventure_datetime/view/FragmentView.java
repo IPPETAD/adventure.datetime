@@ -169,13 +169,13 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		} else {
 			/** End of story **/
-			_choices.setText("The End.");
+			_choices.setText("The End");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					new AlertDialog.Builder(v.getContext())
 					.setTitle("La Fin")
-					.setCancelable(false)
+					.setCancelable(true)
 					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {

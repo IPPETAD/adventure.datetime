@@ -205,7 +205,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 			title.setText(_story.getTitle());
 			author.setText("Author: " + _story.getAuthor());
 			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
-			fragments.setText("Fragments: " + "Idk");
+			fragments.setText("Fragments: " + _story.getFragmentIds().size());
 			content.setText(_story.getSynopsis());
 			
 			// TODO::JF Load data from model
