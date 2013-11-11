@@ -39,6 +39,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**
@@ -56,35 +58,41 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 	private StoryFragment _fragment;
 	private ViewPager _viewPager;
 	private StoryPagerAdapter _pageAdapter;
-	
+
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_fragment = newFragment;
 		setUpView();
 	}
-	
+
 	private void setUpView() {
 		if (_fragment == null) return;
 		if (_pageAdapter == null) return;
-		
+
 		//_pageAdapter.setIllustrations(_fragment.getStoryMedia());
 		ArrayList<String> list = new ArrayList<String>();
 		for (int i=0; i<5; i++) list.add(""+i);
 		_pageAdapter.setIllustrations(list);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// Fullscreen
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		setContentView(R.layout.viewpager);
-		
+
+
 		_pageAdapter = new StoryPagerAdapter(getSupportFragmentManager());
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_pageAdapter);
-		
+
 		setUpView();
 	}
-	
+
 	@Override
 	public void onResume() {
 		Locator.getPresenter().Subscribe(this);
@@ -98,7 +106,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
 		private List<String> _illustrations;
-		
+
 		public StoryPagerAdapter(FragmentManager fm) {
 			super(fm);
 			_illustrations = new ArrayList<String>();
@@ -108,7 +116,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 			_illustrations = illustrationIDs;
 			notifyDataSetChanged();
 		}
-		
+
 		@Override
 		public Fragment getItem(int pos) {
 			IllustrationFragment frag = new IllustrationFragment();
@@ -120,13 +128,13 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		public int getCount() {
 			return _illustrations.size();
 		}
-		
+
 	}
 	public static class IllustrationFragment extends Fragment {
-		
+
 		private View _rootView;
 		private String _sID;
-		
+
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 		}
@@ -137,23 +145,23 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		@Override
 		public View onCreateView(LayoutInflater inflater, 
 				ViewGroup container, Bundle savedInstanceState) {
-			
+
 			_rootView = inflater.inflate(R.layout.fullscreen_illustration, 
 					container, false);
-			
+
 			setUpView();
-			
+
 			return _rootView;
 		}
 		private void setUpView() {
 			if (_sID == null) return;
 			if (_rootView == null) return;
-			
+
 			ImageView image = (ImageView) _rootView.findViewById(R.id.image);
-			image.setBackgroundResource(R.drawable.grumpy_cat);
-			
+			image.setBackgroundResource(R.drawable.grumpy_cat2);
+
 		}
 	}
-	
-	
+
+
 }
