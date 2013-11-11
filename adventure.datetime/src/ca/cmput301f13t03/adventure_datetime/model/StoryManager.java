@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
@@ -55,6 +56,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
 	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
+	private Set<IAllFragmentsListener> m_allFragmentListeners = new HashSet<IAllFragmentsListener>();
 
 	/**
 	 * Create a new story manager and initializes other components using the provided context.
@@ -106,7 +108,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			storyListListener.OnCurrentStoryListChange(m_storyList);
 		} else {
 			LoadStories();
-			PublishStoryListChange();
+			PublishStoryListChanged();
 		}
 	}
 
@@ -116,7 +118,17 @@ public final class StoryManager implements IStoryModelPresenter,
 			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
 		} else {
 			LoadBookmarks();
-			PublishBookmarkListChange();
+			PublishBookmarkListChanged();
+		}
+	}
+	
+	public void Subscribe(IAllFragmentsListener allFragmentsListener)
+	{
+		m_allFragmentListeners.add(allFragmentsListener);
+		if(m_fragmentList != null && m_currentStory != null)
+		{
+			Map<String, StoryFragment> currentFrags = GetAllCurrentFragments();
+			allFragmentsListener.OnAllFragmentsChange(currentFrags);
 		}
 	}
 
@@ -144,6 +156,11 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
 		m_bookmarkListListeners.remove(bookmarkListListener);
 	}
+	
+	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
+	{
+		m_allFragmentListeners.remove(allFragmentsListener);
+	}
 
 	// ============================================================
 	//
@@ -154,16 +171,19 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Publish a change to the current story to all listeners
 	 */
-	private void PublishCurrentStoryChange() {
+	private void PublishCurrentStoryChanged() {
 		for (ICurrentStoryListener storyListener : m_storyListeners) {
 			storyListener.OnCurrentStoryChange(m_currentStory);
 		}
+		
+		// whenever the current story changes so does the list of current fragments
+		PublishAllFragmentsChanged();
 	}
 
 	/**
 	 * Publish a change to the current fragment to all listeners
 	 */
-	private void PublishCurrentFragmentChange() {
+	private void PublishCurrentFragmentChanged() {
 		for (ICurrentFragmentListener fragmentListener : m_fragmentListeners) {
 			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
 		}
@@ -172,15 +192,28 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Publish a changed to the current list of stories to all listeners
 	 */
-	private void PublishStoryListChange() {
+	private void PublishStoryListChanged() {
 		for (IStoryListListener listListener : m_storyListListeners) {
 			listListener.OnCurrentStoryListChange(m_storyList);
 		}
 	}
 
-	private void PublishBookmarkListChange() {
+	private void PublishBookmarkListChanged() {
 		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
 			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
+		}
+	}
+	
+	private void PublishAllFragmentsChanged()
+	{
+		if(m_currentStory != null && m_fragmentList != null)
+		{
+			Map<String, StoryFragment> currentStoryFragments = GetAllCurrentFragments();
+			
+			for(IAllFragmentsListener allFragListener : m_allFragmentListeners)
+			{
+				allFragListener.OnAllFragmentsChange(currentStoryFragments);
+			}
 		}
 	}
 
@@ -195,7 +228,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void selectStory(String storyId) {
 		m_currentStory = getStory(storyId);
-		PublishCurrentStoryChange();
+		PublishCurrentStoryChanged();
 	}
 
 	/**
@@ -203,7 +236,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void selectFragment(String fragmentId) {
 		m_currentFragment = getFragment(fragmentId);
-		PublishCurrentFragmentChange();
+		PublishCurrentFragmentChanged();
 	}
 	
 	/**
@@ -219,7 +252,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_storyList.put(newStory.getId(), newStory);
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 		
-		PublishCurrentStoryChange();
+		PublishCurrentStoryChanged();
 		
 		return newStory;
 	}
@@ -263,6 +296,8 @@ public final class StoryManager implements IStoryModelPresenter,
 		if(result)
 		{
 			result = m_db.setStory(m_currentStory);
+			
+			PublishAllFragmentsChanged();
 		}
 		
 		return result;
@@ -274,6 +309,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void deleteFragment(UUID fragmentId) {
 		// TODO Needs to be implemented in database.
 
+		PublishAllFragmentsChanged();
 	}
 
 	/**
@@ -359,7 +395,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void setBookmark() {
 		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
 		m_db.setBookmark(newBookmark);
-		PublishBookmarkListChange();
+		PublishBookmarkListChanged();
 	}
 	
 	private void LoadStories()
@@ -386,5 +422,27 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 		
 		// TODO load from online
+	}
+	
+	private Map<String, StoryFragment> GetAllCurrentFragments()
+	{
+		Map<String, StoryFragment> currentFragments = new HashMap<String, StoryFragment>();
+		
+		for(String fragmentId : m_currentStory.getFragments())
+		{
+			// first try to fetch from local cache
+			StoryFragment frag = this.getFragment(fragmentId);
+			
+			if(frag != null)
+			{
+				currentFragments.put(frag.getFragmentID(), frag);
+			}
+			else
+			{
+				Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
+			}
+		}
+		
+		return currentFragments;
 	}
 }
