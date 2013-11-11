@@ -92,6 +92,9 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		_stories = newStories;	
 		setUpView();
 	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {}
+
 	private void setUpView() {
 		if (_story == null) return;
 		if (_stories == null) return;
