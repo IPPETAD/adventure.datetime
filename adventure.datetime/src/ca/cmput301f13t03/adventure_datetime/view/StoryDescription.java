@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -129,7 +130,11 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		super.onPause();
 	}
-	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.storydesc, menu);
+		return true;
+	}
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 		
 		private List<StoryDescriptionFragment> _fragments;

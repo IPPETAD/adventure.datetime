@@ -27,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -85,6 +86,11 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
 		setUpView();
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.fragmentview, menu);
+		return true;
 	}
 
 	public void setUpView() {
