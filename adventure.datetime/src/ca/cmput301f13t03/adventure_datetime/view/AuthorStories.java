@@ -164,7 +164,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
 			title.setText(item.getTitle());
-			fragments.setText("Fragments: " + "idk");
+			fragments.setText("Fragments: " + item.getFragmentIds().size());
 			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());
 			
 			/*

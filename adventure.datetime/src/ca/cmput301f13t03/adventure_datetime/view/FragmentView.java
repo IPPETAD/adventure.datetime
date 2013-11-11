@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
@@ -139,34 +140,64 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		}
 
+		if (_fragment.getChoices().size() > 0) {
+			/** Choices **/
+			final List<String> choices = new ArrayList<String>();
+			for (Choice choice : _fragment.getChoices())
+				choices.add(choice.getText());
+			choices.add("I'm feeling lucky.");
 
-		/** Choices **/
-		final List<String> choices = new ArrayList<String>();
-		for (Choice choice : _fragment.getChoices())
-			choices.add(choice.getText());
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("Actions")
+					.setCancelable(true)
+					.setItems(choices.toArray(new String[choices.size()]), 
+							new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
 
-		_choices.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(v.getContext())
-				.setTitle("Actions")
-				.setCancelable(true)
-				.setItems(choices.toArray(new String[choices.size()]), 
-						new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Iterator<Choice> ite = _fragment.getChoices().iterator();
-						Choice choice = null;
+							/** You feeling lucky, punk? **/
+							if (which == _fragment.getChoices().size())
+								which = (int) (Math.random() * _fragment.getChoices().size());
 
-						for (int i=0; i<=which; i++)
-							choice = ite.next();
-						Locator.getUserController().MakeChoice(choice);
-					}
-				})
-				.create().show();
-			}
-		});
+							Choice choice = _fragment.getChoices().get(which);
 
+							Toast.makeText(getApplicationContext(), 
+									choice.getText(), Toast.LENGTH_LONG).show();
+							Locator.getUserController().MakeChoice(choice);
+						}
+					})
+					.create().show();
+				}
+			});
+		} else {
+			/** End of story **/
+			_choices.setText("The End");
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("La Fin")
+					.setCancelable(true)
+					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Locator.getUserController().StartStory(_fragment.getStoryID());							
+						}
+					})
+					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+					.create().show();
+					
+				}
+			});
+		}
 
 	}
 
