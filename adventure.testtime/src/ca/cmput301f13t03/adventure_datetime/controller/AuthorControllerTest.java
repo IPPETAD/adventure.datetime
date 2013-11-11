@@ -50,7 +50,11 @@ public class AuthorControllerTest extends AndroidTestCase {
 	}
 
 	public void testSaveStory() throws Exception {
-		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
+		Story story = controller.CreateStory();
+		
+		story.setAuthor("TestAuthor");
+		story.setTitle("TestTitle");
+		story.setSynopsis("TestSynop");
 
 		Assert.assertTrue("Error inserting story", controller.saveStory(story));
 		Story story2 = controller.getStory(story.getId());
