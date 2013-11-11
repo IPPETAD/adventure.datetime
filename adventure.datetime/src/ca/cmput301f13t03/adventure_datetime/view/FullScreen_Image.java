@@ -22,6 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 /**
@@ -33,8 +39,44 @@ import android.support.v4.app.FragmentActivity;
  * @author James Finlay
  *
  */
-public class FullScreen_Image extends FragmentActivity {
+public class FullScreen_Image extends FragmentActivity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentActivity";
+
+	private StoryFragment _fragment;
+	
+	@Override
+	public void OnCurrentFragmentChange(StoryFragment newFragment) {
+		_fragment = newFragment;
+		setUpView();
+	}
+	
+	private void setUpView() {
+		if (_fragment == null) return;
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fullscreen_illustration);
+		
+		
+		
+	}
+	
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe(this);
+		super.onResume();
+	}
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
+	
+	public static class IllustrationFragment extends Fragment {
+		
+	}
 	
 	
 }
