@@ -74,6 +74,9 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		for (int i=0; i<5; i++) list.add(""+i);
 		_pageAdapter.setIllustrations(list);
 	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
