@@ -37,6 +37,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -135,6 +136,15 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		getMenuInflater().inflate(R.menu.storydesc, menu);
 		return true;
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 		
 		private List<StoryDescriptionFragment> _fragments;

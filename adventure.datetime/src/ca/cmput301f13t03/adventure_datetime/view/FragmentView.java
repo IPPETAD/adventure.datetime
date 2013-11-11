@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -87,12 +88,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		setContentView(R.layout.fragment_view);
 		setUpView();
 	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.fragmentview, menu);
-		return true;
-	}
-
 	public void setUpView() {
 		if (_fragment == null) return;
 
@@ -168,6 +163,21 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		});
 
 
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+
+		getMenuInflater().inflate(R.menu.storydesc, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }
