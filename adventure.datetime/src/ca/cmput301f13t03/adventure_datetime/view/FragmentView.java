@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -133,7 +134,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			li.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// TODO: Open image in fullscreen
+					startActivity(new Intent(FragmentView.this, FullScreen_Image.class));
 				}
 			});
 		}
