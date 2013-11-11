@@ -29,6 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:singleLine="true"
                 android:text="Story Name"
                 android:textSize="20dp" />
 
@@ -51,41 +52,51 @@
                 android:text="Fragments: 69" />
         </LinearLayout>
     </RelativeLayout>
-    
-    <TextView
-        android:id="@+id/synopsis"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:singleLine="true"
-        android:text="Synopsis:"
-        android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/synopsis"
-        android:layout_margin="10dp"
-        android:singleLine="false"
-        android:text="I am watching you, Jesse.."
-        android:textSize="18sp" />
-    
-    <Button 
+    <Button
         android:id="@+id/play"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Start your Adventure!"/>
-    
+        android:text="Start your Adventure!" />
+
     <Button
         android:id="@+id/restart"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/play"
-        android:text="Continue your Adventure!"/>
-    
+        android:text="Continue your Adventure!" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/restart"
+        android:layout_below="@id/header" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/synopsis"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="Synopsis:"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:singleLine="false"
+                android:text="Placeholder text.."
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
