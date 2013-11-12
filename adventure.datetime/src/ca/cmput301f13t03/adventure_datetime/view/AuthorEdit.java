@@ -205,17 +205,14 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		}
 		public void setStory(Story st) {
 			_edit.setStory(st);
-			_overview.setStory(st);
 			_preview.setStory(st);
 		}
 		public void setFragment(StoryFragment sf) {
 			_edit.setFragment(sf);
-			_overview.setFragment(sf);
 			_preview.setFragment(sf);
 		}
 		public void saveFragment() {
 			_edit.saveFragment();
-			_overview.saveFragment();
 			_preview.saveFragment();
 		}
 
