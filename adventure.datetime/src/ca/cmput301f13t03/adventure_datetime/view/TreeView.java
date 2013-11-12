@@ -289,17 +289,62 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 					centerY /= linkedFrags.size();
 				}
 				
-				PlaceNear(centerX, centerY);
+				PlaceNear(centerX, centerY, fragment);
 			}
 			
-			private void PlaceNear(int x, int y)
+			private void PlaceNear(int x, int y, FragmentNode fragment)
 			{
+				boolean isPlaced = false;
 				
+				// first try placing at the original point, if not we'll expand our search outwards
+				fragment.x = x;
+				fragment.y = y;
+				isPlaced = TryPlace(fragment);
+				
+				if(!isPlaced)
+				{
+					// then we failed to place at the desired point
+					// search outwards by trying locations and stopping
+					// after a success
+					final double EXPECTED_RADIUS = FragmentNode.WIDTH;
+					final double VERTICAL_MOD = FragmentNode.HEIGHT / EXPECTED_RADIUS;
+					final double HORIZONTAL_MOD = FragmentNode.WIDTH / EXPECTED_RADIUS;
+					
+					// select a random 45 degree angle
+					double angle = (Math.random() * 7);
+					angle *= 45;
+					double radiusModifier = 1.0;
+					double INITIAL_ANGLE = angle;
+					
+					while(!isPlaced)
+					{
+						fragment.x = (int) (Math.cos(angle) * EXPECTED_RADIUS * VERTICAL_MOD * radiusModifier);
+						fragment.y = (int) (Math.sin(angle) * EXPECTED_RADIUS * HORIZONTAL_MOD * radiusModifier);
+						isPlaced = TryPlace(fragment);
+						
+						angle += 45.0;
+						if(angle - INITIAL_ANGLE > 360.0)
+						{
+							angle -= 360.0;
+							radiusModifier++;
+						}
+					}
+				}
 			}
 			
-			private boolean TryPlace(int x, int y)
+			private boolean TryPlace(FragmentNode fragment)
 			{
-				GridSegment gridSegment = GetGridSegmentAt(x, y);
+				GridSegment gridSegment = GetGridSegmentAt(fragment.x, fragment.y);
+				
+				if(gridSegment.CanPlace(fragment))
+				{
+					gridSegment.Place(fragment);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			
 			private GridSegment GetGridSegmentAt(int x, int y)
@@ -320,7 +365,11 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 					
 					// round x down to the nearest SEGMENT_SIZE
 					// down is defined as closer to negative infinity
-					int newX = (int) Math.floor(x / 100.0) * 100;
+					int newX = (int) Math.floor(x / (float)SEGMENT_SIZE) * SEGMENT_SIZE;
+					int newY = (int) Math.floor(y / (float)SEGMENT_SIZE) * SEGMENT_SIZE;
+					
+					result = new GridSegment(newX, newY, SEGMENT_SIZE, SEGMENT_SIZE);
+					m_gridSegments.add(result);
 				}
 				
 				return result;
@@ -432,8 +481,8 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	 */
 	private class FragmentNode extends Region
 	{
-		private static final int WIDTH = 125;
-		private static final int HEIGHT = 125;
+		public static final int WIDTH = 40;
+		public static final int HEIGHT = 25;
 		private static final int MAX_TXT_LENGTH = 25;
 		
 		private StoryFragment m_fragment = null;
