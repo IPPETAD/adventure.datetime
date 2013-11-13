@@ -53,7 +53,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
-	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
+	private Set<ILocalStoriesListener> m_storyListListeners = new HashSet<ILocalStoriesListener>();
 	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 
 	/**
@@ -100,7 +100,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Subscribe to changes for the current list of stories
 	 */
-	public void Subscribe(IStoryListListener storyListListener) {
+	public void Subscribe(ILocalStoriesListener storyListListener) {
 		m_storyListListeners.add(storyListListener);
 		if (m_storyList != null) {
 			storyListListener.OnCurrentStoryListChange(m_storyList);
@@ -137,7 +137,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Unsubscribe from callbakcs when the current list of stories changes
 	 */
-	public void Unsubscribe(IStoryListListener storyListListener) {
+	public void Unsubscribe(ILocalStoriesListener storyListListener) {
 		m_storyListListeners.remove(storyListListener);
 	}
 
@@ -173,7 +173,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 * Publish a changed to the current list of stories to all listeners
 	 */
 	private void PublishStoryListChange() {
-		for (IStoryListListener listListener : m_storyListListeners) {
+		for (ILocalStoriesListener listListener : m_storyListListeners) {
 			listListener.OnCurrentStoryListChange(m_storyList);
 		}
 	}

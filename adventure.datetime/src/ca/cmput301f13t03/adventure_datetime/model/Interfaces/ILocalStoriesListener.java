@@ -22,53 +22,19 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
+import java.util.Map;
+
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+
 /**
- * Presents the model information to an external package such as a view. Only supplies data
- * in a readonly format.
- *
- * AKA : IModelGet
+ *   Interface for listening for changes to the currently selected story
+ *   @author Jesse
  */
-public interface IStoryModelPresenter
+public interface ILocalStoriesListener
 {
 	/**
-	 * Listens for change on the current fragment
+	 * Callback for when the list of stories changes
+	 * @param newStories The new list of stories
 	 */
-    void Subscribe(ICurrentFragmentListener fragmentListener);
-    
-    /**
-	 * Listens for change on the current story
-	 */
-    void Subscribe(ICurrentStoryListener storyListener);
-    
-    /**
-	 * Listens for change on the current list of stories
-	 */
-    void Subscribe(ILocalStoriesListener storyListListener);
-    
-    /**
-	 * Listens for change on the bookmark list
-	 */
-    void Subscribe(IBookmarkListListener bookmarkListListener);
-    
-    //===========================================================
-    
-    /**
-	 * Stop listening for changes on the current fragment
-	 */
-    void Unsubscribe(ICurrentFragmentListener fragmentListener);
-    
-    /**
-	 * Stop listening for changes on the current story
-	 */
-    void Unsubscribe(ICurrentStoryListener storyListener);
-    
-    /**
-	 * Stop listening for changes on the current story list
-	 */
-    void Unsubscribe(ILocalStoriesListener storyListListener);
-    
-    /**
-	 * Stop listening for changes on the current bookmark list
-	 */
-    void Unsubscribe(IBookmarkListListener bookmarkListListener);
+	 void OnCurrentStoryListChange(Map<String, Story> newStories);
 }

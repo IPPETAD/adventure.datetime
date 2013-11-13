@@ -28,7 +28,7 @@ import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
@@ -55,7 +55,7 @@ import android.widget.ListView;
  * @author James Finlay
  *
  */
-public class AuthorStories extends FragmentActivity implements IStoryListListener {
+public class AuthorStories extends FragmentActivity implements ILocalStoriesListener {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
