@@ -2,6 +2,11 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,10 +18,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CommentsView extends Activity {
+public class CommentsView extends Activity implements ICurrentStoryListener,
+												ICurrentFragmentListener {
 	public static final String COMMENT_TYPE = "forStory";
 	
 	private ListView _listView;
+	private Story _story;
+	private StoryFragment _fragment;
 	private RowArrayAdapter _adapter;
 	private boolean forStoryEh;
 	
@@ -31,12 +39,39 @@ public class CommentsView extends Activity {
 		
 		setUpView();
 	}
-	
+	@Override
+	protected void onResume() {
+		if (forStoryEh)	
+			Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
+		else
+			Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		super.onResume();
+	}
+	@Override
+	protected void onPause() {
+		if (forStoryEh)
+			Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
+		else
+			Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
+		super.onPause();
+	}
+	@Override
+	public void OnCurrentStoryChange(Story story) {
+		_story = story;
+		setUpView();
+	}
+	@Override
+	public void OnCurrentFragmentChange(StoryFragment fragment) {
+		_fragment = fragment;
+		setUpView();
+	}
 	private void setUpView() {
 		if (_listView == null) return;
+		if (_story == null && forStoryEh) return;
+		if (_fragment == null && !forStoryEh) return;
 		
 		// TODO: Use model data
-		
+		// TODO: Send diff comments whether from story or fragment
 		Comment comments[] = new Comment[5];
 		_adapter = new RowArrayAdapter(this, R.layout.comment_single, comments);
 		

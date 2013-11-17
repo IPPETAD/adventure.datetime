@@ -140,6 +140,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			Locator.getUserController().StartStory(_story.getId());
 			Intent intent = new Intent(this, CommentsView.class);
 			intent.putExtra(CommentsView.COMMENT_TYPE, true);
 			startActivity(intent);
