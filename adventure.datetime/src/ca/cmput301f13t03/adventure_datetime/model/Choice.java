@@ -25,33 +25,87 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import java.util.UUID;
 
 /**
+ * A choice the user cna make at the end of the fragment
+ *
  * @author Andrew Fontaine
  * @version 1.0
  * @since 23/10/13
  */
 public class Choice {
 
+	/**
+	 * The text describing the choice
+	 */
 	private String text;
+	/**
+	 * The UUID of the target fragment
+	 */
 	private UUID target;
 
+    /**
+     * Constructs a new Choice
+     *
+     * @param text Text of the new Choice
+     * @param target UUID of the target StoryFragment
+     */
 	public Choice(String text, String target) {
 		this.text = text;
 		this.target = UUID.fromString(target);
 	}
 
+    /**
+     * Gets the text of the Choice
+     *
+     * @return Text of Choice
+     */
 	public String getText() {
 		return text;
 	}
 
+    /**
+     * Sets the text of the Choice
+     *
+     * @param text The text to set
+     */
 	public void setText(String text) {
 		this.text = text;
 	}
 
+    /**
+     * Gets the UUID of the target StoryFragment
+     *
+     * @return UUID of the target StoryFragment
+     */
 	public String getTarget() {
 		return target.toString();
 	}
 
+    /**
+     * Sets the new target for the Choice
+     *
+     * @param target UUID of the new target
+     */
 	public void setTarget(String target) {
 		this.target = UUID.fromString(target);
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Choice choice = (Choice) o;
+
+        if (!target.equals(choice.target)) return false;
+        if (!text.equals(choice.text)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = text.hashCode();
+        result = 31 * result + target.hashCode();
+        return result;
+    }
 }

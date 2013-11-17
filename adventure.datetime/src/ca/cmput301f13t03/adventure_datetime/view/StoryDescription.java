@@ -103,7 +103,7 @@ public class StoryDescription extends FragmentActivity implements ILocalStoriesL
 		int index = 0;
 		for (Story story : stories)
 		{
-			if (_story.isEqual(story))
+			if (_story.equals(story))
 			{
 				title = story.getTitle();
 				break;

@@ -34,6 +34,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Manages all transactions between views, controllers, and models.
+ * Creates new Stories, StoryFragments, etc.
+ * Fetches and caches Stories and StoryFragments
+ */
 public final class StoryManager implements IStoryModelPresenter,
 		IStoryModelDirector {
 	final String DEFAULT_FRAGMENT_TEXT = "<insert content here...>";
