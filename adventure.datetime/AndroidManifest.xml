@@ -45,6 +45,10 @@
             android:name=".view.StoryDescription"
             android:label="@string/app_name"
             android:parentActivityName=".view.BrowseView"/>
+        <activity
+            android:name=".view.CommentsView"
+            android:label="@string/app_name"
+            android:parentActivityName=".view.AuthorStoryDescription"/>
     </application>
 
 </manifest>

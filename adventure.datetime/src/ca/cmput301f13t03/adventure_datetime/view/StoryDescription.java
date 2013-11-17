@@ -140,6 +140,8 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			Intent intent = new Intent(this, CommentsView.class);
+			startActivity(intent);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
