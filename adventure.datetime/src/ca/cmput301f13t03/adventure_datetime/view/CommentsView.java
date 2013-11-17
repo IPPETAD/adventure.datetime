@@ -64,7 +64,9 @@ public class CommentsView extends Activity {
 			
 			/** Layout Items **/
 			TextView author = (TextView) rowView.findViewById(R.id.author);
-			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);
+			TextView date = (TextView) rowView.findViewById(R.id.datetime);
+			ImageView avatar = (ImageView) rowView.findViewById(R.id.thumbnail);
+			ImageView image = (ImageView) rowView.findViewById(R.id.image);
 			TextView content = (TextView) rowView.findViewById(R.id.content);
 			
 			// TODO::JF use actual data
