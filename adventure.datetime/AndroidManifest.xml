@@ -48,7 +48,7 @@
         <activity
             android:name=".view.CommentsView"
             android:label="@string/app_name"
-            android:parentActivityName=".view.AuthorStoryDescription"/>
+            android:parentActivityName=".view.StoryDescription"/>
     </application>
 
 </manifest>

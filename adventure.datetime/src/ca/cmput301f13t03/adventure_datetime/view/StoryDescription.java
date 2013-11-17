@@ -141,6 +141,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		switch (item.getItemId()) {
 		case R.id.action_comment:
 			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, true);
 			startActivity(intent);
 			break;
 		}

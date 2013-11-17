@@ -14,14 +14,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CommentsView extends Activity {
+	public static final String COMMENT_TYPE = "forStory";
 	
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
+	private boolean forStoryEh;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_view);
+		
+		forStoryEh = getIntent().getBooleanExtra(COMMENT_TYPE, true);
 		
 		_listView = (ListView) findViewById(R.id.list_view);
 		
@@ -67,8 +71,14 @@ public class CommentsView extends Activity {
 			
 			//author.setText(item.getAuthor());
 			//content.setText(item.getContent());
-			author.setText("Jane Austen");
-			content.setText("Yolo swag, hipsters be sick yo. #hatersgonnaskate");
+			if (forStoryEh)
+				author.setText("Famous Story Critic");
+			else
+				author.setText("Famous Fragment Critic");
+			content.setText("Yolo swag, hipsters be sick yo. #hatersgonnaskate\n"+
+					"This is more text that we can just throw in to ensure that "+
+					"everything lines up properly ALL THE WAY FUCKING DOWN!\nHol"+
+					"y shit batman, what is that!?");
 			
 			
 			return rowView;

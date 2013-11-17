@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -175,6 +176,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, false);
+			startActivity(intent);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
