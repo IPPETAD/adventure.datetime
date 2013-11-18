@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -101,7 +102,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView date = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView avatar = (ImageView) rowView.findViewById(R.id.thumbnail);
-			ImageView image = (ImageView) rowView.findViewById(R.id.image);
+			Button image = (Button) rowView.findViewById(R.id.image_button);
 			TextView content = (TextView) rowView.findViewById(R.id.content);
 			
 			// TODO::JF use actual data
