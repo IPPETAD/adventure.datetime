@@ -58,6 +58,12 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent UUIDs", fragUuid, frag.getFragmentID());
 
+        database.deleteStoryFragment(fragUuid);
+
+        frag2 = database.getStoryFragment(fragUuid);
+
+        Assert.assertNull("Frgament not null", frag2);
+
 	}
 
 	public void testSetStory() throws Exception {
