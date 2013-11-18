@@ -445,6 +445,35 @@ public class StoryDB implements BaseColumns {
 
 	}
 
+    public boolean deleteStory(String id) {
+        boolean fragments;
+        fragments = deleteStoryFragments(id);
+        deleteBookmark(id);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int story;
+        story = db.delete(STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id});
+        db.close();
+        return story == 1 && fragments;
+    }
+
+    public boolean deleteStoryFragments(String storyID) {
+        int fragments;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        fragments = db.delete(STORYFRAGMENT_TABLE_NAME, STORYFRAGMENT_COLUMN_STORYID + " = ?", new String[] {storyID});
+
+        db.close();
+
+        return fragments > 0;
+    }
+
+    public boolean deleteBookmark(String storyID) {
+        int bookmark;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_STORYID + " = ?", new String[] {storyID});
+        db.close();
+        return bookmark == 1;
+    }
+
 	/**
 	 * Creates story from a cursor
 	 *
