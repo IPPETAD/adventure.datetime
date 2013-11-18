@@ -84,7 +84,7 @@ public class StoryDBTest extends AndroidTestCase {
 
         database.deleteBookmarkByStory(sUuid);
         bookmark2 = database.getBookmark(sUuid);
-        Assert.assertEquals("Bookmark not null", null, bookmark2);
+        Assert.assertNull("Bookmark not null", bookmark2);
 
         Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
 
@@ -92,7 +92,7 @@ public class StoryDBTest extends AndroidTestCase {
 
         bookmark2 = database.getBookmark(sUuid);
 
-        Assert.assertEquals("Bookmark not null", null, bookmark2);
+        Assert.assertNull("Bookmark not null", bookmark2);
 	}
 
 
