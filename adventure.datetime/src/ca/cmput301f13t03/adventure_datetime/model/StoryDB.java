@@ -477,6 +477,21 @@ public class StoryDB implements BaseColumns {
     }
 
     /**
+     * Deletes a fragment with a specific fragment ID
+      * @param fragmentID The UUID of a fragment
+     * @return Roughly whether or not a fragment was deleted
+     */
+    public boolean deleteStoryFragment(String fragmentID) {
+        int fragment;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        fragment = db.delete(STORYFRAGMENT_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {fragmentID});
+
+        db.close();
+
+        return fragment == 1;
+    }
+
+    /**
      * Deletes all Bookmarks with a specific storyID from the databse
      * @param storyID The UUID of the story
      * @return Roughly whether or not a bookmark was deleted
