@@ -241,8 +241,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 * Delete a story from the database
 	 */
 	public void deleteStory(String storyId) {
-		// TODO Needs to be implemented in database.
-
+		m_db.deleteStory(storyId);
 	}
 
 	/**
@@ -277,8 +276,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 * Delete a fragment from the database
 	 */
 	public void deleteFragment(UUID fragmentId) {
-		// TODO Needs to be implemented in database.
-
+		m_db.deleteStoryFragment(fragmentId.toString());
 	}
 
 	/**
