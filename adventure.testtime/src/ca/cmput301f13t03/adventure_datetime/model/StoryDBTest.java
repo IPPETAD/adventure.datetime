@@ -75,6 +75,12 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
 		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
+
+        database.deleteStory(story.getId());
+
+        story2 = database.getStory(story.getId());
+
+        Assert.assertNull("Story not null", story2);
 	}
 
 	public void testSetBookmark() throws Exception {
