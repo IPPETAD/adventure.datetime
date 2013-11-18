@@ -37,7 +37,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -150,9 +149,6 @@ public class StoryDB implements BaseColumns {
 
 	/**
 	 * Retrieves all stories located on local storage by an author
-	 *
-	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories by
-	 *         author.
 	 *
 	 * @return Collection of all stories on local storage by an author. Collection is empty if there are no stories by
 	 *         author.
@@ -725,12 +721,10 @@ public class StoryDB implements BaseColumns {
 			story.addFragment(frag);
 			story.addFragment(frag2);
 			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(1383652800 * 1000);
+			cal.setTimeInMillis(1383652800L * 1000L);
 			Bookmark bookmark = new Bookmark(frag2.getFragmentID(), story.getId(), cal.getTime());
 
 			db.beginTransaction();
-			long inserted = 0;
-			int size = story.getThumbnail().getByteCount();
 			ByteArrayOutputStream blob = new ByteArrayOutputStream();
 			story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
 			byte[] bytes = blob.toByteArray();
@@ -743,27 +737,24 @@ public class StoryDB implements BaseColumns {
 			values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
 			values.put(STORY_COLUMN_THUMBNAIL, bytes);
 			values.put(COLUMN_GUID, story.getId());
-			inserted = db.insert(STORY_TABLE_NAME, null, values);
-			inserted = 0;
-			values = new ContentValues();
+			db.insert(STORY_TABLE_NAME, null, values);
+            values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID());
 			values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
 			values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
 			values.put(COLUMN_GUID, frag.getFragmentID());
-			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
-			inserted = 0;
-			values = new ContentValues();
+			db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+            values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag2.getStoryID());
 			values.put(STORYFRAGMENT_COLUMN_CONTENT, frag2.getStoryText());
 			values.put(STORYFRAGMENT_COLUMN_CHOICES, frag2.getChoicesInJson());
 			values.put(COLUMN_GUID, frag2.getFragmentID());
-			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
-			inserted = 0;
-			values = new ContentValues();
+			db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+            values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
 			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
-			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
+			db.insert(BOOKMARK_TABLE_NAME, null, values);
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
