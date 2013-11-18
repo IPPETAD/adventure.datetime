@@ -63,7 +63,7 @@ public class StoryDBTest extends AndroidTestCase {
 	public void testSetStory() throws Exception {
 		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
 		String uuid = story.getId();
-
+        story.setHeadFragmentId(UUID.randomUUID().toString());
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 
