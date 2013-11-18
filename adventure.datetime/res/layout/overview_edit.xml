@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-	<TreeView
-	    android:id="@+id/v_treeViewBase"/>
+	<ca.cmput301f13t03.adventure_datetime.view.TreeView
+	    android:id="@+id/v_treeViewBase"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"/>
 </RelativeLayout>

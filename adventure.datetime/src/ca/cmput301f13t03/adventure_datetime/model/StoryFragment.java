@@ -27,7 +27,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class StoryFragment {
+public class StoryFragment implements Comparable<StoryFragment>
+{
 
 	final private UUID storyID;
 	final private UUID fragmentID;
@@ -129,5 +130,11 @@ public class StoryFragment {
 
 	public Choice getChoice(int id) {
 		return (Choice) choices.toArray()[id];
+	}
+
+	@Override
+	public int compareTo(StoryFragment other) 
+	{
+		return this.fragmentID.compareTo(other.fragmentID);
 	}
 }

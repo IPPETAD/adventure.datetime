@@ -1,7 +1,6 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,12 +11,15 @@ import java.util.TreeSet;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -32,12 +34,31 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	SurfaceHolder m_surface = null;
 	NodeGrid m_grid = null;
 	Map<String, StoryFragment> m_fragments = null;
+	Camera m_camera = null;
 	
+	// must have all constructors or it doesn't work
 	public TreeView(Context context) 
 	{
 		super(context);
-		
+		Setup();
+	}
+	
+	public TreeView(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+		Setup();
+	}
+	
+	public TreeView(Context context,AttributeSet attrs, int defStyle)
+	{
+		super(context, attrs, defStyle);
+		Setup();
+	}
+	
+	private void Setup()
+	{
 		this.getHolder().addCallback(this);
+		Locator.getPresenter().Subscribe(this);
 	}
 	
 	@Override
@@ -51,14 +72,15 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) 
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
 	{
-		// TODO What do I need to do here?
+		// Don't care (yet)
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder surface) 
 	{
+		m_camera = new Camera();
 		m_grid = new NodeGrid();
 		m_grid.SetFragments(m_fragments);
 		m_isDrawing = true;
@@ -96,10 +118,17 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 		{
 			Canvas canvas = m_surface.lockCanvas();
 			
-			// clear canvas
-			
-			// draw stuffs
-			m_grid.Draw(canvas);
+			try
+			{
+				// clear canvas
+				
+				// draw stuffs
+				m_grid.Draw(canvas, m_camera);
+			}
+			finally
+			{
+				m_surface.unlockCanvasAndPost(canvas);
+			}
 			
 			// then sleep for a bit
 			try 
@@ -137,6 +166,43 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 		}
 	}
 	
+	private class Camera
+	{
+		// java generics are a pain to reuse just to make region use
+		// floats or ints, not going to bother for this simple case
+		private float x = -350.0f;
+		private float y = -250.0f;
+		
+		private float m_zoomLevel = 1.0f;
+		
+		public Camera()
+		{
+			
+		}
+		
+		public Region GetLocalTransform(Region region)
+		{
+			// the rounding isn't important
+			return new Region(	(int)((region.x - this.x) * m_zoomLevel),
+								(int)((region.y - this.y) * m_zoomLevel),
+								(int)(region.width * m_zoomLevel),
+								(int)(region.height * m_zoomLevel));
+		}
+		
+		public void SetPosition(float x, float y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+		
+		public void SetZoom(float zoom)
+		{
+			assert(zoom > 0);
+			
+			m_zoomLevel = zoom;
+		}
+	}
+	
 	/**
 	 * Class that handles positioning of elements
 	 * @author Jesse
@@ -155,13 +221,13 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			
 		}
 		
-		public void Draw(Canvas surface)
+		public void Draw(Canvas surface, Camera camera)
 		{
 			synchronized(m_segments)
 			{
 				for(FragmentConnection connection : m_connections)
 				{
-					connection.Draw(surface);
+					connection.Draw(surface, camera);
 				}
 				
 				for(FragmentNode frag : m_nodes)
@@ -171,7 +237,9 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 					backgroundPaint.setColor(Color.RED);
 					Paint textPaint = new Paint();
 					textPaint.setColor(Color.BLACK);
-					frag.Draw(surface, backgroundPaint, textPaint);
+					
+					
+					frag.Draw(surface, camera, backgroundPaint, textPaint);
 				}
 			}
 		}
@@ -198,60 +266,69 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			}
 		}
 		
-		private void SetupNodes(Map<String, StoryFragment> frags)
+		private void SetupNodes(Map<String, StoryFragment> fragsMap)
 		{
-			Map<String, FragmentNode> setFragments = new HashMap<String, FragmentNode>();
-			NodePlacer newPlacer = new NodePlacer();
+			NodePlacer nodePlacer = new NodePlacer();
 			
-			StoryFragment headFragment = null;
-			// ugly, ugly, UGLY!
-			for(StoryFragment frag : frags.values())
-			{
-				headFragment = frag;
-				break;
-			}
+			Set<FragmentNode> placedFragments = new HashSet<FragmentNode>();
+			Set<StoryFragment> notPlacedFragments = new HashSet<StoryFragment>();
 			
-			if(headFragment != null)
+			notPlacedFragments.addAll(fragsMap.values());
+			
+			while(!notPlacedFragments.isEmpty())
 			{
-				FragmentNode headNode = new FragmentNode(headFragment);
+				// place the head node
+				StoryFragment headFrag = notPlacedFragments.iterator().next();
+				
+				FragmentNode headNode = new FragmentNode(headFrag);
+				nodePlacer.PlaceFragment(headNode);
+				notPlacedFragments.remove(headFrag);
+				placedFragments.add(headNode);
 				m_nodes.add(headNode);
-				newPlacer.PlaceFragment(headNode);
-				setFragments.put(headFragment.getFragmentID(), headNode);
 				
-				// list of fragments to be added to the view
-				List<StoryFragment> nextFragments = new ArrayList<StoryFragment>();
+				// construct a list of nodes to place based upon the head node
+				Set<StoryFragment> linkedFragments = GetLinkedFragments(headFrag, fragsMap);
 				
-				// fragments are inserted in a breadth first manner from the head node
-				for(Choice choice : headFragment.getChoices())
+				// place all linked nodes
+				for(StoryFragment frag : linkedFragments)
 				{
-					StoryFragment t1Fragment = frags.get(choice.getTarget());
-					nextFragments.add(t1Fragment);
-				}
-				
-				// place all of the fragments in a breadth first ordering
-				while(nextFragments.size() > 0)
-				{
-					StoryFragment nextFragment = nextFragments.get(0);
-					
-					// only if the fragment hasn't already been set
-					if(!setFragments.containsKey(nextFragment.getFragmentID()))
-					{
-						// create a node and place it
-						FragmentNode nodeFrag = new FragmentNode(nextFragment);
-						newPlacer.PlaceFragment(nodeFrag);
-						setFragments.put(nextFragment.getFragmentID(), nodeFrag);
-						
-						// get the adjacent nodes
-						for(Choice choice : nextFragment.getChoices())
-						{
-							StoryFragment otherFragment = frags.get(choice.getTarget());
-							nextFragments.add(otherFragment);
-						}
-					}
-					
-					nextFragments.remove(0);
+					FragmentNode nextNode = new FragmentNode(frag);
+					nodePlacer.PlaceFragment(nextNode);
+					notPlacedFragments.remove(frag);
+					placedFragments.add(nextNode);
+					m_nodes.add(nextNode);
 				}
 			}
+			
+			assert(notPlacedFragments.size() == 0);
+		}
+		
+		private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<String, StoryFragment> allFrags)
+		{
+			Set<StoryFragment> linkedFrags = new TreeSet<StoryFragment>();
+			ArrayList<Choice> links = head.getChoices();
+			
+			if(links != null && !links.isEmpty())
+			{
+				do
+				{
+					Choice link = links.get(0);
+					
+					assert(allFrags.containsKey(link.getTarget()));
+					
+					StoryFragment frag = allFrags.get(link.getTarget());
+					
+					// if we don't already have it then add it to the list
+					if(!linkedFrags.contains(frag))
+					{
+						linkedFrags.add(frag);
+						links.addAll(frag.getChoices());
+						links.remove(0);
+					}
+				}while(!links.isEmpty());
+			}
+			
+			return linkedFrags;
 		}
 		
 		private class NodePlacer
@@ -404,11 +481,12 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 		{
 			public static final int GRID_SIZE = 10;
 			
-			private boolean[][] m_space = new boolean[BASE_WIDTH / GRID_SIZE][BASE_HEIGHT / GRID_SIZE];
+			private boolean[][] m_space = null;
 			
 			public GridSegment(int x, int y, int width, int height)
 			{
 				super(x, y, width, height);
+				m_space = new boolean[width / GRID_SIZE][height / GRID_SIZE];
 			}
 			
 			public boolean IsEmpty(int x, int y)
@@ -418,6 +496,20 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			
 			public boolean CanPlace(Region region)
 			{
+				if(	region.x + region.width >= this.x + this.width ||
+					region.y + region.height >= this.y + this.height)
+				{
+					// early out just in case we have a region that
+					// is out of bounds on the right or bottom
+					return false;
+				}
+				if(region.x < this.x || region.y < this.y)
+				{
+					// another early out for handling if we are
+					// out of bounds on the top or left
+					return false;
+				}
+				
 				int baseX = (region.x - this.x) / GRID_SIZE;
 				int baseY = (region.y - this.y) / GRID_SIZE;
 				int endX = (region.x - this.x + region.width) / GRID_SIZE;
@@ -427,7 +519,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 				{
 					for(int currY = baseY ; currY <= endY ; ++currY)
 					{
-						if(m_space[currX][currY])
+						if(IsEmpty(currX, currY))
 						{
 							return false;
 						}
@@ -468,7 +560,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			// use the provided info to build the path
 		}
 		
-		public void Draw(Canvas surface)
+		public void Draw(Canvas surface, Camera camera)
 		{
 			// TODO::JT
 		}
@@ -500,26 +592,29 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			return m_fragment;
 		}
 		
-		public void Draw(Canvas surface, Paint background, Paint text)
+		public void Draw(Canvas surface, Camera camera, Paint background, Paint text)
 		{
 			if(m_displayRect != null)
 			{
-				surface.drawRect(m_displayRect, background);
+				
+				
+				// more hacky shit for now
+				// transform the rectangle
+				Region localCords = camera.GetLocalTransform(this);
+				
+				Rect dispRect = new Rect(localCords.x, localCords.y, localCords.width, localCords.height);
+				
+				//end hacky shit
+				
+				surface.drawRect(dispRect, background);
 				
 				String dispTxt = m_fragment.getStoryText();
 				if(dispTxt.length() > MAX_TXT_LENGTH)
 				{
 					dispTxt = dispTxt.substring(0, MAX_TXT_LENGTH);
 				}
-				surface.drawText(m_fragment.getStoryText(), this.x, this.y, text);
+				surface.drawText(m_fragment.getStoryText(), localCords.x, localCords.y, text);
 			}
-		}
-		
-		public void SetPos(Point p)
-		{
-			this.x = p.x;
-			this.y = p.y;
-			this.m_displayRect = new Rect(0, 0, this.width, this.height);
 		}
 	}
 }
