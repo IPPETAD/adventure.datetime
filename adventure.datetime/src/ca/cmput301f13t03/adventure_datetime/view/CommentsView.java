@@ -12,11 +12,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CommentsView extends Activity implements ICurrentStoryListener,
@@ -102,7 +104,8 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView date = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView avatar = (ImageView) rowView.findViewById(R.id.thumbnail);
-			Button image = (Button) rowView.findViewById(R.id.image_button);
+			Button btnImage = (Button) rowView.findViewById(R.id.image_button);
+			RelativeLayout layImage = (RelativeLayout) rowView.findViewById(R.id.wrapper);
 			TextView content = (TextView) rowView.findViewById(R.id.content);
 			
 			// TODO::JF use actual data
@@ -118,10 +121,50 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 					"everything lines up properly ALL THE WAY FUCKING DOWN!\nHol"+
 					"y shit batman, what is that!?");
 			
+			btnImage.setOnClickListener(new ShowOnClickListener().
+					setUp(layImage, btnImage));
+			
 			
 			return rowView;
 		}
 		
 	}
+	
+	private class ShowOnClickListener implements OnClickListener {
 
+		private RelativeLayout _layout;
+		private Button _button;
+		
+		public OnClickListener setUp(RelativeLayout layout, Button button) {
+			_layout = layout;
+			_button = button;
+			return this;
+		}
+		@Override
+		public void onClick(View v) {
+			_layout.setVisibility(View.VISIBLE);
+			_button.setText("Hide Image");
+			_button.setOnClickListener(new HideOnClickListener().
+					setUp(_layout, _button));
+		}
+	}
+	
+	private class HideOnClickListener implements OnClickListener {
+
+		private RelativeLayout _layout;
+		private Button _button;
+		
+		public OnClickListener setUp(RelativeLayout layout, Button button) {
+			_layout = layout;
+			_button = button;
+			return this;
+		}
+		@Override
+		public void onClick(View v) {
+			_layout.setVisibility(View.GONE);
+			_button.setText("Show Image");
+			_button.setOnClickListener(new ShowOnClickListener().
+					setUp(_layout, _button));
+		}
+	}
 }
