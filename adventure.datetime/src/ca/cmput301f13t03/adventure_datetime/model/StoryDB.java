@@ -483,7 +483,7 @@ public class StoryDB implements BaseColumns {
     public boolean deleteStory(String id) {
         boolean fragments;
         fragments = deleteStoryFragments(id);
-        deleteBookmark(id);
+        deleteBookmarkByStory(id);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int story;
         story = db.delete(STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id});
@@ -499,6 +499,7 @@ public class StoryDB implements BaseColumns {
      */
     public boolean deleteStoryFragments(String storyID) {
         int fragments;
+        deleteBookmarkByStory(storyID);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         fragments = db.delete(STORYFRAGMENT_TABLE_NAME, STORYFRAGMENT_COLUMN_STORYID + " = ?", new String[] {storyID});
         Log.v(TAG, fragments + " deleted from DB, all with StoryID " + storyID);
@@ -514,6 +515,7 @@ public class StoryDB implements BaseColumns {
      */
     public boolean deleteStoryFragment(String fragmentID) {
         int fragment;
+        deleteBookmarkByFragment(fragmentID);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         fragment = db.delete(STORYFRAGMENT_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {fragmentID});
         Log.v(TAG, fragment + " fragment deleted, with fragmentID " + fragmentID);
@@ -523,15 +525,29 @@ public class StoryDB implements BaseColumns {
     }
 
     /**
-     * Deletes all Bookmarks with a specific storyID from the databse
+     * Deletes all Bookmarks with a specific storyID from the database
      * @param storyID The UUID of the story
      * @return Roughly whether or not a bookmark was deleted
      */
-    public boolean deleteBookmark(String storyID) {
+    public boolean deleteBookmarkByStory(String storyID) {
         int bookmark;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_STORYID + " = ?", new String[] {storyID});
         Log.v(TAG, bookmark + " bookmark deleted, with storyID " + storyID);
+        db.close();
+        return bookmark == 1;
+    }
+
+    /**
+     * Deletes all Bookmarks with a specific fragmentID from the database
+     * @param fragmentID The UUID of the story
+     * @return Roughly whether or not a bookmark was deleted
+     */
+    public boolean deleteBookmarkByFragment(String fragmentID) {
+        int bookmark;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_FRAGMENTID + " = ?", new String[] {fragmentID});
+        Log.v(TAG, bookmark + " bookmark deleted, with fragmentID " + fragmentID);
         db.close();
         return bookmark == 1;
     }
