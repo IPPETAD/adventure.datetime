@@ -445,6 +445,11 @@ public class StoryDB implements BaseColumns {
 
 	}
 
+    /**
+     * Deletes a story and all it's related things (StoryFragments, Bookmark) from the database
+     * @param id The UUID of the story
+     * @return Roughly whether or not the story was deleted
+     */
     public boolean deleteStory(String id) {
         boolean fragments;
         fragments = deleteStoryFragments(id);
@@ -456,6 +461,11 @@ public class StoryDB implements BaseColumns {
         return story == 1 && fragments;
     }
 
+    /**
+     * Deletes all fragments with a specific storyID from the database
+     * @param storyID The UUID of the story
+     * @return Roughly whether or not any fragments have been deleted
+     */
     public boolean deleteStoryFragments(String storyID) {
         int fragments;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -466,6 +476,11 @@ public class StoryDB implements BaseColumns {
         return fragments > 0;
     }
 
+    /**
+     * Deletes all Bookmarks with a specific storyID from the databse
+     * @param storyID The UUID of the story
+     * @return Roughly whether or not a bookmark was deleted
+     */
     public boolean deleteBookmark(String storyID) {
         int bookmark;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
