@@ -103,10 +103,13 @@ public class StoryDB implements BaseColumns {
 		Story story;
 
 		if (cursor.moveToFirst()) {
+            Log.v(TAG, "Story with UUID " + id + " retrieved");
 			story = createStory(cursor);
 		}
-		else
+		else {
 			story = null;
+            Log.v(TAG, "No story found");
+        }
 
 		cursor.close();
 		db.close();
@@ -133,9 +136,12 @@ public class StoryDB implements BaseColumns {
 
 		if(cursor.moveToFirst()) {
 			do {
+                Log.v(TAG, "Story with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID)) + " retrieved");
 				stories.add(createStory(cursor));
 			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, stories.size() + " stories retrieved");
 
 		cursor.close();
 		db.close();
@@ -164,11 +170,14 @@ public class StoryDB implements BaseColumns {
 				null);
 		ArrayList<Story> stories = new ArrayList<Story>();
 
-		if (cursor.moveToFirst()) {
-			do {
-				stories.add(createStory(cursor));
-			} while (cursor.moveToNext());
-		}
+        if(cursor.moveToFirst()) {
+            do {
+                Log.v(TAG, "Story with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID)) + " retrieved");
+                stories.add(createStory(cursor));
+            } while(cursor.moveToNext());
+        }
+
+        Log.v(TAG, stories.size() + " stories retrieved");
 
 		cursor.close();
 		db.close();
@@ -194,10 +203,14 @@ public class StoryDB implements BaseColumns {
 				"1");
 
 		StoryFragment frag;
-		if(cursor.moveToFirst())
+		if(cursor.moveToFirst()) {
+            Log.v(TAG, "StoryFragment " + id + " retrieved");
 			frag = createStoryFragment(cursor);
-		else
+        }
+		else {
 			frag = null;
+            Log.v(TAG, "No fragment found");
+        }
 		cursor.close();
 		db.close();
 		return frag;
@@ -223,20 +236,22 @@ public class StoryDB implements BaseColumns {
 
 		ArrayList<StoryFragment> fragments = new ArrayList<StoryFragment>();
 
-		if(cursor.moveToFirst())
-		{
-			do
-			{
+		if(cursor.moveToFirst()) {
+			do {
+                Log.v(TAG, "StoryFragment with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID))
+                        + " retrieved");
 				fragments.add(createStoryFragment(cursor));
-			}while(cursor.moveToNext());
+			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, fragments.size() + " StoryFragments retrieved");
 
 		cursor.close();
 		db.close();
 		return fragments;
 	}
 
-	/**
+	/*
 	 * Get a Bookmark from the Story ID and Fragment ID
 	 * @param storyid The _ID of the story
 	 * @param fragmentid The _ID of the story fragment
@@ -284,10 +299,15 @@ public class StoryDB implements BaseColumns {
 
 		Bookmark bookmark;
 
-		if(cursor.moveToFirst())
+		if(cursor.moveToFirst()) {
+           Log.v(TAG, "Bookmark with Story id " + cursor.getString(cursor.getColumnIndex(BOOKMARK_COLUMN_STORYID)) +
+           "retrieved");
 			bookmark = createBookmark(cursor);
-		else
+        }
+		else {
+            Log.v(TAG, "No bookmark found");
 			bookmark = null;
+        }
 
 		cursor.close();
 		db.close();
@@ -312,9 +332,13 @@ public class StoryDB implements BaseColumns {
 		ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
 		if(cursor.moveToFirst()) {
 			do {
+                Log.v(TAG, "Bookmark with Story id " + cursor.getString(cursor.getColumnIndex(BOOKMARK_COLUMN_STORYID))
+                        + " retrieved");
 				bookmarks.add(createBookmark(cursor));
 			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, bookmarks.size() + " bookmarks retrieved");
 
 		return bookmarks;
 	}
@@ -349,15 +373,18 @@ public class StoryDB implements BaseColumns {
 			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
+                Log.v(TAG, updated + " Bookmarks updated");
 				cursor.close();
 				db.close();
 				return updated == 1;
 			}
+            Log.v(TAG, "No Bookmarks updated");
 			cursor.close();
 			db.close();
 			return false;
 		}
 		updated = db.insert(BOOKMARK_TABLE_NAME, null, values);
+        Log.v(TAG, updated + " Bookmark inserted");
 		cursor.close();
 		db.close();
 		return updated != -1;
@@ -371,7 +398,6 @@ public class StoryDB implements BaseColumns {
 	 * @return True if successful, false if not
 	 */
 	public boolean setStory(Story story) {
-		int size = story.getThumbnail().getByteCount();
 		ByteArrayOutputStream blob = new ByteArrayOutputStream();
 		story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
 		byte[] bytes = blob.toByteArray();
@@ -397,6 +423,7 @@ public class StoryDB implements BaseColumns {
 			int updated;
 			updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
 					new String [] {story.getId()});
+            Log.v(TAG, updated + " stories updated");
 			cursor.close();
 			db.close();
 			return updated == 1;
@@ -404,6 +431,7 @@ public class StoryDB implements BaseColumns {
 		cursor.close();
 		long inserted;
 		inserted = db.insert(STORY_TABLE_NAME, null, values);
+        Log.v(TAG, inserted + " story inserted");
 		db.close();
 		return inserted != -1;
 	}
@@ -434,12 +462,14 @@ public class StoryDB implements BaseColumns {
 			int updated;
 			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
 					new String[] {frag.getFragmentID(), frag.getStoryID()});
+            Log.v(TAG, updated + " fragments updated");
 			cursor.close();
 			db.close();
 			return updated == 1;
 		}
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+        Log.v(TAG, inserted + " fragment inserted");
 		db.close();
 		return inserted != -1;
 
@@ -457,6 +487,7 @@ public class StoryDB implements BaseColumns {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int story;
         story = db.delete(STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id});
+        Log.v(TAG, story + " deleted, had UUID " + id);
         db.close();
         return story == 1 && fragments;
     }
@@ -470,7 +501,7 @@ public class StoryDB implements BaseColumns {
         int fragments;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         fragments = db.delete(STORYFRAGMENT_TABLE_NAME, STORYFRAGMENT_COLUMN_STORYID + " = ?", new String[] {storyID});
-
+        Log.v(TAG, fragments + " deleted from DB, all with StoryID " + storyID);
         db.close();
 
         return fragments > 0;
@@ -485,7 +516,7 @@ public class StoryDB implements BaseColumns {
         int fragment;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         fragment = db.delete(STORYFRAGMENT_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {fragmentID});
-
+        Log.v(TAG, fragment + " fragment deleted, with fragmentID " + fragmentID);
         db.close();
 
         return fragment == 1;
@@ -500,6 +531,7 @@ public class StoryDB implements BaseColumns {
         int bookmark;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_STORYID + " = ?", new String[] {storyID});
+        Log.v(TAG, bookmark + " bookmark deleted, with storyID " + storyID);
         db.close();
         return bookmark == 1;
     }
@@ -696,7 +728,6 @@ public class StoryDB implements BaseColumns {
 			values.put(STORY_COLUMN_THUMBNAIL, bytes);
 			values.put(COLUMN_GUID, story.getId());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
-			Log.d(TAG, String.valueOf(inserted));
 			inserted = 0;
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID());
@@ -704,7 +735,6 @@ public class StoryDB implements BaseColumns {
 			values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
 			values.put(COLUMN_GUID, frag.getFragmentID());
 			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
-			Log.d(TAG, String.valueOf(inserted));
 			inserted = 0;
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag2.getStoryID());
@@ -712,14 +742,12 @@ public class StoryDB implements BaseColumns {
 			values.put(STORYFRAGMENT_COLUMN_CHOICES, frag2.getChoicesInJson());
 			values.put(COLUMN_GUID, frag2.getFragmentID());
 			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
-			Log.d(TAG, String.valueOf(inserted));
 			inserted = 0;
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID());
 			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
-			Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
