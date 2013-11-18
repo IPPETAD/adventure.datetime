@@ -109,7 +109,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
-		fragments.setText("Fragments: " + "idk..");
+		fragments.setText("Fragments: " + _story.getFragmentIds().size());
 		_content.setText(_story.getSynopsis());
 
 
