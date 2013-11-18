@@ -81,6 +81,18 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent story ids", bookmark.getStoryID(), bookmark2.getStoryID());
 		Assert.assertEquals("Not equivalent uuids", sUuid, bookmark.getStoryID());
+
+        database.deleteBookmarkByStory(sUuid);
+        bookmark2 = database.getBookmark(sUuid);
+        Assert.assertEquals("Bookmark not null", null, bookmark2);
+
+        Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
+
+        database.deleteStoryFragment(sFUuid);
+
+        bookmark2 = database.getBookmark(sUuid);
+
+        Assert.assertEquals("Bookmark not null", null, bookmark2);
 	}
 
 
