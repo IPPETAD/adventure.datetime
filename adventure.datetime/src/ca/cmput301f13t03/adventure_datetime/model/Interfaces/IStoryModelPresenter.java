@@ -43,7 +43,7 @@ public interface IStoryModelPresenter
     /**
 	 * Listens for change on the current list of stories
 	 */
-    void Subscribe(ILocalStoriesListener storyListListener);
+    void Subscribe(IStoryListListener storyListListener);
     
     /**
 	 * Listens for change on the bookmark list
@@ -65,7 +65,7 @@ public interface IStoryModelPresenter
     /**
 	 * Stop listening for changes on the current story list
 	 */
-    void Unsubscribe(ILocalStoriesListener storyListListener);
+    void Unsubscribe(IStoryListListener storyListListener);
     
     /**
 	 * Stop listening for changes on the current bookmark list

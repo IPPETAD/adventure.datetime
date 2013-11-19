@@ -44,7 +44,7 @@ import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
@@ -57,7 +57,7 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
  * @author James Finlay
  *
  */
-public class StoryDescription extends FragmentActivity implements ILocalStoriesListener, ICurrentStoryListener {
+public class StoryDescription extends FragmentActivity implements IStoryListListener, ICurrentStoryListener {
 	private static final String TAG = "StoryDescription";
 	
 	private StoryPagerAdapter _pageAdapter;
@@ -118,14 +118,14 @@ public class StoryDescription extends FragmentActivity implements ILocalStoriesL
 	
 	@Override
 	public void onResume() {
-		Locator.getPresenter().Subscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Subscribe((IStoryListListener)this);
 		Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		super.onResume();
 	}
 	
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Unsubscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		super.onPause();
 	}
