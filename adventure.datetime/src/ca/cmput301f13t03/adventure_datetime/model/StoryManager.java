@@ -275,6 +275,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void deleteStory(String storyId) {
 		m_db.deleteStory(storyId);
+        m_storyList.remove(storyId);
+        PublishStoryListChanged();
 	}
 
 	/**
@@ -295,6 +297,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public boolean putFragment(StoryFragment fragment) {
 		
+
 		// this really should be transactional...
 		boolean result = m_db.setStoryFragment(fragment);
 		if(result)
@@ -312,6 +315,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void deleteFragment(UUID fragmentId) {
 		m_db.deleteStoryFragment(fragmentId.toString());
+        m_fragmentList.remove(fragmentId.toString());
+        PublishAllFragmentsChanged();
 	}
 
 	/**
