@@ -80,8 +80,8 @@ public class WebStorage {
 	 * @return The Story object
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public Story getStory(UUID storyId) throws Exception {
-		Get get = new Get.Builder(_index, storyId.toString()).type("story").build();
+	public Story getStory(String storyId) throws Exception {
+		Get get = new Get.Builder(_index, storyId).type("story").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(Story.class);
 	}
@@ -108,8 +108,8 @@ public class WebStorage {
 	 * @return The StoryFragment object
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public StoryFragment getFragment(UUID fragmentId) throws Exception {
-		Get get = new Get.Builder(_index, fragmentId.toString()).type("fragment").build();
+	public StoryFragment getFragment(String fragmentId) throws Exception {
+		Get get = new Get.Builder(_index, fragmentId).type("fragment").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(StoryFragment.class);
 	}
@@ -120,9 +120,9 @@ public class WebStorage {
 	 * @return List of StoryFragments
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
-	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
+	public List<StoryFragment> getAllFragmentsForStory(String storyId) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH_ID, "storyId", storyId.toString()))
+				String.format(MATCH_ID, "storyId", storyId))
 			.addIndex(_index)
 			.addType("fragment")
 			.build();

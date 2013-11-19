@@ -24,12 +24,14 @@ package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -46,6 +48,7 @@ public final class StoryManager implements IStoryModelPresenter,
 
 	private StoryDB m_db = null;
 	private Context m_context = null;
+	private WebStorage m_webStorage = null;
 
 	// Current focus
 	private Story m_currentStory = null;
@@ -68,6 +71,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 public StoryManager(Context context) {
 		m_context = context;
 		m_db = new StoryDB(context);
+		m_webStorage = new WebStorage();
 		
 		m_fragmentList = new HashMap<String, StoryFragment>();
 	}
@@ -317,8 +321,14 @@ public final class StoryManager implements IStoryModelPresenter,
 			result = m_db.getStoryFragment(theId);
 			if(result == null)
 			{
-				// then it wasn't in the database
-				// TODO try fetch from online!
+				try {
+					//TODO:: this needs to be async!
+					result = m_webStorage.getFragment(theId);
+					// afterwards place into cache
+					// m_fragmentList.put(re, value)
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
 			}
 			else
 			{
@@ -377,7 +387,18 @@ public final class StoryManager implements IStoryModelPresenter,
 			m_storyList.put(story.getId(), story);
 		}
 		
-		// TODO load from online
+		try {
+			//TODO make async!
+			List<Story> onlineStories = m_webStorage.getAllStories();
+			
+			for(Story story : onlineStories)
+			{
+				m_storyList.put(story.getId(), story);
+			}
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
 	}
 	
 	private void LoadBookmarks()
@@ -390,6 +411,5 @@ public final class StoryManager implements IStoryModelPresenter,
 			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
 		}
 		
-		// TODO load from online
 	}
 }
