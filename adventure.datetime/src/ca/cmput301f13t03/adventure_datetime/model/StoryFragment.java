@@ -66,10 +66,10 @@ public class StoryFragment {
      * @param storyMedia List of media associated with the StoryFragment
      * @param choices List of Choices associated with the Story Fragment
      */
-	public StoryFragment(String storyID, String fragmentID, String storyText,
+	public StoryFragment(UUID storyID, UUID fragmentID, String storyText,
 	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
-		this.storyID = UUID.fromString(storyID);
-		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
 		this.storyText = storyText;
 		this.storyMedia = storyMedia;
 		this.choices = choices;
@@ -83,8 +83,8 @@ public class StoryFragment {
      * @param storyText Text of the StoryFragment
      * @param choice New Choice for the new StoryFragment
      */
-	public StoryFragment(String storyID, String storyText, Choice choice) {
-		this.storyID = UUID.fromString(storyID);
+	public StoryFragment(UUID storyID, String storyText, Choice choice) {
+		this.storyID = storyID;
 		this.fragmentID = UUID.randomUUID();
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
@@ -99,8 +99,8 @@ public class StoryFragment {
      * @param storyID UUID of the Story the StoryFragment is a part of
      * @param storyText Text of the StoryFragment
      */
-	public StoryFragment(String storyID, String storyText) {
-		this.storyID = UUID.fromString(storyID);
+	public StoryFragment(UUID storyID, String storyText) {
+		this.storyID = storyID;
 		this.fragmentID = UUID.randomUUID();
 		this.storyText = storyText;
 		this.choices = new ArrayList<Choice>();
@@ -116,10 +116,10 @@ public class StoryFragment {
      * @param fragmentID UUID of the StoryFragment
      * @param storyText Text of the StoryFragment
      */
-	public StoryFragment(ArrayList<Choice> choices, String storyID, String fragmentID, String storyText) {
+	public StoryFragment(ArrayList<Choice> choices, UUID storyID, UUID fragmentID, String storyText) {
 		this.choices = choices;
-		this.storyID = UUID.fromString(storyID);
-		this.fragmentID = UUID.fromString(fragmentID);
+		this.storyID = storyID;
+		this.fragmentID = fragmentID;
 		this.storyText = storyText;
 		this.storyMedia = new ArrayList<String>();
 	}
@@ -129,8 +129,8 @@ public class StoryFragment {
      *
      * @return UUID of the Story
      */
-	public String getStoryID() {
-		return storyID.toString();
+	public UUID getStoryID() {
+		return storyID;
 	}
 
     /**
@@ -138,8 +138,8 @@ public class StoryFragment {
      *
      * @return UUID of the StoryFragment
      */
-	public String getFragmentID() {
-		return fragmentID.toString();
+	public UUID getFragmentID() {
+		return fragmentID;
 	}
 
     /**

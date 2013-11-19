@@ -44,16 +44,16 @@ public final class StoryManager implements IStoryModelPresenter,
 	final String DEFAULT_FRAGMENT_TEXT = "<insert content here...>";
 	private static final String TAG = "StoryManager";
 
-	private StoryDB m_db = null;
+	private ILocalStorage m_db = null;
 	private Context m_context = null;
 
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	
-	private Map<String, Story> m_storyList = null;
-	private Map<String, Bookmark> m_bookmarkList = null;
-	private Map<String, StoryFragment> m_fragmentList = null;
+	private Map<UUID, Story> m_storyList = null;
+	private Map<UUID, Bookmark> m_bookmarkList = null;
+	private Map<UUID, StoryFragment> m_fragmentList = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
@@ -69,7 +69,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_context = context;
 		m_db = new StoryDB(context);
 		
-		m_fragmentList = new HashMap<String, StoryFragment>();
+		m_fragmentList = new HashMap<UUID, StoryFragment>();
 	}
 
 	// ============================================================
@@ -198,7 +198,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Select a story
 	 */
-	public void selectStory(String storyId) {
+	public void selectStory(UUID storyId) {
 		m_currentStory = getStory(storyId);
 		PublishCurrentStoryChange();
 	}
@@ -206,7 +206,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Select a fragment as the current fragment
 	 */
-	public void selectFragment(String fragmentId) {
+	public void selectFragment(UUID fragmentId) {
 		m_currentFragment = getFragment(fragmentId);
 		PublishCurrentFragmentChange();
 	}
@@ -240,7 +240,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Delete a story from the database
 	 */
-	public void deleteStory(String storyId) {
+	public void deleteStory(UUID storyId) {
 		// TODO Needs to be implemented in database.
 
 	}
@@ -248,7 +248,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Get a story from the database or cloud
 	 */
-	public Story getStory(String storyId) {
+	public Story getStory(UUID storyId) {
 		if(m_storyList == null)
 		{
 			LoadStories();
@@ -284,16 +284,16 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Get a fragment from either the database or the cloud
 	 */
-	public StoryFragment getFragment(String fragmentId) {
+	public StoryFragment getFragment(UUID fragmentId) {
 		// The fragment should be part of the current story
-		HashSet<String> fragmentIds = m_currentStory.getFragments();
-		String theId = null;
+		HashSet<UUID> fragmentIds = m_currentStory.getFragments();
+		UUID theId = null;
 		StoryFragment result = null;
 		
 		// verify that the id is indeed part of the current story!
-		for(String id : fragmentIds)
+		for(UUID id : fragmentIds)
 		{
-			if(fragmentId.equalsIgnoreCase(id))
+			if(fragmentId.equals(id))
 			{
 				theId = id;
 			}
@@ -352,7 +352,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Fetch a bookmark from local database
 	 */
-	public Bookmark getBookmark(String id) {
+	public Bookmark getBookmark(UUID id) {
 		if(m_bookmarkList == null)
 		{
 			LoadBookmarks();
@@ -369,7 +369,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	
 	private void LoadStories()
 	{
-		m_storyList = new HashMap<String, Story>();
+		m_storyList = new HashMap<UUID, Story>();
 		ArrayList<Story> localStories = m_db.getStories();
 		
 		for(Story story : localStories)
@@ -382,7 +382,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	
 	private void LoadBookmarks()
 	{
-		m_bookmarkList = new HashMap<String, Bookmark>();
+		m_bookmarkList = new HashMap<UUID, Bookmark>();
 		ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
 		
 		for(Bookmark bookmark : bookmarks)

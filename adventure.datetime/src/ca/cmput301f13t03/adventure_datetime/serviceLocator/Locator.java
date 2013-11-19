@@ -4,7 +4,7 @@ import android.content.Context;
 import ca.cmput301f13t03.adventure_datetime.controller.AuthorController;
 import ca.cmput301f13t03.adventure_datetime.controller.UserController;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelPresenter;
 
@@ -28,7 +28,8 @@ public final class Locator
 	public static void initializeLocator(Context applicationContext)
 	{
 		StoryManager manager = new StoryManager(applicationContext);
-		IReaderStorage localDatabase = null; // todo::jt fill this in
+		// TODO: Find person below how to "TODO" properly. Oh, and I murdered IReaderStorage
+		ILocalStorage localDatabase = null; // todo::jt fill this in
 		
 		s_director = manager;
 		s_presenter = manager;

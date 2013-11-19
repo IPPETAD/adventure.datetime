@@ -26,6 +26,8 @@ import junit.framework.Assert;
 
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -33,7 +35,7 @@ import java.util.UUID;
  */
 public class StoryDBTest extends AndroidTestCase {
 
-	private StoryDB database;
+	private ILocalStorage database;
 
 	@Override
 	public void setUp() throws Exception {

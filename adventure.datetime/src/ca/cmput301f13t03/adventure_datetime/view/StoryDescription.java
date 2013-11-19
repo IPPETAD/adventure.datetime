@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,8 +67,8 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 	
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
-	private Map<String, Bookmark> _bookmarks;
-	private Map<String, Story> _stories;
+	private Map<UUID, Bookmark> _bookmarks;
+	private Map<UUID, Story> _stories;
 	private Story _story;
 	
 	@Override
@@ -88,7 +89,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		});
 	}
 	@Override
-	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
 		setUpView();
 	}
@@ -98,7 +99,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
 		_stories = newStories;	
 		setUpView();
 	}
@@ -154,7 +155,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 			super(fm);
 			_fragments = new ArrayList<StoryDescriptionFragment>();
 		}
-		public void setStories(List<Story> newStories, Map<String, Bookmark> bookmarks) {
+		public void setStories(List<Story> newStories, Map<UUID, Bookmark> bookmarks) {
 			_fragments = new ArrayList<StoryDescriptionFragment>();
 			for (Story story : newStories) {
 				StoryDescriptionFragment fragment = new StoryDescriptionFragment();
