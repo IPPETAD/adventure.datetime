@@ -64,7 +64,7 @@ public class AuthorControllerTest extends AndroidTestCase {
 	}
 
 	public void testSaveFragment() throws Exception {
-		String uuid = UUID.randomUUID().toString();
+		UUID uuid = UUID.randomUUID();
 		Choice choice = new Choice("test", uuid);
 		StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
 

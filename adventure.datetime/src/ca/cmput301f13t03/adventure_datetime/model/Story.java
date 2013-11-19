@@ -309,8 +309,8 @@ public class Story {
      *
      * @return Whether the UUID was removed or not
      */
-	public boolean removeFragment(String id) {
-		return this.fragmentIDs.remove(UUID.fromString(id));
+	public boolean removeFragment(UUID id) {
+		return this.fragmentIDs.remove(id);
 	}
 
     /**
