@@ -1,9 +1,13 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 
+/**
+ * Class for interacting with a user's account
+ */
 public class AccountService {
 	
 	private static final String[] projection = { ContactsContract.Contacts.DISPLAY_NAME }; 
@@ -12,7 +16,14 @@ public class AccountService {
 	
 	private AccountService() {	}
 	
-	public static String getUserName(Activity context) {
+	/**
+	 * Returns a users display name from their contacts profile.
+	 * @param context, for querying the user's contacts profile
+	 * @return
+	 */
+	public static String getUserName(Context context) {
+		// TODO: Should this remain static?
+		
 		if (userName == null) {
 			setUserName(context);
 		}
@@ -20,8 +31,9 @@ public class AccountService {
 		return userName;
 	}
 	
-	private static void setUserName(Activity context) {
-		Cursor c = context.getContentResolver().query(
+	private static void setUserName(Context context) {
+		ContentResolver cr = context.getContentResolver();
+		Cursor c = cr.query(
 				ContactsContract.Profile.CONTENT_URI, // Query only the user's profile 
 				projection, // get display name
 				null, // get everything
@@ -30,7 +42,7 @@ public class AccountService {
 				);
 		
 		if (c.moveToFirst()) {
-			userName = c.getString(0);
+			userName = c.getString(c.getColumnIndex(projection[0]));
 		}
 		
 		c.close();
