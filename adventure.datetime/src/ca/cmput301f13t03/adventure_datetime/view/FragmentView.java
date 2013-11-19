@@ -25,14 +25,20 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
@@ -98,11 +104,11 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 		if (_fragment.getStoryMedia() == null)
 			_fragment.setStoryMedia(new ArrayList<String>());
-		
+
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
-		if (_fragment.getStoryMedia().size() > 0)
-			_filmstrip.getLayoutParams().height = 300;
+		//if (_fragment.getStoryMedia().size() > 0)
+		_filmstrip.getLayoutParams().height = 300;
 
 
 		_content.setText(_fragment.getStoryText());
@@ -112,9 +118,10 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		// 2) Set appropriate Layout Params to ImageView
 		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
-		for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
+		//for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
+		for (int i = 0; i < 5; i++) {
 			// TODO::JF Get images from fragment
-			/*	ImageView li = new ImageView(this);
+			ImageView li = new ImageView(this);
 			li.setScaleType(ScaleType.CENTER_INSIDE);
 			li.setImageResource(R.drawable.grumpy_cat2);
 			_filmLayout.addView(li);
@@ -128,39 +135,69 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			li.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// TODO: Open image in fullscreen
+					startActivity(new Intent(FragmentView.this, FullScreen_Image.class));
 				}
-			});*/
+			});
 		}
 
+		if (_fragment.getChoices().size() > 0) {
+			/** Choices **/
+			final List<String> choices = new ArrayList<String>();
+			for (Choice choice : _fragment.getChoices())
+				choices.add(choice.getText());
+			choices.add("I'm feeling lucky.");
 
-		/** Choices **/
-		final List<String> choices = new ArrayList<String>();
-		for (Choice choice : _fragment.getChoices())
-			choices.add(choice.getText());
-		
-		_choices.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(v.getContext())
-				.setTitle("Actions")
-				.setCancelable(true)
-				.setItems(choices.toArray(new String[choices.size()]), 
-						new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Iterator<Choice> ite = _fragment.getChoices().iterator();
-						Choice choice = null;
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("Actions")
+					.setCancelable(true)
+					.setItems(choices.toArray(new String[choices.size()]), 
+							new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
 
-						for (int i=0; i<=which; i++)
-							choice = ite.next();
-						Locator.getUserController().MakeChoice(choice);
-					}
-				})
-				.create().show();
-			}
-		});
+							/** You feeling lucky, punk? **/
+							if (which == _fragment.getChoices().size())
+								which = (int) (Math.random() * _fragment.getChoices().size());
 
+							Choice choice = _fragment.getChoices().get(which);
+
+							Toast.makeText(getApplicationContext(), 
+									choice.getText(), Toast.LENGTH_LONG).show();
+							Locator.getUserController().MakeChoice(choice);
+						}
+					})
+					.create().show();
+				}
+			});
+		} else {
+			/** End of story **/
+			_choices.setText("The End");
+			_choices.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(v.getContext())
+					.setTitle("La Fin")
+					.setCancelable(true)
+					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Locator.getUserController().StartStory(_fragment.getStoryID());							
+						}
+					})
+					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+					.create().show();
+					
+				}
+			});
+		}
 
 	}
 

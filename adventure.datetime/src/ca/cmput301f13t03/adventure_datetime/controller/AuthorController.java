@@ -33,28 +33,56 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
  * Controller for aspects of authoring a story
  *
  * @author Evan DeGraff
+ * @author Jesse Tucker
  */
 public class AuthorController {
 	
 	private IStoryModelDirector m_storyDirector = null;
 
+    /**
+     * Constructor for the AuthorController
+     *
+     * @param director The director managing transactions with local and online storage
+     */
 	public AuthorController(IStoryModelDirector director) {
 		m_storyDirector = director;
 	}
-	
+
+    /**
+     * Passes a new story created by the director to the view
+     *
+     * @return A new Story
+     */
 	public Story CreateStory()
 	{
 		return m_storyDirector.CreateNewStory();
 	}
 
+    /**
+     * Saves a story to the local storage
+     * @param story The Story to save
+     * @return Whether or not the save was successful
+     */
 	public boolean saveStory(Story story) {
 		return m_storyDirector.putStory(story);
 	}
 
+    /**
+     * Gets a story from the director
+     *
+     * @param storyId UUID of the Story to get
+     *
+     * @return The Story, if found. Null, otherwise.
+     */
 	public Story getStory(String storyId) {
 		return m_storyDirector.getStory(storyId);
 	}
 
+    /**
+     * Deletes a Story and all StoryFragments from local and online storage.
+     *
+     * @param storyId UUID of the story to delete
+     */
 	public void deleteStory(String storyId) {
 		Story story = m_storyDirector.getStory(storyId);
 		if (story == null) return;
@@ -68,19 +96,41 @@ public class AuthorController {
 		m_storyDirector.deleteStory(storyId);
 	}
 
+    /**
+     * Saves a fragment to local storage
+     *
+     * @param fragment The fragment to save
+     *
+     * @return Whether or not the fragment was saved successfully
+     */
 	public boolean saveFragment(StoryFragment fragment) {
 		return m_storyDirector.putFragment(fragment);
 	}
 
+    /**
+     * Deletes a fragment from local or online storage
+     *
+     * @param fragmentId UUID of the fragment to delete
+     */
 	public void deleteFragment(UUID fragmentId) {
 		m_storyDirector.deleteFragment(fragmentId);
 	}
-	
+
+    /**
+     * Selects a Story from the local or online storage.
+     *
+     * @param storyId UUID of the story
+     */
 	public void selectStory(String storyId)
 	{
 		m_storyDirector.selectStory(storyId);
 	}
-	
+
+    /**
+     * Selects a StoryFragment from the local or online storage
+     *
+     * @param fragmentId UUID of the fragment
+     */
 	public void selectFragment(String fragmentId)
 	{
 		m_storyDirector.selectFragment(fragmentId);

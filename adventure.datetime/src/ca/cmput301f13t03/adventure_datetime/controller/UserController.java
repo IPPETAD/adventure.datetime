@@ -31,6 +31,9 @@ import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
+/**
+ * Controller for aspects of playing through stories
+ */
 public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
 
@@ -40,7 +43,7 @@ public class UserController {
 	}
 
 	/**
-	 * @param storyId
+	 * @param storyId UUID of the story to start
 	 *
 	 * @return true if the story was successfully selected, false if it doesn't exist
 	 */
@@ -56,7 +59,7 @@ public class UserController {
 	}
 
 	/**
-	 * @param id
+	 * @param id UUID of the story to start
 	 *
 	 * @return true if story was successfully selected, false if it doesn't exist
 	 */
@@ -72,14 +75,27 @@ public class UserController {
 		}
 	}
 
+    /**
+     * Creates a bookmark at the current location
+     */
 	public void SetBookmark() {
 		m_storyDirector.setBookmark();
 	}
 
+    /**
+     * Passes a comment to the fragment
+     *
+     * @param comment The comment to attach to a fragment
+     */
 	public void AddComment(Comment comment) {
 		/* TODO::JT */
 	}
 
+    /**
+     * The user makes a choice at the current fragment
+     *
+     * @param choice The choice made
+     */
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
 	}

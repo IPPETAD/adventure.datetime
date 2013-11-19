@@ -27,6 +27,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import junit.framework.Assert;
 
 import java.util.UUID;
@@ -50,7 +51,11 @@ public class AuthorControllerTest extends AndroidTestCase {
 	}
 
 	public void testSaveStory() throws Exception {
-		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
+		Story story = Locator.getAuthorController().CreateStory();
+		
+		story.setAuthor("TestAuthor");
+		story.setTitle("TestTitle");
+		story.setSynopsis("TestSynop");
 
 		Assert.assertTrue("Error inserting story", controller.saveStory(story));
 		Story story2 = controller.getStory(story.getId());
