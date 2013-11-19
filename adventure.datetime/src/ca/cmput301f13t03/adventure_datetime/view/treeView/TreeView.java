@@ -8,6 +8,7 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -110,6 +111,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			try
 			{
 				// clear canvas
+				canvas.drawColor(Color.WHITE);
 				
 				// draw stuffs
 				m_grid.Draw(canvas, m_camera);

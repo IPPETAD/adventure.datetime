@@ -18,7 +18,7 @@ public class Region
 	
 	public boolean Contains(int x, int y)
 	{
-		return 	x > this.x && x < (this.x + this.width) &&
-				y > this.y && y < (this.y + this.height);
+		return 	x >= this.x && x <= (this.x + this.width) &&
+				y >= this.y && y <= (this.y + this.height);
 	}
 }

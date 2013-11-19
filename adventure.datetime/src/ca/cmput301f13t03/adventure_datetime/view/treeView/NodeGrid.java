@@ -70,6 +70,7 @@ class NodeGrid
 			m_nodes.clear();
 
 			SetupNodes(fragments);
+			SetupConnections();
 		}
 	}
 	
@@ -108,6 +109,11 @@ class NodeGrid
 		}
 		
 		assert(notPlacedFragments.size() == 0);
+	}
+	
+	private void SetupConnections()
+	{
+		
 	}
 	
 	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<String, StoryFragment> allFrags)

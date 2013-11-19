@@ -37,13 +37,14 @@ class FragmentNode extends Region
 	{
 		if(m_displayRect != null)
 		{
-			
-			
 			// more hacky shit for now
 			// transform the rectangle
 			Region localCords = camera.GetLocalTransform(this);
 			
-			Rect dispRect = new Rect(localCords.x, localCords.y, localCords.width, localCords.height);
+			Rect dispRect = new Rect(	localCords.x, 
+										localCords.y, 
+										localCords.x + localCords.width, 
+										localCords.y + localCords.height);
 			
 			//end hacky shit
 			
