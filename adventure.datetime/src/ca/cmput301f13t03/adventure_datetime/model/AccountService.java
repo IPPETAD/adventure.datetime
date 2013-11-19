@@ -1,7 +1,6 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 
@@ -21,18 +20,17 @@ public class AccountService {
 	 * @param context, for querying the user's contacts profile
 	 * @return
 	 */
-	public static String getUserName(Context context) {
+	public static String getUserName(ContentResolver cr) {
 		// TODO: Should this remain static?
 		
 		if (userName == null) {
-			setUserName(context);
+			setUserName(cr);
 		}
 		
 		return userName;
 	}
 	
-	private static void setUserName(Context context) {
-		ContentResolver cr = context.getContentResolver();
+	private static void setUserName(ContentResolver cr) {
 		Cursor c = cr.query(
 				ContactsContract.Profile.CONTENT_URI, // Query only the user's profile 
 				projection, // get display name

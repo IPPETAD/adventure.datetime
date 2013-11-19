@@ -6,7 +6,7 @@ import android.util.Log;
 public class AccountServiceTests extends AndroidTestCase {
 
 	public void testGetUserName() {
-		String userName = AccountService.getUserName(getContext());
+		String userName = AccountService.getUserName(getContext().getContentResolver());
 		Log.d("TEST", "User name found: " + userName);
 		assertNotNull(userName);
 	}
