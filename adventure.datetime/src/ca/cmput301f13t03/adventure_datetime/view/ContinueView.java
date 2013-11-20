@@ -32,7 +32,7 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
@@ -59,7 +59,7 @@ import android.widget.TextView;
  *
  */
 public class ContinueView extends Activity implements IBookmarkListListener,
-														IStoryListListener {
+														ILocalStoriesListener {
 	private static final String TAG = "ContinueView";
 
 	private ListView _listView;
@@ -94,7 +94,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 
 		setUpView();
 	}
-	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+	public void OnLocalStoriesChange(Map<String, Story> newStories) {
 		_stories = newStories;
 		setUpView();
 	}
@@ -116,13 +116,13 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	@Override
 	public void onResume() {
 		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
-		Locator.getPresenter().Subscribe((IStoryListListener)this);
+		Locator.getPresenter().Subscribe((ILocalStoriesListener)this);
 		super.onResume();
 	}
 	@Override
 	public void onPause() {
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
-		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
+		Locator.getPresenter().Unsubscribe((ILocalStoriesListener)this);
 		super.onPause();
 	}
 

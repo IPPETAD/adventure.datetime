@@ -111,7 +111,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Subscribe(ILocalStoriesListener storyListListener) {
 		m_localStoriesListeners.add(storyListListener);
 		if (m_storyList != null) {
-			storyListListener.OnCurrentStoryListChange(m_storyList);
+			storyListListener.OnLocalStoriesChange(m_storyList);
 		} else {
 			LoadStories();
 			PublishStoryListChanged();
@@ -211,7 +211,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	private void PublishStoryListChanged() {
 		for (ILocalStoriesListener listListener : m_localStoriesListeners) {
-			listListener.OnCurrentStoryListChange(m_storyList);
+			listListener.OnLocalStoriesChange(m_storyList);
 		}
 	}
 
