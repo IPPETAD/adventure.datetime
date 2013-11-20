@@ -93,7 +93,7 @@ public class AuthorController {
 			deleteFragment(fragment);
 		}
 
-		m_storyDirector.deleteBookmark(storyId);
+		deleteBookmark(storyId);
 		m_storyDirector.deleteStory(storyId);
 	}
 	
