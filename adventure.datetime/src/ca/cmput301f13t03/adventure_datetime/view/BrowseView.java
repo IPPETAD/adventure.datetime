@@ -27,7 +27,7 @@ import java.util.Map;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -49,14 +49,14 @@ import android.util.Log;
  * @author James Finlay
  *
  */
-public class BrowseView extends FragmentActivity implements IStoryListListener {
+public class BrowseView extends FragmentActivity implements ILocalStoriesListener {
 	private static final String TAG = "BrowseView";
 
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
 	
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+	public void OnLocalStoriesChange(Map<String, Story> newStories) {
 		_adapter.setLocalStories(newStories.values());	
 	}
 	

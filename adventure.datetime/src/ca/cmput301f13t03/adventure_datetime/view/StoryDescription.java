@@ -47,7 +47,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
@@ -98,7 +98,7 @@ public class StoryDescription extends FragmentActivity implements ILocalStoriesL
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+	public void OnLocalStoriesChange(Map<String, Story> newStories) {
 		_stories = newStories;	
 		setUpView();
 	}
@@ -132,7 +132,7 @@ public class StoryDescription extends FragmentActivity implements ILocalStoriesL
 	
 	@Override
 	public void onResume() {
-		Locator.getPresenter().Subscribe((IStoryListListener)this);
+		Locator.getPresenter().Subscribe((ILocalStoriesListener)this);
 		Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
 		super.onResume();
@@ -140,7 +140,7 @@ public class StoryDescription extends FragmentActivity implements ILocalStoriesL
 	
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Unsubscribe((IStoryListListener)this);
+		Locator.getPresenter().Unsubscribe((ILocalStoriesListener)this);
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		super.onPause();
