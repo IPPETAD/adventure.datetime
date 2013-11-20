@@ -36,5 +36,5 @@ public interface ILocalStoriesListener
 	 * Callback for when the list of stories changes
 	 * @param newStories The new list of stories
 	 */
-	 void OnCurrentStoryListChange(Map<String, Story> newStories);
+	 void OnLocalStoriesChange(Map<String, Story> newStories);
 }

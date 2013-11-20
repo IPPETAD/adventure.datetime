@@ -60,7 +60,7 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
  * @author James Finlay
  *
  */
-public class StoryDescription extends FragmentActivity implements IStoryListListener, 
+public class StoryDescription extends FragmentActivity implements ILocalStoriesListener, 
 				ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
 	
