@@ -27,8 +27,8 @@ import java.util.Map;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
- *   Interface for listening for changes to the currently selected story
- *   @author Jesse
+ *   Interface for listening for changes to the local stories
+ *   @author Jesse, James -- TEAM ROCKET!
  */
 public interface ILocalStoriesListener
 {
@@ -36,5 +36,5 @@ public interface ILocalStoriesListener
 	 * Callback for when the list of stories changes
 	 * @param newStories The new list of stories
 	 */
-	 void OnCurrentStoryListChange(Map<String, Story> newStories);
+	 void OnLocalStoriesChange(Map<String, Story> newStories);
 }
