@@ -34,7 +34,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/header" >
-
+<!-- 
         <ImageView
             android:id="@+id/thumbnail"
             android:layout_width="50dp"
@@ -42,11 +42,10 @@
             android:layout_margin="5dp"
             android:adjustViewBounds="true"
             android:background="@drawable/grumpy_cat" />
-
+ -->
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/thumbnail"
             android:padding="5dp" >
 
             <Button
