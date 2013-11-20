@@ -27,14 +27,16 @@ import java.util.Map;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
- *   Interface for listening for changes to the currently selected story
- *   @author Jesse
+ * Interface for listening for changes to the online stories
+ * @author James
+ *
  */
-public interface IStoryListListener
-{
+public interface IOnlineStoriesListener {
+	
 	/**
-	 * Callback for when the list of stories changes
-	 * @param newStories The new list of stories
+	 * Callback for when the list of online stories changes
+	 * @param newStories
 	 */
-	 void OnCurrentStoryListChange(Map<String, Story> newStories);
+	void OnOnlineStoriesChange(Map<String, Story> newStories);
+
 }
