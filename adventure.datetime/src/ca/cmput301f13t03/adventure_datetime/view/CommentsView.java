@@ -1,9 +1,12 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.List;
+
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICommentsListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -22,12 +25,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CommentsView extends Activity implements ICurrentStoryListener,
-												ICurrentFragmentListener {
+									ICurrentFragmentListener, ICommentsListener {
 	public static final String COMMENT_TYPE = "forStory";
 	
 	private ListView _listView;
 	private Story _story;
 	private StoryFragment _fragment;
+	private List<Comment> _comments;
 	private RowArrayAdapter _adapter;
 	private boolean forStoryEh;
 	
@@ -48,6 +52,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			Locator.getPresenter().Subscribe((ICurrentStoryListener)this);
 		else
 			Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Subscribe((ICommentsListener)this);
 		super.onResume();
 	}
 	@Override
@@ -56,6 +61,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		else
 			Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Unsubscribe((ICommentsListener)this);
 		super.onPause();
 	}
 	@Override
@@ -68,15 +74,21 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		_fragment = fragment;
 		setUpView();
 	}
+	@Override
+	public void OnCommentsChange(List<Comment> newComments) {
+		_comments = newComments;
+		setUpView();
+	}
 	private void setUpView() {
 		if (_listView == null) return;
+		if (_comments == null) return;
 		if (_story == null && forStoryEh) return;
 		if (_fragment == null && !forStoryEh) return;
 		
-		// TODO: Use model data
 		// TODO: Send diff comments whether from story or fragment
-		Comment comments[] = new Comment[5];
-		_adapter = new RowArrayAdapter(this, R.layout.comment_single, comments);
+		
+		_adapter = new RowArrayAdapter(this, 
+				R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
 		
 		_listView.setAdapter(_adapter);
 		
@@ -103,24 +115,16 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			/** Layout Items **/
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView date = (TextView) rowView.findViewById(R.id.datetime);
-			ImageView avatar = (ImageView) rowView.findViewById(R.id.thumbnail);
 			Button btnImage = (Button) rowView.findViewById(R.id.image_button);
 			RelativeLayout layImage = (RelativeLayout) rowView.findViewById(R.id.wrapper);
 			TextView content = (TextView) rowView.findViewById(R.id.content);
 			
 			// TODO::JF use actual data
 			
-			//author.setText(item.getAuthor());
-			//content.setText(item.getContent());
-			if (forStoryEh)
-				author.setText("Famous Story Critic");
-			else
-				author.setText("Famous Fragment Critic");
-			content.setText("Yolo swag, hipsters be sick yo. #hatersgonnaskate\n"+
-					"This is more text that we can just throw in to ensure that "+
-					"everything lines up properly ALL THE WAY FUCKING DOWN!\nHol"+
-					"y shit batman, what is that!?");
-			
+			author.setText(item.getAuthor());
+			content.setText(item.getContent());
+			// TODO:: Story needs a timestamp
+			// TODO:: Use model image
 			btnImage.setOnClickListener(new ShowOnClickListener().
 					setUp(layImage, btnImage));
 			
