@@ -93,7 +93,17 @@ public class AuthorController {
 			deleteFragment(fragment);
 		}
 
+		m_storyDirector.deleteBookmark(storyId);
 		m_storyDirector.deleteStory(storyId);
+	}
+	
+	/**
+	 * Deletes a bookmark by StoryID
+	 * 
+	 * @param storyId UUID of the story to delete
+	 */
+	public void deleteBookmark(String storyId) {
+		m_storyDirector.deleteBookmark(storyId);
 	}
 
     /**
