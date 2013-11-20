@@ -31,6 +31,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -55,6 +56,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Map<String, Story> m_storyList = null;
 	private Map<String, Bookmark> m_bookmarkList = null;
 	private Map<String, StoryFragment> m_fragmentList = null;
+	private List<Comment> m_commentsList = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
@@ -62,6 +64,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Set<IStoryListListener> m_storyListListeners = new HashSet<IStoryListListener>();
 	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 	private Set<IAllFragmentsListener> m_allFragmentListeners = new HashSet<IAllFragmentsListener>();
+	private Set<ICommentsListener> m_commentsListeners = new HashSet<ICommentsListener>();
 
 	/**
 	 * Create a new story manager and initializes other components using the provided context.
@@ -136,6 +139,16 @@ public final class StoryManager implements IStoryModelPresenter,
 			allFragmentsListener.OnAllFragmentsChange(currentFrags);
 		}
 	}
+	
+	public void Subscribe(ICommentsListener commentsListener) {
+		m_commentsListeners.add(commentsListener);
+		if(m_commentsList != null){
+			commentsListener.OnCommentsChange(m_commentsList);
+		} else {
+			LoadComments();
+			PublishCommentsChanged();
+		}
+	}
 
 	/**
 	 * Unsubscribe from callbacks when the current fragment changes
@@ -165,6 +178,10 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
 	{
 		m_allFragmentListeners.remove(allFragmentsListener);
+	}
+	
+	public void Unsubscribe(ICommentsListener commentsListener) {
+		m_commentsListeners.remove(commentsListener);
 	}
 
 	// ============================================================
@@ -206,6 +223,12 @@ public final class StoryManager implements IStoryModelPresenter,
 	private void PublishBookmarkListChanged() {
 		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
 			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
+		}
+	}
+	
+	private void PublishCommentsChanged() {
+		for(ICommentsListener commentsListener : m_commentsListeners) {
+			commentsListener.OnCommentsChange(m_commentsList);
 		}
 	}
 	
@@ -297,7 +320,6 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public boolean putFragment(StoryFragment fragment) {
 		
-
 		// this really should be transactional...
 		boolean result = m_db.setStoryFragment(fragment);
 		if(result)
@@ -428,6 +450,13 @@ public final class StoryManager implements IStoryModelPresenter,
 			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
 		}
 		
+		// TODO load from online
+	}
+	
+	private void LoadComments()
+	{
+		m_commentsList = new ArrayList<Comment>();
+		// TODO load from DB
 		// TODO load from online
 	}
 	
