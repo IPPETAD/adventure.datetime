@@ -41,7 +41,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * 
@@ -123,7 +125,8 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		@Override
 		public Fragment getItem(int pos) {
 			IllustrationFragment frag = new IllustrationFragment();
-			frag.setImage(_illustrations.get(pos));
+			frag.init(_illustrations.get(pos), pos);
+			
 			return frag;
 		}
 
@@ -137,12 +140,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
 		private View _rootView;
 		private String _sID;
+		private int _position;
 
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 		}
-		public void setImage(String id) {
+		public void init(String id, int position) {
 			_sID = id;
+			_position = position;
 			setUpView();
 		}
 		@Override
@@ -160,7 +165,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 			if (_sID == null) return;
 			if (_rootView == null) return;
 
+			/** Layout items **/
 			ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+			Button btnNew = (Button) _rootView.findViewById(R.id.action_new);
+			Button btnDel = (Button) _rootView.findViewById(R.id.action_delete);
+			TextView counter = (TextView) _rootView.findViewById(R.id.count);
+			
+			// TODO: Set counter by location
+			
 			image.setBackgroundResource(R.drawable.grumpy_cat2);
 
 		}
