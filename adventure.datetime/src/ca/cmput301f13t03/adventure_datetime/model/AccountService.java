@@ -17,8 +17,8 @@ public class AccountService {
 	
 	/**
 	 * Returns a users display name from their contacts profile.
-	 * @param context, for querying the user's contacts profile
-	 * @return
+	 * @param cr, for querying the user's contacts profile.
+	 * @return the display name from the contacts profile
 	 */
 	public static String getUserName(ContentResolver cr) {
 		// TODO: Should this remain static?
@@ -27,7 +27,7 @@ public class AccountService {
 			setUserName(cr);
 		}
 		
-		return userName;
+		return userName != null ? userName : "no_name";
 	}
 	
 	private static void setUserName(ContentResolver cr) {
