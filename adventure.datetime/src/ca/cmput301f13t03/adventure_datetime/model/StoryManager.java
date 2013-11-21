@@ -59,9 +59,6 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Map<String, Story> m_onlineStories = null;
 	private Map<String, Bookmark> m_bookmarkList = null;
 	private Map<String, StoryFragment> m_fragmentList = null;
-	
-	// For threads
-	private StoryFragment fragmentResult = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
@@ -267,7 +264,10 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void selectFragment(String fragmentId) {
 		m_currentFragment = getFragment(fragmentId);
-		PublishCurrentFragmentChanged();
+		if(m_currentFragment != null)
+			PublishCurrentFragmentChanged();
+		else
+			getFragmentOnline(fragmentId);
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			return false;
 		if (story.getThumbnail() == null)
 			story.setThumbnail(BitmapFactory.decodeResource(
-					m_context.getResources(), R.drawable.logo));
+					m_context.getResources(), R.drawable.grumpy_cat));
 		boolean result = m_db.setStory(story);
 		if(result){
 			m_stories.put(story.getId(), story);
@@ -352,7 +352,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 
 	/**
-	 * Get a fragment from either the database or the cloud
+	 * Get a fragment from the database
 	 */
 	public StoryFragment getFragment(String fragmentId) {
 		// The fragment should be part of the current story
@@ -364,9 +364,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		for(String id : fragmentIds)
 		{
 			if(fragmentId.equalsIgnoreCase(id))
-			{
 				theId = id;
-			}
 		}
 		
 		if(theId == null)
@@ -382,38 +380,32 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 		else
 		{
-			// shit, gotta load, may be in DB or online
-			// attempt DB first
+			//Try loading from db
 			result = m_db.getStoryFragment(theId);
 			if(result == null)
-			{
-				// Fetch fragment asynchronously
-				final String finalId = theId;
-				m_threadPool.execute(new Runnable() {
-					public void run() {
-						try {
-							fragmentResult = m_webStorage.getFragment(finalId);
-							// afterwards place into cache
-							m_fragmentList.put(fragmentResult.getFragmentID(), fragmentResult);
-						} catch (Exception e) {
-							Log.e(TAG, e.getMessage());
-						}
-					}
-				});
-			}
+				return result;
 			else
-			{
-				// add it to the cache
 				m_fragmentList.put(result.getFragmentID(), result);
-			}
-		}
-		
-		if(result == null) {
-			result = fragmentResult;
-			fragmentResult = null;
 		}
 		
 		return result;
+	}
+	
+	private void getFragmentOnline(String fragmentId) {
+		// Fetch fragment asynchronously
+		final String finalId = fragmentId;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					m_currentFragment = m_webStorage.getFragment(finalId);
+					// afterwards place into cache
+					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
+					PublishCurrentFragmentChanged();
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		});
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
