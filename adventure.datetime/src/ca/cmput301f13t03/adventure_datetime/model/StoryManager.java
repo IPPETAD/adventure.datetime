@@ -49,6 +49,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private StoryDB m_db = null;
 	private Context m_context = null;
 	private WebStorage m_webStorage = null;
+	private ThreadPool m_threadPool = null;
 
 	// Current focus
 	private Story m_currentStory = null;
@@ -58,6 +59,9 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Map<String, Story> m_onlineStories = null;
 	private Map<String, Bookmark> m_bookmarkList = null;
 	private Map<String, StoryFragment> m_fragmentList = null;
+	
+	// For threads
+	private StoryFragment fragmentResult = null;
 
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
@@ -75,6 +79,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_context = context;
 		m_db = new StoryDB(context);
 		m_webStorage = new WebStorage();
+		m_threadPool = new ThreadPool();
 		
 		m_fragmentList = new HashMap<String, StoryFragment>();
 	}
@@ -127,7 +132,6 @@ public final class StoryManager implements IStoryModelPresenter,
 			onlineStoriesListener.OnOnlineStoriesChange(m_stories);
 		} else {
 			LoadOnlineStories();
-			PublishOnlineStoriesChanged();
 		}
 	}
 
@@ -291,7 +295,12 @@ public final class StoryManager implements IStoryModelPresenter,
 		if (story.getThumbnail() == null)
 			story.setThumbnail(BitmapFactory.decodeResource(
 					m_context.getResources(), R.drawable.logo));
-		return m_db.setStory(story);
+		boolean result = m_db.setStory(story);
+		if(result){
+			m_stories.put(story.getId(), story);
+			PublishStoriesChanged();
+		}
+		return result;
 	}
 
 	/**
@@ -321,7 +330,6 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public boolean putFragment(StoryFragment fragment) {
 		
-
 		// this really should be transactional...
 		boolean result = m_db.setStoryFragment(fragment);
 		if(result)
@@ -379,20 +387,30 @@ public final class StoryManager implements IStoryModelPresenter,
 			result = m_db.getStoryFragment(theId);
 			if(result == null)
 			{
-				try {
-					//TODO:: this needs to be async!
-					result = m_webStorage.getFragment(theId);
-					// afterwards place into cache
-					// m_fragmentList.put(re, value)
-				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
-				}
+				// Fetch fragment asynchronously
+				final String finalId = theId;
+				m_threadPool.execute(new Runnable() {
+					public void run() {
+						try {
+							fragmentResult = m_webStorage.getFragment(finalId);
+							// afterwards place into cache
+							m_fragmentList.put(fragmentResult.getFragmentID(), fragmentResult);
+						} catch (Exception e) {
+							Log.e(TAG, e.getMessage());
+						}
+					}
+				});
 			}
 			else
 			{
 				// add it to the cache
 				m_fragmentList.put(result.getFragmentID(), result);
 			}
+		}
+		
+		if(result == null) {
+			result = fragmentResult;
+			fragmentResult = null;
 		}
 		
 		return result;
@@ -450,17 +468,23 @@ public final class StoryManager implements IStoryModelPresenter,
 	private void LoadOnlineStories()
 	{
 		m_onlineStories = new HashMap<String, Story>();
-		try {
-			//TODO make async!
-			List<Story> onlineStories = m_webStorage.getAllStories();
-			
-			for(Story story : onlineStories)
-			{
-				m_onlineStories.put(story.getId(), story);
+		
+		// Fetch stories from web asynchronously.
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					List<Story> onlineStories = m_webStorage.getAllStories();
+					
+					for(Story story : onlineStories)
+					{
+						m_onlineStories.put(story.getId(), story);
+					}
+					PublishOnlineStoriesChanged();
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
 			}
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
+		});		
 	}
 	
 	private void LoadBookmarks()
