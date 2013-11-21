@@ -54,7 +54,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
 	
-	private Map<String, Story> m_storyList = null;
+	private Map<String, Story> m_stories = null;
+	private Map<String, Story> m_onlineStories = null;
 	private Map<String, Bookmark> m_bookmarkList = null;
 	private Map<String, StoryFragment> m_fragmentList = null;
 
@@ -111,22 +112,22 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Subscribe to changes for the current list of stories
 	 */
-	public void Subscribe(ILocalStoriesListener storyListListener) {
-		m_localStoriesListeners.add(storyListListener);
-		if (m_storyList != null) {
-			storyListListener.OnLocalStoriesChange(m_storyList);
+	public void Subscribe(ILocalStoriesListener localStoriesListener) {
+		m_localStoriesListeners.add(localStoriesListener);
+		if (m_stories != null) {
+			localStoriesListener.OnLocalStoriesChange(m_stories);
 		} else {
 			LoadStories();
-			PublishStoryListChanged();
+			PublishStoriesChanged();
 		}
 	}
-	public void Subscribe(IOnlineStoriesListener storyListListener) {
-		m_onlineStoriesListeners.add(storyListListener);
-		if (m_storyList != null) {
-			//storyListListener.OnCurrentStoryListChange(m_storyList);
+	public void Subscribe(IOnlineStoriesListener onlineStoriesListener) {
+		m_onlineStoriesListeners.add(onlineStoriesListener);
+		if (m_onlineStories != null) {
+			onlineStoriesListener.OnOnlineStoriesChange(m_stories);
 		} else {
-			//LoadStories();
-			//PublishStoryListChanged();
+			LoadOnlineStories();
+			PublishOnlineStoriesChanged();
 		}
 	}
 
@@ -212,9 +213,15 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Publish a changed to the current list of stories to all listeners
 	 */
-	private void PublishStoryListChanged() {
-		for (ILocalStoriesListener listListener : m_localStoriesListeners) {
-			listListener.OnLocalStoriesChange(m_storyList);
+	private void PublishStoriesChanged() {
+		for (ILocalStoriesListener localStoriesListener : m_localStoriesListeners) {
+			localStoriesListener.OnLocalStoriesChange(m_stories);
+		}
+	}
+	
+	private void PublishOnlineStoriesChanged() {
+		for (IOnlineStoriesListener onlineStoriesListener : m_onlineStoriesListeners) {
+			onlineStoriesListener.OnOnlineStoriesChange(m_stories);
 		}
 	}
 
@@ -269,7 +276,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 		newStory.setHeadFragmentId(headFragment);
 		
-		m_storyList.put(newStory.getId(), newStory);
+		m_stories.put(newStory.getId(), newStory);
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 		
 		PublishCurrentStoryChanged();
@@ -279,6 +286,8 @@ public final class StoryManager implements IStoryModelPresenter,
 
 	public boolean putStory(Story story) {
 		// Set default image if needed
+		if(story == null) 
+			return false;
 		if (story.getThumbnail() == null)
 			story.setThumbnail(BitmapFactory.decodeResource(
 					m_context.getResources(), R.drawable.logo));
@@ -290,21 +299,21 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void deleteStory(String storyId) {
 		m_db.deleteStory(storyId);
-        m_storyList.remove(storyId);
-        PublishStoryListChanged();
+        m_stories.remove(storyId);
+        PublishStoriesChanged();
 	}
 
 	/**
 	 * Get a story from the database or cloud
 	 */
 	public Story getStory(String storyId) {
-		if(m_storyList == null)
+		if(m_stories == null)
 		{
 			LoadStories();
 		}
 		
 		// returns null if there isn't one
-		return m_storyList.get(storyId);
+		return m_stories.get(storyId);
 	}
 
 	/**
@@ -390,14 +399,14 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
-		if(m_storyList == null)
+		if(m_stories == null)
 		{
 			LoadStories();
 		}
 		
 		ArrayList<Story> results = new ArrayList<Story>();
 		
-		for(Story story : m_storyList.values())
+		for(Story story : m_stories.values())
 		{
 			if(author.equalsIgnoreCase(story.getAuthor()))
 			{
@@ -428,26 +437,30 @@ public final class StoryManager implements IStoryModelPresenter,
 	
 	private void LoadStories()
 	{
-		m_storyList = new HashMap<String, Story>();
+		m_stories = new HashMap<String, Story>();
 		ArrayList<Story> localStories = m_db.getStories();
 		
 		for(Story story : localStories)
 		{
-			m_storyList.put(story.getId(), story);
+			m_stories.put(story.getId(), story);
 		}
 		
+	}
+	
+	private void LoadOnlineStories()
+	{
+		m_onlineStories = new HashMap<String, Story>();
 		try {
 			//TODO make async!
 			List<Story> onlineStories = m_webStorage.getAllStories();
 			
 			for(Story story : onlineStories)
 			{
-				m_storyList.put(story.getId(), story);
+				m_onlineStories.put(story.getId(), story);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-		
 	}
 	
 	private void LoadBookmarks()
