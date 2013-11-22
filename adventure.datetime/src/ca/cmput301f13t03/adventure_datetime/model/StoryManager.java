@@ -267,8 +267,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_currentFragment = getFragment(fragmentId);
 		if(m_currentFragment != null)
 			PublishCurrentFragmentChanged();
-		else
+		else {
 			getFragmentOnline(fragmentId);
+			getNextFragments(fragmentId);
+		}
 	}
 	
 	/**
@@ -408,6 +410,9 @@ public final class StoryManager implements IStoryModelPresenter,
 				}
 			}
 		});
+	}
+	
+	private void getNextFragments(UUID fragmentId){
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {

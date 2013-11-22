@@ -26,12 +26,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import android.util.Log;
+
 public class ThreadPool {
 	private static ThreadPoolExecutor threadPool;
 	private final BlockingQueue<Runnable> workQueue;
 
 	public ThreadPool() {
 		int numberCores = Runtime.getRuntime().availableProcessors();
+		Log.v("ThreadPool", "numberThreads: " + numberCores);
 		workQueue = new LinkedBlockingQueue<Runnable>();
 		threadPool = new ThreadPoolExecutor(numberCores, numberCores, 1,
 				TimeUnit.SECONDS, workQueue);
