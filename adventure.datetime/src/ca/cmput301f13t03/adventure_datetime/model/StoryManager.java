@@ -398,7 +398,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					m_currentFragment = m_webStorage.getFragment(UUID.fromString(finalId));
+					m_currentFragment = m_webStorage.getFragment(java.util.UUID.fromString(finalId));
 					// afterwards place into cache
 					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
 					PublishCurrentFragmentChanged();
@@ -443,6 +443,11 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void setBookmark() {
 		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
 		m_db.setBookmark(newBookmark);
+		PublishBookmarkListChanged();
+	}
+	
+	public void deleteBookmark(String storyId) {
+		m_db.deleteBookmarkByStory(storyId);
 		PublishBookmarkListChanged();
 	}
 	

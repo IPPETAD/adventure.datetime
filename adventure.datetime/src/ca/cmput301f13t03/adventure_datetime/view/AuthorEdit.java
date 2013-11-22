@@ -22,6 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.UUID;
+
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -64,6 +66,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
 	private Story _story;
+	private StoryFragment _fragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +110,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 				getActionBar().setSelectedNavigationItem(position);
 			}
 		});
-		
+
 		// Select 'Overview' at start
 		getActionBar().setSelectedNavigationItem(1);
 
@@ -126,6 +129,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 	}
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
+		_fragment = newFragment;
 		_adapter.setFragment(newFragment);
 	}
 	@Override
@@ -154,16 +158,21 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 			/* Ensure user is not retarded and actually wants to do this */
 			new AlertDialog.Builder(this)
 			.setTitle("Delete Story Fragment")
-			.setMessage("This will only delete the current story fragment. You cannot undo.")
+			.setMessage("Deletes only currently selected fragment.\nYou cannot undo.")
 			.setCancelable(true)
-			.setPositiveButton("Kill the fucker!", new OnClickListener() {
+			.setPositiveButton("Delete", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO::JTF Kill the node. If last node, kill story
-					finish();
+					if (_story.getHeadFragmentId().equals(_fragment.getFragmentID())) {
+						Toast.makeText(getApplicationContext(), 
+								"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
+					} else {
+						Locator.getAuthorController().deleteFragment(UUID.fromString(_fragment.getFragmentID()));
+						Locator.getAuthorController().selectFragment(_story.getHeadFragmentId().toString());
+					}
 				}
 			})
-			.setNegativeButton("NO! Don't hurt GRAMGRAM!", new OnClickListener() {
+			.setNegativeButton("Cancel", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
@@ -175,13 +184,13 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public class ViewPagerAdapter extends FragmentPagerAdapter {
-		
+
 		private AuthorEdit_Edit _edit;
 		private AuthorEdit_Overview _overview;
 		private AuthorEdit_Preview _preview;
-		
+
 		public ViewPagerAdapter(FragmentManager fm) {
 			super(fm);
 			_edit = new AuthorEdit_Edit();
