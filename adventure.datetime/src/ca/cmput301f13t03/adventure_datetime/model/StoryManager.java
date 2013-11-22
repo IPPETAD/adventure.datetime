@@ -452,4 +452,16 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 		return currentFragments;
 	}
+
+	@Override
+	public void Subscribe(ICommentsListener commentsListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void Unsubscribe(ICommentsListener commentsListener) {
+		// TODO Auto-generated method stub
+		
+	}
 }
