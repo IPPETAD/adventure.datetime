@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
@@ -511,5 +512,18 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 		
 		return currentFragments;
+	}
+	
+	public void uploadCurrentStory() {
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
+					Toast.makeText(m_context, "Story successfully uploaded", Toast.LENGTH_SHORT).show();
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		});
 	}
 }

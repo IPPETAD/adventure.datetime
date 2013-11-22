@@ -106,4 +106,9 @@ public interface IStoryModelDirector
 	 * @return
 	 */
 	public Bookmark getBookmark(String bookmarkId);
+
+	/**
+	 * Uploads current story to the web storage
+	 */
+	public void uploadCurrentStory();
 }
