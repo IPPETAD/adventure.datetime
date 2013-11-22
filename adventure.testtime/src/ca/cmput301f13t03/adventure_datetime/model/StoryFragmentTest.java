@@ -42,18 +42,18 @@ public class StoryFragmentTest extends TestCase {
 	}
 
 	public void testCreation() throws Exception {
-		StoryFragment frag = new StoryFragment(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+		StoryFragment frag = new StoryFragment(UUID.randomUUID(), UUID.randomUUID(),
 				"test", new ArrayList<String>(), new ArrayList<Choice>());
 		Assert.assertNotNull("Frag is null", frag);
 
-		frag = new StoryFragment(UUID.randomUUID().toString(), "test",
-				new Choice("test", UUID.randomUUID().toString()));
+		frag = new StoryFragment(UUID.randomUUID(), "test",
+				new Choice("test", UUID.randomUUID()));
 		Assert.assertNotNull("Frag is null", frag);
 
-		frag = new StoryFragment(UUID.randomUUID().toString(), "test");
+		frag = new StoryFragment(UUID.randomUUID(), "test");
 		Assert.assertNotNull("Frag is null", frag);
 
-		frag = new StoryFragment(new ArrayList<Choice>(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+		frag = new StoryFragment(new ArrayList<Choice>(), UUID.randomUUID(), UUID.randomUUID(),
 				"test");
 		Assert.assertNotNull("Frag is null", frag);
 	}
@@ -61,9 +61,9 @@ public class StoryFragmentTest extends TestCase {
 	public void testChoices() throws Exception {
 		Gson gson = new Gson();
 		String jsonchoice;
-		StoryFragment frag = new StoryFragment(UUID.randomUUID().toString(), "test");
+		StoryFragment frag = new StoryFragment(UUID.randomUUID(), "test");
 		Assert.assertEquals("Choices is not empty", 0, frag.getChoices().size());
-		Choice choice = new Choice("test", UUID.randomUUID().toString());
+		Choice choice = new Choice("test", UUID.randomUUID());
 		jsonchoice = gson.toJson(choice);
 		frag.addChoice(choice);
 		Assert.assertTrue("Choices doesn't contain choice", frag.getChoices().contains(choice));
@@ -77,7 +77,7 @@ public class StoryFragmentTest extends TestCase {
 
 	public void testGson() throws Exception {
 		Gson gson = new Gson();
-		StoryFragment frag = new StoryFragment(UUID.randomUUID().toString(), "test");
+		StoryFragment frag = new StoryFragment(UUID.randomUUID(), "test");
 		String json = gson.toJson(frag);
 		StoryFragment frag2 = gson.fromJson(json, StoryFragment.class);
 		Assert.assertEquals("Fragment ids are not equal", frag.getFragmentID(), frag2.getFragmentID());

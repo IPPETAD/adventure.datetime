@@ -53,9 +53,9 @@ public class Bookmark {
      * @param storyID UUID of the Story
      * @param fragmentID UUID of the StoryFragment
      */
-	public Bookmark(String storyID, String fragmentID) {
-		this.fragmentID = UUID.fromString(fragmentID);
-		this.storyID = UUID.fromString(storyID);
+	public Bookmark(UUID storyID, UUID fragmentID) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
 		this.date = Calendar.getInstance().getTime();
 	}
 
@@ -65,9 +65,9 @@ public class Bookmark {
      * @param storyID UUID of the Story
      * @param date Date that the bookmark was originally set
      */
-	public Bookmark(String fragmentID, String storyID, Date date) {
-		this.fragmentID = UUID.fromString(fragmentID);
-		this.storyID = UUID.fromString(storyID);
+	public Bookmark(UUID fragmentID, UUID storyID, Date date) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
 		this.date = date;
 	}
 
@@ -76,8 +76,8 @@ public class Bookmark {
      *
      * @return UUID of the fragment
      */
-	public String getFragmentID() {
-		return fragmentID.toString();
+	public UUID getFragmentID() {
+		return fragmentID;
 	}
 
     /**
@@ -85,8 +85,8 @@ public class Bookmark {
      *
      * @param fragmentID StoryFragment the Bookmark points to
      */
-	public void setFragmentID(String fragmentID) {
-		this.fragmentID = UUID.fromString(fragmentID);
+	public void setFragmentID(UUID fragmentID) {
+		this.fragmentID = fragmentID;
 	}
 
     /**
@@ -112,9 +112,9 @@ public class Bookmark {
      *
      * @return UUID of the Story
      */
-	public String getStoryID() {
+	public UUID getStoryID() {
 
-		return storyID.toString();
+		return storyID;
 	}
 
     /**
@@ -122,8 +122,8 @@ public class Bookmark {
      *
      * @param storyID UUID of Story to point to
      */
-	public void setStoryID(String storyID) {
-		this.storyID = UUID.fromString(storyID);
+	public void setStoryID(UUID storyID) {
+		this.storyID = storyID;
 	}
 
     /**

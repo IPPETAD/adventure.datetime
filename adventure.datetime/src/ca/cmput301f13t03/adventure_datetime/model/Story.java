@@ -86,10 +86,10 @@ public class Story {
      * @param thumbnail Thumbnail of Story
      * @param title Title of Story
      */
-	protected Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
+	protected Story(UUID headFragmentId, UUID id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {
-		this.headFragmentId = UUID.fromString(headFragmentId);
-		this.id = UUID.fromString(id);
+		this.headFragmentId = headFragmentId;
+		this.id = id;
 		this.author = author;
 		this.timestamp = timestamp;
 		this.synopsis = synopsis;
@@ -97,6 +97,22 @@ public class Story {
 		this.title = title;
 		fragmentIDs = new HashSet<UUID>();
 		fragmentIDs.add(this.headFragmentId);
+	}
+	
+    /**
+     * Creates a new Story, used by @link{StoryDB}
+     *
+     * @param headFragmentId UUID of the head StoryFragment of the Story
+     * @param id UUID of the Story
+     * @param author Name of author of Story
+     * @param timestamp Time Story was last modified
+     * @param synopsis Synopsis of Story
+     * @param thumbnail Thumbnail of Story
+     * @param title Title of Story
+     */
+	protected Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
+	             Bitmap thumbnail, String title) {
+		this(UUID.fromString(headFragmentId), UUID.fromString(id), author, timestamp, synopsis, thumbnail, title);
 	}
 
     /**
@@ -137,8 +153,8 @@ public class Story {
      *
      * @return UUID of the Story
      */
-	public String getId() {
-		return id.toString();
+	public UUID getId() {
+		return id;
 	}
 
     /**
@@ -181,8 +197,8 @@ public class Story {
      * Gets the UUID of the head StoryFragment
      * @return UUID of the head StoryFragment
      */
-	public String getHeadFragmentId() {
-		return headFragmentId.toString();
+	public UUID getHeadFragmentId() {
+		return headFragmentId;
 	}
 
     /**
@@ -190,8 +206,8 @@ public class Story {
      *
      * @param headFragmentId New UUID of the head StoryFragment
      */
-	public void setHeadFragmentId(String headFragmentId) {
-		this.headFragmentId = UUID.fromString(headFragmentId);
+	public void setHeadFragmentId(UUID headFragmentId) {
+		this.headFragmentId = headFragmentId;
 		addFragment(headFragmentId);
 	}
 
@@ -257,10 +273,10 @@ public class Story {
      *
      * @return Set of UUIDs
      */
-	public HashSet<String> getFragments() {
-		HashSet<String> fragmentIds = new HashSet<String>();
+	public HashSet<UUID> getFragments() {
+		HashSet<UUID> fragmentIds = new HashSet<UUID>();
 		for (UUID uuid : this.fragmentIDs) {
-			fragmentIds.add(uuid.toString());
+			fragmentIds.add(uuid);
 		}
 		return fragmentIds;
 	}
@@ -270,10 +286,10 @@ public class Story {
      *
      * @param id UUID of new StoryFragment
      */
-	public void addFragment(String id) {
+	public void addFragment(UUID id) {
 		if (this.fragmentIDs.isEmpty())
-			this.headFragmentId = UUID.fromString(id);
-		this.fragmentIDs.add(UUID.fromString(id));
+			this.headFragmentId = id;
+		this.fragmentIDs.add(id);
 	}
 
     /**
@@ -282,8 +298,8 @@ public class Story {
      */
 	public void addFragment(StoryFragment frag) {
 		if (this.fragmentIDs.isEmpty())
-			this.headFragmentId = UUID.fromString(frag.getFragmentID());
-		this.fragmentIDs.add(UUID.fromString(frag.getFragmentID()));
+			this.headFragmentId = frag.getFragmentID();
+		this.fragmentIDs.add(frag.getFragmentID());
 	}
 
     /**
@@ -293,8 +309,8 @@ public class Story {
      *
      * @return Whether the UUID was removed or not
      */
-	public boolean removeFragment(String id) {
-		return this.fragmentIDs.remove(UUID.fromString(id));
+	public boolean removeFragment(UUID id) {
+		return this.fragmentIDs.remove(id);
 	}
 
     /**

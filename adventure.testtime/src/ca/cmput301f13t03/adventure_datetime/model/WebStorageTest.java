@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+
 import junit.framework.TestCase;
 
 public class WebStorageTest extends TestCase {
@@ -15,6 +16,7 @@ public class WebStorageTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		es = new WebStorage();
+		es.setIndex("testing");
 	}
 
 	protected void tearDown() throws Exception {
@@ -56,6 +58,8 @@ public class WebStorageTest extends TestCase {
 			assertTrue(es.getErrorMessage(), result);
 		}
 		
+		Thread.sleep(4000);
+		
 		returned = es.getComments(targetId);
 		
 		assertEquals("Lists different size!, " + es.getErrorMessage(), comments.size(), returned.size());
@@ -63,6 +67,15 @@ public class WebStorageTest extends TestCase {
 		
 		for (Comment c : comments) {
 			ids.add(c.getWebId());
+		}
+		
+		for (UUID id : ids) {
+			try {
+				es.deleteComment(id);
+			}
+			catch (Exception e) {
+				
+			}
 		}
 		
 		for (Comment c : returned) {

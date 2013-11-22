@@ -50,11 +50,6 @@ public interface IStoryModelPresenter
 	 */
     void Subscribe(IBookmarkListListener bookmarkListListener);
     
-    /**
-     * Listens for changes to the entire set of fragments
-     */
-    void Subscribe(IAllFragmentsListener allFragmentsListener);
-    
     //===========================================================
     
     /**
@@ -76,9 +71,4 @@ public interface IStoryModelPresenter
 	 * Stop listening for changes on the current bookmark list
 	 */
     void Unsubscribe(IBookmarkListListener bookmarkListListener);
-    
-    /*
-     * Stop listening for changes on the current set of fragments
-     */
-    void Unsubscribe(IAllFragmentsListener allFragmentsListener);
 }

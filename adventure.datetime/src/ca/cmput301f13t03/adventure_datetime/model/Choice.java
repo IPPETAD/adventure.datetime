@@ -48,9 +48,9 @@ public class Choice {
      * @param text Text of the new Choice
      * @param target UUID of the target StoryFragment
      */
-	public Choice(String text, String target) {
+	public Choice(String text, UUID target) {
 		this.text = text;
-		this.target = UUID.fromString(target);
+		this.target = target;
 	}
 
     /**
@@ -76,8 +76,8 @@ public class Choice {
      *
      * @return UUID of the target StoryFragment
      */
-	public String getTarget() {
-		return target.toString();
+	public UUID getTarget() {
+		return target;
 	}
 
     /**
@@ -85,8 +85,8 @@ public class Choice {
      *
      * @param target UUID of the new target
      */
-	public void setTarget(String target) {
-		this.target = UUID.fromString(target);
+	public void setTarget(UUID target) {
+		this.target = target;
 	}
 
     @Override

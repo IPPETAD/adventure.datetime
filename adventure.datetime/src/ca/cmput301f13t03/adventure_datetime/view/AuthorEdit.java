@@ -167,8 +167,8 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 						Toast.makeText(getApplicationContext(), 
 								"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
 					} else {
-						Locator.getAuthorController().deleteFragment(UUID.fromString(_fragment.getFragmentID()));
-						Locator.getAuthorController().selectFragment(_story.getHeadFragmentId().toString());
+						Locator.getAuthorController().deleteFragment(_fragment.getFragmentID());
+						Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
 					}
 				}
 			})
