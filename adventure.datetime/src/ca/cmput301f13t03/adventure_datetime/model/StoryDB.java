@@ -33,13 +33,11 @@ import android.graphics.Color;
 import android.provider.BaseColumns;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -84,7 +82,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	}
 
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStory(java.lang.String)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStory(java.util.UUID)
 	 */
 	@Override
 	public Story getStory(UUID id) {
@@ -103,10 +101,13 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		Story story;
 
 		if (cursor.moveToFirst()) {
+            Log.v(TAG, "Story with UUID " + id + " retrieved");
 			story = createStory(cursor);
 		}
-		else
+		else {
 			story = null;
+            Log.v(TAG, "No story found");
+        }
 
 		cursor.close();
 		db.close();
@@ -132,9 +133,12 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		if(cursor.moveToFirst()) {
 			do {
+                Log.v(TAG, "Story with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID)) + " retrieved");
 				stories.add(createStory(cursor));
 			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, stories.size() + " stories retrieved");
 
 		cursor.close();
 		db.close();
@@ -158,11 +162,14 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				null);
 		ArrayList<Story> stories = new ArrayList<Story>();
 
-		if (cursor.moveToFirst()) {
-			do {
-				stories.add(createStory(cursor));
-			} while (cursor.moveToNext());
-		}
+        if(cursor.moveToFirst()) {
+            do {
+                Log.v(TAG, "Story with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID)) + " retrieved");
+                stories.add(createStory(cursor));
+            } while(cursor.moveToNext());
+        }
+
+        Log.v(TAG, stories.size() + " stories retrieved");
 
 		cursor.close();
 		db.close();
@@ -170,7 +177,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	}
 
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStoryFragment(java.lang.String)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStoryFragment(java.util.UUID)
 	 */
 	@Override
 	public StoryFragment getStoryFragment(UUID id) {
@@ -185,17 +192,21 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				"1");
 
 		StoryFragment frag;
-		if(cursor.moveToFirst())
+		if(cursor.moveToFirst()) {
+            Log.v(TAG, "StoryFragment " + id + " retrieved");
 			frag = createStoryFragment(cursor);
-		else
+        }
+		else {
 			frag = null;
+            Log.v(TAG, "No fragment found");
+        }
 		cursor.close();
 		db.close();
 		return frag;
 	}
 
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStoryFragments(java.lang.String)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getStoryFragments(java.util.UUID)
 	 */
 	@Override
 	public ArrayList<StoryFragment> getStoryFragments(UUID storyid) {
@@ -211,13 +222,15 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		ArrayList<StoryFragment> fragments = new ArrayList<StoryFragment>();
 
-		if(cursor.moveToFirst())
-		{
-			do
-			{
+		if(cursor.moveToFirst()) {
+			do {
+                Log.v(TAG, "StoryFragment with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID))
+                        + " retrieved");
 				fragments.add(createStoryFragment(cursor));
-			}while(cursor.moveToNext());
+			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, fragments.size() + " StoryFragments retrieved");
 
 		cursor.close();
 		db.close();
@@ -253,7 +266,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	}*/
 
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getBookmark(java.lang.String)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getBookmark(java.util.UUID)
 	 */
 	@Override
 	public Bookmark getBookmark(UUID storyid) {
@@ -269,10 +282,15 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		Bookmark bookmark;
 
-		if(cursor.moveToFirst())
+		if(cursor.moveToFirst()) {
+           Log.v(TAG, "Bookmark with Story id " + cursor.getString(cursor.getColumnIndex(BOOKMARK_COLUMN_STORYID)) +
+           "retrieved");
 			bookmark = createBookmark(cursor);
-		else
+        }
+		else {
+            Log.v(TAG, "No bookmark found");
 			bookmark = null;
+        }
 
 		cursor.close();
 		db.close();
@@ -296,9 +314,13 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
 		if(cursor.moveToFirst()) {
 			do {
+                Log.v(TAG, "Bookmark with Story id " + cursor.getString(cursor.getColumnIndex(BOOKMARK_COLUMN_STORYID))
+                        + " retrieved");
 				bookmarks.add(createBookmark(cursor));
 			} while(cursor.moveToNext());
 		}
+
+        Log.v(TAG, bookmarks.size() + " bookmarks retrieved");
 
 		return bookmarks;
 	}
@@ -330,15 +352,18 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
+                Log.v(TAG, updated + " Bookmarks updated");
 				cursor.close();
 				db.close();
 				return updated == 1;
 			}
+            Log.v(TAG, "No Bookmarks updated");
 			cursor.close();
 			db.close();
 			return false;
 		}
 		updated = db.insert(BOOKMARK_TABLE_NAME, null, values);
+        Log.v(TAG, updated + " Bookmark inserted");
 		cursor.close();
 		db.close();
 		return updated != -1;
@@ -349,7 +374,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	 */
 	@Override
 	public boolean setStory(Story story) {
-		int size = story.getThumbnail().getByteCount();
 		ByteArrayOutputStream blob = new ByteArrayOutputStream();
 		story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
 		byte[] bytes = blob.toByteArray();
@@ -375,6 +399,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			int updated;
 			updated = db.update(STORY_TABLE_NAME, values, COLUMN_GUID + " = ?",
 					new String [] {story.getId().toString()});
+            Log.v(TAG, updated + " stories updated");
 			cursor.close();
 			db.close();
 			return updated == 1;
@@ -382,6 +407,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		cursor.close();
 		long inserted;
 		inserted = db.insert(STORY_TABLE_NAME, null, values);
+        Log.v(TAG, inserted + " story inserted");
 		db.close();
 		return inserted != -1;
 	}
@@ -409,16 +435,85 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			int updated;
 			updated = db.update(STORYFRAGMENT_TABLE_NAME, values, COLUMN_GUID + " = ? AND " + STORYFRAGMENT_COLUMN_STORYID + " = ?",
 					new String[] {frag.getFragmentID().toString(), frag.getStoryID().toString()});
+            Log.v(TAG, updated + " fragments updated");
 			cursor.close();
 			db.close();
 			return updated == 1;
 		}
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+        Log.v(TAG, inserted + " fragment inserted");
 		db.close();
 		return inserted != -1;
 
 	}
+
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteStory(java.util.UUID)
+	 */
+    public boolean deleteStory(UUID id) {
+        boolean fragments;
+        fragments = deleteStoryFragments(id);
+        deleteBookmarkByStory(id);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int story;
+        story = db.delete(STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id.toString()});
+        Log.v(TAG, story + " deleted, had UUID " + id);
+        db.close();
+        return story == 1 && fragments;
+    }
+
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteStoryFragments(java.util.UUID)
+	 */
+    public boolean deleteStoryFragments(UUID storyID) {
+        int fragments;
+        deleteBookmarkByStory(storyID);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        fragments = db.delete(STORYFRAGMENT_TABLE_NAME, STORYFRAGMENT_COLUMN_STORYID + " = ?", new String[] {storyID.toString()});
+        Log.v(TAG, fragments + " deleted from DB, all with StoryID " + storyID);
+        db.close();
+
+        return fragments > 0;
+    }
+
+    /* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteStoryFragment(java.util.UUID)
+	 */
+    public boolean deleteStoryFragment(UUID fragmentID) {
+        int fragment;
+        deleteBookmarkByFragment(fragmentID);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        fragment = db.delete(STORYFRAGMENT_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {fragmentID.toString()});
+        Log.v(TAG, fragment + " fragment deleted, with fragmentID " + fragmentID);
+        db.close();
+
+        return fragment == 1;
+    }
+
+    /* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteBookmarkByStory(java.util.UUID)
+	 */
+    public boolean deleteBookmarkByStory(UUID storyID) {
+        int bookmark;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_STORYID + " = ?", new String[] {storyID.toString()});
+        Log.v(TAG, bookmark + " bookmark deleted, with storyID " + storyID);
+        db.close();
+        return bookmark == 1;
+    }
+
+    /* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteBookmarkByFragment(java.util.UUID)
+	 */
+    public boolean deleteBookmarkByFragment(UUID fragmentID) {
+        int bookmark;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        bookmark = db.delete(BOOKMARK_TABLE_NAME, BOOKMARK_COLUMN_FRAGMENTID + " = ?", new String[] {fragmentID.toString()});
+        Log.v(TAG, bookmark + " bookmark deleted, with fragmentID " + fragmentID);
+        db.close();
+        return bookmark == 1;
+    }
 
 	/**
 	 * Creates story from a cursor

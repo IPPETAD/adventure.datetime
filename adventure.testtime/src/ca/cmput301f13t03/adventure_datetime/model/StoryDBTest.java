@@ -60,17 +60,29 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent UUIDs", fragUuid, frag.getFragmentID());
 
+        database.deleteStoryFragment(fragUuid);
+
+        frag2 = database.getStoryFragment(fragUuid);
+
+        Assert.assertNull("Frgament not null", frag2);
+
 	}
 
 	public void testSetStory() throws Exception {
 		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
 		UUID uuid = story.getId();
-
+        story.setHeadFragmentId(UUID.randomUUID());
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 
 		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
 		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
+
+        database.deleteStory(story.getId());
+
+        story2 = database.getStory(story.getId());
+
+        Assert.assertNull("Story not null", story2);
 	}
 
 	public void testSetBookmark() throws Exception {
@@ -83,6 +95,18 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent story ids", bookmark.getStoryID(), bookmark2.getStoryID());
 		Assert.assertEquals("Not equivalent uuids", sUuid, bookmark.getStoryID());
+
+        database.deleteBookmarkByStory(sUuid);
+        bookmark2 = database.getBookmark(sUuid);
+        Assert.assertNull("Bookmark not null", bookmark2);
+
+        Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
+
+        database.deleteStoryFragment(sFUuid);
+
+        bookmark2 = database.getBookmark(sUuid);
+
+        Assert.assertNull("Bookmark not null", bookmark2);
 	}
 
 

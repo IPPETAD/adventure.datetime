@@ -48,6 +48,7 @@ public class AuthorControllerTest extends AndroidTestCase {
 		RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
 		manager = new StoryManager(context);
 		controller = new AuthorController(manager);
+        Locator.initializeLocator(getContext().getApplicationContext());
 	}
 
 	public void testSaveStory() throws Exception {
@@ -56,6 +57,7 @@ public class AuthorControllerTest extends AndroidTestCase {
 		story.setAuthor("TestAuthor");
 		story.setTitle("TestTitle");
 		story.setSynopsis("TestSynop");
+        story.setHeadFragmentId(UUID.randomUUID());
 
 		Assert.assertTrue("Error inserting story", controller.saveStory(story));
 		Story story2 = controller.getStory(story.getId());

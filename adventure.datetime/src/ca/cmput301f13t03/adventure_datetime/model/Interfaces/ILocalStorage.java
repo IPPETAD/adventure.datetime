@@ -118,5 +118,39 @@ public interface ILocalStorage {
 	 * @return True if successful, false if not
 	 */
 	public abstract boolean setStoryFragment(StoryFragment frag);
-
+	
+    /**
+     * Deletes a story and all it's related things (StoryFragments, Bookmark) from the database
+     * @param id The UUID of the story
+     * @return Roughly whether or not the story was deleted
+     */
+    public boolean deleteStory(UUID id);
+	
+    /**
+     * Deletes all fragments with a specific storyID from the database
+     * @param storyID The UUID of the story
+     * @return Roughly whether or not any fragments have been deleted
+     */
+    public boolean deleteStoryFragments(UUID storyID);
+    
+    /**
+     * Deletes a fragment with a specific fragment ID
+      * @param fragmentID The UUID of a fragment
+     * @return Roughly whether or not a fragment was deleted
+     */
+    public boolean deleteStoryFragment(UUID fragmentID);
+    
+    /**
+     * Deletes all Bookmarks with a specific storyID from the database
+     * @param storyID The UUID of the story
+     * @return Roughly whether or not a bookmark was deleted
+     */
+    public boolean deleteBookmarkByStory(UUID storyID);
+    
+    /**
+     * Deletes all Bookmarks with a specific fragmentID from the database
+     * @param fragmentID The UUID of the story
+     * @return Roughly whether or not a bookmark was deleted
+     */
+    public boolean deleteBookmarkByFragment(UUID fragmentID);
 }
