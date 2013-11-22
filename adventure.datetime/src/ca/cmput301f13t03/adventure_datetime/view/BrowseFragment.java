@@ -64,12 +64,10 @@ public class BrowseFragment extends Fragment {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Log.v(TAG, "FART");
 				Story[] array = _stories.toArray(new Story[_stories.size()]);
 				_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
 				_listView.setAdapter(_adapter);
 				_bar.setVisibility(View.GONE);
-				Log.v(TAG, "TESTICLE");
 			}
 		});
 		
@@ -98,7 +96,6 @@ public class BrowseFragment extends Fragment {
 	}
 	
 	protected class RowArrayAdapter extends ArrayAdapter<Story> {
-		private static final String TAG = "RowArrayAdapter";
 		
 		private Context context;
 		private int layoutResourceID;
@@ -134,7 +131,6 @@ public class BrowseFragment extends Fragment {
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available
-
 			return rowView;
 		}
 		
