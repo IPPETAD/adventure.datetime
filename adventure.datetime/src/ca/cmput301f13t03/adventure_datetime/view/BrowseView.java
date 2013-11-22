@@ -28,6 +28,7 @@ import java.util.Map;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IOnlineStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -49,7 +50,8 @@ import android.util.Log;
  * @author James Finlay
  *
  */
-public class BrowseView extends FragmentActivity implements ILocalStoriesListener {
+public class BrowseView extends FragmentActivity implements ILocalStoriesListener,
+											IOnlineStoriesListener {
 	private static final String TAG = "BrowseView";
 
 	private ViewPager _viewPager;
@@ -59,17 +61,24 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 	public void OnLocalStoriesChange(Map<String, Story> newStories) {
 		_adapter.setLocalStories(newStories.values());	
 	}
+	@Override
+	public void OnOnlineStoriesChange(Map<String, Story> newStories) {
+		Log.v(TAG, "online stories");
+		_adapter.setOnlineStories(newStories.values());
+	}
 	
 	// TODO::JF Listen for Server stories
 	
 	@Override
 	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
+		Locator.getPresenter().Subscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Subscribe((IOnlineStoriesListener)this);
 		super.onResume();
 	}
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
+		Locator.getPresenter().Unsubscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Unsubscribe((IOnlineStoriesListener)this);
 		super.onPause();
 	}
 	@Override
