@@ -519,9 +519,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			public void run() {
 				try {
 					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
-					Log.v(TAG, "Toast?");
 					Toast.makeText(m_context, "Story successfully uploaded", Toast.LENGTH_SHORT).show();
-					Log.v(TAG, "TOAST!");
 				} catch (Exception e) {
 					Log.e(TAG, e.getMessage());
 				}
