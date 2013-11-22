@@ -321,9 +321,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		{
 			LoadStories();
 		}
-		
-		// returns null if there isn't one
-		return m_stories.get(storyId);
+		Story story = m_stories.get(storyId);
+		if(story == null)
+			story = m_onlineStories.get(storyId);
+		return story;
 	}
 
 	/**
@@ -519,7 +520,6 @@ public final class StoryManager implements IStoryModelPresenter,
 			public void run() {
 				try {
 					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
-					Toast.makeText(m_context, "Story successfully uploaded", Toast.LENGTH_SHORT).show();
 				} catch (Exception e) {
 					Log.e(TAG, e.getMessage());
 				}
