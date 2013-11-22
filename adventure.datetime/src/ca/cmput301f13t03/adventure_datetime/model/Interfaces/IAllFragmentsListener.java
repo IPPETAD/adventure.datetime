@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -36,5 +37,5 @@ public interface IAllFragmentsListener
 	/**
 	 * Callback for when the fragment list changes
 	 */
-	public void OnAllFragmentsChange(Map<String, StoryFragment> newFragments);
+	public void OnAllFragmentsChange(Map<UUID, StoryFragment> newFragments);
 }

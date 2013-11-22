@@ -34,11 +34,14 @@ import io.searchbox.core.Search;
 import java.util.List;
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IWebStorage;
+
+
 /**
  * Class for interacting with the ES service
  * The latest error string can be retrieved via getErrorString
  */
-public class WebStorage {
+public class WebStorage implements IWebStorage {
 	
 	private static final String MATCH_ALL = 
 		"{\n" +
@@ -74,23 +77,20 @@ public class WebStorage {
 		_index = defaultIndex;
 	}
 
-	/**
-	 * Gets a story from ES
-	 * @param storyId ID of the story to retrieve
-	 * @return The Story object
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getStory(java.util.UUID)
 	 */
+	@Override
 	public Story getStory(UUID storyId) throws Exception {
 		Get get = new Get.Builder(_index, storyId.toString()).type("story").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(Story.class);
 	}
 	
-	/**
-	 * Gets all stories from ES
-	 * @return List of stories
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllStories()
 	 */
+	@Override
 	public List<Story> getAllStories() throws Exception {
 		Search search = new Search.Builder(MATCH_ALL)
 			.addIndex(_index)
@@ -101,25 +101,20 @@ public class WebStorage {
 		return result.getSourceAsObjectList(Story.class);
 	}
 	
-	/**
-	 * Gets a fragment from ES
-	 * All fragments are UUID so story reference is not needed
-	 * @param fragmentId ID of the fragment to retrieve
-	 * @return The StoryFragment object
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getFragment(java.util.UUID)
 	 */
+	@Override
 	public StoryFragment getFragment(UUID fragmentId) throws Exception {
 		Get get = new Get.Builder(_index, fragmentId.toString()).type("fragment").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(StoryFragment.class);
 	}
 	
-	/**
-	 * Gets all fragments for a given story
-	 * @param storyId ID of the story to retrieve all fragments for
-	 * @return List of StoryFragments
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllFragmentsForStory(java.util.UUID)
 	 */
+	@Override
 	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
 		Search search = new Search.Builder(
 				String.format(MATCH_ID, "storyId", storyId.toString()))
@@ -131,12 +126,10 @@ public class WebStorage {
 		return result.getSourceAsObjectList(StoryFragment.class);
 	}
 	
-	/**
-	 * Gets a comment for the targetId. May be a StoryId or FragmentId.
-	 * @param targetId. The Story or StoryFragment to retrieve comments for.
-	 * @return A List of comments
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getComments(java.util.UUID)
 	 */
+	@Override
 	public List<Comment> getComments(UUID targetId) throws Exception {
 		Search search = new Search.Builder(
 				String.format(MATCH_ID, "targetId", targetId.toString()))
@@ -148,12 +141,10 @@ public class WebStorage {
 		return result.getSourceAsObjectList(Comment.class);
 	}
 
-	/**
-	 * Puts a comment to ES
-	 * @param comment the Comment to save to ES
-	 * @return True if succeeded, false otherwise.
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#putComment(ca.cmput301f13t03.adventure_datetime.model.Comment)
 	 */
+	@Override
 	public boolean putComment(Comment comment) throws Exception {
 		Index index = new Index.Builder(comment)
 			.index(_index)
@@ -164,12 +155,10 @@ public class WebStorage {
 		return result.isSucceeded();
 	}
 	
-	/**
-	 * Deletes a comment from ES
-	 * @param commentId ID of the comment to delete
-	 * @return True if succeeded, false otherwise
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteComment(java.util.UUID)
 	 */
+	@Override
 	public boolean deleteComment(UUID commentId) throws Exception {
 		JestResult result = execute(new Delete.Builder(commentId.toString())
 			.index(_index)
@@ -177,14 +166,10 @@ public class WebStorage {
 		return result.isSucceeded();
 	}
 	
-	/**
-	 * Publishes a Story to ES. Overwrites if already exists.
-	 * Note: this does NOT check if the StoryFragments actually belong to the Story
-	 * @param story the Story object to publish
-	 * @param fragments List of StoryFragments to publish
-	 * @return True if succeeded, false otherwise
-	 * @throws Exception, connection errors, etc. See JestClient
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#publishStory(ca.cmput301f13t03.adventure_datetime.model.Story, java.util.List)
 	 */
+	@Override
 	public boolean publishStory(Story story, List<StoryFragment> fragments) throws Exception {
 		// TODO: make this more clear on what part failed if it does fail
 		// TODO: change getId and getFragmentId to getWebId when it is implemented
@@ -194,7 +179,7 @@ public class WebStorage {
 		Index index = new Index.Builder(story)
 			.index(_index)
 			.type("story")
-			.id(story.getId())
+			.id(story.getId().toString())
 			.build();
 		JestResult resultStory = execute(index);
 		
@@ -203,7 +188,7 @@ public class WebStorage {
 			.defaultType("fragment");
 		
 		for (StoryFragment f : fragments) {
-			bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID()).build());
+			bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID().toString()).build());
 		}
 		
 		JestResult resultFragments = execute(bulkBuilder.build());

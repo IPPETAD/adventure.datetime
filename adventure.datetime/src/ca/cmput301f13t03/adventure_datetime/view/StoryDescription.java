@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -66,7 +67,14 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
 	
+<<<<<<< HEAD
 	private Map<String, Bookmark> _bookmarks;
+=======
+	private StoryPagerAdapter _pageAdapter;
+	private ViewPager _viewPager;
+	private Map<UUID, Bookmark> _bookmarks;
+	private Map<UUID, Story> _stories;
+>>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 	private Story _story;
 	
 	@Override
@@ -75,7 +83,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		setContentView(R.layout.story_descript);
 	}
 	@Override
-	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
 		setUpView();
 	}
@@ -85,6 +93,14 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		setUpView();
 	}
 	@Override
+<<<<<<< HEAD
+=======
+	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
+		_stories = newStories;	
+		setUpView();
+	}
+	@Override
+>>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 	public void onSaveInstanceState(Bundle outState) {}
 
 	private void setUpView() {
@@ -151,4 +167,117 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		super.onPause();
 	}
+<<<<<<< HEAD
+=======
+	
+	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
+		
+		private List<StoryDescriptionFragment> _fragments;
+		
+		public StoryPagerAdapter(FragmentManager fm) {
+			super(fm);
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+		}
+		public void setStories(List<Story> newStories, Map<UUID, Bookmark> bookmarks) {
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+			for (Story story : newStories) {
+				StoryDescriptionFragment fragment = new StoryDescriptionFragment();
+				
+				fragment.setStory(story, bookmarks.containsKey(story.getId()));
+				_fragments.add(fragment);
+			}
+			
+			this.notifyDataSetChanged();
+		}
+		
+		@Override
+		public Fragment getItem(int i) {
+			return _fragments.get(i);
+		}
+		@Override
+		public int getCount() {
+			return _fragments.size();
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "Object " + (position+1);
+		}
+	}
+	
+	public static class StoryDescriptionFragment extends Fragment {
+		
+		private Story _story;
+		private View _rootView;
+		private boolean _bookmarked;
+		
+		public void onCreate(Bundle bundle) {
+			super.onCreate(bundle);
+			setHasOptionsMenu(true);
+		}
+		public void setStory(Story story, boolean bookmarked) {
+			_story = story;
+			_bookmarked = bookmarked;
+			setUpView();
+		}
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			
+			_rootView = inflater.inflate(R.layout.story_descript, container, false);
+			
+			setUpView();
+			
+			return _rootView;			
+		}
+		
+		private void setUpView() {
+			if (_story == null) return;
+			if (_rootView == null) return;
+			
+			/** Layout items **/
+			Button play = (Button) _rootView.findViewById(R.id.play); 
+			Button restart = (Button) _rootView.findViewById(R.id.restart);
+			TextView title  = (TextView) _rootView.findViewById(R.id.title);
+			TextView author  = (TextView) _rootView.findViewById(R.id.author);
+			TextView datetime = (TextView) _rootView.findViewById(R.id.datetime);
+			TextView fragments = (TextView) _rootView.findViewById(R.id.fragments);
+			TextView content = (TextView) _rootView.findViewById(R.id.content);
+			
+			title.setText(_story.getTitle());
+			author.setText("Author: " + _story.getAuthor());
+			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
+			fragments.setText("Fragments: " + _story.getFragmentIds().size());
+			content.setText(_story.getSynopsis());
+
+			if (_bookmarked) {
+				play.setText("Continue Story");
+				restart.setText("Start from the Beginning");
+			} else {
+				play.setText("Play Story");
+				restart.setVisibility(View.GONE);
+			}
+
+			play.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch Story
+					Locator.getUserController().ResumeStory(_story.getId());
+					Intent intent = new Intent(getActivity(), FragmentView.class);
+					startActivity(intent);
+				}
+			});
+			
+			restart.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Restart & Launch Story
+					Locator.getUserController().StartStory(_story.getId());
+					Intent intent = new Intent(getActivity(), FragmentView.class);
+					startActivity(intent);
+				}
+			});
+			
+		}
+	}
+>>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 }

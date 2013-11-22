@@ -57,7 +57,7 @@ public class AuthorControllerTest extends AndroidTestCase {
 		story.setAuthor("TestAuthor");
 		story.setTitle("TestTitle");
 		story.setSynopsis("TestSynop");
-        story.setHeadFragmentId(UUID.randomUUID().toString());
+        story.setHeadFragmentId(UUID.randomUUID());
 
 		Assert.assertTrue("Error inserting story", controller.saveStory(story));
 		Story story2 = controller.getStory(story.getId());
@@ -66,7 +66,7 @@ public class AuthorControllerTest extends AndroidTestCase {
 	}
 
 	public void testSaveFragment() throws Exception {
-		String uuid = UUID.randomUUID().toString();
+		UUID uuid = UUID.randomUUID();
 		Choice choice = new Choice("test", uuid);
 		StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
 
