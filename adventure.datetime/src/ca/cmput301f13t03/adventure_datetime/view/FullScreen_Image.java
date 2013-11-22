@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ import android.widget.TextView;
  */
 public class FullScreen_Image extends FragmentActivity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentActivity";
+	public static final String TAG_AUTHOR = "yolo.swag.AuthorEh";
 
 	private StoryFragment _fragment;
 	private ViewPager _viewPager;
@@ -74,7 +76,8 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		//_pageAdapter.setIllustrations(_fragment.getStoryMedia());
 		ArrayList<String> list = new ArrayList<String>();
 		for (int i=0; i<5; i++) list.add(""+i);
-		_pageAdapter.setIllustrations(list);
+		_pageAdapter.setIllustrations(list, getIntent().
+				getBooleanExtra(TAG_AUTHOR, false));
 	}
 	@Override
 	public void onSaveInstanceState(Bundle outState) {}
@@ -111,21 +114,23 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
 		private List<String> _illustrations;
+		private boolean _author;
 
 		public StoryPagerAdapter(FragmentManager fm) {
 			super(fm);
 			_illustrations = new ArrayList<String>();
 		}
 
-		public void setIllustrations(List<String> illustrationIDs) {
+		public void setIllustrations(List<String> illustrationIDs, boolean author) {
 			_illustrations = illustrationIDs;
+			_author = author;
 			notifyDataSetChanged();
 		}
 
 		@Override
 		public Fragment getItem(int pos) {
 			IllustrationFragment frag = new IllustrationFragment();
-			frag.init(_illustrations.get(pos), pos);
+			frag.init(_illustrations.get(pos), pos, _author);
 			
 			return frag;
 		}
@@ -141,13 +146,15 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		private View _rootView;
 		private String _sID;
 		private int _position;
+		private boolean _author;
 
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 		}
-		public void init(String id, int position) {
+		public void init(String id, int position, boolean author) {
 			_sID = id;
 			_position = position;
+			_author = author;
 			setUpView();
 		}
 		@Override
@@ -174,7 +181,12 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 			// TODO: Set counter by location
 			
 			image.setBackgroundResource(R.drawable.grumpy_cat2);
-
+			
+			// turn off author buttons if necessary
+			if (!_author) {
+				btnNew.setVisibility(View.GONE);
+				btnDel.setVisibility(View.GONE);
+			}
 		}
 	}
 
