@@ -63,6 +63,7 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 	}
 	@Override
 	public void OnOnlineStoriesChange(Map<String, Story> newStories) {
+		Log.v(TAG, "online stories");
 		_adapter.setOnlineStories(newStories.values());
 	}
 	
