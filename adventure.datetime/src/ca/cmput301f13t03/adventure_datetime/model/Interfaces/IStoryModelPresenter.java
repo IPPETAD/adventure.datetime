@@ -57,6 +57,11 @@ public interface IStoryModelPresenter
      */
     void Subscribe(IAllFragmentsListener allFragmentsListener);
     
+    /**
+     * Listens for changes to the comments
+     */
+    void Subscribe(ICommentsListener commentsListener);
+    
     //===========================================================
     
     /**
@@ -80,8 +85,13 @@ public interface IStoryModelPresenter
 	 */
     void Unsubscribe(IBookmarkListListener bookmarkListListener);
     
-    /*
+    /**
      * Stop listening for changes on the current set of fragments
      */
     void Unsubscribe(IAllFragmentsListener allFragmentsListener);
+    
+    /**
+     * Stop listening for changes to the comments
+     */
+    void Unsubscribe(ICommentsListener commentsListener);
 }

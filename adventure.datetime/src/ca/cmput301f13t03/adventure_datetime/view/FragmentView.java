@@ -28,6 +28,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -92,7 +94,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		setContentView(R.layout.fragment_view);
 		setUpView();
 	}
-
 	public void setUpView() {
 		if (_fragment == null) return;
 
@@ -135,7 +136,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			li.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					startActivity(new Intent(FragmentView.this, FullScreen_Image.class));
+					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
+					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
+					startActivity(intent);
 				}
 			});
 		}
@@ -200,6 +203,24 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		}
 
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+
+		getMenuInflater().inflate(R.menu.storydesc, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, false);
+			startActivity(intent);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

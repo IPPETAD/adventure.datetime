@@ -38,12 +38,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -150,5 +153,134 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		super.onPause();
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.storydesc, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			Locator.getUserController().StartStory(_story.getId());
+			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, true);
+			startActivity(intent);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
+		
+		private List<StoryDescriptionFragment> _fragments;
+		
+		public StoryPagerAdapter(FragmentManager fm) {
+			super(fm);
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+		}
+		public void setStories(List<Story> newStories, Map<String, Bookmark> bookmarks) {
+			_fragments = new ArrayList<StoryDescriptionFragment>();
+			for (Story story : newStories) {
+				StoryDescriptionFragment fragment = new StoryDescriptionFragment();
+				
+				fragment.setStory(story, bookmarks.containsKey(story.getId()));
+				_fragments.add(fragment);
+			}
+			
+			this.notifyDataSetChanged();
+		}
+		
+		@Override
+		public Fragment getItem(int i) {
+			return _fragments.get(i);
+		}
+		@Override
+		public int getCount() {
+			return _fragments.size();
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "Object " + (position+1);
+		}
+	}
+	
+	public static class StoryDescriptionFragment extends Fragment {
+		
+		private Story _story;
+		private View _rootView;
+		private boolean _bookmarked;
+		
+		public void onCreate(Bundle bundle) {
+			super.onCreate(bundle);
+			setHasOptionsMenu(true);
+		}
+		public void setStory(Story story, boolean bookmarked) {
+			_story = story;
+			_bookmarked = bookmarked;
+			setUpView();
+		}
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			
+			_rootView = inflater.inflate(R.layout.story_descript, container, false);
+			
+			setUpView();
+			
+			return _rootView;			
+		}
+		
+		private void setUpView() {
+			if (_story == null) return;
+			if (_rootView == null) return;
+			
+			/** Layout items **/
+			ImageView thumbnail = (ImageView) _rootView.findViewById(R.id.thumbnail);
+			Button play = (Button) _rootView.findViewById(R.id.play); 
+			Button restart = (Button) _rootView.findViewById(R.id.restart);
+			TextView title  = (TextView) _rootView.findViewById(R.id.title);
+			TextView author  = (TextView) _rootView.findViewById(R.id.author);
+			TextView datetime = (TextView) _rootView.findViewById(R.id.datetime);
+			TextView fragments = (TextView) _rootView.findViewById(R.id.fragments);
+			TextView content = (TextView) _rootView.findViewById(R.id.content);
+			
+			title.setText(_story.getTitle());
+			author.setText("Author: " + _story.getAuthor());
+			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
+			fragments.setText("Fragments: " + _story.getFragmentIds().size());
+			content.setText(_story.getSynopsis());
+			thumbnail.setImageBitmap(_story.getThumbnail());
+
+			if (_bookmarked) {
+				play.setText("Continue Story");
+				restart.setText("Start from the Beginning");
+			} else {
+				play.setText("Play Story");
+				restart.setVisibility(View.GONE);
+			}
+
+			play.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch Story
+					Locator.getUserController().ResumeStory(_story.getId());
+					Intent intent = new Intent(getActivity(), FragmentView.class);
+					startActivity(intent);
+				}
+			});
+			
+			restart.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Restart & Launch Story
+					Locator.getUserController().StartStory(_story.getId());
+					Intent intent = new Intent(getActivity(), FragmentView.class);
+					startActivity(intent);
+				}
+			});
+			
+		}
 	}
 }
