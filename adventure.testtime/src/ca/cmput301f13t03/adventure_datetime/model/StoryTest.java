@@ -79,19 +79,6 @@ public class StoryTest extends TestCase {
 		Assert.assertEquals("HashMap doesn't contain 1 value", 1, story.getTags().size());
 	}
 
-	public void testUUID() throws Exception {
-		Story story = new Story();
-		String newUUID = UUID.randomUUID().toString();
-		try {
-			story.setHeadFragmentId("WRONG");
-			Assert.fail("UUID was set");
-		} catch (IllegalArgumentException e) {
-
-		}
-		story.setHeadFragmentId(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, story.getHeadFragmentId());
-	}
-
 	public void testJSON() throws Exception {
 		Story story = new Story();
 		Gson gson = new Gson();

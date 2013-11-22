@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -65,8 +66,8 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	
-	private Map<String, Bookmark> _bookmarks;
-	private Map<String, Story> _stories;
+	private Map<UUID, Bookmark> _bookmarks;
+	private Map<UUID, Story> _stories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,12 +90,12 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 			}
 		});
 	}
-	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
 
 		setUpView();
 	}
-	public void OnLocalStoriesChange(Map<String, Story> newStories) {
+	public void OnLocalStoriesChange(Map<UUID, Story> newStories) {
 		_stories = newStories;
 		setUpView();
 	}
@@ -102,7 +103,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 		if (_bookmarks == null) return;
 		if (_stories == null) return;
 		
-		Map<String, Story> hStories = _stories;
+		Map<UUID, Story> hStories = _stories;
 		
 		List<Story> relevants = new ArrayList<Story>();
 		for (Bookmark bookmark : _bookmarks.values()) {

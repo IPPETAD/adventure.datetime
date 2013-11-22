@@ -64,10 +64,12 @@ public class BrowseFragment extends Fragment {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				Log.v(TAG, "FART");
 				Story[] array = _stories.toArray(new Story[_stories.size()]);
 				_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
 				_listView.setAdapter(_adapter);
 				_bar.setVisibility(View.GONE);
+				Log.v(TAG, "TESTICLE");
 			}
 		});
 		

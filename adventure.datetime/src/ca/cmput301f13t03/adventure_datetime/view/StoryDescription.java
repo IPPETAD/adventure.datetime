@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -69,7 +70,10 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
 	
-	private Map<String, Bookmark> _bookmarks;
+	private StoryPagerAdapter _pageAdapter;
+	private ViewPager _viewPager;
+	private Map<UUID, Bookmark> _bookmarks;
+	private Map<UUID, Story> _stories;
 	private Story _story;
 	
 	@Override
@@ -78,7 +82,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		setContentView(R.layout.story_descript);
 	}
 	@Override
-	public void OnBookmarkListChange(Map<String, Bookmark> newBookmarks) {
+	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
 		_bookmarks = newBookmarks;
 		setUpView();
 	}
@@ -154,6 +158,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		super.onPause();
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.storydesc, menu);
@@ -180,7 +185,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			super(fm);
 			_fragments = new ArrayList<StoryDescriptionFragment>();
 		}
-		public void setStories(List<Story> newStories, Map<String, Bookmark> bookmarks) {
+		public void setStories(List<Story> newStories, Map<UUID, Bookmark> bookmarks) {
 			_fragments = new ArrayList<StoryDescriptionFragment>();
 			for (Story story : newStories) {
 				StoryDescriptionFragment fragment = new StoryDescriptionFragment();
@@ -237,6 +242,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			if (_rootView == null) return;
 			
 			/** Layout items **/
+
 			ImageView thumbnail = (ImageView) _rootView.findViewById(R.id.thumbnail);
 			Button play = (Button) _rootView.findViewById(R.id.play); 
 			Button restart = (Button) _rootView.findViewById(R.id.restart);

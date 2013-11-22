@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
@@ -36,5 +37,5 @@ public interface ILocalStoriesListener
 	 * Callback for when the list of stories changes
 	 * @param newStories The new list of stories
 	 */
-	 void OnLocalStoriesChange(Map<String, Story> newStories);
+	 void OnLocalStoriesChange(Map<UUID, Story> newStories);
 }
