@@ -404,6 +404,11 @@ public final class StoryManager implements IStoryModelPresenter,
 		PublishBookmarkListChanged();
 	}
 	
+	public void deleteBookmark(UUID storyId) {
+		m_db.deleteBookmarkByStory(storyId);
+		PublishBookmarkListChanged();
+	}
+	
 	private void LoadStories()
 	{
 		m_storyList = new HashMap<UUID, Story>();
@@ -451,4 +456,5 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 		return currentFragments;
 	}
+	
 }

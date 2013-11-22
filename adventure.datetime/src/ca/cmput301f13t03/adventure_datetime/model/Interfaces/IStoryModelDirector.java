@@ -106,4 +106,11 @@ public interface IStoryModelDirector
 	 * @return
 	 */
 	public Bookmark getBookmark(UUID bookmarkId);
+
+	/**
+	 * Deletes a bookmark by StoryID
+	 * 
+	 * @param storyId UUID of the story to delete
+	 */
+	public void deleteBookmark(UUID storyId);
 }
