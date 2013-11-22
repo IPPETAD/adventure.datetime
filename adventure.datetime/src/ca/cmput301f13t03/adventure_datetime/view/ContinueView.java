@@ -95,11 +95,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 
 		setUpView();
 	}
-<<<<<<< HEAD
-	public void OnLocalStoriesChange(Map<String, Story> newStories) {
-=======
-	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
+	public void OnLocalStoriesChange(Map<UUID, Story> newStories) {
 		_stories = newStories;
 		setUpView();
 	}

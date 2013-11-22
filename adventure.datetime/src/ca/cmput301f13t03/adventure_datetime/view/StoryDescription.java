@@ -39,12 +39,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -67,14 +70,10 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
 	
-<<<<<<< HEAD
-	private Map<String, Bookmark> _bookmarks;
-=======
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
 	private Map<UUID, Bookmark> _bookmarks;
 	private Map<UUID, Story> _stories;
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 	private Story _story;
 	
 	@Override
@@ -93,14 +92,6 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		setUpView();
 	}
 	@Override
-<<<<<<< HEAD
-=======
-	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
-		_stories = newStories;	
-		setUpView();
-	}
-	@Override
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 	public void onSaveInstanceState(Bundle outState) {}
 
 	private void setUpView() {
@@ -167,8 +158,24 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		super.onPause();
 	}
-<<<<<<< HEAD
-=======
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.storydesc, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			Locator.getUserController().StartStory(_story.getId());
+			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, true);
+			startActivity(intent);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	
 	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 		
@@ -235,6 +242,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			if (_rootView == null) return;
 			
 			/** Layout items **/
+
+			ImageView thumbnail = (ImageView) _rootView.findViewById(R.id.thumbnail);
 			Button play = (Button) _rootView.findViewById(R.id.play); 
 			Button restart = (Button) _rootView.findViewById(R.id.restart);
 			TextView title  = (TextView) _rootView.findViewById(R.id.title);
@@ -248,6 +257,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 			fragments.setText("Fragments: " + _story.getFragmentIds().size());
 			content.setText(_story.getSynopsis());
+			thumbnail.setImageBitmap(_story.getThumbnail());
 
 			if (_bookmarked) {
 				play.setText("Continue Story");
@@ -279,5 +289,4 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			
 		}
 	}
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
 }

@@ -59,15 +59,11 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 	private ViewPagerAdapter _adapter;
 	
 	@Override
-<<<<<<< HEAD
-	public void OnLocalStoriesChange(Map<String, Story> newStories) {
-=======
-	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
+	public void OnLocalStoriesChange(Map<UUID, Story> newStories) {
 		_adapter.setLocalStories(newStories.values());	
 	}
 	@Override
-	public void OnOnlineStoriesChange(Map<String, Story> newStories) {
+	public void OnOnlineStoriesChange(Map<UUID, Story> newStories) {
 		Log.v(TAG, "online stories");
 		_adapter.setOnlineStories(newStories.values());
 	}

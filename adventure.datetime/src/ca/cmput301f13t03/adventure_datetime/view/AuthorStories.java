@@ -85,11 +85,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 		setUpView();
 	}
 	@Override
-<<<<<<< HEAD
-	public void OnLocalStoriesChange(Map<String, Story> stories) {
-=======
-	public void OnCurrentStoryListChange(Map<UUID, Story> stories) {
->>>>>>> cb7934637749ce8ee3d3fb9e9ca206cf6f9fdde5
+	public void OnLocalStoriesChange(Map<UUID, Story> stories) {
 		_stories = stories;
 		setUpView();
 	}
@@ -168,6 +164,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
+			thumbnail.setImageBitmap(item.getThumbnail());
 			title.setText(item.getTitle());
 			fragments.setText("Fragments: " + item.getFragmentIds().size());
 			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());

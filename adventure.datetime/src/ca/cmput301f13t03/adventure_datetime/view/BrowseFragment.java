@@ -64,10 +64,12 @@ public class BrowseFragment extends Fragment {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				Log.v(TAG, "FART");
 				Story[] array = _stories.toArray(new Story[_stories.size()]);
 				_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
 				_listView.setAdapter(_adapter);
 				_bar.setVisibility(View.GONE);
+				Log.v(TAG, "TESTICLE");
 			}
 		});
 		
@@ -124,9 +126,11 @@ public class BrowseFragment extends Fragment {
 			Story story = stories[position];
 			
 			title.setText(story.getTitle());
-			// TODO::JF set the thumbnail
 			author.setText("Author: " + story.getAuthor());
 			time.setText("Last Modified: " + story.getFormattedTimestamp());
+			
+			//if (story.getThumbnail() != null)
+				thumbnail.setImageBitmap(story.getThumbnail());
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available

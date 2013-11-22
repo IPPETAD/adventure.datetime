@@ -524,7 +524,6 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 		return currentFragments;
 	}
-	
 	public void uploadCurrentStory() {
 		m_threadPool.execute(new Runnable() {
 			public void run() {
@@ -535,5 +534,17 @@ public final class StoryManager implements IStoryModelPresenter,
 				}
 			}
 		});
+	}
+
+	@Override
+	public void Subscribe(ICommentsListener commentsListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void Unsubscribe(ICommentsListener commentsListener) {
+		// TODO Auto-generated method stub
+		
 	}
 }
