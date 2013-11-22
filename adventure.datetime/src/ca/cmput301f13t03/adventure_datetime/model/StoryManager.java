@@ -398,7 +398,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					m_currentFragment = m_webStorage.getFragment(finalId);
+					m_currentFragment = m_webStorage.getFragment(UUID.fromString(finalId));
 					// afterwards place into cache
 					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
 					PublishCurrentFragmentChanged();
