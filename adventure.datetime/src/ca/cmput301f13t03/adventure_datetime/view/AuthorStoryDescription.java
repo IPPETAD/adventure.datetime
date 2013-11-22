@@ -49,6 +49,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,6 +99,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		getActionBar().setTitle(_story.getTitle());
 
 		/** Layout items **/
+		ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
 		_title = (EditText) findViewById(R.id.title);
 		TextView author = (TextView) findViewById(R.id.author);
 		_content = (EditText) findViewById(R.id.content);
@@ -106,6 +108,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
 
 		/* Text */
+		thumbnail.setImageBitmap(_story.getThumbnail());
 		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());

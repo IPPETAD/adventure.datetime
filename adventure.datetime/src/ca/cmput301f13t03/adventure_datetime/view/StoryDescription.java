@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -230,6 +231,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 			if (_rootView == null) return;
 			
 			/** Layout items **/
+			ImageView thumbnail = (ImageView) _rootView.findViewById(R.id.thumbnail);
 			Button play = (Button) _rootView.findViewById(R.id.play); 
 			Button restart = (Button) _rootView.findViewById(R.id.restart);
 			TextView title  = (TextView) _rootView.findViewById(R.id.title);
@@ -243,6 +245,7 @@ public class StoryDescription extends FragmentActivity implements IStoryListList
 			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 			fragments.setText("Fragments: " + _story.getFragmentIds().size());
 			content.setText(_story.getSynopsis());
+			thumbnail.setImageBitmap(_story.getThumbnail());
 
 			if (_bookmarked) {
 				play.setText("Continue Story");
