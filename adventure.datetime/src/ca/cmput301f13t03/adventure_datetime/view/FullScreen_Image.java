@@ -29,6 +29,7 @@ import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -39,6 +40,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -58,6 +60,8 @@ import android.widget.TextView;
 public class FullScreen_Image extends FragmentActivity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentActivity";
 	public static final String TAG_AUTHOR = "yolo.swag.AuthorEh";
+	public static final int GALLERY = 42;
+	public static final int CAMERA = 23;
 
 	private StoryFragment _fragment;
 	private ViewPager _viewPager;
@@ -130,8 +134,8 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 		@Override
 		public Fragment getItem(int pos) {
 			IllustrationFragment frag = new IllustrationFragment();
-			frag.init(_illustrations.get(pos), pos, _author);
-			
+			frag.init(_illustrations.get(pos), pos, _illustrations.size(), _author);
+
 			return frag;
 		}
 
@@ -145,15 +149,15 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
 		private View _rootView;
 		private String _sID;
-		private int _position;
+		private String _position;
 		private boolean _author;
 
 		public void onCreate(Bundle bundle) {
 			super.onCreate(bundle);
 		}
-		public void init(String id, int position, boolean author) {
+		public void init(String id, int position, int total, boolean author) {
 			_sID = id;
-			_position = position;
+			_position = (position+1) + "/" + total;
 			_author = author;
 			setUpView();
 		}
@@ -174,18 +178,66 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
 			/** Layout items **/
 			ImageView image = (ImageView) _rootView.findViewById(R.id.image);
-			Button btnNew = (Button) _rootView.findViewById(R.id.action_new);
-			Button btnDel = (Button) _rootView.findViewById(R.id.action_delete);
+			Button gallery = (Button) _rootView.findViewById(R.id.gallery);
+			Button camera = (Button) _rootView.findViewById(R.id.camera);
+			Button delete = (Button) _rootView.findViewById(R.id.action_delete);
 			TextView counter = (TextView) _rootView.findViewById(R.id.count);
-			
+
 			// TODO: Set counter by location
-			
+
 			image.setBackgroundResource(R.drawable.grumpy_cat2);
-			
+			counter.setText(_position);
+
+			gallery.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent i = new Intent(Intent.ACTION_PICK,
+							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					startActivityForResult(i, GALLERY);
+				}
+			});
+			camera.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					startActivityForResult(i, CAMERA);
+				}
+			});
+
 			// turn off author buttons if necessary
 			if (!_author) {
-				btnNew.setVisibility(View.GONE);
-				btnDel.setVisibility(View.GONE);
+				gallery.setVisibility(View.GONE);
+				camera.setVisibility(View.GONE);
+				delete.setVisibility(View.GONE);
+			}
+		}
+		@Override
+		public void onActivityResult(int requestCode, int resultCode,
+				Intent imageReturnedIntent) {
+			super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+			if (resultCode != RESULT_OK) return;
+
+			switch (requestCode) {
+			case GALLERY:
+				/*Uri selectedImage = imageReturnedIntent.getData();
+		            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+		            Cursor cursor = getContentResolver().query(
+		                               selectedImage, filePathColumn, null, null, null);
+		            cursor.moveToFirst();
+
+		            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+		            String filePath = cursor.getString(columnIndex);
+		            cursor.close();
+
+
+		            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+				 */ 
+				break;
+			case CAMERA:
+
+				break;
 			}
 		}
 	}
