@@ -127,7 +127,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Subscribe(IOnlineStoriesListener onlineStoriesListener) {
 		m_onlineStoriesListeners.add(onlineStoriesListener);
 		if (m_onlineStories != null) {
-			onlineStoriesListener.OnOnlineStoriesChange(m_stories);
+			onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
 		} else {
 			LoadOnlineStories();
 		}
@@ -223,7 +223,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	
 	private void PublishOnlineStoriesChanged() {
 		for (IOnlineStoriesListener onlineStoriesListener : m_onlineStoriesListeners) {
-			onlineStoriesListener.OnOnlineStoriesChange(m_stories);
+			onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
 		}
 	}
 
