@@ -60,11 +60,18 @@ public class BrowseFragment extends Fragment {
 		if (_stories == null) return;
 		if (_listView == null) return;
 		
-		Story[] array = _stories.toArray(new Story[_stories.size()]);
-		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
-		_listView.setAdapter(_adapter);
+		/* Run on UI Thread for server stuff */
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Story[] array = _stories.toArray(new Story[_stories.size()]);
+				_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
+				_listView.setAdapter(_adapter);
+				_bar.setVisibility(View.GONE);
+			}
+		});
 		
-		_bar.setVisibility(View.GONE);
+		
 	}
 	
 	@Override
