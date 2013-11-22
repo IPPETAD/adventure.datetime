@@ -53,30 +53,37 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/play"
+    <LinearLayout
+        android:id="@+id/btn_wrapper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Start your Adventure!" />
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/restart"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/play"
-        android:text="Continue your Adventure!" />
+        <Button
+            android:id="@+id/play"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Start your Adventure!" />
+
+        <Button
+            android:id="@+id/restart"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/play"
+            android:text="Continue your Adventure!" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/restart"
+        android:layout_above="@id/btn_wrapper"
         android:layout_below="@id/header" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/synopsis"
