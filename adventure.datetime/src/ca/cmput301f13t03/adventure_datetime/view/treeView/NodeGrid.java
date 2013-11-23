@@ -76,7 +76,7 @@ class NodeGrid
 			m_nodes.clear();
 
 			SetupNodes(fragments);
-			SetupConnections(fragments);
+			SetupConnections();
 		}
 	}
 	
@@ -117,7 +117,7 @@ class NodeGrid
 		assert(notPlacedFragments.size() == 0);
 	}
 	
-	private void SetupConnections(Map<UUID, StoryFragment> fragments)
+	private void SetupConnections()
 	{
 		ConnectionPlacer placer = new ConnectionPlacer(this.m_segments, GridSegment.GRID_SIZE);
 		Map<UUID, FragmentNode> lookupList = new HashMap<UUID, FragmentNode>();

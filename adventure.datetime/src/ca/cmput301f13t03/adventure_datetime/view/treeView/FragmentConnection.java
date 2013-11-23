@@ -48,5 +48,6 @@ final class FragmentConnection
 		m_pathStyle.setAlpha(200);
 		m_pathStyle.setColor(Color.CYAN); // TODO::JT get a better colour!
 		m_pathStyle.setStyle(Style.STROKE);
+		m_pathStyle.setStrokeWidth(3.0f);
 	}
 }
