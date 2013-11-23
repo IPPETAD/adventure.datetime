@@ -1,5 +1,8 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
+import android.graphics.Matrix;
+import android.graphics.Path;
+
 class Camera
 {
 	// java generics are a pain to reuse just to make region use
@@ -21,6 +24,22 @@ class Camera
 							(int)((region.y - this.y) * m_zoomLevel),
 							(int)(region.width * m_zoomLevel),
 							(int)(region.height * m_zoomLevel));
+	}
+	
+	public void SetLocal(Path p)
+	{
+		Matrix scaleAndTranslate = new Matrix();
+		scaleAndTranslate.setScale(m_zoomLevel, m_zoomLevel);
+		scaleAndTranslate.setTranslate(-this.x, -this.y);
+		p.transform(scaleAndTranslate);
+	}
+	
+	public void InvertLocal(Path p)
+	{
+		Matrix scaleAndTranslate = new Matrix();
+		scaleAndTranslate.setScale(1/m_zoomLevel, 1/m_zoomLevel);
+		scaleAndTranslate.setTranslate(this.x, this.y);
+		p.transform(scaleAndTranslate);
 	}
 	
 	public void SetPosition(float x, float y)

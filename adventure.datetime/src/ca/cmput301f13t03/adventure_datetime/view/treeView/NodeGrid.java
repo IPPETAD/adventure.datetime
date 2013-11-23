@@ -1,7 +1,9 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,6 +12,7 @@ import java.util.UUID;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.view.treeView.Camera;
@@ -20,6 +23,8 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.Camera;
  */
 class NodeGrid
 {
+	private static final String TAG = "NODE_GRID";
+	
 	private ArrayList<GridSegment> m_segments = new ArrayList<GridSegment>();
 	private ArrayList<FragmentConnection> m_connections = new ArrayList<FragmentConnection>();
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
@@ -71,7 +76,7 @@ class NodeGrid
 			m_nodes.clear();
 
 			SetupNodes(fragments);
-			SetupConnections();
+			SetupConnections(fragments);
 		}
 	}
 	
@@ -112,9 +117,40 @@ class NodeGrid
 		assert(notPlacedFragments.size() == 0);
 	}
 	
-	private void SetupConnections()
+	private void SetupConnections(Map<UUID, StoryFragment> fragments)
 	{
+		ConnectionPlacer placer = new ConnectionPlacer(this.m_segments, GridSegment.GRID_SIZE);
+		Map<UUID, FragmentNode> lookupList = new HashMap<UUID, FragmentNode>();
 		
+		// construct the lookup map
+		for(FragmentNode node : m_nodes)
+		{
+			lookupList.put(node.GetFragment().getFragmentID(), node);
+		}
+		
+		// now iterate over each fragment node and connect it with its choices
+		for(FragmentNode node : m_nodes)
+		{
+			List<Choice> links = node.GetFragment().getChoices();
+			
+			for(Choice choice : links)
+			{
+				UUID key = choice.getTarget();
+				// lookup the node
+				if(lookupList.containsKey(key))
+				{
+					FragmentConnection connection = new FragmentConnection();
+					placer.PlaceConnection(connection, node, lookupList.get(key));
+					this.m_connections.add(connection);
+				}
+				else
+				{
+					// What the hell? How could there be a choice without
+					// a node?
+					Log.e(TAG, "Choice with no associated node encountered! Discarding choice.");
+				}
+			}
+		}
 	}
 	
 	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<UUID, StoryFragment> allFrags)
