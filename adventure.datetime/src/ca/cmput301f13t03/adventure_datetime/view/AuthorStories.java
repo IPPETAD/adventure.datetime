@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -59,7 +60,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	private Map<String, Story> _stories;
+	private Map<UUID, Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> stories) {
+	public void OnCurrentStoryListChange(Map<UUID, Story> stories) {
 		_stories = stories;
 		setUpView();
 	}
@@ -164,7 +165,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
 			title.setText(item.getTitle());
-			fragments.setText("Fragments: " + "idk");
+			fragments.setText("Fragments: " + item.getFragmentIds().size());
 			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());
 			
 			/*

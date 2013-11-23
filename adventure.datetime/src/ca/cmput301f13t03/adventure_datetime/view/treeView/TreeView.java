@@ -1,6 +1,7 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
@@ -23,7 +24,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	boolean m_isDrawing = false;
 	SurfaceHolder m_surface = null;
 	NodeGrid m_grid = null;
-	Map<String, StoryFragment> m_fragments = null;
+	Map<UUID, StoryFragment> m_fragments = null;
 	Camera m_camera = null;
 	
 	// must have all constructors or it doesn't work
@@ -52,7 +53,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	}
 	
 	@Override
-	public void OnAllFragmentsChange(Map<String, StoryFragment> newFragments) 
+	public void OnAllFragmentsChange(Map<UUID, StoryFragment> newFragments) 
 	{
 		m_fragments = newFragments;
 		if(m_grid != null)

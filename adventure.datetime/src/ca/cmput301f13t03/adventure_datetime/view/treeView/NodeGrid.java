@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -54,7 +55,7 @@ class NodeGrid
 	/**
 	 * Set the fragments that are to be displayed by this component
 	 */
-	public void SetFragments(Map<String, StoryFragment> fragments)
+	public void SetFragments(Map<UUID, StoryFragment> fragments)
 	{
 		// early out
 		if(fragments == null)
@@ -74,7 +75,7 @@ class NodeGrid
 		}
 	}
 	
-	private void SetupNodes(Map<String, StoryFragment> fragsMap)
+	private void SetupNodes(Map<UUID, StoryFragment> fragsMap)
 	{
 		NodePlacer nodePlacer = new NodePlacer();
 		
@@ -116,7 +117,7 @@ class NodeGrid
 		
 	}
 	
-	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<String, StoryFragment> allFrags)
+	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<UUID, StoryFragment> allFrags)
 	{
 		Set<StoryFragment> linkedFrags = new TreeSet<StoryFragment>();
 		ArrayList<Choice> links = head.getChoices();

@@ -26,6 +26,8 @@ import junit.framework.Assert;
 
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -33,7 +35,7 @@ import java.util.UUID;
  */
 public class StoryDBTest extends AndroidTestCase {
 
-	private StoryDB database;
+	private ILocalStorage database;
 
 	@Override
 	public void setUp() throws Exception {
@@ -44,11 +46,11 @@ public class StoryDBTest extends AndroidTestCase {
 
 	public void testSetStoryFragment() throws Exception {
 
-		String uuid = UUID.randomUUID().toString();
+		UUID uuid = UUID.randomUUID();
 		Choice choice = new Choice("test", uuid);
 		StoryFragment frag = new StoryFragment(uuid, "testing", choice);
 
-		String fragUuid = frag.getFragmentID();
+		UUID fragUuid = frag.getFragmentID();
 
 		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
 		StoryFragment frag2 = database.getStoryFragment(frag.getFragmentID());
@@ -58,29 +60,53 @@ public class StoryDBTest extends AndroidTestCase {
 
 		Assert.assertEquals("Not equivalent UUIDs", fragUuid, frag.getFragmentID());
 
+        database.deleteStoryFragment(fragUuid);
+
+        frag2 = database.getStoryFragment(fragUuid);
+
+        Assert.assertNull("Frgament not null", frag2);
+
 	}
 
 	public void testSetStory() throws Exception {
 		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
-		String uuid = story.getId();
-
+		UUID uuid = story.getId();
+        story.setHeadFragmentId(UUID.randomUUID());
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 
 		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
 		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
+
+        database.deleteStory(story.getId());
+
+        story2 = database.getStory(story.getId());
+
+        Assert.assertNull("Story not null", story2);
 	}
 
 	public void testSetBookmark() throws Exception {
-		String sUuid, sFUuid;
-		sUuid = UUID.randomUUID().toString();
-		sFUuid = UUID.randomUUID().toString();
+		UUID sUuid, sFUuid;
+		sUuid = UUID.randomUUID();
+		sFUuid = UUID.randomUUID();
 		Bookmark bookmark = new Bookmark(sUuid, sFUuid);
 		Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
 		Bookmark bookmark2 = database.getBookmark(sUuid);
 
 		Assert.assertEquals("Not equivalent story ids", bookmark.getStoryID(), bookmark2.getStoryID());
 		Assert.assertEquals("Not equivalent uuids", sUuid, bookmark.getStoryID());
+
+        database.deleteBookmarkByStory(sUuid);
+        bookmark2 = database.getBookmark(sUuid);
+        Assert.assertNull("Bookmark not null", bookmark2);
+
+        Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
+
+        database.deleteStoryFragment(sFUuid);
+
+        bookmark2 = database.getBookmark(sUuid);
+
+        Assert.assertNull("Bookmark not null", bookmark2);
 	}
 
 

@@ -19,7 +19,67 @@
  *  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.util.UUID;
+
 public class Comment {
+
+	private UUID webId;
+	private UUID targetId;
+	private String author;
+	private String content;
+	
+	/**
+	 * Construct an empty Comment object
+	 */
+	public Comment() {
+	}
+	
+	/**
+	 * Construct a Comment object with populated fields
+	 * @param webId the webId
+	 * @param targetId the targetId
+	 * @param author the Author
+	 * @param content the Content
+	 */
+	public Comment(UUID webId, UUID targetId, String author, String content) {
+		this.webId = webId;
+		this.targetId = targetId;
+		this.author = author;
+		this.content = content;
+	}
+
+	public UUID getWebId() {
+		return webId;
+	}
+
+	public void setWebId(UUID webId) {
+		this.webId = webId;
+	}
+
+	public UUID getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(UUID targetId) {
+		this.targetId = targetId;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
 }

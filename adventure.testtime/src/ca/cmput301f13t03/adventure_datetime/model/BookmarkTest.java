@@ -41,35 +41,15 @@ public class BookmarkTest extends TestCase {
 	}
 
 	public void testCreation() throws Exception {
-		Bookmark bookmark = new Bookmark(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Bookmark bookmark = new Bookmark(UUID.randomUUID(), UUID.randomUUID());
 		Assert.assertNotNull("Bookmark is null", bookmark);
 		Calendar cal = Calendar.getInstance();
-		bookmark = new Bookmark(UUID.randomUUID().toString(), UUID.randomUUID().toString(), cal.getTime());
+		bookmark = new Bookmark(UUID.randomUUID(), UUID.randomUUID(), cal.getTime());
 		Assert.assertNotNull("Bookmark is null", bookmark);
-	}
-
-	public void testUUID() throws Exception {
-		Bookmark bookmark = new Bookmark(UUID.randomUUID().toString(), UUID.randomUUID().toString());
-		try {
-			bookmark.setFragmentID("WRONG");
-			Assert.fail("UUID was set");
-		} catch (Exception e) {
-		}
-		String newUUID = UUID.randomUUID().toString();
-		bookmark.setFragmentID(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, bookmark.getFragmentID());
-
-		try {
-			bookmark.setStoryID("WRONG");
-			Assert.fail("UUID was set");
-		} catch (Exception e) {
-		}
-		bookmark.setStoryID(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, bookmark.getStoryID());
 	}
 
 	public void testJson() throws Exception {
-		Bookmark bookmark = new Bookmark(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Bookmark bookmark = new Bookmark(UUID.randomUUID(), UUID.randomUUID());
 		Gson gson = new Gson();
 		String json = gson.toJson(bookmark);
 

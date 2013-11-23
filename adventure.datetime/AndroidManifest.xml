@@ -3,13 +3,20 @@
     package="ca.cmput301f13t03.adventure_datetime"
     android:versionCode="1"
     android:versionName="1.0" >
-
-    <uses-sdk android:minSdkVersion="14" />
-
+	
+    <uses-sdk 
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    
     <application
         android:icon="@drawable/launch_icon"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.Light" >
+        android:theme="@android:style/Theme.Holo.Light" 
+        android:allowBackup="false" >
         <activity
             android:name=".view.MainView"
             android:label="@string/app_name" >
@@ -45,6 +52,10 @@
             android:name=".view.StoryDescription"
             android:label="@string/app_name"
             android:parentActivityName=".view.BrowseView"/>
+        <activity
+            android:name=".view.FullScreen_Image"
+            android:label="@string/app_name"
+            android:parentActivityName=".view.FragmentView"/>
     </application>
 
 </manifest>

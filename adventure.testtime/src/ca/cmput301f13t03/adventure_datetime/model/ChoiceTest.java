@@ -41,34 +41,12 @@ public class ChoiceTest extends TestCase {
 	}
 
 	public void testConstruction() throws Exception {
-		Choice choice = new Choice("test", UUID.randomUUID().toString());
+		Choice choice = new Choice("test", UUID.randomUUID());
 		Assert.assertNotNull("Choice is null", choice);
 	}
 
-	public void testUUID() throws Exception {
-		Choice choice;
-		try {
-			choice = new Choice("test", "WRONGE");
-			Assert.fail("UUID was set");
-		} catch (Exception e) {
-			choice = new Choice("test", UUID.randomUUID().toString());
-		}
-		try {
-			choice.setTarget("WRONG");
-			Assert.fail("UUID was re-set");
-		} catch (Exception e) {
-
-		}
-
-		String newUUID = UUID.randomUUID().toString();
-
-		choice.setTarget(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, choice.getTarget());
-
-	}
-
 	public void testJson() throws Exception {
-		Choice choice = new Choice("test", UUID.randomUUID().toString());
+		Choice choice = new Choice("test", UUID.randomUUID());
 		Gson gson = new Gson();
 		String json = gson.toJson(choice);
 		Choice choice2 = gson.fromJson(json, Choice.class);

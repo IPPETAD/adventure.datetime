@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -56,7 +57,7 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 	private ViewPagerAdapter _adapter;
 	
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> newStories) {
+	public void OnCurrentStoryListChange(Map<UUID, Story> newStories) {
 		_adapter.setLocalStories(newStories.values());	
 	}
 	
@@ -72,7 +73,9 @@ public class BrowseView extends FragmentActivity implements IStoryListListener {
 		Locator.getPresenter().Unsubscribe(this);
 		super.onPause();
 	}
-	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

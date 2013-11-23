@@ -20,40 +20,42 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
+package ca.cmput301f13t03.adventure_datetime.model;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
-
-import java.util.Collection;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.ClientConfig;
 
 /**
- * Service for publishing Stories or saving them
- * locally while working on them.
+ * Container class for ElasticSearch singletons
  */
-public interface IAuthorStorage extends IReaderStorage {
+public class ES {
 	
 	/**
-	 * Publish a story to the web. May be an insert or update.
-	 * Must be the author in case of an update.
-	 * @param story the story
-	 * @param fragments the fragments for the story
-	 * @return the ID of the story published
+	 * The JEST client for ElasticSearch
 	 */
-	int publishStory(Story story, Collection<StoryFragment> fragments);
-	
-	/**
-	 * Remove a story from the web service.
-	 * Must be the author of the story
-	 * @param storyId the story id
-	 * @return True if story deleted, false otherwise
-	 */
-	boolean unpublishStory(long storyId);
-	
-	/**
-	 * Save a story to local storage. Does not publish the story
-	 * @param story the story
-	 * @param fragments the fragments for the story
-	 * @return True if saved, false otherwise
-	 */
-	boolean saveStory(Story story, Collection<StoryFragment> fragments);
+	public static class Client {
+		
+		private static final String CON_URL = 
+			"http://cmput301.softwareprocess.es:8080";
+		private static JestClient jestClient;
+		
+		/**
+		 * Gets the HTTP JestClient singleton for:
+		 * http://cmput301.softwareprocess.es:8080/cmput301f13t03/
+		 * @return JestClient for our ES server
+		 */
+		public static JestClient getClient() {
+			if (jestClient == null) {
+				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(false).build();
+				JestClientFactory factory = new JestClientFactory();
+				factory.setClientConfig(clientConfig);
+				jestClient = factory.getObject();
+			}
+			
+			return jestClient;
+		}
+		
+	}
+		
 }

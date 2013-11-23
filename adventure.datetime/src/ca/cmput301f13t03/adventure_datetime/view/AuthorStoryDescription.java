@@ -109,7 +109,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
-		fragments.setText("Fragments: " + "idk..");
+		fragments.setText("Fragments: " + _story.getFragmentIds().size());
 		_content.setText(_story.getSynopsis());
 
 
@@ -161,17 +161,16 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			/* Ensure user is not retarded and actually wants to do this */
 			new AlertDialog.Builder(this)
 			.setTitle("Delete Story")
-			.setMessage("This will delete the story. You cannot undo.")
+			.setMessage("This will kill the story.\nAction cannot be undone.")
 			.setCancelable(true)
-			.setPositiveButton("Kill the fucker!", new DialogInterface.OnClickListener() {
+			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-
-					// TODO::JF Delete story once possible
+					Locator.getAuthorController().deleteStory(_story.getId());
 					finish();
 				}
 			})
-			.setNegativeButton("NO! Don't hurt GRAMGRAM!", new DialogInterface.OnClickListener() {
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();

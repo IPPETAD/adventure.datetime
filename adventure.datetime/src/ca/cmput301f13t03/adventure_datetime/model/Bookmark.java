@@ -28,52 +28,109 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * A Bookmark pointing to a Story and Fragment to continue where the User left off
  * @author Andrew Fontaine
  * @version 1.0
  * @since 23/10/13
  */
 public class Bookmark {
 
+	/**
+	 * The UUID of the fragment the Bookmark points to
+	 */
 	private UUID fragmentID;
+	/**
+	 * The UUID of the story the Bookmark points to
+	 */
 	private UUID storyID;
+	/**
+	 * The date of creation of the Bookmark
+	 */
 	private Date date;
 
-	public Bookmark(String storyID, String fragmentID) {
-		this.fragmentID = UUID.fromString(fragmentID);
-		this.storyID = UUID.fromString(storyID);
+    /**
+     * Creates a new bookmark with the given Story, StoryFragment, and current time
+     * @param storyID UUID of the Story
+     * @param fragmentID UUID of the StoryFragment
+     */
+	public Bookmark(UUID storyID, UUID fragmentID) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
 		this.date = Calendar.getInstance().getTime();
 	}
 
-	public Bookmark(String fragmentID, String storyID, Date date) {
-		this.fragmentID = UUID.fromString(fragmentID);
-		this.storyID = UUID.fromString(storyID);
+    /**
+     * Creates a new bookmark with the given Story, StoryFragment, and Date
+     * @param fragmentID UUID of the StoryFragment
+     * @param storyID UUID of the Story
+     * @param date Date that the bookmark was originally set
+     */
+	public Bookmark(UUID fragmentID, UUID storyID, Date date) {
+		this.fragmentID = fragmentID;
+		this.storyID = storyID;
 		this.date = date;
 	}
 
-	public String getFragmentID() {
-		return fragmentID.toString();
+    /**
+     * Gets the UUID of the StoryFragment
+     *
+     * @return UUID of the fragment
+     */
+	public UUID getFragmentID() {
+		return fragmentID;
 	}
 
-	public void setFragmentID(String fragmentID) {
-		this.fragmentID = UUID.fromString(fragmentID);
+    /**
+     * Sets the UUID of the StoryFragment
+     *
+     * @param fragmentID StoryFragment the Bookmark points to
+     */
+	public void setFragmentID(UUID fragmentID) {
+		this.fragmentID = fragmentID;
 	}
 
+    /**
+     * Gets the Date associated with the Bookmark
+     *
+     * @return Date the bookmark was set
+     */
 	public Date getDate() {
 		return date;
 	}
 
+    /**
+     * Sets a new date for the Bookmark
+     *
+     * @param date The Date the bookmark will be set to
+     */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public String getStoryID() {
+    /**
+     * Gets the UUID of the Story the Bookmark points to.
+     *
+     * @return UUID of the Story
+     */
+	public UUID getStoryID() {
 
-		return storyID.toString();
+		return storyID;
 	}
 
-	public void setStoryID(String storyID) {
-		this.storyID = UUID.fromString(storyID);
+    /**
+     * Sets the UUID the Bookmark points to
+     *
+     * @param storyID UUID of Story to point to
+     */
+	public void setStoryID(UUID storyID) {
+		this.storyID = storyID;
 	}
+
+    /**
+     * Creates a formatted string for the Date associated with the Bookmark
+     *
+     * @return The date, formatted as "mm/dd/yyyy"
+     */
 	public String getFormattedTimestamp() {
 		SimpleDateFormat format = new SimpleDateFormat("mm/dd/yyyy");
 		return format.format(date);
