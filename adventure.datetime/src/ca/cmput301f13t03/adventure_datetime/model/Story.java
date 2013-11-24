@@ -289,6 +289,7 @@ public class Story {
 		if (thumbnailDirty || this.thumbnailDecoded == null) {
 			byte[] decodedThumbnail = Base64.decode(this.thumbnail, 0);
 			this.thumbnailDecoded = BitmapFactory.decodeByteArray(decodedThumbnail, 0, decodedThumbnail.length);
+			thumbnailDirty = false;
 		}
 		
 		return thumbnailDecoded;
