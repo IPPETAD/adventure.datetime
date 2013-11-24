@@ -9,16 +9,17 @@ import java.util.Set;
 
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.util.Log;
 
 public final class ConnectionPlacer 
 {
-	private int m_horizontalOffset = 0;
-	private int m_verticalOffset = 0;
+	public int m_horizontalOffset = 0; // TODO::JT set as public for testing purposes
+	public int m_verticalOffset = 0; // TODO::JT set as public for testing purposes
 	private int m_mapWidth = 0;
 	private int m_mapHeight = 0;
+	private int m_actualHeight = 0;
+	private int m_actualWidth = 0;
 	private int m_gridSize = 0;
-	private boolean[][] m_map = null;
+	public boolean[][] m_map = null; // TODO::JT set as public for testing purposes
 
 	public ConnectionPlacer(ArrayList<GridSegment> gridSegments, int gridSize)
 	{
@@ -43,11 +44,11 @@ public final class ConnectionPlacer
 			bottomMost = Math.max(bottom, bottomMost);
 		}
 
-		m_mapWidth = rightMost - leftMost;
-		m_mapHeight = bottomMost - topMost;
+		m_actualWidth = rightMost - leftMost;
+		m_actualHeight = bottomMost - topMost;
 
-		m_mapWidth /= gridSize;
-		m_mapHeight /= gridSize;
+		m_mapWidth = m_actualWidth / gridSize;
+		m_mapHeight = m_actualHeight / gridSize;
 
 		m_horizontalOffset = leftMost;
 		m_verticalOffset = topMost;
@@ -62,32 +63,22 @@ public final class ConnectionPlacer
 
 		for(GridSegment seg : segments)
 		{
-			int gridWidth = seg.height / m_gridSize;
-			int gridHeight = seg.width / m_gridSize;
-
-			int baseX = (seg.x - m_horizontalOffset) / m_gridSize;
-			int baseY = (seg.y - m_verticalOffset) / m_gridSize;
-			int endX = baseX + gridWidth;
-			int endY = baseY + gridHeight;
+			int xStart = seg.x - m_horizontalOffset;
+			int yStart = seg.y - m_verticalOffset;
+			int increment = m_gridSize;
 			
-			int segmentHorizontalOffset = (seg.x - m_horizontalOffset) / m_gridSize;
-			int segmentVerticalOffset = (seg.y - m_verticalOffset) / m_gridSize;
-
-			for(int x = baseX ; x < endX ; ++x)
+			int xEnd = seg.x + seg.width - m_horizontalOffset;
+			int yEnd = seg.y + seg.height - m_verticalOffset;
+			
+			for(int x = xStart ; x < xEnd ; x += increment)
 			{
-				for(int y = baseY ; y < endY ; ++y)
+				for(int y = yStart ; y < yEnd ; y += increment)
 				{
-					try
+					if(seg.IsEmpty(x, y))
 					{
-						if(!seg.IsEmpty(x - segmentHorizontalOffset,
-										y - segmentVerticalOffset))
-						{
-							m_map[x][y] = true;
-						}
-					}
-					catch(Exception ex)
-					{
-						Log.e("blah", ex.getMessage());
+						int localX = (x + m_horizontalOffset) / m_gridSize;
+						int localY = (y + m_verticalOffset) / m_gridSize;
+						m_map[localX][localY] = true;
 					}
 				}
 			}
@@ -121,11 +112,11 @@ public final class ConnectionPlacer
 
 		// first draw a line in the direction of the target until a free point is reached
 		// store this result in the start path
-		startPath = GetPath(start, end, new PartialPathBuilder(start, end, m_map, m_gridSize));
+		startPath = GetPath(start, end, new PartialPathBuilder(start, end, m_map, m_gridSize), true);
 
 		// now draw a line from the target in the direction of the start
 		// store this result in the end path
-		endPath = GetPath(end, start, new PartialPathBuilder(end, start, m_map, m_gridSize));
+		endPath = GetPath(end, start, new PartialPathBuilder(end, start, m_map, m_gridSize), true);
 
 		// now path find from the start path to the end path
 		midPath = ConstructMidPath(startPath, endPath, start, end);
@@ -134,7 +125,7 @@ public final class ConnectionPlacer
 		finalPath = JoinPaths(startPath, midPath, endPath);
 		
 		// transform them to global space and assign it to the connection
-		finalPath.offset(m_horizontalOffset, m_verticalOffset);
+		finalPath.offset(-m_horizontalOffset, -m_verticalOffset);
 		connection.SetPath(finalPath);
 	}
 	
@@ -173,7 +164,7 @@ public final class ConnectionPlacer
 		}
 
 		// now we find a path between them
-		return GetPath(midStart, midEnd, new FullPathBuilder(midStart, midEnd));
+		return GetPath(midStart, midEnd, new FullPathBuilder(midStart, midEnd, m_gridSize * m_gridSize), false);
 	}
 
 	// helper function, why does Java not have this???
@@ -182,11 +173,11 @@ public final class ConnectionPlacer
 		return Math.min(Math.max(val, min), max);
 	}
 
-	private Path GetPath(Location start, Location target, IPathBuilderCallbacks builder)
+	private Path GetPath(Location start, Location target, IPathBuilderCallbacks builder, boolean ignoreCollision)
 	{
 		Path result = new Path();
 		result.moveTo(start.x, start.y);
-		SortedLocationList openList = new SortedLocationList();
+		SortedLocationList openList = new SortedLocationList(m_map, m_gridSize, !ignoreCollision);
 		Set<Location> closedList = new HashSet<Location>();
 		int currentDepth = 0;
 
@@ -216,16 +207,16 @@ public final class ConnectionPlacer
 						int baseY = currentLocation.location.y;
 
 						// get adjacent locations
-						int yUp = baseY - 1;
-						int yDown = baseY + 1;
-						int xRight = baseX + 1;
-						int xLeft = baseX - 1;
+						int yUp = baseY - m_gridSize;
+						int yDown = baseY + m_gridSize;
+						int xRight = baseX + m_gridSize;
+						int xLeft = baseX - m_gridSize;
 
 						// clamp all values
-						yUp = Clamp(yUp, 0, m_mapHeight - 1);
-						yDown = Clamp(yDown, 0, m_mapHeight - 1);
-						xRight = Clamp(xRight, 0, m_mapWidth - 1);
-						xLeft = Clamp(xLeft, 0, m_mapWidth - 1);
+						yUp = Clamp(yUp, 0, m_actualHeight);
+						yDown = Clamp(yDown, 0, m_actualHeight);
+						xRight = Clamp(xRight, 0, m_actualWidth);
+						xLeft = Clamp(xLeft, 0, m_actualWidth);
 
 						// construct adjacent nodes
 						LocationNode up = new LocationNode(new Location(baseX, yUp), target, currentDepth, currentLocation);
@@ -262,6 +253,12 @@ public final class ConnectionPlacer
 
 		public int x = 0;
 		public int y = 0;
+		
+		public int DistanceSquared(Location other)
+		{
+			return 	(this.x - other.x)*(this.x - other.x) +
+					(this.y - other.y)*(this.y - other.y);
+		}
 
 		public int compareTo(Location other) 
 		{
@@ -291,6 +288,21 @@ public final class ConnectionPlacer
 				}
 			}
 		}
+		
+		public boolean equals(Object other)
+		{
+			if(other instanceof Location)
+			{
+				Location otherLocation = (Location)(other);
+				return 	otherLocation.x == this.x &&
+						otherLocation.y == this.y;
+						
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 
 	// no I am not using tuple for this.
@@ -300,10 +312,8 @@ public final class ConnectionPlacer
 		public LocationNode(Location src, Location target, int expansionLevel, LocationNode previousNode)
 		{
 			location = src;
-			// not using Math.pow cuz it is slow for squaring stuff
-			weight = (target.x - src.x)*(target.x - src.x) +
-					(target.y - src.y)*(target.y - src.y);
-			weight += expansionLevel;
+			weight = src.DistanceSquared(target);
+			weight += expansionLevel * expansionLevel;
 
 			this.prev = previousNode;
 		}
@@ -320,10 +330,31 @@ public final class ConnectionPlacer
 	private final class SortedLocationList extends LinkedList<LocationNode>
 	{
 		private static final long serialVersionUID = -1181516011560588762L;
+		
+		private boolean[][] m_map = null;
+		private int m_gridSize = 0;
+		private boolean m_testCollision = true;
+		
+		public SortedLocationList(boolean[][] map, int gridSize, boolean testCollision)
+		{
+			this.m_gridSize = gridSize;
+			this.m_map = map;
+		}
 
 		@Override
-		public boolean add(LocationNode object) 
+		public boolean add(LocationNode object)
 		{
+			if(m_testCollision)
+			{
+				// only add it if it doesn't collide with anything
+				int x = object.location.x / this.m_gridSize;
+				int y = object.location.y / this.m_gridSize;
+				if(m_map[x][y]) // if there is something at this position 
+				{
+					return false;
+				}
+			}
+			
 			Iterator<LocationNode> itr = this.listIterator();
 			int insertLocation = 0;
 
@@ -339,7 +370,7 @@ public final class ConnectionPlacer
 
 			super.add(insertLocation, object);
 
-			return true; // cuz the java spec says that add must always return true for a linked list
+			return true;
 		}
 
 		public List<LocationNode> GetAndRemoveNextLowestWeights()
@@ -383,16 +414,18 @@ public final class ConnectionPlacer
 	{
 		Location m_target = null;
 		Location m_start = null;
+		int m_targetVariance = 0;
 
-		public FullPathBuilder(Location start, Location target)
+		public FullPathBuilder(Location start, Location target, int targetVariance)
 		{
 			this.m_start = start;
 			this.m_target = target;
+			this.m_targetVariance = targetVariance;
 		}
 
 		public boolean TestForDestination(Location loc) 
 		{
-			return this.m_target.compareTo(loc) == 0;
+			return m_target.DistanceSquared(loc) <= m_targetVariance;
 		}
 
 		@Override
@@ -503,7 +536,7 @@ public final class ConnectionPlacer
 		
 		public boolean TestForDestination(Location loc) 
 		{
-			return this.m_map[loc.x / this.m_gridSize][loc.y / this.m_gridSize];
+			return !this.m_map[loc.x / this.m_gridSize][loc.y / this.m_gridSize];
 		}
 
 		public Path BuildPath(LocationNode endNode) 

@@ -18,7 +18,10 @@ public class GridSegment extends Region
 	
 	public boolean IsEmpty(int x, int y)
 	{
-		return m_space[x][y];
+		int localX = (x - this.x) / GRID_SIZE;
+		int localY = (y - this.y) / GRID_SIZE;
+		
+		return m_space[localX][localY];
 	}
 	
 	public boolean CanPlace(Region region)
@@ -37,14 +40,14 @@ public class GridSegment extends Region
 			return false;
 		}
 		
-		int baseX = (region.x - this.x) / GRID_SIZE;
-		int baseY = (region.y - this.y) / GRID_SIZE;
-		int endX = (region.x - this.x + region.width) / GRID_SIZE;
-		int endY = (region.y - this.y + region.height) / GRID_SIZE;
+		int startX = region.x;
+		int startY = region.y;
+		int endX = region.x + region.width;
+		int endY = region.y + region.height;
 		
-		for(int currX = baseX ; currX <= endX ; ++currX)
+		for(int currX = startX ; currX < endX ; currX += GRID_SIZE)
 		{
-			for(int currY = baseY ; currY <= endY ; ++currY)
+			for(int currY = startY ; currY < endY ; currY += GRID_SIZE)
 			{
 				if(IsEmpty(currX, currY))
 				{
@@ -53,6 +56,7 @@ public class GridSegment extends Region
 			}
 		}
 		
+		// if we made it here then no collisions were detected
 		return true;
 	}
 	

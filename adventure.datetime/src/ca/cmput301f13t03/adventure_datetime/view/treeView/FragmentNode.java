@@ -14,8 +14,8 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.Region;
  */
 class FragmentNode extends Region
 {
-	public static final int WIDTH = 40;
-	public static final int HEIGHT = 25;
+	public static final int WIDTH = 120;
+	public static final int HEIGHT = 75;
 	private static final int MAX_TXT_LENGTH = 25;
 	
 	private StoryFragment m_fragment = null;

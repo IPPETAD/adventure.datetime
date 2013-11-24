@@ -12,6 +12,7 @@ import java.util.UUID;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -29,6 +30,10 @@ class NodeGrid
 	private ArrayList<FragmentConnection> m_connections = new ArrayList<FragmentConnection>();
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
 	
+	boolean[][] temp = null;
+	int temp_h = 0;
+	int temp_v = 0;
+	
 	public NodeGrid()
 	{
 		
@@ -38,9 +43,26 @@ class NodeGrid
 	{
 		synchronized(m_segments)
 		{
-			for(FragmentConnection connection : m_connections)
+			if(temp != null)
 			{
-				connection.Draw(surface, camera);
+				Paint tempPaintTrue = new Paint();
+				tempPaintTrue.setColor(Color.GRAY);
+				Paint tempPaintFalse = new Paint();
+				tempPaintFalse.setColor(Color.LTGRAY);
+				for(int x = 0 ; x < temp.length ; ++x)
+				{
+					for(int y = 0 ; y > temp[x].length ; ++y)
+					{
+						if(temp[x][y])
+						{
+							surface.drawRect(new Rect(x * 10, y * 10, x * 10 + 10, y * 10 + 10), tempPaintTrue);
+						}
+						else
+						{
+							surface.drawRect(new Rect(x * 10, y * 10, x * 10 + 10, y * 10 + 10), tempPaintFalse);
+						}
+					}
+				}
 			}
 			
 			for(FragmentNode frag : m_nodes)
@@ -53,6 +75,11 @@ class NodeGrid
 				
 				
 				frag.Draw(surface, camera, backgroundPaint, textPaint);
+			}
+			
+			for(FragmentConnection connection : m_connections)
+			{
+				connection.Draw(surface, camera);
 			}
 		}
 	}
@@ -155,6 +182,10 @@ class NodeGrid
 				}
 			}
 		}
+
+		this.temp = placer.m_map;
+		this.temp_h = placer.m_horizontalOffset;
+		this.temp_v = placer.m_verticalOffset;
 	}
 	
 	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<UUID, StoryFragment> allFrags)

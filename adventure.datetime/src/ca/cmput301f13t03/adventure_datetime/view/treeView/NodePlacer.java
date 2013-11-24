@@ -10,7 +10,7 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.GridSegment;
 
 class NodePlacer
 {
-	private static final int SEGMENT_SIZE = 100;
+	private static final int SEGMENT_SIZE = 1000;
 	
 	ArrayList<GridSegment> m_gridSegments = new ArrayList<GridSegment>();
 	Map<String, FragmentNode> m_placedNodes = new HashMap<String, FragmentNode>();
@@ -65,7 +65,8 @@ class NodePlacer
 			final double HORIZONTAL_MOD = FragmentNode.WIDTH / EXPECTED_RADIUS;
 			
 			// select a random 45 degree angle
-			double angle = (Math.random() * 7);
+			// double angle = (Math.random() * 7);
+			double angle = 0;
 			angle *= 45;
 			double radiusModifier = 1.0;
 			double INITIAL_ANGLE = angle;
