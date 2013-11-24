@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import android.graphics.Path;
-import android.graphics.PathMeasure;
 
 public final class ConnectionPlacer 
 {
@@ -63,24 +62,50 @@ public final class ConnectionPlacer
 
 		for(GridSegment seg : segments)
 		{
-			int xStart = seg.x;
-			int yStart = seg.y;
-			int increment = m_gridSize;
-			
-			int xEnd = seg.x + seg.width;
-			int yEnd = seg.y + seg.height;
-			
-			for(int x = xStart ; x < xEnd ; x += increment)
+			ApplySegmentToMap(seg);
+		}
+	}
+	
+	private void ApplySegmentToMap(GridSegment seg)
+	{
+		int xStart = seg.x;
+		int yStart = seg.y;
+		int increment = m_gridSize;
+		
+		int xEnd = seg.x + seg.width;
+		int yEnd = seg.y + seg.height;
+		
+		for(int x = xStart ; x < xEnd ; x += increment)
+		{
+			for(int y = yStart ; y < yEnd ; y += increment)
 			{
-				for(int y = yStart ; y < yEnd ; y += increment)
+				if(seg.IsEmpty(x, y))
 				{
-					if(seg.IsEmpty(x, y))
-					{
-						int localX = (x - m_horizontalOffset) / m_gridSize;
-						int localY = (y - m_verticalOffset) / m_gridSize;
-						m_map[localX][localY] = true;
-					}
+					int localX = (x - m_horizontalOffset) / m_gridSize;
+					int localY = (y - m_verticalOffset) / m_gridSize;
+					m_map[localX][localY] = true;
 				}
+			}
+		}
+	}
+	
+	private void ApplyFragmentToMap(FragmentNode node, boolean valueToApply)
+	{
+		int xStart = node.x - m_horizontalOffset;
+		int yStart = node.y - m_verticalOffset;
+		int increment = m_gridSize;
+		
+		int xEnd = xStart + node.width;
+		int yEnd = yStart + node.height;
+		
+		for(int x = xStart ; x < xEnd ; x += increment)
+		{
+			for(int y = yStart ; y < yEnd ; y += increment)
+			{
+				int localX = (x) / m_gridSize;
+				int localY = (y) / m_gridSize;
+				
+				m_map[localX][localY] = valueToApply;
 			}
 		}
 	}
@@ -104,67 +129,20 @@ public final class ConnectionPlacer
 		Location end = new Location(	targetFrag.x - m_horizontalOffset + targetFrag.width / 2, 
 										targetFrag.y - m_verticalOffset + targetFrag.height / 2);
 
+		// first remove the origin and target fragments from the collision map
+		ApplyFragmentToMap(originFrag, false);
+		ApplyFragmentToMap(targetFrag, false);
+		
 		// Path values
-		Path startPath = null;
-		Path endPath = null;
-		Path midPath = null;
-		Path finalPath = null;
-
-		// first draw a line in the direction of the target until a free point is reached
-		// store this result in the start path
-		startPath = GetPath(start, end, new PartialPathBuilder(start, end, m_map, m_gridSize), true);
-
-		// now draw a line from the target in the direction of the start
-		// store this result in the end path
-		endPath = GetPath(end, start, new PartialPathBuilder(end, start, m_map, m_gridSize), true);
-
-		// now path find from the start path to the end path
-		midPath = ConstructMidPath(startPath, endPath, start, end);
-
-		// finally join the 3 paths together
-		finalPath = JoinPaths(startPath, midPath, endPath);
+		Path finalPath = GetPath(start, end, new FullPathBuilder(start, end, m_gridSize));
+		
+		// now restore the collision map
+		ApplyFragmentToMap(originFrag, true);
+		ApplyFragmentToMap(targetFrag, true);
 		
 		// transform them to global space and assign it to the connection
 		finalPath.offset(m_horizontalOffset, m_verticalOffset);
 		connection.SetPath(finalPath);
-	}
-	
-	private Path JoinPaths(Path start, Path mid, Path end)
-	{
-		mid.addPath(end);
-		start.addPath(mid);
-		return start;
-	}
-	
-	private Path ConstructMidPath(Path startPath, Path endPath, Location start, Location end)
-	{
-		Location midStart = null;
-		Location midEnd = null;
-
-		PathMeasure pm = new PathMeasure(startPath, false);
-		float cords[] = { 0 , 0 };
-
-		if(pm.getPosTan(pm.getLength(), cords, null))
-		{
-			midStart = new Location(Math.round(cords[0]), Math.round(cords[1]));
-		}
-		else
-		{
-			midStart = new Location(start.x, start.y);
-		}
-
-		pm = new PathMeasure(endPath, false);
-		if(pm.getPosTan(pm.getLength(), cords, null))
-		{
-			midEnd = new Location(Math.round(cords[0]), Math.round(cords[1]));
-		}
-		else
-		{
-			midEnd = new Location(end.x, end.y);
-		}
-
-		// now we find a path between them
-		return GetPath(midStart, midEnd, new FullPathBuilder(midStart, midEnd, m_gridSize * m_gridSize), false);
 	}
 
 	// helper function, why does Java not have this???
@@ -173,9 +151,9 @@ public final class ConnectionPlacer
 		return Math.min(Math.max(val, min), max);
 	}
 
-	private Path GetPath(Location start, Location target, IPathBuilderCallbacks builder, boolean ignoreCollision)
+	private Path GetPath(Location start, Location target, FullPathBuilder builder)
 	{
-		SortedLocationList openList = new SortedLocationList(m_map, m_gridSize, !ignoreCollision);
+		SortedLocationList openList = new SortedLocationList(m_map, m_gridSize);
 		Set<Location> closedList = new HashSet<Location>();
 		int currentDepth = 0;
 
@@ -211,10 +189,10 @@ public final class ConnectionPlacer
 						int xLeft = baseX - m_gridSize;
 
 						// clamp all values
-						yUp = Clamp(yUp, 0, m_actualHeight);
-						yDown = Clamp(yDown, 0, m_actualHeight);
-						xRight = Clamp(xRight, 0, m_actualWidth);
-						xLeft = Clamp(xLeft, 0, m_actualWidth);
+						yUp = Clamp(yUp, 0, m_actualHeight - m_gridSize);
+						yDown = Clamp(yDown, 0, m_actualHeight - m_gridSize);
+						xRight = Clamp(xRight, 0, m_actualWidth - m_gridSize);
+						xLeft = Clamp(xLeft, 0, m_actualWidth - m_gridSize);
 
 						// construct adjacent nodes
 						LocationNode up = new LocationNode(new Location(baseX, yUp), target, currentDepth, currentLocation);
@@ -222,35 +200,34 @@ public final class ConnectionPlacer
 						LocationNode left = new LocationNode(new Location(xLeft, baseY), target, currentDepth, currentLocation);
 						LocationNode right = new LocationNode(new Location(xRight, baseY), target, currentDepth, currentLocation);
 						
-						// diagonal as well (cuz we get better lines this way)
-						LocationNode upLeft = new LocationNode(new Location(xLeft, yUp), target, currentDepth, currentLocation);
-						LocationNode upRight = new LocationNode(new Location(xRight, yUp), target, currentDepth, currentLocation);
-						LocationNode downLeft = new LocationNode(new Location(xLeft, yDown), target, currentDepth, currentLocation);
-						LocationNode downRight = new LocationNode(new Location(xRight, yDown), target, currentDepth, currentLocation);
-						
-						
 						// add all adjacent nodes to this list
-						openList.add(up);
-						openList.add(down);
-						openList.add(left);
-						openList.add(right);
+						AddToClosedList(up, openList, closedList);
+						AddToClosedList(down, openList, closedList);
+						AddToClosedList(left, openList, closedList);
+						AddToClosedList(right, openList, closedList);
 						
-						openList.add(upLeft);
-						openList.add(upRight);
-						openList.add(downRight);
-						openList.add(downLeft);
-
 						// now lets keep searching!
 					}
 				}
 			}
 
-			++currentDepth;
+			currentDepth += m_gridSize;
 		}
 
 		// if we've made it this far then no path could be found as one does not exist
 		// so just return a default path
 		return builder.BuildDefaultPath();
+	}
+	
+	private void AddToClosedList(LocationNode node, SortedLocationList openList, Set<Location> closedList)
+	{
+		if(!closedList.contains(node.location))
+		{
+			if(!openList.add(node))
+			{
+				closedList.add(node.location);
+			}
+		}
 	}
 
 	private final class Location implements Comparable<Location>
@@ -348,27 +325,21 @@ public final class ConnectionPlacer
 		
 		private boolean[][] m_map = null;
 		private int m_gridSize = 0;
-		private boolean m_testCollision = true;
 		
-		public SortedLocationList(boolean[][] map, int gridSize, boolean testCollision)
+		public SortedLocationList(boolean[][] map, int gridSize)
 		{
 			this.m_gridSize = gridSize;
 			this.m_map = map;
-			this.m_testCollision = testCollision;
 		}
 
-		@Override
 		public boolean add(LocationNode object)
 		{
-			if(m_testCollision)
+			// only add it if it doesn't collide with anything
+			int x = object.location.x / this.m_gridSize;
+			int y = object.location.y / this.m_gridSize;
+			if(m_map[x][y]) // if there is something at this position 
 			{
-				// only add it if it doesn't collide with anything
-				int x = object.location.x / this.m_gridSize;
-				int y = object.location.y / this.m_gridSize;
-				if(m_map[x][y]) // if there is something at this position 
-				{
-					return false;
-				}
+				return false;
 			}
 			
 			Iterator<LocationNode> itr = this.listIterator();
@@ -419,14 +390,7 @@ public final class ConnectionPlacer
 		}
 	}
 
-	private interface IPathBuilderCallbacks
-	{
-		boolean TestForDestination(Location loc);
-		Path BuildPath(LocationNode endNode);
-		Path BuildDefaultPath();
-	}
-
-	private final class FullPathBuilder implements IPathBuilderCallbacks
+	private final class FullPathBuilder
 	{
 		Location m_target = null;
 		Location m_start = null;
@@ -436,7 +400,7 @@ public final class ConnectionPlacer
 		{
 			this.m_start = start;
 			this.m_target = target;
-			this.m_targetVariance = targetVariance;
+			this.m_targetVariance = (int) Math.round(targetVariance * 1.5); // technically the value is only needed to be sqrt(2), but this is close enough
 		}
 
 		public boolean TestForDestination(Location loc) 
@@ -444,7 +408,6 @@ public final class ConnectionPlacer
 			return m_target.DistanceSquared(loc) <= m_targetVariance;
 		}
 
-		@Override
 		public Path BuildPath(LocationNode endNode) 
 		{
 			List<LocationNode> pathNodes = new ArrayList<LocationNode>();
@@ -469,8 +432,6 @@ public final class ConnectionPlacer
 			// first simplify the node list
 			nodes = SimplifyPath(nodes);
 			
-			result.moveTo(m_target.x, m_target.y);
-
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516
 			// --Thanks to : johncarl
@@ -504,6 +465,12 @@ public final class ConnectionPlacer
 					}
 				}
 			}
+			
+			if(nodes.size() > 0)
+			{
+				LocationNode first = nodes.get(0);
+				result.moveTo(first.location.x, first.location.y);
+			}
 
 			for(int i = 1; i < nodes.size(); i++)
 			{
@@ -519,8 +486,6 @@ public final class ConnectionPlacer
 								point.location.y);
 			}
 			
-			result.lineTo(m_start.x, m_start.y);
-
 			return result;
 		}
 
@@ -547,8 +512,8 @@ public final class ConnectionPlacer
 				simplifiedList.add(currentNode);
 				
 				// dir as in direction
-				float currentXDir = 1.0f;
-				float currentYDir = 0;
+				float currentXDir = 0.0f;
+				float currentYDir = 0.0f;
 				
 				for(LocationNode next : baseNodes)
 				{
@@ -575,51 +540,15 @@ public final class ConnectionPlacer
 					
 					// else we discard this node and move on
 				}
+				
+				if(baseNodes.size() > 0)
+				{
+					// ensure the last one is in the list, no matter what
+					simplifiedList.add(baseNodes.get(baseNodes.size() - 1));
+				}
 			}
 			
 			return simplifiedList;
 		}
-	}
-
-	private final class PartialPathBuilder implements IPathBuilderCallbacks
-	{
-		private boolean[][] m_map = null;
-		private Location m_start = null;
-		private Location m_end = null;
-		private int m_gridSize = 0;
-		
-		public PartialPathBuilder(Location start, Location target, boolean[][] map, int gridSize)
-		{
-			m_start = start;
-			m_end = target;
-			this.m_map = map;
-			this.m_gridSize = gridSize;
-		}
-		
-		public boolean TestForDestination(Location loc) 
-		{
-			return !this.m_map[loc.x / this.m_gridSize][loc.y / this.m_gridSize];
-		}
-
-		public Path BuildPath(LocationNode endNode) 
-		{
-			Path result = new Path();
-
-			result.moveTo(m_start.x, m_start.y);
-			result.lineTo(endNode.location.x, endNode.location.y);
-
-			return result;
-		}
-
-		public Path BuildDefaultPath() 
-		{
-			Path result = new Path();
-
-			result.moveTo(m_start.x, m_start.y);
-			result.lineTo(m_end.x, m_end.y);
-
-			return result;
-		}
-
 	}
 }

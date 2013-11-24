@@ -69,9 +69,9 @@ public class GridSegment extends Region
 		int endX = (region.x - this.x + region.width) / GRID_SIZE;
 		int endY = (region.y - this.y + region.height) / GRID_SIZE;
 		
-		for(int currX = baseX ; currX <= endX ; ++currX)
+		for(int currX = baseX ; currX < endX ; ++currX)
 		{
-			for(int currY = baseY ; currY <= endY ; ++currY)
+			for(int currY = baseY ; currY < endY ; ++currY)
 			{
 				m_space[currX][currY] = true;
 			}

@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Paint.Style;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -50,6 +51,11 @@ class NodeGrid
 				Paint tempPaintFalse = new Paint();
 				tempPaintFalse.setColor(Color.LTGRAY);
 				
+				Paint edge = new Paint();
+				edge.setColor(Color.BLACK);
+				edge.setStyle(Style.STROKE);
+				edge.setStrokeWidth(1.0f);
+				
 				Region reg = new Region(0, 0, temp.length * GridSegment.GRID_SIZE, temp[0].length * GridSegment.GRID_SIZE);
 				Region localReg = camera.GetLocalTransform(reg);
 				
@@ -73,6 +79,15 @@ class NodeGrid
 								y * GridSegment.GRID_SIZE + temp_v + localReg.y, 
 								x * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_h + localReg.x, 
 								y * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_v + localReg.y), color);
+						
+						
+						
+						surface.drawRect(new Rect(	
+								x * GridSegment.GRID_SIZE + this.temp_h + localReg.x, 
+								y * GridSegment.GRID_SIZE + temp_v + localReg.y, 
+								x * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_h + localReg.x, 
+								y * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_v + localReg.y), edge);
+						
 					}
 				}
 			}
