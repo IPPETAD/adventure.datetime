@@ -84,7 +84,7 @@ class NodeGrid
 	{
 		NodePlacer nodePlacer = new NodePlacer();
 		
-		Set<FragmentNode> placedFragments = new HashSet<FragmentNode>();
+		Set<UUID> placedFragments = new HashSet<UUID>();
 		Set<StoryFragment> notPlacedFragments = new HashSet<StoryFragment>();
 		
 		notPlacedFragments.addAll(fragsMap.values());
@@ -97,7 +97,7 @@ class NodeGrid
 			FragmentNode headNode = new FragmentNode(headFrag);
 			nodePlacer.PlaceFragment(headNode);
 			notPlacedFragments.remove(headFrag);
-			placedFragments.add(headNode);
+			placedFragments.add(headFrag.getFragmentID());
 			m_nodes.add(headNode);
 			
 			// construct a list of nodes to place based upon the head node
@@ -106,15 +106,19 @@ class NodeGrid
 			// place all linked nodes
 			for(StoryFragment frag : linkedFragments)
 			{
-				FragmentNode nextNode = new FragmentNode(frag);
-				nodePlacer.PlaceFragment(nextNode);
-				notPlacedFragments.remove(frag);
-				placedFragments.add(nextNode);
-				m_nodes.add(nextNode);
+				if(!placedFragments.contains(frag.getFragmentID()))
+				{
+					FragmentNode nextNode = new FragmentNode(frag);
+					nodePlacer.PlaceFragment(nextNode);
+					notPlacedFragments.remove(frag);
+					placedFragments.add(frag.getFragmentID());
+					m_nodes.add(nextNode);
+				}
 			}
 		}
 		
 		assert(notPlacedFragments.size() == 0);
+		this.m_segments = nodePlacer.GetSegments();
 	}
 	
 	private void SetupConnections()
@@ -156,7 +160,7 @@ class NodeGrid
 	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<UUID, StoryFragment> allFrags)
 	{
 		Set<StoryFragment> linkedFrags = new TreeSet<StoryFragment>();
-		ArrayList<Choice> links = head.getChoices();
+		List<Choice> links = new ArrayList<Choice>(head.getChoices());
 		
 		if(links != null && !links.isEmpty())
 		{

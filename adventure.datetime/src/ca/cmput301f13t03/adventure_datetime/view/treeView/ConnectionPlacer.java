@@ -9,6 +9,7 @@ import java.util.Set;
 
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.util.Log;
 
 public final class ConnectionPlacer 
 {
@@ -64,18 +65,29 @@ public final class ConnectionPlacer
 			int gridWidth = seg.height / m_gridSize;
 			int gridHeight = seg.width / m_gridSize;
 
-			int baseX = seg.x - m_horizontalOffset;
-			int baseY = seg.y - m_verticalOffset;
+			int baseX = (seg.x - m_horizontalOffset) / m_gridSize;
+			int baseY = (seg.y - m_verticalOffset) / m_gridSize;
 			int endX = baseX + gridWidth;
 			int endY = baseY + gridHeight;
+			
+			int segmentHorizontalOffset = (seg.x - m_horizontalOffset) / m_gridSize;
+			int segmentVerticalOffset = (seg.y - m_verticalOffset) / m_gridSize;
 
 			for(int x = baseX ; x < endX ; ++x)
 			{
 				for(int y = baseY ; y < endY ; ++y)
 				{
-					if(!seg.IsEmpty(x, y))
+					try
 					{
-						m_map[x][y] = true;
+						if(!seg.IsEmpty(x - segmentHorizontalOffset,
+										y - segmentVerticalOffset))
+						{
+							m_map[x][y] = true;
+						}
+					}
+					catch(Exception ex)
+					{
+						Log.e("blah", ex.getMessage());
 					}
 				}
 			}
@@ -109,11 +121,11 @@ public final class ConnectionPlacer
 
 		// first draw a line in the direction of the target until a free point is reached
 		// store this result in the start path
-		startPath = GetPath(start, end, new PartialPathBuilder(start, end, m_map));
+		startPath = GetPath(start, end, new PartialPathBuilder(start, end, m_map, m_gridSize));
 
 		// now draw a line from the target in the direction of the start
 		// store this result in the end path
-		endPath = GetPath(end, start, new PartialPathBuilder(end, start, m_map));
+		endPath = GetPath(end, start, new PartialPathBuilder(end, start, m_map, m_gridSize));
 
 		// now path find from the start path to the end path
 		midPath = ConstructMidPath(startPath, endPath, start, end);
@@ -479,17 +491,19 @@ public final class ConnectionPlacer
 		private boolean[][] m_map = null;
 		private Location m_start = null;
 		private Location m_end = null;
+		private int m_gridSize = 0;
 		
-		public PartialPathBuilder(Location start, Location target, boolean[][] map)
+		public PartialPathBuilder(Location start, Location target, boolean[][] map, int gridSize)
 		{
 			m_start = start;
 			m_end = target;
 			this.m_map = map;
+			this.m_gridSize = gridSize;
 		}
 		
 		public boolean TestForDestination(Location loc) 
 		{
-			return this.m_map[loc.x][loc.y];
+			return this.m_map[loc.x / this.m_gridSize][loc.y / this.m_gridSize];
 		}
 
 		public Path BuildPath(LocationNode endNode) 

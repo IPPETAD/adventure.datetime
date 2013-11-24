@@ -333,6 +333,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			if(fragmentId.equals(id))
 			{
 				theId = id;
+				break;
 			}
 		}
 		
