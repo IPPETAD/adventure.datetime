@@ -175,8 +175,6 @@ public final class ConnectionPlacer
 
 	private Path GetPath(Location start, Location target, IPathBuilderCallbacks builder, boolean ignoreCollision)
 	{
-		Path result = new Path();
-		result.moveTo(start.x, start.y);
 		SortedLocationList openList = new SortedLocationList(m_map, m_gridSize, !ignoreCollision);
 		Set<Location> closedList = new HashSet<Location>();
 		int currentDepth = 0;
@@ -223,12 +221,24 @@ public final class ConnectionPlacer
 						LocationNode down = new LocationNode(new Location(baseX, yDown), target, currentDepth, currentLocation);
 						LocationNode left = new LocationNode(new Location(xLeft, baseY), target, currentDepth, currentLocation);
 						LocationNode right = new LocationNode(new Location(xRight, baseY), target, currentDepth, currentLocation);
-
+						
+						// diagonal as well (cuz we get better lines this way)
+						LocationNode upLeft = new LocationNode(new Location(xLeft, yUp), target, currentDepth, currentLocation);
+						LocationNode upRight = new LocationNode(new Location(xRight, yUp), target, currentDepth, currentLocation);
+						LocationNode downLeft = new LocationNode(new Location(xLeft, yDown), target, currentDepth, currentLocation);
+						LocationNode downRight = new LocationNode(new Location(xRight, yDown), target, currentDepth, currentLocation);
+						
+						
 						// add all adjacent nodes to this list
 						openList.add(up);
 						openList.add(down);
 						openList.add(left);
 						openList.add(right);
+						
+						openList.add(upLeft);
+						openList.add(upRight);
+						openList.add(downRight);
+						openList.add(downLeft);
 
 						// now lets keep searching!
 					}
@@ -317,8 +327,8 @@ public final class ConnectionPlacer
 		public LocationNode(Location src, Location target, int expansionLevel, LocationNode previousNode)
 		{
 			location = src;
-			weight = src.DistanceSquared(target);
-			weight += expansionLevel * expansionLevel;
+			weight = (int) Math.round(Math.sqrt(src.DistanceSquared(target)));
+			weight += expansionLevel;
 
 			this.prev = previousNode;
 		}
@@ -451,9 +461,15 @@ public final class ConnectionPlacer
 			return ConstructFromNodes(pathNodes);
 		}
 
+		// TODO::JT this needs to be re evaluated! Right now it just draws straight lines...
 		private Path ConstructFromNodes(List<LocationNode> nodes)
 		{
 			Path result = new Path();
+			
+			// first simplify the node list
+			nodes = SimplifyPath(nodes);
+			
+			result.moveTo(m_target.x, m_target.y);
 
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516
@@ -489,26 +505,21 @@ public final class ConnectionPlacer
 				}
 			}
 
-			boolean first = true;
-			for(int i = 0; i < nodes.size(); i++){
+			for(int i = 1; i < nodes.size(); i++)
+			{
 				LocationNode point = nodes.get(i);
-				if(first)
-				{
-					first = false;
-					result.moveTo(	point.location.x, 
-									point.location.y);
-				}
-				else
-				{
-					LocationNode prev = nodes.get(i - 1);
-					result.cubicTo(	prev.location.x + prev.dx, 
-									prev.location.y + prev.dy, 
-									point.location.x - point.dx, 
-									point.location.y - point.dy, 
-									point.location.x, 
-									point.location.y);
-				}
+				LocationNode prev = null;
+				prev = nodes.get(i - 1);
+				
+				result.cubicTo(	prev.location.x + prev.dx,
+								prev.location.y + prev.dy,
+								point.location.x - point.dx,
+								point.location.y - point.dy,
+								point.location.x,
+								point.location.y);
 			}
+			
+			result.lineTo(m_start.x, m_start.y);
 
 			return result;
 		}
@@ -522,7 +533,52 @@ public final class ConnectionPlacer
 
 			return result;
 		}
-
+		
+		private List<LocationNode> SimplifyPath(List<LocationNode> baseNodes)
+		{
+			final float VARIANCE = 0.1f;
+			
+			List<LocationNode> simplifiedList = new ArrayList<LocationNode>();
+			
+			LocationNode currentNode = null;
+			if(baseNodes.size() > 0)
+			{
+				currentNode = baseNodes.get(0);
+				simplifiedList.add(currentNode);
+				
+				// dir as in direction
+				float currentXDir = 1.0f;
+				float currentYDir = 0;
+				
+				for(LocationNode next : baseNodes)
+				{
+					float nextXdir = next.location.x - currentNode.location.x;
+					float nextYdir = next.location.y - currentNode.location.y;
+					
+					// normalize
+					double distance = Math.sqrt(next.location.DistanceSquared(currentNode.location));
+					nextXdir /= distance;
+					nextYdir /= distance;
+					
+					// compare
+					if(	Math.abs(nextXdir - currentXDir) > VARIANCE ||
+						Math.abs(nextYdir - currentYDir) > VARIANCE)
+					{
+						// then they are different enough
+						// for this one to be included
+						currentNode = next;
+						simplifiedList.add(next);
+						
+						currentXDir = nextXdir;
+						currentYDir = nextYdir;
+					}
+					
+					// else we discard this node and move on
+				}
+			}
+			
+			return simplifiedList;
+		}
 	}
 
 	private final class PartialPathBuilder implements IPathBuilderCallbacks

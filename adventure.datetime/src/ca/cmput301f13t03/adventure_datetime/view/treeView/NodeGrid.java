@@ -50,7 +50,7 @@ class NodeGrid
 				Paint tempPaintFalse = new Paint();
 				tempPaintFalse.setColor(Color.LTGRAY);
 				
-				Region reg = new Region(0, 0, temp.length * 10, temp[0].length * 10);
+				Region reg = new Region(0, 0, temp.length * GridSegment.GRID_SIZE, temp[0].length * GridSegment.GRID_SIZE);
 				Region localReg = camera.GetLocalTransform(reg);
 				
 				for(int x = 0 ; x < temp.length ; ++x)
@@ -69,10 +69,10 @@ class NodeGrid
 						}
 						
 						surface.drawRect(new Rect(	
-								x * 10 + this.temp_h + localReg.x, 
-								y * 10 + temp_v + localReg.y, 
-								x * 10 + 10 + temp_h + localReg.x, 
-								y * 10 + 10 + temp_v + localReg.y), color);
+								x * GridSegment.GRID_SIZE + this.temp_h + localReg.x, 
+								y * GridSegment.GRID_SIZE + temp_v + localReg.y, 
+								x * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_h + localReg.x, 
+								y * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_v + localReg.y), color);
 					}
 				}
 			}
