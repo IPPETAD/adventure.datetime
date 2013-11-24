@@ -13,14 +13,18 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.Camera;
  */
 final class FragmentConnection
 {
-	private static Paint m_pathStyle = new Paint();
-	private static boolean m_isPaintInitialized = false;
+	private static Paint s_pathStyle = null;
 	
 	private Path m_connectionPath = null;
 	
-	public FragmentConnection()
+	static
 	{
-		// use the provided info to build the path
+		s_pathStyle = new Paint();
+		s_pathStyle.setAntiAlias(true);
+		s_pathStyle.setAlpha(200);
+		s_pathStyle.setColor(Color.CYAN); // TODO::JT get a better colour!
+		s_pathStyle.setStyle(Style.STROKE);
+		s_pathStyle.setStrokeWidth(3.0f);
 	}
 	
 	public void SetPath(Path path)
@@ -30,24 +34,10 @@ final class FragmentConnection
 	
 	public void Draw(Canvas surface, Camera camera)
 	{
-		if(!m_isPaintInitialized)
-		{
-			SetupPaint();
-		}
-		
 		// TODO::JT add in the particle animation
 		// translate, draw then return to original point
 		camera.SetLocal(m_connectionPath);
-		surface.drawPath(m_connectionPath, m_pathStyle);
+		surface.drawPath(m_connectionPath, s_pathStyle);
 		camera.InvertLocal(m_connectionPath);
-	}
-	
-	private static void SetupPaint()
-	{
-		m_pathStyle.setAntiAlias(true);
-		m_pathStyle.setAlpha(200);
-		m_pathStyle.setColor(Color.CYAN); // TODO::JT get a better colour!
-		m_pathStyle.setStyle(Style.STROKE);
-		m_pathStyle.setStrokeWidth(3.0f);
 	}
 }

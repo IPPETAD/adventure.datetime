@@ -63,12 +63,12 @@ public final class ConnectionPlacer
 
 		for(GridSegment seg : segments)
 		{
-			int xStart = seg.x - m_horizontalOffset;
-			int yStart = seg.y - m_verticalOffset;
+			int xStart = seg.x;
+			int yStart = seg.y;
 			int increment = m_gridSize;
 			
-			int xEnd = seg.x + seg.width - m_horizontalOffset;
-			int yEnd = seg.y + seg.height - m_verticalOffset;
+			int xEnd = seg.x + seg.width;
+			int yEnd = seg.y + seg.height;
 			
 			for(int x = xStart ; x < xEnd ; x += increment)
 			{
@@ -76,8 +76,8 @@ public final class ConnectionPlacer
 				{
 					if(seg.IsEmpty(x, y))
 					{
-						int localX = (x + m_horizontalOffset) / m_gridSize;
-						int localY = (y + m_verticalOffset) / m_gridSize;
+						int localX = (x - m_horizontalOffset) / m_gridSize;
+						int localY = (y - m_verticalOffset) / m_gridSize;
 						m_map[localX][localY] = true;
 					}
 				}
@@ -99,10 +99,10 @@ public final class ConnectionPlacer
 	public void PlaceConnection(FragmentConnection connection, FragmentNode originFrag, FragmentNode targetFrag)
 	{
 		// Transform the x and y cords to local map space
-		Location start = new Location(	originFrag.x - m_horizontalOffset, 
-										originFrag.y - m_verticalOffset);
-		Location end = new Location(	targetFrag.x - m_horizontalOffset, 
-										targetFrag.y - m_verticalOffset);
+		Location start = new Location(	originFrag.x - m_horizontalOffset + originFrag.width / 2, 
+										originFrag.y - m_verticalOffset + originFrag.height / 2);
+		Location end = new Location(	targetFrag.x - m_horizontalOffset + targetFrag.width / 2, 
+										targetFrag.y - m_verticalOffset + targetFrag.height / 2);
 
 		// Path values
 		Path startPath = null;
@@ -125,7 +125,7 @@ public final class ConnectionPlacer
 		finalPath = JoinPaths(startPath, midPath, endPath);
 		
 		// transform them to global space and assign it to the connection
-		finalPath.offset(-m_horizontalOffset, -m_verticalOffset);
+		finalPath.offset(m_horizontalOffset, m_verticalOffset);
 		connection.SetPath(finalPath);
 	}
 	
@@ -191,7 +191,7 @@ public final class ConnectionPlacer
 			for(LocationNode currentLocation : nextBatch)
 			{
 				// only check it if we haven't checked it already
-				if(!closedList.contains(currentLocation))
+				if(!closedList.contains(currentLocation.location))
 				{
 					if(builder.TestForDestination(currentLocation.location))
 					{
@@ -303,6 +303,11 @@ public final class ConnectionPlacer
 				return false;
 			}
 		}
+		
+		public int hashCode()
+		{
+			return this.x ^ this.y;
+		}
 	}
 
 	// no I am not using tuple for this.
@@ -339,6 +344,7 @@ public final class ConnectionPlacer
 		{
 			this.m_gridSize = gridSize;
 			this.m_map = map;
+			this.m_testCollision = testCollision;
 		}
 
 		@Override

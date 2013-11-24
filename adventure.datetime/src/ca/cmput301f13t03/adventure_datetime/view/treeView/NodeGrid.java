@@ -49,32 +49,37 @@ class NodeGrid
 				tempPaintTrue.setColor(Color.GRAY);
 				Paint tempPaintFalse = new Paint();
 				tempPaintFalse.setColor(Color.LTGRAY);
+				
+				Region reg = new Region(0, 0, temp.length * 10, temp[0].length * 10);
+				Region localReg = camera.GetLocalTransform(reg);
+				
 				for(int x = 0 ; x < temp.length ; ++x)
 				{
-					for(int y = 0 ; y > temp[x].length ; ++y)
+					for(int y = 0 ; y < temp[x].length ; ++y)
 					{
+						Paint color = null;
+						
 						if(temp[x][y])
 						{
-							surface.drawRect(new Rect(x * 10, y * 10, x * 10 + 10, y * 10 + 10), tempPaintTrue);
+							color = tempPaintTrue;
 						}
 						else
 						{
-							surface.drawRect(new Rect(x * 10, y * 10, x * 10 + 10, y * 10 + 10), tempPaintFalse);
+							color = tempPaintFalse;
 						}
+						
+						surface.drawRect(new Rect(	
+								x * 10 + this.temp_h + localReg.x, 
+								y * 10 + temp_v + localReg.y, 
+								x * 10 + 10 + temp_h + localReg.x, 
+								y * 10 + 10 + temp_v + localReg.y), color);
 					}
 				}
 			}
 			
 			for(FragmentNode frag : m_nodes)
 			{
-				// temp
-				Paint backgroundPaint = new Paint();
-				backgroundPaint.setColor(Color.RED);
-				Paint textPaint = new Paint();
-				textPaint.setColor(Color.BLACK);
-				
-				
-				frag.Draw(surface, camera, backgroundPaint, textPaint);
+				frag.Draw(surface, camera);
 			}
 			
 			for(FragmentConnection connection : m_connections)

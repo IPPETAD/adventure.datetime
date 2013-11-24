@@ -10,7 +10,7 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.GridSegment;
 
 class NodePlacer
 {
-	private static final int SEGMENT_SIZE = 1000;
+	private static final int SEGMENT_SIZE = 200;
 	
 	ArrayList<GridSegment> m_gridSegments = new ArrayList<GridSegment>();
 	Map<String, FragmentNode> m_placedNodes = new HashMap<String, FragmentNode>();
@@ -60,27 +60,31 @@ class NodePlacer
 			// then we failed to place at the desired point
 			// search outwards by trying locations and stopping
 			// after a success
-			final double EXPECTED_RADIUS = FragmentNode.WIDTH;
-			final double VERTICAL_MOD = FragmentNode.HEIGHT / EXPECTED_RADIUS;
-			final double HORIZONTAL_MOD = FragmentNode.WIDTH / EXPECTED_RADIUS;
+			final double EXPECTED_RADIUS = FragmentNode.WIDTH * 3.0;
+			final double VERTICAL_MOD = (double)FragmentNode.HEIGHT / (double)FragmentNode.WIDTH;
+			final double HORIZONTAL_MOD = (double)FragmentNode.WIDTH / (double)FragmentNode.WIDTH; // kinda reduntant...
 			
 			// select a random 45 degree angle
-			// double angle = (Math.random() * 7);
-			double angle = 0;
+			double angle = (Math.random() * 7);
 			angle *= 45;
 			double radiusModifier = 1.0;
+			
+			angle = Math.toRadians(angle);
+			
+			double angleIncrement = Math.toRadians(45);
+			double twoPi = Math.toRadians(360.0);
 			double INITIAL_ANGLE = angle;
 			
 			while(!isPlaced)
 			{
-				fragment.x = (int) (Math.cos(angle) * EXPECTED_RADIUS * VERTICAL_MOD * radiusModifier);
-				fragment.y = (int) (Math.sin(angle) * EXPECTED_RADIUS * HORIZONTAL_MOD * radiusModifier);
+				fragment.x = (int) (Math.cos(angle) * EXPECTED_RADIUS * HORIZONTAL_MOD * radiusModifier) + x;
+				fragment.y = (int) (Math.sin(angle) * EXPECTED_RADIUS * VERTICAL_MOD * radiusModifier) + y;
 				isPlaced = TryPlace(fragment);
 				
-				angle += 45.0;
-				if(angle - INITIAL_ANGLE > 360.0)
+				angle += angleIncrement;
+				if(angle - INITIAL_ANGLE > twoPi)
 				{
-					angle -= 360.0;
+					angle -= twoPi;
 					radiusModifier++;
 				}
 			}
