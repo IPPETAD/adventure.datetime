@@ -117,4 +117,9 @@ public interface IStoryModelDirector
 	 * @param storyId UUID of the story to delete
 	 */
 	public void deleteBookmark(UUID storyId);
+
+	/**
+	 * Downloads current story to local database
+	 */
+	public void download();
 }
