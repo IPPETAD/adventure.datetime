@@ -430,8 +430,9 @@ public final class ConnectionPlacer
 		{
 			Path result = new Path();
 
+			// TODO::JT figure out what to do about simplifying the path...?
 			// first simplify the node list
-			nodes = SimplifyPath(nodes);
+			// nodes = SimplifyPath(nodes);
 
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516

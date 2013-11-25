@@ -34,7 +34,6 @@ class FragmentNode extends Region
 	static
 	{
 		s_backgroundPaint = new Paint();
-		s_backgroundPaint.setAlpha(225);
 		
 		s_textPaint = new Paint();
 		s_textPaint.setColor(Color.BLACK);

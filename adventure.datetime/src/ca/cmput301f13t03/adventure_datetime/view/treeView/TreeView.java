@@ -20,12 +20,12 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	private static final float FPS = 30.0f;
 	private static final String TAG = "TreeView";
 	
-	Thread m_drawingThread = null;
-	boolean m_isDrawing = false;
-	SurfaceHolder m_surface = null;
-	NodeGrid m_grid = null;
-	Map<UUID, StoryFragment> m_fragments = null;
-	Camera m_camera = null;
+	private Thread m_drawingThread = null;
+	private volatile boolean m_isDrawing = false;
+	private SurfaceHolder m_surface = null;
+	private NodeGrid m_grid = null;
+	private Map<UUID, StoryFragment> m_fragments = null;
+	private Camera m_camera = null;
 	
 	// must have all constructors or it doesn't work
 	public TreeView(Context context) 
