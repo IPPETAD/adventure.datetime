@@ -33,11 +33,16 @@ import android.widget.TextView;
  */
 public class BrowseFragment extends Fragment {
 	private static final String TAG = "BrowseFragment";
+	public static final String SERVER = "icanhaz_server";
+	public static final int SOURCE_CACHE = 0;
+	public static final int SOURCE_AUTHOR = 1;
+	public static final int SOURCE_ONLINE = 2;
 
 	private Collection<Story> _stories;
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
 	private ProgressBar _bar;
+	private int source;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -51,8 +56,9 @@ public class BrowseFragment extends Fragment {
 		
 		return rootView;
 	}
-	public void setStories(Collection<Story> stories) {
+	public void setStories(Collection<Story> stories, int source) {
 		_stories = stories;
+		this.source = source;
 		setUpView();
 	}
 	
@@ -88,6 +94,7 @@ public class BrowseFragment extends Fragment {
 				Locator.getAuthorController().selectStory(item.getId());
 				
 				Intent intent = new Intent(getActivity(), StoryDescription.class);
+				intent.putExtra(StoryDescription.SERVER, source);
 				startActivity(intent);
 			}
 		});
