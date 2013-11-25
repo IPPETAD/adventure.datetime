@@ -257,7 +257,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 			fragments.setText("Fragments: " + _story.getFragmentIds().size());
 			content.setText(_story.getSynopsis());
-			thumbnail.setImageBitmap(_story.getThumbnail());
+			thumbnail.setImageBitmap(_story.decodeThumbnail());
 
 			if (_bookmarked) {
 				play.setText("Continue Story");

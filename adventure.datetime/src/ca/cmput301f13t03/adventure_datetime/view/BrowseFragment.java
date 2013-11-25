@@ -127,7 +127,7 @@ public class BrowseFragment extends Fragment {
 			time.setText("Last Modified: " + story.getFormattedTimestamp());
 			
 			//if (story.getThumbnail() != null)
-				thumbnail.setImageBitmap(story.getThumbnail());
+				thumbnail.setImageBitmap(story.decodeThumbnail());
 			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available

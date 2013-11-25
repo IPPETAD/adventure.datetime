@@ -164,7 +164,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
-			thumbnail.setImageBitmap(item.getThumbnail());
+			thumbnail.setImageBitmap(item.decodeThumbnail());
 			title.setText(item.getTitle());
 			fragments.setText("Fragments: " + item.getFragmentIds().size());
 			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());
