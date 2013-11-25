@@ -101,5 +101,10 @@ public class UserController {
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
 	}
+	
+	public void download() 
+	{
+		m_storyDirector.download();
+	}
 
 }

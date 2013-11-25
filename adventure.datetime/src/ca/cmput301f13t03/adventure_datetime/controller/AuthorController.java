@@ -136,7 +136,9 @@ public class AuthorController {
 		m_storyDirector.selectFragment(fragmentId);
 	}
 	
-	public void upload(){
+	public void upload()
+	{
 		m_storyDirector.uploadCurrentStory();
 	}
+	
 }
