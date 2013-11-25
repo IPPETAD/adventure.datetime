@@ -30,6 +30,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
@@ -680,9 +681,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			String storyText = "You wake up. The room is spinning very gently round your head. Or at least it would be "
 					+ "if you could see it which you can't";
 			StoryFragment frag = new StoryFragment(story.getId(), UUID.fromString("5582f797-29b8-4d9d-83bf-88c434c1944a"), storyText,
-					new ArrayList<String>(), new ArrayList<Choice>());
+					new ArrayList<Uri>(), new ArrayList<Choice>());
 			StoryFragment frag2 = new StoryFragment(story.getId(), UUID.fromString("b10ef8ca-1180-44f6-b11b-170fef5ec071"), "You break" +
-					" your neck in the dark.", new ArrayList<String>(), new ArrayList<Choice>());
+					" your neck in the dark.", new ArrayList<Uri>(), new ArrayList<Choice>());
 			Choice choice = new Choice("Get out of bed", frag2.getFragmentID());
 			frag.addChoice(choice);
 			story.addFragment(frag);

@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -104,7 +105,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		_content = (TextView) findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<String>());
+			_fragment.setStoryMedia(new ArrayList<Uri>());
 
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value

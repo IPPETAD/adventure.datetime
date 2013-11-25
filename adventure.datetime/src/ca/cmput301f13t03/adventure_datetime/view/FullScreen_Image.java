@@ -22,10 +22,16 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.R;
@@ -103,11 +109,11 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         });
 
 
-        //_pageAdapter.setIllustrations(_fragment.getStoryMedia());
-        ArrayList<String> list = new ArrayList<String>();
+        _pageAdapter.setIllustrations(_fragment.getStoryMedia(), getIntent().getBooleanExtra(TAG_AUTHOR, false));
+      /*  ArrayList<String> list = new ArrayList<String>();
         for (int i=0; i<5; i++) list.add(""+i);
         _pageAdapter.setIllustrations(list, getIntent().
-                getBooleanExtra(TAG_AUTHOR, false));
+                getBooleanExtra(TAG_AUTHOR, false));*/
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {}
@@ -153,7 +159,6 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             case GALLERY:
                 Uri selectedImage = imageReturnedIntent.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
                 Cursor cursor = getContentResolver().query(
                         selectedImage, filePathColumn, null, null, null);
                 cursor.moveToFirst();
@@ -161,7 +166,8 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
-                _fragment.addMedia(filePath);
+                _fragment.addMedia(selectedImage);
+                Locator.getAuthorController().saveFragment(_fragment);
                 break;
             case CAMERA:
 
@@ -171,15 +177,15 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
     private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
-        private List<String> _illustrations;
+        private List<Uri> _illustrations;
         private boolean _author;
 
         public StoryPagerAdapter(FragmentManager fm) {
             super(fm);
-            _illustrations = new ArrayList<String>();
+            _illustrations = new ArrayList<Uri>();
         }
 
-        public void setIllustrations(List<String> illustrationIDs, boolean author) {
+        public void setIllustrations(List<Uri> illustrationIDs, boolean author) {
             _illustrations = illustrationIDs;
             _author = author;
             notifyDataSetChanged();
@@ -202,14 +208,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
     public static class IllustrationFragment extends Fragment {
 
         private View _rootView;
-        private String _sID;
+        private Uri _sID;
         private String _position;
         private boolean _author;
 
         public void onCreate(Bundle bundle) {
             super.onCreate(bundle);
         }
-        public void init(String id, int position, int total, boolean author) {
+        public void init(Uri id, int position, int total, boolean author) {
             _sID = id;
             _position = (position+1) + "/" + total;
             _author = author;
@@ -237,7 +243,26 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
             // TODO: Set counter by location
 
-            image.setBackgroundResource(R.drawable.grumpy_cat2);
+            //image.setBackgroundResource(R.drawable.grumpy_cat2);
+
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+
+            opts.inSampleSize = 2;
+
+            Bitmap bit = null;
+
+            InputStream is = null;
+            try {
+                is = getActivity().getContentResolver().openInputStream(_sID);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+            bit = BitmapFactory.decodeStream(is);
+
+
+            //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
+            image.setImageBitmap(bit);
             counter.setText(_position);
 
             Button gallery = (Button) _rootView.findViewById(R.id.gallery);
