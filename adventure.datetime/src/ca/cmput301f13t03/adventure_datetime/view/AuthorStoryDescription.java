@@ -142,7 +142,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			break;
 		case R.id.action_upload:
 			Locator.getAuthorController().upload();
-			Toast.makeText(getApplicationContext(), "Uploaded!", Toast.LENGTH_LONG);
+			Toast.makeText(getApplicationContext(), "Uploaded!", Toast.LENGTH_LONG).show();
 			break;
 		case R.id.action_discard:
 			/* Ensure user is not retarded and actually wants to do this */

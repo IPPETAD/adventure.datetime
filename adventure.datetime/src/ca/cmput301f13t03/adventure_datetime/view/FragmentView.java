@@ -220,12 +220,6 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			intent.putExtra(CommentsView.COMMENT_TYPE, false);
 			startActivity(intent);
 			break;
-		case R.id.action_download:
-			/* Download to cache */
-			break;
-		case R.id.action_edit:
-			/* Move from cache to authorship */
-			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

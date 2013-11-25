@@ -46,6 +46,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -185,10 +186,19 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			/**  Launch **/
 			Locator.getUserController().StartStory(_story.getId());
 			Intent intent = new Intent(this, CommentsView.class);
 			intent.putExtra(CommentsView.COMMENT_TYPE, true);
 			startActivity(intent);
+			break;
+		case R.id.action_download:
+			/* Download to cache */
+			Locator.getUserController().download();
+			Toast.makeText(getApplicationContext(), "Downloaded!", Toast.LENGTH_LONG).show();
+			break;
+		case R.id.action_edit:
+			/* Move from cache to authorship */
 			break;
 		}
 		return super.onOptionsItemSelected(item);
