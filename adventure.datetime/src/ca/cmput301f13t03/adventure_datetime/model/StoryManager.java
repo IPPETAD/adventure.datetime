@@ -477,11 +477,19 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					List<Story> onlineStories = m_webStorage.getStories(0, 3);
 					
-					for(Story story : onlineStories)
-					{
-						m_onlineStories.put(story.getId(), story);
+					List<Story> onlineStories;
+					int size = 10;
+					int i = 0;
+					
+					while(size == 10) {
+						onlineStories = m_webStorage.getStories(i, 10);
+						for(Story story : onlineStories)
+						{
+							m_onlineStories.put(story.getId(), story);
+						}
+						size = onlineStories.size();
+						i += 10;
 					}
 					PublishOnlineStoriesChanged();
 				} catch (Exception e) {
