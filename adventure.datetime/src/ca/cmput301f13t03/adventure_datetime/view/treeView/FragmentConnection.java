@@ -34,10 +34,6 @@ final class FragmentConnection
 	
 	public void Draw(Canvas surface, Camera camera)
 	{
-		// TODO::JT add in the particle animation
-		// translate, draw then return to original point
-		camera.SetLocal(m_connectionPath);
-		surface.drawPath(m_connectionPath, s_pathStyle);
-		camera.InvertLocal(m_connectionPath);
+		camera.DrawLocal(surface, s_pathStyle, this.m_connectionPath);
 	}
 }

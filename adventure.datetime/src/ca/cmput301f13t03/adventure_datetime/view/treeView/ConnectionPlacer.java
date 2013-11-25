@@ -65,16 +65,16 @@ public final class ConnectionPlacer
 			ApplySegmentToMap(seg);
 		}
 	}
-	
+
 	private void ApplySegmentToMap(GridSegment seg)
 	{
 		int xStart = seg.x;
 		int yStart = seg.y;
 		int increment = m_gridSize;
-		
+
 		int xEnd = seg.x + seg.width;
 		int yEnd = seg.y + seg.height;
-		
+
 		for(int x = xStart ; x < xEnd ; x += increment)
 		{
 			for(int y = yStart ; y < yEnd ; y += increment)
@@ -88,23 +88,23 @@ public final class ConnectionPlacer
 			}
 		}
 	}
-	
+
 	private void ApplyFragmentToMap(FragmentNode node, boolean valueToApply)
 	{
 		int xStart = node.x - m_horizontalOffset;
 		int yStart = node.y - m_verticalOffset;
 		int increment = m_gridSize;
-		
+
 		int xEnd = xStart + node.width;
 		int yEnd = yStart + node.height;
-		
+
 		for(int x = xStart ; x < xEnd ; x += increment)
 		{
 			for(int y = yStart ; y < yEnd ; y += increment)
 			{
 				int localX = (x) / m_gridSize;
 				int localY = (y) / m_gridSize;
-				
+
 				m_map[localX][localY] = valueToApply;
 			}
 		}
@@ -125,21 +125,21 @@ public final class ConnectionPlacer
 	{
 		// Transform the x and y cords to local map space
 		Location start = new Location(	originFrag.x - m_horizontalOffset + originFrag.width / 2, 
-										originFrag.y - m_verticalOffset + originFrag.height / 2);
+				originFrag.y - m_verticalOffset + originFrag.height / 2);
 		Location end = new Location(	targetFrag.x - m_horizontalOffset + targetFrag.width / 2, 
-										targetFrag.y - m_verticalOffset + targetFrag.height / 2);
+				targetFrag.y - m_verticalOffset + targetFrag.height / 2);
 
 		// first remove the origin and target fragments from the collision map
 		ApplyFragmentToMap(originFrag, false);
 		ApplyFragmentToMap(targetFrag, false);
-		
+
 		// Path values
-		Path finalPath = GetPath(start, end, new FullPathBuilder(start, end, m_gridSize));
-		
+		Path finalPath = GetPath(start, end, new FullPathBuilder(start, end, m_gridSize, m_map));
+
 		// now restore the collision map
 		ApplyFragmentToMap(originFrag, true);
 		ApplyFragmentToMap(targetFrag, true);
-		
+
 		// transform them to global space and assign it to the connection
 		finalPath.offset(m_horizontalOffset, m_verticalOffset);
 		connection.SetPath(finalPath);
@@ -199,13 +199,13 @@ public final class ConnectionPlacer
 						LocationNode down = new LocationNode(new Location(baseX, yDown), target, currentDepth, currentLocation);
 						LocationNode left = new LocationNode(new Location(xLeft, baseY), target, currentDepth, currentLocation);
 						LocationNode right = new LocationNode(new Location(xRight, baseY), target, currentDepth, currentLocation);
-						
+
 						// add all adjacent nodes to this list
 						AddToClosedList(up, openList, closedList);
 						AddToClosedList(down, openList, closedList);
 						AddToClosedList(left, openList, closedList);
 						AddToClosedList(right, openList, closedList);
-						
+
 						// now lets keep searching!
 					}
 				}
@@ -218,7 +218,7 @@ public final class ConnectionPlacer
 		// so just return a default path
 		return builder.BuildDefaultPath();
 	}
-	
+
 	private void AddToClosedList(LocationNode node, SortedLocationList openList, Set<Location> closedList)
 	{
 		if(!closedList.contains(node.location))
@@ -240,7 +240,7 @@ public final class ConnectionPlacer
 
 		public int x = 0;
 		public int y = 0;
-		
+
 		public int DistanceSquared(Location other)
 		{
 			return 	(this.x - other.x)*(this.x - other.x) +
@@ -275,7 +275,7 @@ public final class ConnectionPlacer
 				}
 			}
 		}
-		
+
 		public boolean equals(Object other)
 		{
 			if(other instanceof Location)
@@ -283,14 +283,14 @@ public final class ConnectionPlacer
 				Location otherLocation = (Location)(other);
 				return 	otherLocation.x == this.x &&
 						otherLocation.y == this.y;
-						
+
 			}
 			else
 			{
 				return false;
 			}
 		}
-		
+
 		public int hashCode()
 		{
 			return this.x ^ this.y;
@@ -322,10 +322,10 @@ public final class ConnectionPlacer
 	private final class SortedLocationList extends LinkedList<LocationNode>
 	{
 		private static final long serialVersionUID = -1181516011560588762L;
-		
+
 		private boolean[][] m_map = null;
 		private int m_gridSize = 0;
-		
+
 		public SortedLocationList(boolean[][] map, int gridSize)
 		{
 			this.m_gridSize = gridSize;
@@ -341,7 +341,7 @@ public final class ConnectionPlacer
 			{
 				return false;
 			}
-			
+
 			Iterator<LocationNode> itr = this.listIterator();
 			int insertLocation = 0;
 
@@ -395,12 +395,14 @@ public final class ConnectionPlacer
 		Location m_target = null;
 		Location m_start = null;
 		int m_targetVariance = 0;
+		boolean[][] m_map = null;
 
-		public FullPathBuilder(Location start, Location target, int targetVariance)
+		public FullPathBuilder(Location start, Location target, int targetVariance, boolean[][] map)
 		{
 			this.m_start = start;
 			this.m_target = target;
 			this.m_targetVariance = (int) Math.round(targetVariance * 1.5); // technically the value is only needed to be sqrt(2), but this is close enough
+			this.m_map = map;
 		}
 
 		public boolean TestForDestination(Location loc) 
@@ -424,14 +426,13 @@ public final class ConnectionPlacer
 			return ConstructFromNodes(pathNodes);
 		}
 
-		// TODO::JT this needs to be re evaluated! Right now it just draws straight lines...
 		private Path ConstructFromNodes(List<LocationNode> nodes)
 		{
 			Path result = new Path();
-			
+
 			// first simplify the node list
 			nodes = SimplifyPath(nodes);
-			
+
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516
 			// --Thanks to : johncarl
@@ -465,7 +466,7 @@ public final class ConnectionPlacer
 					}
 				}
 			}
-			
+
 			if(nodes.size() > 0)
 			{
 				LocationNode first = nodes.get(0);
@@ -477,15 +478,15 @@ public final class ConnectionPlacer
 				LocationNode point = nodes.get(i);
 				LocationNode prev = null;
 				prev = nodes.get(i - 1);
-				
+
 				result.cubicTo(	prev.location.x + prev.dx,
-								prev.location.y + prev.dy,
-								point.location.x - point.dx,
-								point.location.y - point.dy,
-								point.location.x,
-								point.location.y);
+						prev.location.y + prev.dy,
+						point.location.x - point.dx,
+						point.location.y - point.dy,
+						point.location.x,
+						point.location.y);
 			}
-			
+
 			return result;
 		}
 
@@ -498,57 +499,89 @@ public final class ConnectionPlacer
 
 			return result;
 		}
-		
+
 		private List<LocationNode> SimplifyPath(List<LocationNode> baseNodes)
 		{
-			final float VARIANCE = 0.1f;
-			
 			List<LocationNode> simplifiedList = new ArrayList<LocationNode>();
-			
-			LocationNode currentNode = null;
-			if(baseNodes.size() > 0)
+
+			if(baseNodes.size() > 1)
 			{
-				currentNode = baseNodes.get(0);
-				simplifiedList.add(currentNode);
-				
-				// dir as in direction
-				float currentXDir = 0.0f;
-				float currentYDir = 0.0f;
-				
-				for(LocationNode next : baseNodes)
+				LocationNode currentBase = baseNodes.get(1);
+				LocationNode prev = baseNodes.get(0);
+				Iterator<LocationNode> itr = baseNodes.listIterator(2);
+
+				simplifiedList.add(prev);
+				prev = currentBase;
+
+				while(itr.hasNext())
 				{
-					float nextXdir = next.location.x - currentNode.location.x;
-					float nextYdir = next.location.y - currentNode.location.y;
-					
-					// normalize
-					double distance = Math.sqrt(next.location.DistanceSquared(currentNode.location));
-					nextXdir /= distance;
-					nextYdir /= distance;
-					
-					// compare
-					if(	Math.abs(nextXdir - currentXDir) > VARIANCE ||
-						Math.abs(nextYdir - currentYDir) > VARIANCE)
+					LocationNode nextNode = itr.next();
+
+					if(IsStraightLineReachable(currentBase.location, nextNode.location))
 					{
-						// then they are different enough
-						// for this one to be included
-						currentNode = next;
-						simplifiedList.add(next);
-						
-						currentXDir = nextXdir;
-						currentYDir = nextYdir;
+						// then we'll just ignore it and continue with the next node
+						continue;
 					}
-					
-					// else we discard this node and move on
+					else
+					{
+						// the current node cannnot be reached from the base, therefore
+						// we need to rebase from prev and continue
+						simplifiedList.add(prev);
+						prev = currentBase;
+						currentBase = nextNode;
+					}
 				}
-				
-				if(baseNodes.size() > 0)
+
+				// make sure the last node is in the list
+				simplifiedList.add(baseNodes.get(baseNodes.size() - 1));
+			}
+			else
+			{
+				// well crap, only 1 or zero nodes, just give 'em that back.
+				// doesn't get much simpler than a path with only a point A or
+				// no point at all!
+				simplifiedList = baseNodes;
+			}
+
+			return simplifiedList;
+		}
+
+		/**
+		 * Test if a straight line can be drawn from node 1 to node 2 without anything
+		 * getting in the way. Returns true if this is possible and false if it is not.
+		 */
+		private boolean IsStraightLineReachable(Location p1, Location p2)
+		{
+			boolean result = true; 	// assuming the Titanic will not sink until we hit the iceberg
+			// (or Buckingham palace, as the case may be)
+
+			float rise = (float)(p2.y) - (float)(p1.y);
+			float run = (float)(p2.x) - (float)(p1.x);
+
+			float angle = (float) Math.atan(rise / run);
+
+			float h_step = (float) ((float)(m_gridSize) * Math.cos(angle));
+			float v_step = (float) ((float)(m_gridSize) * Math.sin(angle));
+
+			// technically speaking rise/v_step and run/hstep should be equal
+			// but I figured it current hurt to average them in case the floating
+			// point values are off by a hair, also easier to debug this way!
+			float steps = (float) Math.ceil(((rise / v_step) + (run / h_step)) / 2.0f);
+
+			for(float step = 0 ; step < steps ; ++step)
+			{
+				int testPointX = (int) (step * h_step);
+				int testPointY = (int) (step * v_step);
+
+				if(this.m_map[testPointX][testPointY])
 				{
-					// ensure the last one is in the list, no matter what
-					simplifiedList.add(baseNodes.get(baseNodes.size() - 1));
+					// then we hit something!
+					result = false;
+					break;
 				}
 			}
-			
-			return simplifiedList;
+
+			return result;
 		}
 	}
 }

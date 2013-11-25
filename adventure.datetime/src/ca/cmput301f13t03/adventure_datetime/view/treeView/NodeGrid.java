@@ -9,11 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Paint.Style;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -31,19 +28,19 @@ class NodeGrid
 	private ArrayList<FragmentConnection> m_connections = new ArrayList<FragmentConnection>();
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
 	
-	boolean[][] temp = null;
-	int temp_h = 0;
-	int temp_v = 0;
+	private Resources m_res = null;
 	
-	public NodeGrid()
+	public NodeGrid(Resources res)
 	{
-		
+		m_res = res;
 	}
 	
 	public void Draw(Canvas surface, Camera camera)
 	{
 		synchronized(m_segments)
 		{
+			// TODO::JT remove this
+			/*
 			if(temp != null)
 			{
 				Paint tempPaintTrue = new Paint();
@@ -90,16 +87,16 @@ class NodeGrid
 						
 					}
 				}
+			}*/
+			
+			for(FragmentConnection connection : m_connections)
+			{
+				connection.Draw(surface, camera);
 			}
 			
 			for(FragmentNode frag : m_nodes)
 			{
 				frag.Draw(surface, camera);
-			}
-			
-			for(FragmentConnection connection : m_connections)
-			{
-				connection.Draw(surface, camera);
 			}
 		}
 	}
@@ -141,7 +138,7 @@ class NodeGrid
 			// place the head node
 			StoryFragment headFrag = notPlacedFragments.iterator().next();
 			
-			FragmentNode headNode = new FragmentNode(headFrag);
+			FragmentNode headNode = new FragmentNode(headFrag, m_res);
 			nodePlacer.PlaceFragment(headNode);
 			notPlacedFragments.remove(headFrag);
 			placedFragments.add(headFrag.getFragmentID());
@@ -155,7 +152,7 @@ class NodeGrid
 			{
 				if(!placedFragments.contains(frag.getFragmentID()))
 				{
-					FragmentNode nextNode = new FragmentNode(frag);
+					FragmentNode nextNode = new FragmentNode(frag, m_res);
 					nodePlacer.PlaceFragment(nextNode);
 					notPlacedFragments.remove(frag);
 					placedFragments.add(frag.getFragmentID());
@@ -202,10 +199,6 @@ class NodeGrid
 				}
 			}
 		}
-
-		this.temp = placer.m_map;
-		this.temp_h = placer.m_horizontalOffset;
-		this.temp_v = placer.m_verticalOffset;
 	}
 	
 	private Set<StoryFragment> GetLinkedFragments(StoryFragment head, Map<UUID, StoryFragment> allFrags)

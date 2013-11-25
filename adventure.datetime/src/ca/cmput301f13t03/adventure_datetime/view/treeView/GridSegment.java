@@ -6,7 +6,7 @@ package ca.cmput301f13t03.adventure_datetime.view.treeView;
  */
 public class GridSegment extends Region
 {
-	public static final int GRID_SIZE = 25;
+	public static final int GRID_SIZE = 50;
 	
 	private boolean[][] m_space = null;
 	

@@ -10,7 +10,7 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.GridSegment;
 
 class NodePlacer
 {
-	private static final int SEGMENT_SIZE = 200;
+	private static final int SEGMENT_SIZE = 800;
 	
 	ArrayList<GridSegment> m_gridSegments = new ArrayList<GridSegment>();
 	Map<String, FragmentNode> m_placedNodes = new HashMap<String, FragmentNode>();
@@ -60,9 +60,9 @@ class NodePlacer
 			// then we failed to place at the desired point
 			// search outwards by trying locations and stopping
 			// after a success
-			final double EXPECTED_RADIUS = FragmentNode.WIDTH * 3.0;
-			final double VERTICAL_MOD = (double)FragmentNode.HEIGHT / (double)FragmentNode.WIDTH;
-			final double HORIZONTAL_MOD = (double)FragmentNode.WIDTH / (double)FragmentNode.WIDTH; // kinda reduntant...
+			final double EXPECTED_RADIUS = fragment.width * 2.0;
+			final double VERTICAL_MOD = (double)fragment.height / (double)fragment.width;
+			final double HORIZONTAL_MOD = (double)fragment.width / (double)fragment.width; // kinda reduntant...
 			
 			// select a random 45 degree angle
 			double angle = (Math.random() * 7);

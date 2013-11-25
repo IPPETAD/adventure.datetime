@@ -1,6 +1,9 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 
 class Camera
@@ -12,40 +15,66 @@ class Camera
 	
 	private float m_zoomLevel = 1.0f;
 	
+	private Matrix m_transform = null;
+	private Matrix m_inverse = null;
+	
 	public Camera()
 	{
 		
 	}
 	
-	public Region GetLocalTransform(Region region)
+	public void DrawLocal(Canvas canvas, Paint paint, Path p)
 	{
-		// the rounding isn't important
-		return new Region(	(int)((region.x - this.x) * m_zoomLevel),
-							(int)((region.y - this.y) * m_zoomLevel),
-							(int)(region.width * m_zoomLevel),
-							(int)(region.height * m_zoomLevel));
+		p.transform(this.GetTransform());
+		canvas.drawPath(p, paint);
+		p.transform(this.GetInverseTransform());
 	}
 	
-	public void SetLocal(Path p)
+	public void DrawLocal(Canvas canvas, Paint paint, Bitmap image, int x, int y)
 	{
-		Matrix scaleAndTranslate = new Matrix();
-		scaleAndTranslate.setScale(m_zoomLevel, m_zoomLevel);
-		scaleAndTranslate.setTranslate(-this.x, -this.y);
-		p.transform(scaleAndTranslate);
+		Matrix trans = new Matrix(GetTransform());
+		trans.setTranslate(x - this.x, y - this.y);
+		canvas.drawBitmap(image, trans, paint);
 	}
 	
-	public void InvertLocal(Path p)
+	public void DrawLocal(Canvas canvas, Paint paint, String text, int centerX, int centerY)
 	{
-		Matrix scaleAndTranslate = new Matrix();
-		scaleAndTranslate.setScale(1/m_zoomLevel, 1/m_zoomLevel);
-		scaleAndTranslate.setTranslate(this.x, this.y);
-		p.transform(scaleAndTranslate);
+		float points[] = { centerX, centerY };
+		
+		this.GetTransform().mapPoints(points);
+		
+		canvas.drawText(text, points[0], points[1], paint);
+	}
+	
+	private Matrix GetTransform()
+	{
+		if(m_transform == null)
+		{
+			m_transform = new Matrix();
+			m_transform.setScale(m_zoomLevel, m_zoomLevel);
+			m_transform.setTranslate(-this.x, -this.y);
+		}
+		
+		return m_transform;
+	}
+	
+	private Matrix GetInverseTransform()
+	{
+		if(m_inverse == null)
+		{
+			m_inverse = new Matrix();
+			m_inverse.setScale(1.0f / m_zoomLevel, 1.0f / m_zoomLevel);
+			m_inverse.setTranslate(this.x, this.y);
+		}
+		
+		return m_inverse;
 	}
 	
 	public void SetPosition(float x, float y)
 	{
 		this.x = x;
 		this.y = y;
+		m_transform = null;
 	}
 	
 	public void SetZoom(float zoom)
@@ -53,5 +82,6 @@ class Camera
 		assert(zoom > 0);
 		
 		m_zoomLevel = zoom;
+		m_transform = null;
 	}
 }

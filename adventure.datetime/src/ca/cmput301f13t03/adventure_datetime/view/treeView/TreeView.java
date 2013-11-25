@@ -72,7 +72,7 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	public void surfaceCreated(SurfaceHolder surface) 
 	{
 		m_camera = new Camera();
-		m_grid = new NodeGrid();
+		m_grid = new NodeGrid(this.getResources());
 		m_grid.SetFragments(m_fragments);
 		m_isDrawing = true;
 		m_surface = surface;
