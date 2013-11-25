@@ -543,6 +543,17 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		});
 	}
+	
+	public void download() {
+		if(m_currentStory != null) {
+			m_stories.put(m_currentStory.getId(), m_currentStory);
+			m_db.setStory(m_currentStory);
+			for(UUID fragmentId : m_currentStory.getFragments()) {
+				getFragmentOnline(fragmentId);
+				m_db.setStoryFragment(m_fragmentList.get(fragmentId));
+			}
+		}
+	}
 
 	@Override
 	public void Subscribe(ICommentsListener commentsListener) {
