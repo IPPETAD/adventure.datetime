@@ -69,17 +69,21 @@ import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
  */
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
+	public static final String SERVER = "doge.such.server";
 	
 	private StoryPagerAdapter _pageAdapter;
 	private ViewPager _viewPager;
 	private Map<UUID, Bookmark> _bookmarks;
 	private Map<UUID, Story> _stories;
 	private Story _story;
+	private boolean fromServerEh;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.story_descript);
+		
+		fromServerEh = getIntent().getBooleanExtra(SERVER, false);
 	}
 	@Override
 	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
