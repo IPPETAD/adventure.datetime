@@ -74,7 +74,7 @@ public class AuthorController {
      *
      * @return The Story, if found. Null, otherwise.
      */
-	public Story getStory(String storyId) {
+	public Story getStory(UUID storyId) {
 		return m_storyDirector.getStory(storyId);
 	}
 
@@ -83,7 +83,7 @@ public class AuthorController {
      *
      * @param storyId UUID of the story to delete
      */
-	public void deleteStory(String storyId) {
+	public void deleteStory(UUID storyId) {
 		Story story = m_storyDirector.getStory(storyId);
 		if (story == null) return;
 		
@@ -121,7 +121,7 @@ public class AuthorController {
      *
      * @param storyId UUID of the story
      */
-	public void selectStory(String storyId)
+	public void selectStory(UUID storyId)
 	{
 		m_storyDirector.selectStory(storyId);
 	}
@@ -131,12 +131,12 @@ public class AuthorController {
      *
      * @param fragmentId UUID of the fragment
      */
-	public void selectFragment(String fragmentId)
+	public void selectFragment(UUID fragmentId)
 	{
 		m_storyDirector.selectFragment(fragmentId);
 	}
 	
-	/*public void publish(long storyID){
-		m_storyDirector.publish(storyID);
-	}*/
+	public void upload(){
+		m_storyDirector.uploadCurrentStory();
+	}
 }

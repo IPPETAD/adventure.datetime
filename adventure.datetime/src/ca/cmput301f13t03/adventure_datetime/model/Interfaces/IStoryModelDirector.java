@@ -41,13 +41,13 @@ public interface IStoryModelDirector
 	 * Select the story as the current story
 	 * @param storyId
 	 */
-	public void selectStory(String storyId);
+	public void selectStory(UUID storyId);
 
 	/**
 	 * Select the fragment as the current fragment
 	 * @param fragmentId
 	 */
-	public void selectFragment(String fragmentId);
+	public void selectFragment(UUID fragmentId);
 
 	// void AddComment(Comment comment); 
 	//public void publish(long storyID);
@@ -60,7 +60,7 @@ public interface IStoryModelDirector
 	 * @return Success value
 	 */
 	public boolean putStory(Story story);
-	
+
 	/**
 	 * Creates a new story with a head fragment
 	 */
@@ -70,7 +70,7 @@ public interface IStoryModelDirector
 	 * Delete a story from the database
 	 * @param storyId
 	 */
-	public void deleteStory(String storyId);
+	public void deleteStory(UUID storyId);
 
 	/**
 	 * Save a fragment to the database
@@ -90,11 +90,11 @@ public interface IStoryModelDirector
 	 * @param storyId
 	 * @return The matching story object
 	 */
-	public Story getStory(String storyId);
+	public Story getStory(UUID storyId);
 
 	/**
-	*	Save a bookmark to the database
-	*/
+	 *	Save a bookmark to the database
+	 */
 	public void setBookmark();
 
 	/**
@@ -105,5 +105,16 @@ public interface IStoryModelDirector
 	 * @param bookmarkId
 	 * @return
 	 */
-	public Bookmark getBookmark(String bookmarkId);
+	public Bookmark getBookmark(UUID bookmarkId);
+
+	/**
+	 * Uploads current story to the web storage
+	 */
+	public void uploadCurrentStory();
+
+	/* Deletes a bookmark by StoryID
+	 * 
+	 * @param storyId UUID of the story to delete
+	 */
+	public void deleteBookmark(UUID storyId);
 }

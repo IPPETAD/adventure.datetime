@@ -25,10 +25,11 @@ package ca.cmput301f13t03.adventure_datetime.view;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
@@ -55,11 +56,11 @@ import android.widget.ListView;
  * @author James Finlay
  *
  */
-public class AuthorStories extends FragmentActivity implements IStoryListListener {
+public class AuthorStories extends FragmentActivity implements ILocalStoriesListener {
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	private Map<String, Story> _stories;
+	private Map<UUID, Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 		setUpView();
 	}
 	@Override
-	public void OnCurrentStoryListChange(Map<String, Story> stories) {
+	public void OnLocalStoriesChange(Map<UUID, Story> stories) {
 		_stories = stories;
 		setUpView();
 	}
@@ -163,6 +164,7 @@ public class AuthorStories extends FragmentActivity implements IStoryListListene
 			TextView lastModified = (TextView) rowView.findViewById(R.id.datetime);
 			ImageView status = (ImageView) rowView.findViewById(R.id.status_icon);
 
+			thumbnail.setImageBitmap(item.decodeThumbnail());
 			title.setText(item.getTitle());
 			fragments.setText("Fragments: " + item.getFragmentIds().size());
 			lastModified.setText("Last Modified: " + item.getFormattedTimestamp());

@@ -22,40 +22,23 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
@@ -98,6 +81,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		getActionBar().setTitle(_story.getTitle());
 
 		/** Layout items **/
+		ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
 		_title = (EditText) findViewById(R.id.title);
 		TextView author = (TextView) findViewById(R.id.author);
 		_content = (EditText) findViewById(R.id.content);
@@ -106,6 +90,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
 
 		/* Text */
+		thumbnail.setImageBitmap(_story.decodeThumbnail());
 		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
@@ -156,22 +141,23 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			startActivity(intent);				
 			break;
 		case R.id.action_upload:
+			Locator.getAuthorController().upload();
+			Toast.makeText(getApplicationContext(), "Uploaded!", Toast.LENGTH_LONG);
 			break;
 		case R.id.action_discard:
 			/* Ensure user is not retarded and actually wants to do this */
 			new AlertDialog.Builder(this)
 			.setTitle("Delete Story")
-			.setMessage("This will delete the story. You cannot undo.")
+			.setMessage("This will kill the story.\nAction cannot be undone.")
 			.setCancelable(true)
-			.setPositiveButton("Kill the fucker!", new DialogInterface.OnClickListener() {
+			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-
-					// TODO::JF Delete story once possible
+					Locator.getAuthorController().deleteStory(_story.getId());
 					finish();
 				}
 			})
-			.setNegativeButton("NO! Don't hurt GRAMGRAM!", new DialogInterface.OnClickListener() {
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();

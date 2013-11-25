@@ -19,22 +19,28 @@
  *         IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package ca.cmput301f13t03.adventure_datetime.model;
 
-package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import java.util.Map;
+import android.util.Log;
 
-import ca.cmput301f13t03.adventure_datetime.model.Story;
+public class ThreadPool {
+	private static ThreadPoolExecutor threadPool;
+	private final BlockingQueue<Runnable> workQueue;
 
-/**
- *   Interface for listening for changes to the currently selected story
- *   @author Jesse
- */
-public interface IStoryListListener
-{
-	/**
-	 * Callback for when the list of stories changes
-	 * @param newStories The new list of stories
-	 */
-	 void OnCurrentStoryListChange(Map<String, Story> newStories);
+	public ThreadPool() {
+		int numberCores = Runtime.getRuntime().availableProcessors();
+		Log.v("ThreadPool", "numberThreads: " + numberCores);
+		workQueue = new LinkedBlockingQueue<Runnable>();
+		threadPool = new ThreadPoolExecutor(numberCores, numberCores, 1,
+				TimeUnit.SECONDS, workQueue);
+	}
+	
+	public void execute(Runnable runnable) {
+		threadPool.execute(runnable);
+	}
 }

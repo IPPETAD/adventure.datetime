@@ -22,38 +22,20 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
+import java.util.Map;
+import java.util.UUID;
 
-import java.util.Collection;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
- * Service for publishing Stories or saving them
- * locally while working on them.
+ *   Interface for listening for changes to the local stories
+ *   @author Jesse, James -- TEAM ROCKET!
  */
-public interface IAuthorStorage extends IReaderStorage {
-	
+public interface ILocalStoriesListener
+{
 	/**
-	 * Publish a story to the web. May be an insert or update.
-	 * Must be the author in case of an update.
-	 * @param story the story
-	 * @param fragments the fragments for the story
-	 * @return the ID of the story published
+	 * Callback for when the list of stories changes
+	 * @param newStories The new list of stories
 	 */
-	int publishStory(Story story, Collection<StoryFragment> fragments);
-	
-	/**
-	 * Remove a story from the web service.
-	 * Must be the author of the story
-	 * @param storyId the story id
-	 * @return True if story deleted, false otherwise
-	 */
-	boolean unpublishStory(long storyId);
-	
-	/**
-	 * Save a story to local storage. Does not publish the story
-	 * @param story the story
-	 * @param fragments the fragments for the story
-	 * @return True if saved, false otherwise
-	 */
-	boolean saveStory(Story story, Collection<StoryFragment> fragments);
+	 void OnLocalStoriesChange(Map<UUID, Story> newStories);
 }

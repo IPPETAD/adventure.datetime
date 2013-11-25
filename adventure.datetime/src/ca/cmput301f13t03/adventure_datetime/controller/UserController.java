@@ -23,12 +23,14 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+import java.util.UUID;
+
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
 
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IReaderStorage;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 
 /**
@@ -38,7 +40,7 @@ public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
 
 
-	public UserController(IStoryModelDirector director, IReaderStorage storage) {
+	public UserController(IStoryModelDirector director, ILocalStorage storage) {
 		m_storyDirector = director;
 	}
 
@@ -47,7 +49,7 @@ public class UserController {
 	 *
 	 * @return true if the story was successfully selected, false if it doesn't exist
 	 */
-	public boolean StartStory(String storyId) {
+	public boolean StartStory(UUID storyId) {
 		try {
 			m_storyDirector.selectStory(storyId);
 			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
@@ -63,7 +65,7 @@ public class UserController {
 	 *
 	 * @return true if story was successfully selected, false if it doesn't exist
 	 */
-	public boolean ResumeStory(String id) {
+	public boolean ResumeStory(UUID id) {
 		Bookmark bookmark = m_storyDirector.getBookmark(id);
 		try {
 			m_storyDirector.selectStory(bookmark.getStoryID());

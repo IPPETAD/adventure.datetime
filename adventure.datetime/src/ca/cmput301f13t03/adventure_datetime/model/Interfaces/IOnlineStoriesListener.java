@@ -20,42 +20,24 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model;
+package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.ClientConfig;
+import java.util.Map;
+import java.util.UUID;
+
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
- * Container class for ElasticSearch singletons
+ * Interface for listening for changes to the online stories
+ * @author James
+ *
  */
-public class ES {
+public interface IOnlineStoriesListener {
 	
 	/**
-	 * The JEST client for ElasticSearch
+	 * Callback for when the list of online stories changes
+	 * @param newStories
 	 */
-	public static class Client {
-		
-		private static final String CON_URL = 
-			"http://cmput301.softwareprocess.es:8080";
-		private static JestClient jestClient;
-		
-		/**
-		 * Gets the HTTP JestClient singleton for:
-		 * http://cmput301.softwareprocess.es:8080/cmput301f13t03/
-		 * @return JestClient for our ES server
-		 */
-		public static JestClient getClient() {
-			if (jestClient == null) {
-				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(true).build();
-				JestClientFactory factory = new JestClientFactory();
-				factory.setClientConfig(clientConfig);
-				jestClient = factory.getObject();
-			}
-			
-			return jestClient;
-		}
-		
-	}
-		
+	void OnOnlineStoriesChange(Map<UUID, Story> newStories);
+
 }

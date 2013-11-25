@@ -136,7 +136,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			li.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					startActivity(new Intent(FragmentView.this, FullScreen_Image.class));
+					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
+					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
+					startActivity(intent);
 				}
 			});
 		}
@@ -148,6 +150,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 				choices.add(choice.getText());
 			choices.add("I'm feeling lucky.");
 
+			_choices.setText("Actions");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {

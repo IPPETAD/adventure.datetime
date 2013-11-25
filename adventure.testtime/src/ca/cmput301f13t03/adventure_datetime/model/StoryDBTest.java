@@ -26,6 +26,8 @@ import junit.framework.Assert;
 
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
+
 /**
  * @author Andrew Fontaine
  * @version 1.0
@@ -33,7 +35,7 @@ import java.util.UUID;
  */
 public class StoryDBTest extends AndroidTestCase {
 
-	private StoryDB database;
+	private ILocalStorage database;
 
 	@Override
 	public void setUp() throws Exception {
@@ -44,11 +46,11 @@ public class StoryDBTest extends AndroidTestCase {
 
 	public void testSetStoryFragment() throws Exception {
 
-		String uuid = UUID.randomUUID().toString();
+		UUID uuid = UUID.randomUUID();
 		Choice choice = new Choice("test", uuid);
 		StoryFragment frag = new StoryFragment(uuid, "testing", choice);
 
-		String fragUuid = frag.getFragmentID();
+		UUID fragUuid = frag.getFragmentID();
 
 		Assert.assertTrue("Error inserting fragment", database.setStoryFragment(frag));
 		StoryFragment frag2 = database.getStoryFragment(frag.getFragmentID());
@@ -68,8 +70,8 @@ public class StoryDBTest extends AndroidTestCase {
 
 	public void testSetStory() throws Exception {
 		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
-		String uuid = story.getId();
-        story.setHeadFragmentId(UUID.randomUUID().toString());
+		UUID uuid = story.getId();
+        story.setHeadFragmentId(UUID.randomUUID());
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 
@@ -84,9 +86,9 @@ public class StoryDBTest extends AndroidTestCase {
 	}
 
 	public void testSetBookmark() throws Exception {
-		String sUuid, sFUuid;
-		sUuid = UUID.randomUUID().toString();
-		sFUuid = UUID.randomUUID().toString();
+		UUID sUuid, sFUuid;
+		sUuid = UUID.randomUUID();
+		sFUuid = UUID.randomUUID();
 		Bookmark bookmark = new Bookmark(sUuid, sFUuid);
 		Assert.assertTrue("Error inserting bookmark", database.setBookmark(bookmark));
 		Bookmark bookmark2 = database.getBookmark(sUuid);

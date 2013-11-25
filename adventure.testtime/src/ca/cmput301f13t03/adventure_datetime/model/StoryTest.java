@@ -23,6 +23,11 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.test.AndroidTestCase;
+
+import ca.cmput301f13t03.adventure_datetime.R;
+
 import com.google.gson.Gson;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -34,7 +39,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 04/11/13
  */
-public class StoryTest extends TestCase {
+public class StoryTest extends AndroidTestCase {
 
 	public void setUp() throws Exception {
 		super.setUp();
@@ -79,19 +84,6 @@ public class StoryTest extends TestCase {
 		Assert.assertEquals("HashMap doesn't contain 1 value", 1, story.getTags().size());
 	}
 
-	public void testUUID() throws Exception {
-		Story story = new Story();
-		String newUUID = UUID.randomUUID().toString();
-		try {
-			story.setHeadFragmentId("WRONG");
-			Assert.fail("UUID was set");
-		} catch (IllegalArgumentException e) {
-
-		}
-		story.setHeadFragmentId(newUUID);
-		Assert.assertEquals("UUID was not set", newUUID, story.getHeadFragmentId());
-	}
-
 	public void testJSON() throws Exception {
 		Story story = new Story();
 		Gson gson = new Gson();
@@ -99,6 +91,23 @@ public class StoryTest extends TestCase {
 		Story story2;
 		story2 = gson.fromJson(json, Story.class);
 		Assert.assertEquals("UUIDs do not match", story.getId(), story2.getId());
+	}
+	
+	public void testThumbnail() throws Exception {
+		Story story = new Story();
+		Gson gson = new Gson();
+		
+		story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
+		Bitmap bitmap = story.decodeThumbnail();
+		assertEquals(bitmap, story.decodeThumbnail()); // getting this item twice returns the same object
+		
+		String json = gson.toJson(story);
+		assertFalse(json.contains("thumbnailDecoded")); // transient property. Should not appear.
+		assertFalse(json.contains("thumbnailDirty")); // transient property. Should not appear.
+		
+		story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.launch_icon));
+		assertFalse(bitmap.equals(story.decodeThumbnail())); // thumbnail should be regenerated, thus not equal
+		
 	}
 
 	public void tearDown() throws Exception {
