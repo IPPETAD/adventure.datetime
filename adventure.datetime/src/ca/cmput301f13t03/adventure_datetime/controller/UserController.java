@@ -90,7 +90,7 @@ public class UserController {
      * @param comment The comment to attach to a fragment
      */
 	public void AddComment(Comment comment) {
-		/* TODO::JT */
+		m_storyDirector.addComment(comment);
 	}
 
     /**

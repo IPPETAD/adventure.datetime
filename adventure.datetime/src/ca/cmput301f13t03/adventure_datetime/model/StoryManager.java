@@ -473,6 +473,19 @@ public final class StoryManager implements IStoryModelPresenter,
 		PublishBookmarkListChanged();
 	}
 	
+	public void addComment(Comment comment) {
+		final Comment finalComment = comment;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					m_webStorage.putComment(finalComment);
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		});
+	}
+	
 	private void LoadStories()
 	{
 		m_stories = new HashMap<UUID, Story>();

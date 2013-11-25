@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -117,4 +118,10 @@ public interface IStoryModelDirector
 	 * @param storyId UUID of the story to delete
 	 */
 	public void deleteBookmark(UUID storyId);
+
+	/**
+	 * Publishes a comment to the server
+	 * @param comment
+	 */
+	public void addComment(Comment comment);
 }
