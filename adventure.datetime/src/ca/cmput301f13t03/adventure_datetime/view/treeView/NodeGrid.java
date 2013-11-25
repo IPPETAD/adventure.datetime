@@ -30,6 +30,10 @@ class NodeGrid
 	
 	private Resources m_res = null;
 	
+	private Object m_syncLock = new Object();
+	private Map<UUID, StoryFragment> m_fragments = null;
+	private volatile boolean m_reloadView = false;
+	
 	public NodeGrid(Resources res)
 	{
 		m_res = res;
@@ -37,57 +41,26 @@ class NodeGrid
 	
 	public void Draw(Canvas surface, Camera camera)
 	{
-		synchronized(m_segments)
+		synchronized(m_syncLock)
 		{
-			// TODO::JT remove this
-			/*
-			if(temp != null)
+			// early out, just in case the threads haven't yet
+			// set up the fragments
+			if(m_fragments == null)
 			{
-				Paint tempPaintTrue = new Paint();
-				tempPaintTrue.setColor(Color.GRAY);
-				Paint tempPaintFalse = new Paint();
-				tempPaintFalse.setColor(Color.LTGRAY);
-				
-				Paint edge = new Paint();
-				edge.setColor(Color.BLACK);
-				edge.setStyle(Style.STROKE);
-				edge.setStrokeWidth(1.0f);
-				
-				Region reg = new Region(0, 0, temp.length * GridSegment.GRID_SIZE, temp[0].length * GridSegment.GRID_SIZE);
-				Region localReg = camera.GetLocalTransform(reg);
-				
-				for(int x = 0 ; x < temp.length ; ++x)
-				{
-					for(int y = 0 ; y < temp[x].length ; ++y)
-					{
-						Paint color = null;
-						
-						if(temp[x][y])
-						{
-							color = tempPaintTrue;
-						}
-						else
-						{
-							color = tempPaintFalse;
-						}
-						
-						surface.drawRect(new Rect(	
-								x * GridSegment.GRID_SIZE + this.temp_h + localReg.x, 
-								y * GridSegment.GRID_SIZE + temp_v + localReg.y, 
-								x * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_h + localReg.x, 
-								y * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_v + localReg.y), color);
-						
-						
-						
-						surface.drawRect(new Rect(	
-								x * GridSegment.GRID_SIZE + this.temp_h + localReg.x, 
-								y * GridSegment.GRID_SIZE + temp_v + localReg.y, 
-								x * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_h + localReg.x, 
-								y * GridSegment.GRID_SIZE + GridSegment.GRID_SIZE + temp_v + localReg.y), edge);
-						
-					}
-				}
-			}*/
+				return;
+			}
+			
+			if(m_reloadView)
+			{
+				// clear the list of segments as we rebuild
+				m_segments.clear();
+				m_connections.clear();
+				m_nodes.clear();
+
+				SetupNodes(m_fragments);
+				SetupConnections();
+				m_reloadView = false;
+			}
 			
 			for(FragmentConnection connection : m_connections)
 			{
@@ -106,21 +79,10 @@ class NodeGrid
 	 */
 	public void SetFragments(Map<UUID, StoryFragment> fragments)
 	{
-		// early out
-		if(fragments == null)
+		synchronized(m_syncLock)
 		{
-			return;
-		}
-		
-		synchronized(m_segments)
-		{
-			// clear the list of segments as we rebuild
-			m_segments.clear();
-			m_connections.clear();
-			m_nodes.clear();
-
-			SetupNodes(fragments);
-			SetupConnections();
+			m_fragments = fragments;
+			m_reloadView = true;
 		}
 	}
 	

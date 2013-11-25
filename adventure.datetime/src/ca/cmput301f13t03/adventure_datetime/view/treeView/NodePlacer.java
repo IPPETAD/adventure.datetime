@@ -11,6 +11,7 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.GridSegment;
 class NodePlacer
 {
 	private static final int SEGMENT_SIZE = 800;
+	private static final float PLACEMENT_SCALE = 1.75f; // bigger numbers will place the nodes further
 	
 	ArrayList<GridSegment> m_gridSegments = new ArrayList<GridSegment>();
 	Map<String, FragmentNode> m_placedNodes = new HashMap<String, FragmentNode>();
@@ -60,7 +61,7 @@ class NodePlacer
 			// then we failed to place at the desired point
 			// search outwards by trying locations and stopping
 			// after a success
-			final double EXPECTED_RADIUS = fragment.width * 2.0;
+			final double EXPECTED_RADIUS = fragment.width * PLACEMENT_SCALE;
 			final double VERTICAL_MOD = (double)fragment.height / (double)fragment.width;
 			final double HORIZONTAL_MOD = (double)fragment.width / (double)fragment.width; // kinda reduntant...
 			

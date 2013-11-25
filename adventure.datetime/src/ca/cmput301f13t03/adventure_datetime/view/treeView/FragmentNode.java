@@ -53,13 +53,13 @@ class FragmentNode extends Region
 		
 		if(storyTxt.length() > MAX_TXT_FOR_FIRST_LINE + MAX_TXT_FOR_SECOND_LINE)
 		{
-			m_lineOne = ChopString(storyTxt, MAX_TXT_FOR_FIRST_LINE, 0);
-			m_lineTwo = ChopString(storyTxt, m_lineOne.length(), MAX_TXT_FOR_FIRST_LINE) + "...";
+			m_lineOne = ChopString(storyTxt, MAX_TXT_FOR_FIRST_LINE, 0).trim();
+			m_lineTwo = ChopString(storyTxt, MAX_TXT_FOR_SECOND_LINE, m_lineOne.length()).trim() + "...";
 		}
 		else if(storyTxt.length() > MAX_TXT_FOR_FIRST_LINE)
 		{
-			m_lineOne = ChopString(storyTxt, MAX_TXT_FOR_FIRST_LINE, 0);
-			m_lineTwo = storyTxt.substring(m_lineOne.length(), storyTxt.length());
+			m_lineOne = ChopString(storyTxt, MAX_TXT_FOR_FIRST_LINE, 0).trim();
+			m_lineTwo = storyTxt.substring(m_lineOne.length(), storyTxt.length()).trim();
 		}
 		else
 		{
