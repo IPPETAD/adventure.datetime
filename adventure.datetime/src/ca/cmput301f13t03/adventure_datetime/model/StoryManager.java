@@ -477,7 +477,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					List<Story> onlineStories = m_webStorage.getAllStories();
+					List<Story> onlineStories = m_webStorage.getStories(0, 3);
 					
 					for(Story story : onlineStories)
 					{

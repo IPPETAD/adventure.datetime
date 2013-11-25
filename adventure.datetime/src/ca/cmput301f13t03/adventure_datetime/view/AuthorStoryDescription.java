@@ -90,7 +90,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
 
 		/* Text */
-		thumbnail.setImageBitmap(_story.getThumbnail());
+		thumbnail.setImageBitmap(_story.decodeThumbnail());
 		_title.setText(_story.getTitle());
 		author.setText("Creator: " + _story.getAuthor());
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
