@@ -287,7 +287,6 @@ public final class StoryManager implements IStoryModelPresenter,
 			getFragmentOnline(fragmentId, false);
 			getNextFragments(fragmentId);
 		}
-		setBookmark();
 	}
 	
 	/**
@@ -475,8 +474,9 @@ public final class StoryManager implements IStoryModelPresenter,
 		PublishBookmarkListChanged();
 	}
 	
-	public void deleteBookmark(UUID storyId) {
-		m_db.deleteBookmarkByStory(storyId);
+	public void deleteBookmark() {
+		m_db.deleteBookmarkByStory(m_currentStory.getId());
+		m_bookmarkList.remove(m_currentStory.getId());
 		PublishBookmarkListChanged();
 	}
 	
