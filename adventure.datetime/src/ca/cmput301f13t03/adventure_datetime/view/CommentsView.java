@@ -77,18 +77,21 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	@Override
 	public void OnCurrentStoryChange(Story story) {
 		_story = story;
+		Log.v(TAG, "subscribe story");
 		Locator.getPresenter().Subscribe((ICommentsListener)this, _story.getId());
 		setUpView();
 	}
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment fragment) {
 		_fragment = fragment;
+		Log.v(TAG, "subscribe fragment");
 		Locator.getPresenter().Subscribe((ICommentsListener)this, _fragment.getFragmentID());
 		setUpView();
 	}
 	@Override
 	public void OnCommentsChange(List<Comment> newComments) {
 		_comments = newComments;
+		Log.v(TAG, "Comments received. Count: " + newComments.size());
 		setUpView();
 	}
 	@Override
@@ -118,6 +121,8 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 					Comment c = new Comment();
 					c.setAuthor(AccountService.getUserName(getContentResolver()));
 					c.setContent(txt.getText().toString());
+					if (forStoryEh)	c.setTargetId(_story.getId());
+					else c.setTargetId(_fragment.getFragmentID());
 					//TODO::JF Save attached pic
 					
 					Locator.getUserController().AddComment(c);
@@ -186,8 +191,9 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			
 			author.setText(item.getAuthor());
 			content.setText(item.getContent());
-			// TODO:: Story needs a timestamp
+			date.setText(item.getFormattedTimestamp());
 			// TODO:: Use model image
+			layImage.setVisibility(View.GONE);
 			btnImage.setOnClickListener(new ShowOnClickListener().
 					setUp(layImage, btnImage));
 			
