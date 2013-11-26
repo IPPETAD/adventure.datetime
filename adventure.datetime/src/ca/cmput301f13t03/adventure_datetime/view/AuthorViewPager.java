@@ -22,15 +22,33 @@ public class AuthorViewPager extends ViewPager
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		boolean result = false;
 		if(this.getCurrentItem() == AuthorEdit.OVERVIEW_INDEX)
 		{
 			// just ignore it if we are on the overview screen
-			return false;
+			result = false;
 		}
 		else
 		{
-			return super.onTouchEvent(event);
+			result = super.onTouchEvent(event);
 		}
+		return result;
+	}
+	
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent event)
+	{
+		boolean result = false;
+		if(this.getCurrentItem() == AuthorEdit.OVERVIEW_INDEX)
+		{
+			// just ignore it if we are on the overview screen
+			result = false;
+		}
+		else
+		{
+			result = super.onInterceptTouchEvent(event);
+		}
+		return result;
 	}
 	
 }

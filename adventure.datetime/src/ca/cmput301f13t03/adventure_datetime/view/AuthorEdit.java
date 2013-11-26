@@ -58,7 +58,11 @@ import android.widget.Toast;
  * @author James Finlay
  *
  */
-public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener, ICurrentStoryListener {
+public class AuthorEdit extends FragmentActivity 
+	implements 	ICurrentFragmentListener, 
+				ICurrentStoryListener,
+				IFragmentSelected
+{
 	
 	public static final int OVERVIEW_INDEX = 0;
 	public static final int EDIT_INDEX = 1;
@@ -79,7 +83,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		setContentView(R.layout.viewpager);
 
 		/* Set up View Pager */
-		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
+		_adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
 
@@ -117,7 +121,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		});
 
 		// Select 'Overview' at start
-		getActionBar().setSelectedNavigationItem(0);
+		getActionBar().setSelectedNavigationItem(OVERVIEW_INDEX);
 
 	}
 	@Override
@@ -189,17 +193,25 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void OnFragmentSelected(StoryFragment selectedFragment) 
+	{
+		getActionBar().setSelectedNavigationItem(EDIT_INDEX);
+		Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
+	}
 
-	public class ViewPagerAdapter extends FragmentPagerAdapter {
+	public class ViewPagerAdapter extends FragmentPagerAdapter 
+	{
 
 		private AuthorEdit_Edit _edit;
 		private AuthorEdit_Overview _overview;
 		private AuthorEdit_Preview _preview;
 
-		public ViewPagerAdapter(FragmentManager fm) {
+		public ViewPagerAdapter(FragmentManager fm, IFragmentSelected callback) {
 			super(fm);
 			_edit = new AuthorEdit_Edit();
 			_overview = new AuthorEdit_Overview();
+			_overview.SetFragmentSelectionCallback(callback);
 			_preview = new AuthorEdit_Preview();
 		}
 

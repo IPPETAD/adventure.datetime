@@ -8,6 +8,7 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -24,17 +25,20 @@ public class TreeView extends SurfaceView
 				SurfaceHolder.Callback, 
 				Runnable
 {
-	private static final float FPS = 30.0f;
+	private static final float FPS = 60.0f; // TODO::JT strictly speaking this isn't being calculated quite right...
 	private static final String TAG = "TreeView";
 	
 	private Thread m_drawingThread = null;
 	private volatile boolean m_isDrawing = false;
 	private SurfaceHolder m_surface = null;
-	private NodeGrid m_grid = null; // hacky as fuck...
-	private Map<UUID, StoryFragment> m_fragments = null;
 	private Camera m_camera = null;
-	private InputHandler m_touchHandler = null;
+	
+	private NodeGrid m_grid = null;
+	private Map<UUID, StoryFragment> m_fragments = null;
 	private Story m_currentStory = null;
+	
+	private InputHandler m_touchHandler = null;
+	
 	
 	// must have all constructors or it doesn't work
 	public TreeView(Context context) 
@@ -84,6 +88,11 @@ public class TreeView extends SurfaceView
 		{
 			AfterDataAvailable();
 		}
+	}
+	
+	public void SetFragmentCallback(IFragmentSelected selectionCallback)
+	{
+		m_touchHandler.SetSelectionCallback(selectionCallback);
 	}
 	
 	private void AfterDataAvailable()

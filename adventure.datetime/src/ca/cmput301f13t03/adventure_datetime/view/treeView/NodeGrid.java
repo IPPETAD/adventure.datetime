@@ -104,6 +104,23 @@ class NodeGrid
 		m_syncLock.unlock();
 	}
 	
+	public FragmentNode GetNodeAtLocation(int x, int y)
+	{
+		FragmentNode result = null;
+		
+		// ya, not the most efficent way to do it, but it works
+		// would rather use a BSP tree, but that is just overkill...
+		for(FragmentNode m_node : m_nodes)
+		{
+			if(m_node.Contains(x, y))
+			{
+				result = m_node;
+			}
+		}
+		
+		return result;
+	}
+	
 	private FragmentNode GetTopLevelFragment(UUID headId)
 	{
 		if(m_headNode == null || !(m_headNode.GetFragment().getFragmentID().equals(headId)))

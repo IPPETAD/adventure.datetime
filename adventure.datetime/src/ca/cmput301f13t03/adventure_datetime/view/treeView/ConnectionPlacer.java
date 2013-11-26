@@ -410,7 +410,7 @@ public final class ConnectionPlacer
 		{
 			this.m_start = start;
 			this.m_target = target;
-			this.m_targetVariance = (int) Math.round(targetVariance * 1.5); // technically the value is only needed to be sqrt(2), but this is close enough
+			this.m_targetVariance = (int) Math.round(targetVariance * targetVariance * 1.5); // technically the value is only needed to be sqrt(2), but this is close enough
 			this.m_map = map;
 		}
 
@@ -439,9 +439,8 @@ public final class ConnectionPlacer
 		{
 			Path result = new Path();
 
-			// TODO::JT figure out what to do about simplifying the path...?
 			// first simplify the node list
-			// nodes = SimplifyPath(nodes);
+			nodes = SimplifyPath(nodes);
 
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516

@@ -23,6 +23,7 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -38,19 +39,29 @@ import android.view.ViewGroup;
  * Shows a dynamically-created tree representing
  * the nodes of the current story.
  * 
- * TODO : Everything.
+ * TODO : Not quite everything.
  * 
- * @author James Finlay
+ * @author James Finlay + Jesse Tucker
  *
  */
 public class AuthorEdit_Overview extends Fragment
 {
+	private IFragmentSelected m_fragmentCallback = null;
+	
+	public void SetFragmentSelectionCallback(IFragmentSelected callback)
+	{
+		m_fragmentCallback = callback;
+	}
+	
 	@Override
 	public View onCreateView(	LayoutInflater inflater,
 								ViewGroup container, 
 								Bundle savedInstanceState) 
 	{
 		View rootView = inflater.inflate(R.layout.overview_edit, container, false);
+		
+		TreeView treeView = (TreeView)(rootView.findViewById(R.id.v_treeViewBase));
+		treeView.SetFragmentCallback(m_fragmentCallback);
 		
 		return rootView;
 	}

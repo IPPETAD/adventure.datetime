@@ -135,6 +135,6 @@ class Camera
 	
 	public void ScreenCordsToWorldCords(float[] screenCords)
 	{
-		GetTransform().mapPoints(screenCords);
+		GetInverseTransform().mapPoints(screenCords);
 	}
 }

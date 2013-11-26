@@ -1,5 +1,6 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
+import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
 import android.view.MotionEvent;
 
 class InputHandler 
@@ -10,12 +11,15 @@ class InputHandler
 	// touch input
 	private boolean m_hasPrimaryTouch = false;
 	private int m_pointerId = 0; // only supporting single touch
+	private boolean m_isDragging = false;
 	
 	private static final float DRAG_MINIMUM_SQUARED = 625.0f;
 	private float m_initialX = 0;
 	private float m_initialY = 0;
 	private float m_previousX = 0;
 	private float m_previousY = 0;
+	
+	private IFragmentSelected m_selectionCallback = null;
 	
 	private enum MoveType
 	{
@@ -53,6 +57,11 @@ class InputHandler
 		}
 		
 		return result;
+	}
+	
+	public void SetSelectionCallback(IFragmentSelected callback)
+	{
+		m_selectionCallback = callback;
 	}
 	
 	private boolean HandleTouchUp(MotionEvent event, int pointerId, int pointerIndex)
@@ -97,6 +106,7 @@ class InputHandler
 			m_initialX = m_previousX;
 			m_initialY = m_previousY;
 			m_hasPrimaryTouch = true;
+			m_isDragging = false;
 			
 			result = true;
 		}
@@ -159,6 +169,8 @@ class InputHandler
 	
 	private void HandleDrag(float currX, float currY)
 	{
+		m_isDragging = true;
+		
 		float deltaX = currX - m_previousX;
 		float deltaY = currY - m_previousY;
 		
@@ -170,7 +182,27 @@ class InputHandler
 	
 	private void HandleTap(float currX, float currY)
 	{
-		// TODO::JT
+		// early out if we are dragging
+		if(m_isDragging)
+		{
+			return;
+		}
+		
+		float cords[] = { currX, currY };
+		m_camera.ScreenCordsToWorldCords(cords);
+		
+		FragmentNode tappedNode = m_nodeGrid.GetNodeAtLocation((int)(cords[0]), (int)(cords[1]));
+		
+		if(tappedNode != null)
+		{
+			// the node was selected!
+			if(m_selectionCallback != null)
+			{
+				m_selectionCallback.OnFragmentSelected(tappedNode.GetFragment());
+			}
+			// else... I guess no one will ever know...
+		}
+		// else we just ignore the tap, cuz there is nothing there!
 	}
 	
 	private MoveType GetMoveType(float currX, float currY)
