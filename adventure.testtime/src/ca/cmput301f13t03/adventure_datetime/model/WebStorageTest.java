@@ -1,15 +1,12 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
 
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
+import ca.cmput301f13t03.adventure_datetime.R;
 
 public class WebStorageTest extends AndroidTestCase {
 
@@ -30,21 +27,20 @@ public class WebStorageTest extends AndroidTestCase {
 		c.setAuthor("lolcat");
 		c.setContent("Can I haz ID?");
 		c.setTargetId(UUID.randomUUID());
-		c.setWebId(UUID.randomUUID());
+		c.setId(UUID.randomUUID());
 		
 		boolean result = es.putComment(c);
 		assertTrue(es.getErrorMessage(), result);
 		
-		System.out.println("Comment ID: " + c.getWebId());
+		System.out.println("Comment ID: " + c.getId());
 		
-		result = es.deleteComment(c.getWebId());
+		result = es.deleteComment(c.getId());
 		assertTrue(es.getErrorMessage(), result);
 	}
 	
 	public void testGetComments() throws Exception {
 		List<Comment> comments = new ArrayList<Comment>();
 		List<Comment> returned = new ArrayList<Comment>();
-		Set<UUID> ids = new HashSet<UUID>();
 		UUID targetId = UUID.randomUUID();
 		
 		for (int i = 0; i < 5; i++) {
@@ -52,13 +48,12 @@ public class WebStorageTest extends AndroidTestCase {
 			c.setAuthor("Pretentious Douchebag " + i);
 			c.setContent("This test sucks. 0/5 would not test again.");
 			c.setTargetId(targetId);
-			c.setWebId(UUID.randomUUID());
+			c.setId(UUID.randomUUID());
 			comments.add(c);
 		}
 
 		for (Comment c : comments) {
 			boolean result = es.putComment(c);
-			ids.add(c.getWebId());
 			assertTrue(es.getErrorMessage(), result);
 		}
 		
@@ -69,19 +64,19 @@ public class WebStorageTest extends AndroidTestCase {
 		
 		assertEquals("Lists different size!, " + es.getErrorMessage(), comments.size(), returned.size());
 		
-		for (UUID id : ids) {
+		for (Comment c : returned) {
 			try {
-				es.deleteComment(id);
+				es.deleteComment(c.getId());
 			}
 			catch (Exception e) {
 				
 			}
 		}
 		
-		for (Comment c : returned) {
-			assertTrue("Id found in returned, but not in original", ids.contains(c.getWebId()));
+		for (Comment c : comments) {
+			assertTrue("Comment missing from results", returned.contains(c));
 		}
-		
+
 	}
 	
 	public void testGetAllStories() throws Exception {
@@ -106,6 +101,38 @@ public class WebStorageTest extends AndroidTestCase {
 			assertTrue("Story missing from results", result.contains(s));
 		}
 		
+	}
+	
+	public void testQueryStories() throws Exception {
+		List<Story> stories = new ArrayList<Story>();
+		for (int i = 0; i < 5; i++) {
+			Story story = createStory(i);
+			stories.add(story);
+		}
+		
+		stories.get(0).setAuthor("Andrew Fontaine");
+		stories.get(1).setTitle("Thanks Andrew");
+		stories.get(2).setSynopsis("How Andrew ruined civ.");
+		
+		for (Story s : stories) {
+			boolean result = es.publishStory(s, null);
+			assertTrue(es.getErrorMessage(), result);
+		}
+		
+		//give elasticsearch some time, its a bit slow. In the head.
+		Thread.sleep(4000);
+		
+		String filter = "Andrew Fontaine";
+		List<Story> result = es.queryStories(filter, 0, 10);	
+		
+		for (Story s : stories) {
+			es.deleteStory(s.getId());
+		}
+		
+		assertTrue(result.size() >= 3);
+		assertTrue("Story missing from results", result.contains(stories.get(0)));
+		assertTrue("Story missing from results", result.contains(stories.get(1)));
+		assertTrue("Story missing from results", result.contains(stories.get(2)));
 	}
 	
 	private Story createStory(int i) {
