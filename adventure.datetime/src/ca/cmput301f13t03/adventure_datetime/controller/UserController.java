@@ -55,7 +55,7 @@ public class UserController {
 			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
 			return true;
 		} catch (NullPointerException e) {
-			Log.e("UserController", e.getMessage());
+			Log.e("UserController", "Error: ",e);
 			return false;
 		}
 	}
@@ -72,7 +72,7 @@ public class UserController {
 			m_storyDirector.selectFragment(bookmark.getFragmentID());
 			return true;
 		} catch (NullPointerException e) {
-			Log.e("UserController", e.getMessage());
+			Log.e("UserController", "Error: ", e);
 			return false;
 		}
 	}
