@@ -60,7 +60,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Map<UUID, Story> m_onlineStories = null;
 	private Map<UUID, Bookmark> m_bookmarkList = null;
 	private Map<UUID, StoryFragment> m_fragmentList = null;
-
+	private Map<UUID, List<Comment>> m_comments = null;
+	
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
@@ -68,6 +69,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Set<IOnlineStoriesListener> m_onlineStoriesListeners = new HashSet<IOnlineStoriesListener>();
 	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 	private Set<IAllFragmentsListener> m_allFragmentListeners = new HashSet<IAllFragmentsListener>();
+	private Map<UUID, ICommentsListener> m_commentsListeners = new HashMap<UUID, ICommentsListener>();
 
 	/**
 	 * Create a new story manager and initializes other components using the provided context.
@@ -80,6 +82,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool = new ThreadPool();
 		
 		m_fragmentList = new HashMap<UUID, StoryFragment>();
+		m_comments = new HashMap<UUID, List<Comment>>();
 	}
 
 	// ============================================================
@@ -152,6 +155,11 @@ public final class StoryManager implements IStoryModelPresenter,
 			allFragmentsListener.OnAllFragmentsChange(currentFrags);
 		}
 	}
+	
+	public void Subscribe(ICommentsListener commentsListener, UUID id) {
+		m_commentsListeners.put(id, commentsListener);
+		LoadComments(id);
+	}
 
 	/**
 	 * Unsubscribe from callbacks when the current fragment changes
@@ -183,6 +191,10 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
 	{
 		m_allFragmentListeners.remove(allFragmentsListener);
+	}
+	
+	public void Unsubscribe(UUID id) {
+		m_commentsListeners.remove(id);
 	}
 
 	// ============================================================
@@ -231,6 +243,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
 			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
 		}
+	}
+	
+	private void PublishCommentsChanged(UUID finalId) {
+		m_commentsListeners.get(finalId).OnCommentsChange(m_comments.get(finalId));
 	}
 	
 	private void PublishAllFragmentsChanged()
@@ -457,6 +473,19 @@ public final class StoryManager implements IStoryModelPresenter,
 		PublishBookmarkListChanged();
 	}
 	
+	public void addComment(Comment comment) {
+		final Comment finalComment = comment;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					m_webStorage.putComment(finalComment);
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		});
+	}
+	
 	private void LoadStories()
 	{
 		m_stories = new HashMap<UUID, Story>();
@@ -511,6 +540,39 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 	}
 	
+	private void LoadComments(UUID id)
+	{
+		final UUID finalId = id;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					if(m_comments.get(finalId) != null)
+						m_comments.remove(finalId);
+					
+					List<Comment> tempComments;
+					List<Comment> onlineComments = new ArrayList<Comment>();
+					int size = 10;
+					int i = 0;
+					
+					while(size == 10) {
+						tempComments = m_webStorage.getComments(finalId, i, 10);
+						for(Comment comment : tempComments)
+						{
+							onlineComments.add(comment);
+						}
+						size = tempComments.size();
+						i += 10;
+					}
+					m_comments.put(finalId, onlineComments);
+					PublishCommentsChanged(finalId);
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+		});
+		
+	}
+	
 	private Map<UUID, StoryFragment> GetAllCurrentFragments()
 	{
 		Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
@@ -555,15 +617,4 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 	}
 
-	@Override
-	public void Subscribe(ICommentsListener commentsListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void Unsubscribe(ICommentsListener commentsListener) {
-		// TODO Auto-generated method stub
-		
-	}
 }
