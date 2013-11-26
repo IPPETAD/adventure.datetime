@@ -287,6 +287,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			getFragmentOnline(fragmentId, false);
 			getNextFragments(fragmentId);
 		}
+		setBookmark();
 	}
 	
 	/**
