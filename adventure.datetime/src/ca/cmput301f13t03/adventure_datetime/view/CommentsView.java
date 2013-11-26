@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 
 public class CommentsView extends Activity implements ICurrentStoryListener,
 									ICurrentFragmentListener, ICommentsListener {
+	private static final String TAG = "CommentsView";
 	public static final String COMMENT_TYPE = "forStory";
 	
 	private ListView _listView;
@@ -99,6 +101,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		switch (item.getItemId()) {
 		case R.id.action_new:
 			final Dialog dia = new Dialog(CommentsView.this);
+			dia.setTitle("New Comment");
 			dia.setContentView(R.layout.comment_add);
 			dia.setCancelable(true);
 			
@@ -130,6 +133,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			});
 			
 			//TODO::AF media from gallery / camera
+			dia.show();
 			
 			break;
 		}
@@ -140,13 +144,16 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		if (_comments == null) return;
 		if (_story == null && forStoryEh) return;
 		if (_fragment == null && !forStoryEh) return;
-		
+
 		// TODO: Send diff comments whether from story or fragment
-		
-		_adapter = new RowArrayAdapter(this, 
-				R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
-		
-		_listView.setAdapter(_adapter);
+
+		runOnUiThread(new Runnable() {
+			public void run() {
+				_adapter = new RowArrayAdapter(getApplicationContext(), 
+						R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
+				_listView.setAdapter(_adapter);					
+			}
+		});
 		
 	}
 

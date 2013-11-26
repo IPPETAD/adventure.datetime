@@ -480,7 +480,7 @@ public final class StoryManager implements IStoryModelPresenter,
 				try {
 					m_webStorage.putComment(finalComment);
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});
