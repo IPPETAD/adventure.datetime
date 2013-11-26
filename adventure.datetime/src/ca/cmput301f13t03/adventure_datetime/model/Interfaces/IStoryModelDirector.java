@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -122,4 +123,10 @@ public interface IStoryModelDirector
 	 * Downloads current story to local database
 	 */
 	public void download();
+
+	/**
+	 *  Publishes a comment to the server
+	 * @param comment
+	 */
+	public void addComment(Comment comment);
 }
