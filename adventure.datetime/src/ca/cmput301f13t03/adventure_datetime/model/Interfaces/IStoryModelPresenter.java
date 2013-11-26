@@ -43,14 +43,24 @@ public interface IStoryModelPresenter
     /**
 	 * Listens for change on the current list of stories
 	 */
-    void Subscribe(IStoryListListener storyListListener);
+    void Subscribe(ILocalStoriesListener storyListListener);
+    
+    void Subscribe(IOnlineStoriesListener storyListListener);
     
     /**
 	 * Listens for change on the bookmark list
 	 */
     void Subscribe(IBookmarkListListener bookmarkListListener);
     
-    //===========================================================
+    /**
+     * Listens for changes to the entire set of fragments
+     */
+    void Subscribe(IAllFragmentsListener allFragmentsListener);
+    
+    /**
+     * Listens for changes to the comments
+     */
+    void Subscribe(ICommentsListener commentsListener);
     
     /**
 	 * Stop listening for changes on the current fragment
@@ -65,10 +75,22 @@ public interface IStoryModelPresenter
     /**
 	 * Stop listening for changes on the current story list
 	 */
-    void Unsubscribe(IStoryListListener storyListListener);
+    void Unsubscribe(ILocalStoriesListener storyListListener);
     
+    void Unsubscribe(IOnlineStoriesListener storyListListener);
     /**
 	 * Stop listening for changes on the current bookmark list
 	 */
     void Unsubscribe(IBookmarkListListener bookmarkListListener);
+    
+    /**
+     * Stop listening for changes on the current set of fragments
+     */
+    void Unsubscribe(IAllFragmentsListener allFragmentsListener);
+    
+    /**
+     * Stop listening for changes to the comments
+     */
+    void Unsubscribe(ICommentsListener commentsListener);
+
 }

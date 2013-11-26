@@ -34,6 +34,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentLis
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -94,6 +95,15 @@ public class AuthorEdit_Edit extends Fragment {
 		_content = (EditText) _rootView.findViewById(R.id.content);
 		
 		_content.setText(_fragment.getStoryText());
+		
+		_media.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), FullScreen_Image.class);
+				intent.putExtra(FullScreen_Image.TAG_AUTHOR, true);
+				startActivity(intent);	
+			}
+		});
 
 		/** Choices **/
 		final List<String> lchoices = new ArrayList<String>();
