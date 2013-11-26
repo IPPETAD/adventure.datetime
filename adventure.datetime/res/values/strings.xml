@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Adventure.DateTime</string>
+    <string name="btn_editChoice">Edit Choice</string>
+    <string name="btn_deleteChoice">Delete Choice</string>
 </resources>

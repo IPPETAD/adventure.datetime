@@ -32,22 +32,38 @@
             android:id="@+id/content"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:hint="Content..."
             android:padding="10dp"
             android:singleLine="false"
-            android:textSize="18sp" 
-            android:hint="Content..."/>
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choices:"
+            android:textSize="24sp" />
+
+        <!-- Horizontal Div -->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="#000000" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_margin="10dp" >
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" 
+            android:background="#DBDBDB">
 
-            <Button
-                android:id="@+id/choices"
+            <ListView
+                android:id="@+id/choicesList"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="Actions" />
+                android:layout_gravity="center_horizontal" />
+            <Button 
+                android:id="@+id/addChoice_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
         </RelativeLayout>
     </LinearLayout>
 
