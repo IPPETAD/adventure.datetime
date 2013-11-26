@@ -1,7 +1,7 @@
 #
 # A fatal error has been detected by the Java Runtime Environment:
 #
-#  Internal Error (javaClasses.cpp:136), pid=14740, tid=6915
+#  Internal Error (javaClasses.cpp:136), pid=18644, tid=6915
 #  fatal error: Invalid layout of preloaded class
 #
 # JRE version:  (7.0_40-b43) (build )
@@ -14,9 +14,9 @@
 
 ---------------  T H R E A D  ---------------
 
-Current thread (0x00007fbdba006800):  JavaThread "Unknown thread" [_thread_in_vm, id=6915, stack(0x00000001074d5000,0x00000001075d5000)]
+Current thread (0x00007f9a9180a800):  JavaThread "Unknown thread" [_thread_in_vm, id=6915, stack(0x000000010669d000,0x000000010679d000)]
 
-Stack: [0x00000001074d5000,0x00000001075d5000],  sp=0x00000001075d4810,  free space=1022k
+Stack: [0x000000010669d000,0x000000010679d000],  sp=0x000000010679c810,  free space=1022k
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 V  [libjvm.dylib+0x5245f9]  VMError::report_and_die()+0x5d5
 V  [libjvm.dylib+0x1ebd3d]  report_vm_error(char const*, int, char const*, char const*)+0x54
@@ -40,7 +40,7 @@ Java Threads: ( => current thread )
 
 Other Threads:
 
-=>0x00007fbdba006800 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=6915, stack(0x00000001074d5000,0x00000001075d5000)]
+=>0x00007f9a9180a800 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=6915, stack(0x000000010669d000,0x000000010679d000)]
 
 VM state:not at safepoint (not fully initialized)
 
@@ -56,16 +56,16 @@ Internal exceptions (0 events):
 No events
 
 Events (10 events):
-Event: 0.014 loading class 0x000000010d5966e0 done
-Event: 0.014 loading class 0x000000010d596100 done
-Event: 0.014 loading class 0x000000010d5960e0
-Event: 0.035 loading class 0x000000010d59e1e0
-Event: 0.035 loading class 0x000000010d59e1e0 done
-Event: 0.035 loading class 0x000000010d59e210
-Event: 0.035 loading class 0x000000010d59e210 done
-Event: 0.035 loading class 0x000000010d59e240
-Event: 0.035 loading class 0x000000010d59e240 done
-Event: 0.036 loading class 0x000000010d5960e0 done
+Event: 0.161 loading class 0x000000010c7666e0 done
+Event: 0.162 loading class 0x000000010c766100 done
+Event: 0.162 loading class 0x000000010c7660e0
+Event: 0.162 loading class 0x000000010c76e1e0
+Event: 0.178 loading class 0x000000010c76e1e0 done
+Event: 0.178 loading class 0x000000010c76e210
+Event: 0.200 loading class 0x000000010c76e210 done
+Event: 0.200 loading class 0x000000010c76e240
+Event: 0.201 loading class 0x000000010c76e240 done
+Event: 0.201 loading class 0x000000010c7660e0 done
 
 
 Dynamic libraries:
@@ -216,15 +216,15 @@ Dynamic libraries:
 0x00000000098f9000 	/System/Library/PrivateFrameworks/CoreSymbolication.framework/Versions/A/CoreSymbolication
 0x00000000098f9000 	/System/Library/PrivateFrameworks/Symbolication.framework/Versions/A/Symbolication
 0x00000000098f9000 	/System/Library/PrivateFrameworks/DebugSymbols.framework/Versions/A/DebugSymbols
-0x0000000106a6c000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/server/libjvm.dylib
+0x0000000105c34000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/server/libjvm.dylib
 0x00000000098f9000 	/usr/lib/libstdc++.6.dylib
-0x00000001075d7000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libverify.dylib
-0x0000000107a00000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libjava.dylib
-0x00000001075ee000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libzip.dylib
+0x000000010679f000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libverify.dylib
+0x00000001067ac000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libjava.dylib
+0x00000001067e6000 	/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre/lib/libzip.dylib
 
 VM Arguments:
 jvm_args: -Dfile.encoding=US-ASCII -Xbootclasspath:/Users/evandegraff/Android/adt-bundle-mac-x86_64-20130911/sdk/platforms/android-18/android.jar 
-java_command: org.pitest.pitclipse.pitrunner.PitRunner 61421
+java_command: org.pitest.pitclipse.pitrunner.PitRunner 61246
 Launcher Type: SUN_STANDARD
 
 Environment Variables:
@@ -250,7 +250,7 @@ SIGQUIT: SIG_DFL, sa_mask[0]=0xfffefeff, sa_flags=0x00000042
 
 OS:Bsduname:Darwin 13.0.0 Darwin Kernel Version 13.0.0: Thu Sep 19 22:22:27 PDT 2013; root:xnu-2422.1.72~6/RELEASE_X86_64 x86_64
 rlimit: STACK 8192k, CORE 0k, NPROC 709, NOFILE 10240, AS infinity
-load average:1.47 1.34 1.32
+load average:1.28 1.17 1.21
 
 CPU:total 2 (2 cores per cpu, 1 threads per core) family 6 model 23 stepping 10, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, tsc
 
@@ -261,6 +261,6 @@ Memory: 4k page, physical 4194304k(1048576k free)
 
 vm_info: Java HotSpot(TM) 64-Bit Server VM (24.0-b56) for bsd-amd64 JRE (1.7.0_40-b43), built on Aug 26 2013 21:29:19 by "java_re" with gcc 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.11.00)
 
-time: Thu Nov 21 18:12:21 2013
+time: Mon Nov 25 18:59:48 2013
 elapsed time: 0 seconds
 

@@ -60,7 +60,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Map<UUID, Story> m_onlineStories = null;
 	private Map<UUID, Bookmark> m_bookmarkList = null;
 	private Map<UUID, StoryFragment> m_fragmentList = null;
-
+	private Map<UUID, List<Comment>> m_comments = null;
+	
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
@@ -68,6 +69,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	private Set<IOnlineStoriesListener> m_onlineStoriesListeners = new HashSet<IOnlineStoriesListener>();
 	private Set<IBookmarkListListener> m_bookmarkListListeners = new HashSet<IBookmarkListListener>();
 	private Set<IAllFragmentsListener> m_allFragmentListeners = new HashSet<IAllFragmentsListener>();
+	private Map<UUID, ICommentsListener> m_commentsListeners = new HashMap<UUID, ICommentsListener>();
 
 	/**
 	 * Create a new story manager and initializes other components using the provided context.
@@ -80,6 +82,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool = new ThreadPool();
 		
 		m_fragmentList = new HashMap<UUID, StoryFragment>();
+		m_comments = new HashMap<UUID, List<Comment>>();
 	}
 
 	// ============================================================
@@ -152,6 +155,11 @@ public final class StoryManager implements IStoryModelPresenter,
 			allFragmentsListener.OnAllFragmentsChange(currentFrags);
 		}
 	}
+	
+	public void Subscribe(ICommentsListener commentsListener, UUID id) {
+		m_commentsListeners.put(id, commentsListener);
+		LoadComments(id);
+	}
 
 	/**
 	 * Unsubscribe from callbacks when the current fragment changes
@@ -183,6 +191,10 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
 	{
 		m_allFragmentListeners.remove(allFragmentsListener);
+	}
+	
+	public void Unsubscribe(UUID id) {
+		m_commentsListeners.remove(id);
 	}
 
 	// ============================================================
@@ -233,6 +245,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 	}
 	
+	private void PublishCommentsChanged(UUID finalId) {
+		m_commentsListeners.get(finalId).OnCommentsChange(m_comments.get(finalId));
+	}
+	
 	private void PublishAllFragmentsChanged()
 	{
 		if(m_currentStory != null && m_fragmentList != null)
@@ -267,8 +283,11 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_currentFragment = getFragment(fragmentId);
 		if(m_currentFragment != null)
 			PublishCurrentFragmentChanged();
-		else
-			getFragmentOnline(fragmentId);
+		else {
+			getFragmentOnline(fragmentId, false);
+			getNextFragments(fragmentId);
+		}
+		setBookmark();
 	}
 	
 	/**
@@ -393,9 +412,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		return result;
 	}
 	
-	private void getFragmentOnline(UUID fragmentId) {
+	private void getFragmentOnline(UUID fragmentId, boolean storeDB) {
 		// Fetch fragment asynchronously
 		final UUID finalId = fragmentId;
+		final boolean finalStoreDB = storeDB;
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
@@ -403,11 +423,17 @@ public final class StoryManager implements IStoryModelPresenter,
 					// afterwards place into cache
 					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
 					PublishCurrentFragmentChanged();
+					if(finalStoreDB) {
+						m_db.setStoryFragment(m_currentFragment);
+					}
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "StoryManager: ", e);
 				}
 			}
 		});
+	}
+	
+	private void getNextFragments(UUID fragmentId){
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
@@ -443,6 +469,8 @@ public final class StoryManager implements IStoryModelPresenter,
 
 	public void setBookmark() {
 		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
+		m_bookmarkList.remove(m_currentStory.getId());
+		m_bookmarkList.put(m_currentStory.getId(), newBookmark);
 		m_db.setBookmark(newBookmark);
 		PublishBookmarkListChanged();
 	}
@@ -450,6 +478,20 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void deleteBookmark(UUID storyId) {
 		m_db.deleteBookmarkByStory(storyId);
 		PublishBookmarkListChanged();
+	}
+	
+	public void addComment(Comment comment) {
+		final Comment finalComment = comment;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					m_webStorage.putComment(finalComment);
+					LoadComments(finalComment.getTargetId());
+				} catch (Exception e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+		});
 	}
 	
 	private void LoadStories()
@@ -472,15 +514,23 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					List<Story> onlineStories = m_webStorage.getAllStories();
 					
-					for(Story story : onlineStories)
-					{
-						m_onlineStories.put(story.getId(), story);
+					List<Story> onlineStories;
+					int size = 10;
+					int i = 0;
+					
+					while(size == 10) {
+						onlineStories = m_webStorage.getStories(i, 10);
+						for(Story story : onlineStories)
+						{
+							m_onlineStories.put(story.getId(), story);
+						}
+						size = onlineStories.size();
+						i += 10;
 					}
 					PublishOnlineStoriesChanged();
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});		
@@ -495,6 +545,39 @@ public final class StoryManager implements IStoryModelPresenter,
 		{
 			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
 		}
+		
+	}
+	
+	private void LoadComments(UUID id)
+	{
+		final UUID finalId = id;
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					if(m_comments.get(finalId) != null)
+						m_comments.remove(finalId);
+					
+					List<Comment> tempComments;
+					List<Comment> onlineComments = new ArrayList<Comment>();
+					int size = 10;
+					int i = 0;
+					
+					while(size == 10) {
+						tempComments = m_webStorage.getComments(finalId, i, 10);
+						for(Comment comment : tempComments)
+						{
+							onlineComments.add(comment);
+						}
+						size = tempComments.size();
+						i += 10;
+					}
+					m_comments.put(finalId, onlineComments);
+					PublishCommentsChanged(finalId);
+				} catch (Exception e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+		});
 		
 	}
 	
@@ -525,21 +608,20 @@ public final class StoryManager implements IStoryModelPresenter,
 				try {
 					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});
 	}
-
-	@Override
-	public void Subscribe(ICommentsListener commentsListener) {
-		// TODO Auto-generated method stub
-		
+	
+	public void download() {
+		if(m_currentStory != null) {
+			m_stories.put(m_currentStory.getId(), m_currentStory);
+			m_db.setStory(m_currentStory);
+			for(UUID fragmentId : m_currentStory.getFragments()) {
+				getFragmentOnline(fragmentId, true);
+			}
+		}
 	}
 
-	@Override
-	public void Unsubscribe(ICommentsListener commentsListener) {
-		// TODO Auto-generated method stub
-		
-	}
 }

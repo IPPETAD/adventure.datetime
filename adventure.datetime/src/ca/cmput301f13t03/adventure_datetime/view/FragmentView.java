@@ -63,11 +63,13 @@ import java.util.List;
  */
 public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentView";
+	public static final String FOR_SERVER = "emagherd.server";
 
 	private HorizontalScrollView _filmstrip;
 	private TextView _content;
 	private LinearLayout _filmLayout;
 	private Button _choices;
+	private boolean forServerEh;
 
 	private StoryFragment _fragment;
 
@@ -93,6 +95,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
+		forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
 		setUpView();
 	}
 	public void setUpView() {
@@ -208,14 +211,15 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-
-		getMenuInflater().inflate(R.menu.storydesc, menu);
+		if (forServerEh)
+			getMenuInflater().inflate(R.menu.fragment_menu, menu);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			/* Open comments activity */
 			Intent intent = new Intent(this, CommentsView.class);
 			intent.putExtra(CommentsView.COMMENT_TYPE, false);
 			startActivity(intent);

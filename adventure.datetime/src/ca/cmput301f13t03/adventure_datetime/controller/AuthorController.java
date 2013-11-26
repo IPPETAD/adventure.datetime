@@ -146,5 +146,4 @@ public class AuthorController {
 	public void upload(){
 		m_storyDirector.uploadCurrentStory();
 	}
-
 }

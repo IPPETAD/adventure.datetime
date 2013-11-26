@@ -20,22 +20,29 @@
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
+package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
-import ca.cmput301f13t03.adventure_datetime.model.Story;
+import android.test.AndroidTestCase;
 
-/**
- *   Interface for listening for changes to the currently selected story
- *   @author Jesse
- */
-public interface ILocalStoriesListener
-{
-	/**
-	 * Callback for when the list of stories changes
-	 * @param newStories The new list of stories
-	 */
-	 void OnCurrentStoryListChange(Map<UUID, Story> newStories);
+public class WebStorageCleaner extends AndroidTestCase {
+
+	WebStorage es;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		es = new WebStorage();
+		es.setIndex("testing");
+	}
+	
+	public void testCleanUp() throws Exception {
+		List<Story> stories = es.getStories(0, 10);
+		
+		
+		for (Story s : stories) {
+			es.deleteStory(s.getId());
+		}
+	}
+
 }

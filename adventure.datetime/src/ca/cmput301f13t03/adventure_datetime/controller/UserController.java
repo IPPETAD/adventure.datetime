@@ -55,7 +55,7 @@ public class UserController {
 			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
 			return true;
 		} catch (NullPointerException e) {
-			Log.e("UserController", e.getMessage());
+			Log.e("UserController", "Error: ",e);
 			return false;
 		}
 	}
@@ -72,7 +72,7 @@ public class UserController {
 			m_storyDirector.selectFragment(bookmark.getFragmentID());
 			return true;
 		} catch (NullPointerException e) {
-			Log.e("UserController", e.getMessage());
+			Log.e("UserController", "Error: ", e);
 			return false;
 		}
 	}
@@ -90,7 +90,7 @@ public class UserController {
      * @param comment The comment to attach to a fragment
      */
 	public void AddComment(Comment comment) {
-		/* TODO::JT */
+		m_storyDirector.addComment(comment);
 	}
 
     /**
@@ -100,6 +100,11 @@ public class UserController {
      */
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
+	}
+	
+	public void download() 
+	{
+		m_storyDirector.download();
 	}
 
 }

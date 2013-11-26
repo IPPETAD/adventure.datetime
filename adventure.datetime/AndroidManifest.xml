@@ -55,12 +55,10 @@
             android:parentActivityName=".view.BrowseView" />
         <activity
             android:name=".view.CommentsView"
-            android:label="@string/app_name"
-            android:parentActivityName=".view.StoryDescription" />
+            android:label="@string/app_name" />
         <activity
             android:name=".view.FullScreen_Image"
-            android:label="@string/app_name"
-            android:parentActivityName=".view.FragmentView" />
+            android:label="@string/app_name" />
     </application>
 
 </manifest>
