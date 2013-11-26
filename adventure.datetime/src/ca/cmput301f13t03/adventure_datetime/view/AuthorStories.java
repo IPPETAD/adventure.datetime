@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.AccountService;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -123,7 +124,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 		switch (item.getItemId()) {
 		case R.id.action_new:
 			Story story = Locator.getAuthorController().CreateStory();
-			
+			story.setAuthor(AccountService.getUserName(getContentResolver()));
 			Locator.getAuthorController().saveStory(story);
 			Locator.getAuthorController().selectStory(story.getId());
 			

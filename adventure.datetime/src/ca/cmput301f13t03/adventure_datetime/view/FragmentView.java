@@ -208,13 +208,14 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 
-		getMenuInflater().inflate(R.menu.storydesc, menu);
+		getMenuInflater().inflate(R.menu.fragment_menu, menu);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_comment:
+			/* Open comments activity */
 			Intent intent = new Intent(this, CommentsView.class);
 			intent.putExtra(CommentsView.COMMENT_TYPE, false);
 			startActivity(intent);

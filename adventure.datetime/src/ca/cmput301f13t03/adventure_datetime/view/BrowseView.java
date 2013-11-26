@@ -144,11 +144,11 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 		}
 		
 		public void setLocalStories(Collection<Story> stories) {
-			cached.setStories(stories);
-			authored.setStories(stories);
+			cached.setStories(stories, BrowseFragment.SOURCE_CACHE);
+			authored.setStories(stories, BrowseFragment.SOURCE_AUTHOR);
 		}
 		public void setOnlineStories(Collection<Story> stories) {
-			online.setStories(stories);
+			online.setStories(stories, BrowseFragment.SOURCE_ONLINE);
 		}
 
 		@Override
