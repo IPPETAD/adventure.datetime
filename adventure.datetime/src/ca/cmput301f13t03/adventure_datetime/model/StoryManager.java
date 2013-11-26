@@ -469,6 +469,8 @@ public final class StoryManager implements IStoryModelPresenter,
 
 	public void setBookmark() {
 		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
+		m_bookmarkList.remove(m_currentStory.getId());
+		m_bookmarkList.put(m_currentStory.getId(), newBookmark);
 		m_db.setBookmark(newBookmark);
 		PublishBookmarkListChanged();
 	}
