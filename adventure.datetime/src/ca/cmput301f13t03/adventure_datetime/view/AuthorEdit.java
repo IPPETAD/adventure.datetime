@@ -22,8 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -61,6 +59,13 @@ import android.widget.Toast;
  *
  */
 public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener, ICurrentStoryListener {
+	
+	public static final int OVERVIEW_INDEX = 0;
+	public static final int EDIT_INDEX = 1;
+	public static final int PREVIEW_INDEX = 2;
+	// make sure to update this if we add a tab!
+	public static final int INDEX_COUNT = 3;
+	
 	private static final String TAG = "AuthorEdit";
 
 	private ViewPager _viewPager;
@@ -112,7 +117,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		});
 
 		// Select 'Overview' at start
-		getActionBar().setSelectedNavigationItem(1);
+		getActionBar().setSelectedNavigationItem(0);
 
 	}
 	@Override
@@ -201,11 +206,11 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		@Override
 		public Fragment getItem(int i) {
 			switch (i) {
-			case 0:
-				return _edit;
-			case 1:
+			case OVERVIEW_INDEX:
 				return _overview;
-			case 2:
+			case EDIT_INDEX:
+				return _edit;
+			case PREVIEW_INDEX:
 				return _preview;
 			default:
 				Log.e(TAG, "invalid item #");
@@ -227,15 +232,15 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 
 		@Override
 		public int getCount() {
-			return 3;
+			return INDEX_COUNT;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
-			case 0: return "Edit";
-			case 1: return "Overview";
-			case 2: return "Preview";
+			case EDIT_INDEX: return "Edit";
+			case OVERVIEW_INDEX: return "Overview";
+			case PREVIEW_INDEX: return "Preview";
 			default: return "It be a Pirate!";
 			}
 		}

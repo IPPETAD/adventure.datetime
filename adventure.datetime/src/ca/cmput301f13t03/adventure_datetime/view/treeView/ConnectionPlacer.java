@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import android.graphics.Path;
+import android.util.Log;
 
 public final class ConnectionPlacer 
 {
+	private static final int DEPTH_LIMIT = 100;
+	private static final String TAG = "ConnectionPlacer";
+	
 	public int m_horizontalOffset = 0; // TODO::JT set as public for testing purposes
 	public int m_verticalOffset = 0; // TODO::JT set as public for testing purposes
 	private int m_mapWidth = 0;
@@ -160,7 +164,7 @@ public final class ConnectionPlacer
 		LocationNode startPoint = new LocationNode(start, target, currentDepth, null);
 		openList.add(startPoint);
 
-		while(openList.size() > 0)
+		while(openList.size() > 0 && currentDepth < DEPTH_LIMIT)
 		{
 			List<LocationNode> nextBatch = openList.GetAndRemoveNextLowestWeights();
 
@@ -212,6 +216,11 @@ public final class ConnectionPlacer
 			}
 
 			currentDepth += m_gridSize;
+		}
+		
+		if(currentDepth >= DEPTH_LIMIT)
+		{
+			Log.w(TAG, "Failed to find a path before hitting the depth limit!");
 		}
 
 		// if we've made it this far then no path could be found as one does not exist

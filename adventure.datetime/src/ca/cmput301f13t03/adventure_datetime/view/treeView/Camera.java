@@ -8,15 +8,28 @@ import android.graphics.Path;
 
 class Camera
 {
-	// java generics are a pain to reuse just to make region use
-	// floats or ints, not going to bother for this simple case
-	private float x = -350.0f;
-	private float y = -250.0f;
+	// these will be overwritten early on
+	private static final float DEFAULT_WIDTH = 500;
+	private static final float DEFAULT_HEIGHT = 1000;
+	
+	// x, y position of the top left of the screen in world coordinates
+	private float x = 0;
+	private float y = 0;
+	
+	// size of the view
+	private float m_viewWidth = DEFAULT_WIDTH;
+	private float m_viewHeight = DEFAULT_HEIGHT;
+	
+	// coords we want to keep centered
+	private float m_xTarget = 0 - m_viewWidth / 2;
+	private float m_yTarget = 0 - m_viewWidth / 2;
 	
 	private float m_zoomLevel = 1.0f;
 	
 	private Matrix m_transform = null;
 	private Matrix m_inverse = null;
+	
+	private Object m_syncLock = new Object();
 	
 	public Camera()
 	{
@@ -48,40 +61,80 @@ class Camera
 	
 	private Matrix GetTransform()
 	{
-		if(m_transform == null)
+		Matrix result = null;
+		
+		synchronized (m_syncLock) 
 		{
-			m_transform = new Matrix();
-			m_transform.setScale(m_zoomLevel, m_zoomLevel);
-			m_transform.setTranslate(-this.x, -this.y);
+			if(m_transform == null)
+			{
+				m_transform = new Matrix();
+				m_transform.setScale(m_zoomLevel, m_zoomLevel);
+				m_transform.setTranslate(-this.x, -this.y);
+			}
+			
+			result = m_transform;
 		}
 		
-		return m_transform;
+		return result;
 	}
 	
 	private Matrix GetInverseTransform()
 	{
-		if(m_inverse == null)
+		Matrix result = null;
+		
+		synchronized (m_syncLock) 
 		{
-			m_inverse = new Matrix();
-			m_inverse.setScale(1.0f / m_zoomLevel, 1.0f / m_zoomLevel);
-			m_inverse.setTranslate(this.x, this.y);
+			if(m_inverse == null)
+			{
+				m_inverse = new Matrix();
+				m_inverse.setScale(1.0f / m_zoomLevel, 1.0f / m_zoomLevel);
+				m_inverse.setTranslate(this.x, this.y);
+			}
+			
+			result = m_inverse;
 		}
 		
-		return m_inverse;
+		return result;
 	}
 	
-	public void SetPosition(float x, float y)
+	public float GetXTarget()
 	{
-		this.x = x;
-		this.y = y;
-		m_transform = null;
+		return m_xTarget;
 	}
 	
-	public void SetZoom(float zoom)
+	public float GetYTarget()
 	{
-		assert(zoom > 0);
+		return m_yTarget;
+	}
+	
+	public void ResizeView(float width, float height)
+	{
+		synchronized (m_syncLock) 
+		{
+			m_viewWidth = width;
+			m_viewHeight = height;
+		}
 		
-		m_zoomLevel = zoom;
-		m_transform = null;
+		LookAt(m_xTarget, m_yTarget);
+	}
+	
+	public void LookAt(float x, float y)
+	{
+		synchronized (m_syncLock) 
+		{
+			m_xTarget = x;
+			m_yTarget = y;
+			
+			this.x = m_xTarget - m_viewWidth / 2;
+			this.y = m_yTarget - m_viewHeight / 2;
+			
+			m_inverse = null;
+			m_transform = null;
+		}
+	}
+	
+	public void ScreenCordsToWorldCords(float[] screenCords)
+	{
+		GetTransform().mapPoints(screenCords);
 	}
 }

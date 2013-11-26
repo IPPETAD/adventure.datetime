@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -29,9 +31,11 @@ class NodeGrid
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
 	
 	private Resources m_res = null;
+	private FragmentNode m_headNode = null;
 	
-	private Object m_syncLock = new Object();
+	private Lock m_syncLock = new ReentrantLock();
 	private Map<UUID, StoryFragment> m_fragments = null;
+	private UUID m_headFragmentId = null;
 	private volatile boolean m_reloadView = false;
 	
 	public NodeGrid(Resources res)
@@ -41,35 +45,46 @@ class NodeGrid
 	
 	public void Draw(Canvas surface, Camera camera)
 	{
-		synchronized(m_syncLock)
+		if(m_syncLock.tryLock())
 		{
-			// early out, just in case the threads haven't yet
-			// set up the fragments
-			if(m_fragments == null)
+			try
 			{
-				return;
-			}
-			
-			if(m_reloadView)
-			{
-				// clear the list of segments as we rebuild
-				m_segments.clear();
-				m_connections.clear();
-				m_nodes.clear();
+				// early out, just in case the threads haven't yet
+				// set up the fragments
+				if(m_fragments == null)
+				{
+					return;
+				}
+				
+				if(m_reloadView)
+				{
+					// clear the list of segments as we rebuild
+					m_segments.clear();
+					m_connections.clear();
+					m_nodes.clear();
 
-				SetupNodes(m_fragments);
-				SetupConnections();
-				m_reloadView = false;
+					SetupNodes(m_fragments);
+					SetupConnections();
+					
+					FragmentNode headNode = GetTopLevelFragment(m_headFragmentId);
+					camera.LookAt(headNode.x + headNode.width / 2, headNode.y + headNode.height / 2);
+					
+					m_reloadView = false;
+				}
+				
+				for(FragmentConnection connection : m_connections)
+				{
+					connection.Draw(surface, camera);
+				}
+				
+				for(FragmentNode frag : m_nodes)
+				{
+					frag.Draw(surface, camera);
+				}
 			}
-			
-			for(FragmentConnection connection : m_connections)
+			finally
 			{
-				connection.Draw(surface, camera);
-			}
-			
-			for(FragmentNode frag : m_nodes)
-			{
-				frag.Draw(surface, camera);
+				m_syncLock.unlock();
 			}
 		}
 	}
@@ -77,13 +92,33 @@ class NodeGrid
 	/**
 	 * Set the fragments that are to be displayed by this component
 	 */
-	public void SetFragments(Map<UUID, StoryFragment> fragments)
+	public void SetFragments(Map<UUID, StoryFragment> fragments, UUID headFragmentId)
 	{
-		synchronized(m_syncLock)
+		m_syncLock.lock();
 		{
+			m_headFragmentId = headFragmentId;
 			m_fragments = fragments;
 			m_reloadView = true;
 		}
+		
+		m_syncLock.unlock();
+	}
+	
+	private FragmentNode GetTopLevelFragment(UUID headId)
+	{
+		if(m_headNode == null || !(m_headNode.GetFragment().getFragmentID().equals(headId)))
+		{
+			for(FragmentNode node : m_nodes)
+			{
+				if(node.GetFragment().getFragmentID().equals(headId))
+				{
+					m_headNode = node;
+					break;
+				}
+			}
+		}
+		
+		return m_headNode;
 	}
 	
 	private void SetupNodes(Map<UUID, StoryFragment> fragsMap)

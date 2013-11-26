@@ -3,8 +3,10 @@ package ca.cmput301f13t03.adventure_datetime.view.treeView;
 import java.util.Map;
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 import android.content.Context;
@@ -12,10 +14,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class TreeView extends SurfaceView implements IAllFragmentsListener, SurfaceHolder.Callback, Runnable
+public class TreeView extends SurfaceView 
+	implements 	IAllFragmentsListener, 
+				ICurrentStoryListener,
+				SurfaceHolder.Callback, 
+				Runnable
 {
 	private static final float FPS = 30.0f;
 	private static final String TAG = "TreeView";
@@ -23,9 +30,11 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	private Thread m_drawingThread = null;
 	private volatile boolean m_isDrawing = false;
 	private SurfaceHolder m_surface = null;
-	private NodeGrid m_grid = null;
+	private NodeGrid m_grid = null; // hacky as fuck...
 	private Map<UUID, StoryFragment> m_fragments = null;
 	private Camera m_camera = null;
+	private InputHandler m_touchHandler = null;
+	private Story m_currentStory = null;
 	
 	// must have all constructors or it doesn't work
 	public TreeView(Context context) 
@@ -49,31 +58,54 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	private void Setup()
 	{
 		this.getHolder().addCallback(this);
-		Locator.getPresenter().Subscribe(this);
+		
+		m_grid = new NodeGrid(this.getResources());
+		m_camera = new Camera();
+		m_touchHandler = new InputHandler(m_camera, m_grid);
 	}
 	
-	@Override
 	public void OnAllFragmentsChange(Map<UUID, StoryFragment> newFragments) 
 	{
 		m_fragments = newFragments;
+		
+		// due to the async nature of the callbacks we may not have all the data we need
+		// at this point, we have most, but not all
+		if(m_currentStory != null)
+		{
+			AfterDataAvailable();
+		}
+	}
+	
+	public void OnCurrentStoryChange(Story newStory) 
+	{
+		m_currentStory = newStory;
+		
+		if(m_fragments != null)
+		{
+			AfterDataAvailable();
+		}
+	}
+	
+	private void AfterDataAvailable()
+	{
 		if(m_grid != null)
 		{
-			m_grid.SetFragments(newFragments);
+			m_grid.SetFragments(m_fragments, m_currentStory.getHeadFragmentId());
 		}
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
 	{
-		// Don't care (yet)
+		m_camera.ResizeView(width, height);
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder surface) 
 	{
-		m_camera = new Camera();
-		m_grid = new NodeGrid(this.getResources());
-		m_grid.SetFragments(m_fragments);
+		Locator.getPresenter().Subscribe((ICurrentStoryListener)(this));
+		Locator.getPresenter().Subscribe((IAllFragmentsListener)(this));
+		
 		m_isDrawing = true;
 		m_surface = surface;
 		m_drawingThread = new Thread(this);
@@ -83,6 +115,9 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 	@Override
 	public void surfaceDestroyed(SurfaceHolder surface) 
 	{
+		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)(this));
+		Locator.getPresenter().Unsubscribe((IAllFragmentsListener)(this));
+		
 		m_isDrawing = false;
 		if(m_drawingThread != null)
 		{
@@ -109,17 +144,20 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 		{
 			Canvas canvas = m_surface.lockCanvas();
 			
-			try
+			if(canvas != null)
 			{
-				// clear canvas
-				canvas.drawColor(Color.WHITE);
-				
-				// draw stuffs
-				m_grid.Draw(canvas, m_camera);
-			}
-			finally
-			{
-				m_surface.unlockCanvasAndPost(canvas);
+				try
+				{
+					// clear canvas
+					canvas.drawColor(Color.WHITE);
+					
+					// draw stuffs
+					m_grid.Draw(canvas, m_camera);
+				}
+				finally
+				{
+					m_surface.unlockCanvasAndPost(canvas);
+				}
 			}
 			
 			// then sleep for a bit
@@ -134,4 +172,16 @@ public class TreeView extends SurfaceView implements IAllFragmentsListener, Surf
 			}
 		}
 	}
+
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		if(m_touchHandler != null)
+		{
+			m_touchHandler.OnTouchAction(event);
+		}
+		
+		//TODO::JT HAX!
+		return true;
+	}
+	
 }
