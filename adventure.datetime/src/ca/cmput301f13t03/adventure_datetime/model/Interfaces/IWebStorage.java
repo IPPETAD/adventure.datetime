@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -48,6 +49,17 @@ public interface IWebStorage {
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */
 	public abstract List<Story> getStories(int from, int size) throws Exception;
+	
+	/**
+	 * Queries elasticsearch with the provided filter for matching stories
+	 * Searches across Author, title, tags, and synposis fields 
+	 * @param filter the filter to search for.
+	 * @param from the start index to return stories from
+	 * @param size the amount of stories to try to return
+	 * @return List of stories
+	 * @throws Exception, connection errors, etc. See JestClient
+	 */
+	public List<Story> queryStories(String filter, int from, int size) throws Exception;
 
 	/**
 	 * Gets a fragment from ES
@@ -107,6 +119,31 @@ public interface IWebStorage {
 	 */
 	public abstract boolean publishStory(Story story,
 			List<StoryFragment> fragments) throws Exception;
+	
+	/**
+	 * Gets an image from elasticsearch
+	 * @param imageId the image to get
+	 * @return The retrieved Image object
+	 * @throws Exception, connection errors, etc. See JestClient
+	 */
+	public Image getImage(UUID imageId) throws Exception;
+	
+	/**
+	 * Puts an image into elasticsearch.
+	 * Updates it if it already exists.
+	 * @param Image, the image to put
+	 * @return True if succeeded, false otherwise.
+	 * @throws Exception, connection errors, etc. See JestClient
+	 */
+	public boolean putImage(Image image) throws Exception;
+	
+	/**
+	 * Deletes an image from elasticsearch
+	 * @param imageId the image to delete
+	 * @return True if succeeded, false otherwise
+	 * @throws Exception, connection errors, etc. See JestClient
+	 */
+	public boolean deleteImage(UUID imageId) throws Exception;
 	
 	/**
 	 * Deletes a story from the web service. 
