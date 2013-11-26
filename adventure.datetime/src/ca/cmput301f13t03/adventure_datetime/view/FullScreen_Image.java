@@ -22,10 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +30,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
@@ -103,7 +101,15 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         camera.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "adventure.datetime");
+                if(!picDir.exists()) picDir.mkdirs();
+                File pic = new File(picDir.getPath(), File.separator + _fragment.getFragmentID().toString()
+                        + "-" + _fragment.getStoryMedia().size());
+                Uri location = Uri.fromFile(pic);
                 Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, location);
+                _fragment.addMedia(location);
                 startActivityForResult(i, CAMERA);
             }
         });
@@ -153,24 +159,23 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                                  Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK) {
+            if(requestCode == CAMERA) {
+                _fragment.removeMedia(_fragment.getStoryMedia().size() - 1);
+            }
+            return;
+        }
 
         switch (requestCode) {
             case GALLERY:
                 Uri selectedImage = imageReturnedIntent.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(
-                        selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String filePath = cursor.getString(columnIndex);
-                cursor.close();
                 _fragment.addMedia(selectedImage);
                 Locator.getAuthorController().saveFragment(_fragment);
                 break;
             case CAMERA:
-
+                //Uri location = imageReturnedIntent.getData();
+                //_fragment.addMedia(location);
+                Locator.getAuthorController().saveFragment(_fragment);
                 break;
         }
     }
@@ -244,10 +249,6 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             // TODO: Set counter by location
 
             //image.setBackgroundResource(R.drawable.grumpy_cat2);
-
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-
-            opts.inSampleSize = 2;
 
             Bitmap bit = null;
 

@@ -179,6 +179,10 @@ public class StoryFragment {
 		storyMedia.remove(media);
 	}
 
+    public void removeMedia(int media) {
+        storyMedia.remove(media);
+    }
+
     /**
      * Gets media at a certain index of the list
      *
