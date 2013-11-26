@@ -64,7 +64,6 @@ public class WebStorageTest extends AndroidTestCase {
 		
 		for (Comment c : returned) {
 			try {
-				es.deleteImage(c.getImageId());
 				es.deleteComment(c.getId());
 			}
 			catch (Exception e) {
@@ -77,8 +76,8 @@ public class WebStorageTest extends AndroidTestCase {
 		}
 		
 		for (Comment c : returned) {
-			if (c.getImageId() != null)
-				assertNotNull(c.getImage());
+				assertEquals(c.getId(), c.getImage().getId());
+				assertNotNull(c.getImage().getEncodedBitmap());
 		}
 
 	}
@@ -103,6 +102,11 @@ public class WebStorageTest extends AndroidTestCase {
 		
 		for (Story s : stories) {
 			assertTrue("Story missing from results", result.contains(s));
+		}
+		
+		for (Story s : result) {
+			assertEquals(s.getId(), s.getThumbnail().getId());
+			assertNotNull(s.getThumbnail().getEncodedBitmap());
 		}
 		
 	}
@@ -142,6 +146,11 @@ public class WebStorageTest extends AndroidTestCase {
 		assertTrue("Story missing from results", result.contains(stories.get(0)));
 		assertTrue("Story missing from results", result.contains(stories.get(1)));
 		assertTrue("Story missing from results", result.contains(stories.get(2)));
+		
+		for (Story s : result) {
+			assertEquals(s.getId(), s.getThumbnail().getId());
+			assertNotNull(s.getThumbnail().getEncodedBitmap());
+		}
 	}
 	
 	private Story createStory(int i) {
@@ -161,7 +170,7 @@ public class WebStorageTest extends AndroidTestCase {
 		comment.setTargetId(targetId);
 		comment.setAuthor("Pretentious Douchebag " + i);
 		comment.setContent("This test sucks. 0/5 would not test again.");
-		comment.setImage(new Image(bitmap));
+		comment.setImage(bitmap);
 		
 		return comment;
 	}

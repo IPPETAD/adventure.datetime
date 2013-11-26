@@ -132,6 +132,14 @@ public interface IWebStorage {
 	public Image getImage(UUID imageId) throws Exception;
 	
 	/**
+	 * Gets images in bulk
+	 * @param imageIds the list of images to retrieve
+	 * @return A list of images
+	 * @throws Exception, connection errors, etc. See JestClient
+	 */
+	public List<Image> getImages(List<UUID> imageIds) throws Exception;
+	
+	/**
 	 * Puts an image into elasticsearch.
 	 * Updates it if it already exists.
 	 * @param Image, the image to put

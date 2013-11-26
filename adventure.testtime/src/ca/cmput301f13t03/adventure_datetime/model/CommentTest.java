@@ -20,8 +20,9 @@ public class CommentTest extends AndroidTestCase {
 	
 	public void testJson() {
 		Comment comment = new Comment(UUID.randomUUID(), "Bad Author", "Bad Content");
-		comment.setImage(new Image(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat)));
-		assertNotNull(comment.getImageId());
+		comment.setImage(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
+		assertNotNull(comment.getImage());
+		assertEquals(comment.getId(), comment.getImage().getId());
 		Gson gson = new Gson();
 		
 		String json = gson.toJson(comment);

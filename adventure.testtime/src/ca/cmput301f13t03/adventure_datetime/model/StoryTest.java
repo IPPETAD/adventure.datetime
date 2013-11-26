@@ -22,17 +22,15 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.util.UUID;
+
+import junit.framework.Assert;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
-
 import ca.cmput301f13t03.adventure_datetime.R;
 
 import com.google.gson.Gson;
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import java.util.UUID;
 
 /**
  * @author Andrew Fontaine
@@ -100,6 +98,7 @@ public class StoryTest extends AndroidTestCase {
 		story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
 		Bitmap bitmap = story.decodeThumbnail();
 		assertEquals(bitmap, story.decodeThumbnail()); // getting this item twice returns the same object
+		assertEquals(story.getId(), story.getThumbnail().getId());
 		
 		String json = gson.toJson(story);
 		assertFalse(json.contains("thumbnailDecoded")); // transient property. Should not appear.
@@ -107,6 +106,7 @@ public class StoryTest extends AndroidTestCase {
 		
 		story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.launch_icon));
 		assertFalse(bitmap.equals(story.decodeThumbnail())); // thumbnail should be regenerated, thus not equal
+		assertEquals(story.getId(), story.getThumbnail().getId());
 		
 	}
 

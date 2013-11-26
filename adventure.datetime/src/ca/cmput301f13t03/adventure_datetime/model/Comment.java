@@ -33,7 +33,6 @@ public class Comment {
 
 	private UUID _id;
 	private UUID targetId;
-	private UUID imageId;
 	private String author;
 	private String content;
 	private Long timestamp;
@@ -106,14 +105,6 @@ public class Comment {
 		this.content = content;
 	}
 	
-	public UUID getImageId() {
-		return imageId;
-	}
-	
-	public void setImageId(UUID imageId) {
-		this.imageId = imageId;
-	}
-	
 	/**
 	 * Returns the decoded bitmap from the image.
 	 * Or null if image is null.
@@ -124,13 +115,29 @@ public class Comment {
 	}
 	
 	/**
-	 * Sets the comments image and imageId.
-	 * If image is null, sets imageId to null.
-	 * @param image the image to set.
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
 	 */
-	public void setImage(Image image) {
-		this.imageId = image == null ? null : image.getId();
-		this.image = image;
+	public void setImage(String bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
+	}
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
+	public void setImage(Bitmap bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
 	}
 	
 	public Image getImage() {
@@ -164,7 +171,6 @@ public class Comment {
 		
 		return _id == null ? c._id == null : _id.equals(c._id)
 			&& targetId == null ? c.targetId == null : targetId.equals(c.targetId)
-			&& imageId == null ? c.imageId == null : imageId.equals(c.imageId) 
 			&& author == null ? c.author == null : author.equals(c.author)
 			&& content == null ? c.content == null : content.equals(c.content);
 	}
