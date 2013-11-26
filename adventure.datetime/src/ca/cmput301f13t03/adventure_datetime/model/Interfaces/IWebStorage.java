@@ -85,6 +85,7 @@ public interface IWebStorage {
 	/**
 	 * Gets comments for the targetId. May be a StoryId or FragmentId.
 	 * Will return up to size comments starting at from.
+	 * Loads images if a comment contains one as well.
 	 * @param targetId. The Story or StoryFragment to retrieve comments for.
 	 * @param from the start index to return comments from
 	 * @param size the amount of comments to try to return
@@ -94,7 +95,8 @@ public interface IWebStorage {
 	public abstract List<Comment> getComments(UUID targetId, int from, int size) throws Exception;
 
 	/**
-	 * Puts a comment to ES
+	 * Puts a comment to ES. If a comment contains an image, it puts
+	 * that in ES as well.
 	 * @param comment the Comment to save to ES
 	 * @return True if succeeded, false otherwise.
 	 * @throws Exception, connection errors, etc. See JestClient
@@ -102,7 +104,8 @@ public interface IWebStorage {
 	public abstract boolean putComment(Comment comment) throws Exception;
 
 	/**
-	 * Deletes a comment from ES
+	 * Deletes a comment from ES.
+	 * Does not delete a comments image if it contains one.
 	 * @param commentId ID of the comment to delete
 	 * @return True if succeeded, false otherwise
 	 * @throws Exception, connection errors, etc. See JestClient

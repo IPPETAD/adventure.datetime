@@ -166,7 +166,15 @@ public class WebStorage implements IWebStorage {
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Comment.class);
+		List<Comment> comments = result.getSourceAsObjectList(Comment.class);
+		
+		for (Comment c : comments) {
+			if (c.getImageId() != null) {
+				c.setImage(getImage(c.getImageId()));
+			}
+		}
+		
+		return comments;
 	}
 
 	/* (non-Javadoc)
@@ -180,7 +188,13 @@ public class WebStorage implements IWebStorage {
 			.id(comment.getId().toString())
 			.build();
 		JestResult result = execute(index);
-		return result.isSucceeded();
+		
+		boolean success = result.isSucceeded();
+		if (comment.getImage() != null) {
+			putImage(comment.getImage());
+		}
+		
+		return success;
 	}
 	
 	/* (non-Javadoc)

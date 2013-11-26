@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import ca.cmput301f13t03.adventure_datetime.R;
@@ -11,11 +12,13 @@ import ca.cmput301f13t03.adventure_datetime.R;
 public class WebStorageTest extends AndroidTestCase {
 
 	WebStorage es;
+	Bitmap bitmap;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		es = new WebStorage();
 		es.setIndex("testing");
+		bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat);
 	}
 
 	protected void tearDown() throws Exception {
@@ -44,12 +47,7 @@ public class WebStorageTest extends AndroidTestCase {
 		UUID targetId = UUID.randomUUID();
 		
 		for (int i = 0; i < 5; i++) {
-			Comment c = new Comment();
-			c.setAuthor("Pretentious Douchebag " + i);
-			c.setContent("This test sucks. 0/5 would not test again.");
-			c.setTargetId(targetId);
-			c.setId(UUID.randomUUID());
-			comments.add(c);
+			comments.add(createComment(i, targetId));
 		}
 
 		for (Comment c : comments) {
@@ -66,6 +64,7 @@ public class WebStorageTest extends AndroidTestCase {
 		
 		for (Comment c : returned) {
 			try {
+				es.deleteImage(c.getImageId());
 				es.deleteComment(c.getId());
 			}
 			catch (Exception e) {
@@ -75,6 +74,11 @@ public class WebStorageTest extends AndroidTestCase {
 		
 		for (Comment c : comments) {
 			assertTrue("Comment missing from results", returned.contains(c));
+		}
+		
+		for (Comment c : returned) {
+			if (c.getImageId() != null)
+				assertNotNull(c.getImage());
 		}
 
 	}
@@ -126,7 +130,12 @@ public class WebStorageTest extends AndroidTestCase {
 		List<Story> result = es.queryStories(filter, 0, 10);	
 		
 		for (Story s : stories) {
-			es.deleteStory(s.getId());
+			try {
+				es.deleteStory(s.getId());
+			}
+			catch (Exception e) {
+				// keep on trucking
+			}
 		}
 		
 		assertTrue(result.size() >= 3);
@@ -142,9 +151,18 @@ public class WebStorageTest extends AndroidTestCase {
 		story.setSynopsis("Bad Synopsis " + i);
 		story.setTitle("Bad Story " + i);
 		story.setHeadFragmentId(UUID.randomUUID());
-		story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
+		story.setThumbnail(bitmap);
 	
 		return story;
 	}
-
+	
+	private Comment createComment(int i, UUID targetId) {
+		Comment comment = new Comment();
+		comment.setTargetId(targetId);
+		comment.setAuthor("Pretentious Douchebag " + i);
+		comment.setContent("This test sucks. 0/5 would not test again.");
+		comment.setImage(new Image(bitmap));
+		
+		return comment;
+	}
 }
