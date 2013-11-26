@@ -28,14 +28,14 @@ import java.util.UUID;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 
 /**
- *   Interface for listening for changes to the currently selected story
- *   @author Jesse
+ *   Interface for listening for changes to the local stories
+ *   @author Jesse, James -- TEAM ROCKET!
  */
-public interface IStoryListListener
+public interface ILocalStoriesListener
 {
 	/**
 	 * Callback for when the list of stories changes
 	 * @param newStories The new list of stories
 	 */
-	 void OnCurrentStoryListChange(Map<UUID, Story> newStories);
+	 void OnLocalStoriesChange(Map<UUID, Story> newStories);
 }

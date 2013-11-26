@@ -60,7 +60,7 @@ public interface IStoryModelDirector
 	 * @return Success value
 	 */
 	public boolean putStory(Story story);
-	
+
 	/**
 	 * Creates a new story with a head fragment
 	 */
@@ -93,8 +93,8 @@ public interface IStoryModelDirector
 	public Story getStory(UUID storyId);
 
 	/**
-	*	Save a bookmark to the database
-	*/
+	 *	Save a bookmark to the database
+	 */
 	public void setBookmark();
 
 	/**
@@ -108,7 +108,11 @@ public interface IStoryModelDirector
 	public Bookmark getBookmark(UUID bookmarkId);
 
 	/**
-	 * Deletes a bookmark by StoryID
+	 * Uploads current story to the web storage
+	 */
+	public void uploadCurrentStory();
+
+	/* Deletes a bookmark by StoryID
 	 * 
 	 * @param storyId UUID of the story to delete
 	 */

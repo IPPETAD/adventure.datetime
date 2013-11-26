@@ -60,11 +60,18 @@ public class BrowseFragment extends Fragment {
 		if (_stories == null) return;
 		if (_listView == null) return;
 		
-		Story[] array = _stories.toArray(new Story[_stories.size()]);
-		_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
-		_listView.setAdapter(_adapter);
+		/* Run on UI Thread for server stuff */
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Story[] array = _stories.toArray(new Story[_stories.size()]);
+				_adapter = new RowArrayAdapter(getActivity(), R.layout.listviewitem, array);
+				_listView.setAdapter(_adapter);
+				_bar.setVisibility(View.GONE);
+			}
+		});
 		
-		_bar.setVisibility(View.GONE);
+		
 	}
 	
 	@Override
@@ -89,7 +96,6 @@ public class BrowseFragment extends Fragment {
 	}
 	
 	protected class RowArrayAdapter extends ArrayAdapter<Story> {
-		private static final String TAG = "RowArrayAdapter";
 		
 		private Context context;
 		private int layoutResourceID;
@@ -117,13 +123,14 @@ public class BrowseFragment extends Fragment {
 			Story story = stories[position];
 			
 			title.setText(story.getTitle());
-			// TODO::JF set the thumbnail
 			author.setText("Author: " + story.getAuthor());
 			time.setText("Last Modified: " + story.getFormattedTimestamp());
 			
+			//if (story.getThumbnail() != null)
+				thumbnail.setImageBitmap(story.decodeThumbnail());
+			
 			// TODO::JF Bookmark icon once available
 			// TODO::JF Completed icon once Bookmark shit available
-
 			return rowView;
 		}
 		
