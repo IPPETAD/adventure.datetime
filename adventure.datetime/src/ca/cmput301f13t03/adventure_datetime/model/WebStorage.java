@@ -51,7 +51,7 @@ public class WebStorage implements IWebStorage {
 		"  		}\n" +
 		"}";
 	
-	private static final String MATCH_ID =
+	private static final String MATCH =
 		"{\n" +
 		"	\"from\" : %s, \"size\" : %s,\n" +
 		"  		\"query\" : {\n" +
@@ -64,7 +64,18 @@ public class WebStorage implements IWebStorage {
 		"  		}\n" +
 		"}";
 	
-	private static final String defaultIndex = "cmput301f13t03";;
+	private static final String MULTI_MATCH =
+		"{\n" +
+	    "	\"from\": %s, \"size\": %s,\n" +
+	    "	\"query\": {\n" +
+	    "    	\"multi_match\": {\n" +
+	    "       	\"query\": \"%s\",\n" +
+	    "      		\"fields\": [\"author^3\", \"title^3\", \"tags^2\", \"synopsis\"]\n" +
+	    "    	}\n" +
+	    "	}\n" +
+		"}";
+	
+	private static final String defaultIndex = "cmput301f13t03";
 	
 	private JestClient client;
 	private String errorMessage;
@@ -90,12 +101,26 @@ public class WebStorage implements IWebStorage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllStories(int, int)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getStories(int, int)
 	 */
 	@Override
 	public List<Story> getStories(int from, int size) throws Exception {
 		Search search = new Search.Builder(
 				String.format(MATCH_ALL, from, size))
+			.addIndex(_index)
+			.addType("story")
+			.build();
+		
+		JestResult result = execute(search);
+		return result.getSourceAsObjectList(Story.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#queryStories(Java.lang.String, int, int)
+	 */
+	public List<Story> queryStories(String filter, int from, int size) throws Exception {
+		Search search = new Search.Builder(
+				String.format(MULTI_MATCH, from, size, filter))
 			.addIndex(_index)
 			.addType("story")
 			.build();
@@ -115,12 +140,12 @@ public class WebStorage implements IWebStorage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllFragmentsForStory(java.util.UUID, int, int)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getFragmentsForStory(java.util.UUID, int, int)
 	 */
 	@Override
 	public List<StoryFragment> getFragmentsForStory(UUID storyId, int from, int size) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH_ID, from, size, "storyId", storyId.toString()))
+				String.format(MATCH, from, size, "storyId", storyId.toString()))
 			.addIndex(_index)
 			.addType("fragment")
 			.build();
@@ -135,7 +160,7 @@ public class WebStorage implements IWebStorage {
 	@Override
 	public List<Comment> getComments(UUID targetId, int from, int size) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH_ID, from, size, "targetId", targetId.toString()))
+				String.format(MATCH, from, size, "targetId", targetId.toString()))
 			.addIndex(_index)
 			.addType("comment")
 			.build();
@@ -152,7 +177,7 @@ public class WebStorage implements IWebStorage {
 		Index index = new Index.Builder(comment)
 			.index(_index)
 			.type("comment")
-			.id(comment.getWebId().toString())
+			.id(comment.getId().toString())
 			.build();
 		JestResult result = execute(index);
 		return result.isSucceeded();
@@ -203,8 +228,46 @@ public class WebStorage implements IWebStorage {
 	}
 	
 	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getImage(java.util.UUID)
+	 */
+	@Override
+	public Image getImage(UUID imageId) throws Exception {
+		Get get = new Get.Builder(_index, imageId.toString()).type("image").build();
+		JestResult result = execute(get);
+		return result.getSourceAsObject(Image.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#putImage(ca.cmput301f13t03.adventure_datetime.model.Image)
+	 */
+	@Override
+	public boolean putImage(Image image) throws Exception {
+		Index index = new Index.Builder(image)
+			.index(_index)
+			.type("image")
+			.id(image.getId().toString())
+			.build();
+		JestResult result = execute(index);
+		return result.isSucceeded();
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteImage(java.util.UUID)
+	 */
+	@Override
+	public boolean deleteImage(UUID imageId) throws Exception {
+		Delete delete = new Delete.Builder(imageId.toString())
+			.index(_index)
+			.type("image")
+			.build();
+		JestResult result = execute(delete);
+		return result.isSucceeded();
+	}
+	
+	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteStory(java.util.UUID)
 	 */
+	@Override
 	public boolean deleteStory(UUID storyId) throws Exception {
 		JestResult result = execute(new Delete.Builder(storyId.toString())
 			.index(_index)
@@ -215,6 +278,7 @@ public class WebStorage implements IWebStorage {
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteFragment(java.util.UUID)
 	 */
+	@Override
 	public boolean deleteFragment(UUID fragId) throws Exception {
 		JestResult result = execute(new Delete.Builder(fragId.toString())
 			.index(_index)
