@@ -268,7 +268,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		if(m_currentFragment != null)
 			PublishCurrentFragmentChanged();
 		else {
-			getFragmentOnline(fragmentId);
+			getFragmentOnline(fragmentId, false);
 			getNextFragments(fragmentId);
 		}
 	}
@@ -395,9 +395,10 @@ public final class StoryManager implements IStoryModelPresenter,
 		return result;
 	}
 	
-	private void getFragmentOnline(UUID fragmentId) {
+	private void getFragmentOnline(UUID fragmentId, boolean storeDB) {
 		// Fetch fragment asynchronously
 		final UUID finalId = fragmentId;
+		final boolean finalStoreDB = storeDB;
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
@@ -405,6 +406,9 @@ public final class StoryManager implements IStoryModelPresenter,
 					// afterwards place into cache
 					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
 					PublishCurrentFragmentChanged();
+					if(finalStoreDB) {
+						m_db.setStoryFragment(m_currentFragment);
+					}
 				} catch (Exception e) {
 					Log.e(TAG, e.getMessage());
 				}
@@ -542,6 +546,16 @@ public final class StoryManager implements IStoryModelPresenter,
 				}
 			}
 		});
+	}
+	
+	public void download() {
+		if(m_currentStory != null) {
+			m_stories.put(m_currentStory.getId(), m_currentStory);
+			m_db.setStory(m_currentStory);
+			for(UUID fragmentId : m_currentStory.getFragments()) {
+				getFragmentOnline(fragmentId, true);
+			}
+		}
 	}
 
 	@Override
