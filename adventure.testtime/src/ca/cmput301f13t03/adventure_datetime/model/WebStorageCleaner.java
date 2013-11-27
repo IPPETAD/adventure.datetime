@@ -39,7 +39,6 @@ public class WebStorageCleaner extends AndroidTestCase {
 	public void testCleanUp() throws Exception {
 		List<Story> stories = es.getStories(0, 10);
 		
-		
 		for (Story s : stories) {
 			es.deleteStory(s.getId());
 		}

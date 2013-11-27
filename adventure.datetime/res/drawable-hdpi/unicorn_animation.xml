@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:drawable="@drawable/unicorn1"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/unicorn2"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/unicorn3"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/unicorn4"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/unicorn5"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/unicorn6"
+        android:duration="100"/>
+
+</animation-list>

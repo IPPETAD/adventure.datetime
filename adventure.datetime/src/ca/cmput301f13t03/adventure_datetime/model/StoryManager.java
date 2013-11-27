@@ -426,7 +426,7 @@ public final class StoryManager implements IStoryModelPresenter,
 						m_db.setStoryFragment(m_currentFragment);
 					}
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "StoryManager: ", e);
 				}
 			}
 		});
@@ -530,7 +530,7 @@ public final class StoryManager implements IStoryModelPresenter,
 					}
 					PublishOnlineStoriesChanged();
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});		
@@ -574,7 +574,7 @@ public final class StoryManager implements IStoryModelPresenter,
 					m_comments.put(finalId, onlineComments);
 					PublishCommentsChanged(finalId);
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});
@@ -608,7 +608,7 @@ public final class StoryManager implements IStoryModelPresenter,
 				try {
 					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "Error: ", e);
 				}
 			}
 		});

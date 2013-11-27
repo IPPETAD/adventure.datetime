@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
+import android.graphics.Bitmap;
+
 public class Comment {
 
 	private UUID _id;
@@ -34,6 +36,8 @@ public class Comment {
 	private String author;
 	private String content;
 	private Long timestamp;
+	
+	private transient Image image;
 	
 	/**
 	 * Construct a comment object with a random ID
@@ -51,7 +55,7 @@ public class Comment {
 	 * @param content the Content
 	 */
 	public Comment(UUID targetId, String author, String content) {
-		this();
+		this(); 
 		this.targetId = targetId;
 		this.author = author;
 		this.content = content;
@@ -99,6 +103,45 @@ public class Comment {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	/**
+	 * Returns the decoded bitmap from the image.
+	 * Or null if image is null.
+	 * @return Decoded image or null if no image.
+	 */
+	public Bitmap decodeImage() {
+		return image == null ? null : image.decodeBitmap();
+	}
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
+	public void setImage(String bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
+	}
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
+	public void setImage(Bitmap bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
+	}
+	
+	public Image getImage() {
+		return image;
 	}
 	
     /**

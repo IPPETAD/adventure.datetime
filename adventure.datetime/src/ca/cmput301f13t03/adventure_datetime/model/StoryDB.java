@@ -381,7 +381,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 		values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-		values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail());
+		values.put(STORY_COLUMN_THUMBNAIL, (story.getThumbnail() == null ? null : story.getThumbnail().getEncodedBitmap()));
 		values.put(COLUMN_GUID, story.getId().toString());
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -694,7 +694,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 			values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 			values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail());
+			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getEncodedBitmap());
 			values.put(COLUMN_GUID, story.getId().toString());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));

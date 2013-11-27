@@ -55,7 +55,7 @@ public class UserController {
 			m_storyDirector.selectFragment(m_storyDirector.getStory(storyId).getHeadFragmentId());
 			return true;
 		} catch (NullPointerException e) {
-			Log.e("UserController", "Error: ", e);
+			Log.e("UserController", "Error: ",e);
 			return false;
 		}
 	}
