@@ -242,6 +242,34 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		return fragments;
 	}
 
+    private ArrayList<UUID> getStoryFragmentIDs(UUID storyID) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
+                new String[]{COLUMN_GUID},
+                STORYFRAGMENT_COLUMN_STORYID + " = ?",
+                new String[]{storyID.toString()},
+                null,
+                null,
+                null);
+
+        ArrayList<UUID> fragmentIDs = new ArrayList<UUID>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                Log.v(TAG, "StoryFragment with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID))
+                        + " retrieved");
+                fragmentIDs.add(UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID))));
+            } while(cursor.moveToNext());
+        }
+
+        Log.v(TAG, fragmentIDs.size() + " StoryFragments retrieved");
+
+        cursor.close();
+        db.close();
+        return fragmentIDs;
+    }
+
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getBookmark(java.util.UUID)
 	 */
@@ -405,12 +433,12 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime()/1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp()/1000);
 
 		long updated;
 		if(cursor.moveToFirst()) {
 			Bookmark bookmark1 = createBookmark(cursor);
-			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
+			if(bookmark.getTimestamp() > bookmark1.getTimestamp()) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
                 Log.v(TAG, updated + " Bookmarks updated");
@@ -674,9 +702,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		
 		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 		
-		ArrayList<StoryFragment> referencedFragments = this.getStoryFragments(id);
+		ArrayList<UUID> referencedFragments = this.getStoryFragmentIDs(id);
 		
-		for(StoryFragment frag : referencedFragments)
+		for(UUID frag : referencedFragments)
 		{
 			newStory.addFragment(frag);
 		}
@@ -900,7 +928,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
+			values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
             values = new ContentValues();
