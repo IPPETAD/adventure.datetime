@@ -608,6 +608,15 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         return authoredStory == 1;
     }
 
+    public boolean deleteImages(UUID id) {
+        int images;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        images = db.delete(STORY_IMAGE_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id.toString()});
+        Log.v(TAG, images + " images deleted, with UUID " + id);
+
+        return images != 0;
+    }
+
 	/**
 	 * Creates story from a cursor
 	 *
