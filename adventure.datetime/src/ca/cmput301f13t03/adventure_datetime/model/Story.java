@@ -22,12 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
+
+import android.graphics.Bitmap;
 
 /**
  * A model for an entire Choose-Your-Own-Adventure story
@@ -62,10 +61,12 @@ public class Story {
 	 * The synopsis of the Story
 	 */
 	private String synopsis;
+	
 	/**
-	 * The bitmap image of the Story
+	 * The thumbnail for the story
 	 */
-	private Bitmap thumbnail;
+	private transient Image thumbnail;
+	
 	/**
 	 * A collection of Tags for the Story
 	 */
@@ -87,19 +88,59 @@ public class Story {
      * @param title Title of Story
      */
 	protected Story(UUID headFragmentId, UUID id, String author, long timestamp, String synopsis,
+	             String thumbnail, String title) {
+		this.headFragmentId = headFragmentId;
+		this.id = id;
+		this.author = author;
+		this.timestamp = timestamp;
+		this.synopsis = synopsis;
+		this.thumbnail = new Image(this.id, thumbnail);
+		this.title = title;
+		fragmentIDs = new HashSet<UUID>();
+		fragmentIDs.add(this.headFragmentId);
+	}
+	
+	/**
+     * Creates a new Story, used by @link{StoryDB}
+     *
+     * @param headFragmentId UUID of the head StoryFragment of the Story
+     * @param id UUID of the Story
+     * @param author Name of author of Story
+     * @param timestamp Time Story was last modified
+     * @param synopsis Synopsis of Story
+     * @param thumbnail Thumbnail of Story
+     * @param title Title of Story
+     */
+	protected Story(UUID headFragmentId, UUID id, String author, long timestamp, String synopsis,
 	             Bitmap thumbnail, String title) {
 		this.headFragmentId = headFragmentId;
 		this.id = id;
 		this.author = author;
 		this.timestamp = timestamp;
 		this.synopsis = synopsis;
-		this.thumbnail = thumbnail;
+		this.thumbnail = new Image(this.id, thumbnail);
 		this.title = title;
 		fragmentIDs = new HashSet<UUID>();
 		fragmentIDs.add(this.headFragmentId);
 	}
 	
     /**
+     * Creates a new Story, used by @link{StoryDB}
+     *
+     * @param headFragmentId UUID of the head StoryFragment of the Story
+     * @param id UUID of the Story
+     * @param author Name of author of Story
+     * @param timestamp Time Story was last modified
+     * @param synopsis Synopsis of Story
+     * @param thumbnail Thumbnail of Story
+     * @param title Title of Story
+     */
+	protected Story(String headFragmentId, String id, String author, long timestamp, String synopsis,
+	             String thumbnail, String title) {
+		this(UUID.fromString(headFragmentId), UUID.fromString(id), author, timestamp, synopsis, thumbnail, title);
+	}
+	
+	/**
      * Creates a new Story, used by @link{StoryDB}
      *
      * @param headFragmentId UUID of the head StoryFragment of the Story
@@ -126,7 +167,6 @@ public class Story {
 		this.author = author;
 		this.title = title;
 		this.synopsis = synopsis;
-		this.thumbnail = Bitmap.createBitmap(50, 50, Bitmap.Config.RGB_565); /* for testing purposes */
 		id = UUID.randomUUID();
 		headFragmentId = null;
 		fragmentIDs = new HashSet<UUID>();
@@ -138,7 +178,7 @@ public class Story {
     /**
      * Constructs a new Story with a random UUID
      */
-	protected Story() {
+	public Story() {
 		id = UUID.randomUUID();
 		title = "Untitled";
 		headFragmentId = null;
@@ -219,32 +259,47 @@ public class Story {
 	public void setHeadFragmentId(StoryFragment frag) {
 		setHeadFragmentId(frag.getFragmentID());
 	}
-
-    /**
-     * Gets the Story thumbnail
-     *
-     * @return Story thumbnail
-     */
-	public Bitmap getThumbnail() {
-		return thumbnail;
+	
+	/**
+	 * Decodes the thumbnail and returns it as a bitmap
+	 * @return A decoded bitmap of the thumbnail
+	 */
+	public Bitmap decodeThumbnail() {
+		return thumbnail == null ? null : thumbnail.decodeBitmap();
 	}
-
-    /**
-     * Sets the new Story thumbnail
-     *
-     * @param bitmap New Story thumbnail file name
-     */
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
 	public void setThumbnail(String bitmap) {
-		this.thumbnail = BitmapFactory.decodeFile(bitmap);
+		if (bitmap == null)
+			this.thumbnail = null;
+		else if (this.thumbnail == null)
+			this.thumbnail = new Image(this.id, bitmap);
+		else
+			this.thumbnail.setBitmap(bitmap);
 	}
-
-    /**
-     * Sets the new Story thumbnail
-     *
-     * @param bitmap New Story thumbnail
-     */
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
 	public void setThumbnail(Bitmap bitmap) {
-		this.thumbnail = bitmap;
+		if (bitmap == null)
+			this.thumbnail = null;
+		else if (this.thumbnail == null)
+			this.thumbnail = new Image(this.id, bitmap);
+		else
+			this.thumbnail.setBitmap(bitmap);
+	}
+	
+	/**
+	 * Gets the thumbnail image object
+	 * @return The Image object of the thumbnail
+	 */
+	public Image getThumbnail() {
+		return this.thumbnail;
 	}
 
     /**
@@ -357,7 +412,6 @@ public class Story {
      */
 	public HashSet<UUID> getFragmentIds() {
 		return fragmentIDs;
-
 	}
 
     /**
@@ -380,35 +434,33 @@ public class Story {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) 
+        	return true;
+        if (o == null || getClass() != o.getClass()) 
+        	return false;
 
-        Story story = (Story) o;
+        Story s = (Story) o;
 
-        if (timestamp != story.timestamp) return false;
-        if (!author.equals(story.author)) return false;
-        if (!fragmentIDs.equals(story.fragmentIDs)) return false;
-        if (!headFragmentId.equals(story.headFragmentId)) return false;
-        if (!id.equals(story.id)) return false;
-        if (!synopsis.equals(story.synopsis)) return false;
-        if (tags != null ? !tags.equals(story.tags) : story.tags != null) return false;
-        if (!thumbnail.equals(story.thumbnail)) return false;
-        if (!title.equals(story.title)) return false;
-
-        return true;
+        return id == null ? s.getId() == null : id.equals(s.getId())
+        	&& headFragmentId == null ? s.getHeadFragmentId() == null : headFragmentId.equals(s.getHeadFragmentId())
+        	&& author == null ? s.getAuthor() == null : author.equals(s.getAuthor())
+        	&& title == null ? s.getTitle() == null : title.equals(s.getTitle())
+        	&& synopsis == null ? s.getSynopsis() == null : synopsis.equals(s.getSynopsis())
+        	&& tags == null ? s.getTags() == null : tags.equals(s.getTags())
+        	&& fragmentIDs == null ? s.getFragmentIds() == null : fragmentIDs.equals(s.getFragmentIds());      
     }
 
     @Override
     public int hashCode() {
         int result = headFragmentId.hashCode();
-        result = 31 * result + id.hashCode();
+        result = 31 * result + (id == null ? 0 : id.hashCode());
         result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
-        result = 31 * result + author.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + synopsis.hashCode();
-        result = 31 * result + thumbnail.hashCode();
-        result = 31 * result + (tags != null ? tags.hashCode() : 0);
-        result = 31 * result + fragmentIDs.hashCode();
+        result = 31 * result + (author == null ? 0 : author.hashCode());
+        result = 31 * result + (title == null ? 0 : title.hashCode());
+        result = 31 * result + (synopsis == null ? 0 : synopsis.hashCode());
+        result = 31 * result + (thumbnail == null ? 0 : thumbnail.hashCode());
+        result = 31 * result + (tags == null ? 0 : tags.hashCode());
+        result = 31 * result + (fragmentIDs == null ? 0 : fragmentIDs.hashCode());
         return result;
     }
 }

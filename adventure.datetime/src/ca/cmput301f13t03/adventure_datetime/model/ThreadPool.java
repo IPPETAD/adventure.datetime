@@ -19,43 +19,28 @@
  *         IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.ClientConfig;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Container class for ElasticSearch singletons
- */
-public class ES {
-	
-	/**
-	 * The JEST client for ElasticSearch
-	 */
-	public static class Client {
-		
-		private static final String CON_URL = 
-			"http://cmput301.softwareprocess.es:8080";
-		private static JestClient jestClient;
-		
-		/**
-		 * Gets the HTTP JestClient singleton for:
-		 * http://cmput301.softwareprocess.es:8080/cmput301f13t03/
-		 * @return JestClient for our ES server
-		 */
-		public static JestClient getClient() {
-			if (jestClient == null) {
-				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(true).build();
-				JestClientFactory factory = new JestClientFactory();
-				factory.setClientConfig(clientConfig);
-				jestClient = factory.getObject();
-			}
-			
-			return jestClient;
-		}
-		
+import android.util.Log;
+
+public class ThreadPool {
+	private static ThreadPoolExecutor threadPool;
+	private final BlockingQueue<Runnable> workQueue;
+
+	public ThreadPool() {
+		int numberCores = Runtime.getRuntime().availableProcessors();
+		Log.v("ThreadPool", "numberThreads: " + numberCores);
+		workQueue = new LinkedBlockingQueue<Runnable>();
+		threadPool = new ThreadPoolExecutor(numberCores, numberCores, 1,
+				TimeUnit.SECONDS, workQueue);
 	}
-		
+	
+	public void execute(Runnable runnable) {
+		threadPool.execute(runnable);
+	}
 }

@@ -22,27 +22,26 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.provider.BaseColumns;
-import android.util.Log;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.provider.BaseColumns;
+import android.util.Log;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * The local database containing all stories, fragments, bookmarks, and subscriptions
@@ -344,12 +343,12 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime()/1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp()/1000);
 
 		long updated;
 		if(cursor.moveToFirst()) {
 			Bookmark bookmark1 = createBookmark(cursor);
-			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
+			if(bookmark.getTimestamp() > bookmark1.getTimestamp()) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
                 Log.v(TAG, updated + " Bookmarks updated");
@@ -374,9 +373,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	 */
 	@Override
 	public boolean setStory(Story story) {
-		ByteArrayOutputStream blob = new ByteArrayOutputStream();
-		story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
-		byte[] bytes = blob.toByteArray();
 
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -385,7 +381,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 		values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-		values.put(STORY_COLUMN_THUMBNAIL, bytes);
+		values.put(STORY_COLUMN_THUMBNAIL, (story.getThumbnail() == null ? null : story.getThumbnail().getEncodedBitmap()));
 		values.put(COLUMN_GUID, story.getId().toString());
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -523,18 +519,16 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	 * @return A Story instance from the Database
 	 */
 	private Story createStory(Cursor cursor) {
-		String title, author, synopsis;
+		String title, author, synopsis, thumbnail;
 		UUID headFragmentId, id;
 		long timestamp;
-		Bitmap thumbnail;
 
 		id = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID)));
 		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
 		headFragmentId = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT)));
 		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
-		byte[] thumb = cursor.getBlob(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
-		thumbnail = BitmapFactory.decodeByteArray(thumb, 0, thumb.length);
+		thumbnail = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TIMESTAMP));
 		
 		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
@@ -595,7 +589,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 3;
+		public static final int DATABASE_VERSION = 4;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -609,7 +603,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				+ STORY_COLUMN_SYNOPSIS + " TEXT, "
 				+ STORY_COLUMN_HEAD_FRAGMENT + " INTEGER, "
 				+ STORY_COLUMN_TIMESTAMP + " INTEGER, "
-				+ STORY_COLUMN_THUMBNAIL + " BLOB, "
+				+ STORY_COLUMN_THUMBNAIL + " TEXT, "
 				+ "FOREIGN KEY(" + STORY_COLUMN_HEAD_FRAGMENT
 				+ ") REFERENCES " + STORYFRAGMENT_TABLE_NAME
 				+ "(" +  COLUMN_GUID + ") )";
@@ -693,10 +687,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 			db.beginTransaction();
 			long inserted = 0;
-			int size = story.getThumbnail().getByteCount();
-			ByteArrayOutputStream blob = new ByteArrayOutputStream();
-			story.getThumbnail().compress(Bitmap.CompressFormat.PNG, 0, blob);
-			byte[] bytes = blob.toByteArray();
 
 			ContentValues values = new ContentValues();
 			values.put(STORY_COLUMN_TITLE, story.getTitle());
@@ -704,7 +694,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 			values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 			values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-			values.put(STORY_COLUMN_THUMBNAIL, bytes);
+			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getEncodedBitmap());
 			values.put(COLUMN_GUID, story.getId().toString());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
@@ -728,7 +718,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
+			values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();

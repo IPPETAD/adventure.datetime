@@ -3,20 +3,21 @@
     package="ca.cmput301f13t03.adventure_datetime"
     android:versionCode="1"
     android:versionName="1.0" >
-	
-    <uses-sdk 
+
+    <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
-    
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
+
     <application
+        android:allowBackup="false"
         android:icon="@drawable/launch_icon"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.Light" 
-        android:allowBackup="false" >
+        android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name=".view.MainView"
             android:label="@string/app_name" >
@@ -36,26 +37,28 @@
             android:parentActivityName=".view.MainView" />
         <activity
             android:name=".view.FragmentView"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name" />
         <activity
             android:name=".view.AuthorStories"
             android:label="Your Stories"
-            android:parentActivityName=".view.MainView"/>
+            android:parentActivityName=".view.MainView" />
         <activity
             android:name=".view.AuthorStoryDescription"
             android:label="@string/app_name"
-            android:parentActivityName=".view.AuthorStories"/>
+            android:parentActivityName=".view.AuthorStories" />
         <activity
             android:name=".view.AuthorEdit"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name" />
         <activity
             android:name=".view.StoryDescription"
             android:label="@string/app_name"
-            android:parentActivityName=".view.BrowseView"/>
+            android:parentActivityName=".view.BrowseView" />
+        <activity
+            android:name=".view.CommentsView"
+            android:label="@string/app_name" />
         <activity
             android:name=".view.FullScreen_Image"
-            android:label="@string/app_name"
-            android:parentActivityName=".view.FragmentView"/>
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

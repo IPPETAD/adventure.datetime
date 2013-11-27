@@ -141,7 +141,9 @@ public class AuthorController {
 		m_storyDirector.selectFragment(fragmentId);
 	}
 	
-	/*public void publish(long storyID){
-		m_storyDirector.publish(storyID);
-	}*/
+	public void upload()
+	{
+		m_storyDirector.uploadCurrentStory();
+	}
+	
 }

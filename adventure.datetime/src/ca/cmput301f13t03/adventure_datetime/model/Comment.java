@@ -22,19 +22,43 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.UUID;
+
+import android.graphics.Bitmap;
 
 public class Comment {
 
-	private UUID webId;
+	private UUID _id;
 	private UUID targetId;
 	private String author;
 	private String content;
+	private Long timestamp;
+	
+	private transient Image image;
 	
 	/**
-	 * Construct an empty Comment object
+	 * Construct a comment object with a random ID
+	 * and timestamp set to now.
 	 */
 	public Comment() {
+		this._id = UUID.randomUUID();
+		this.timestamp = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Construct a Comment object with a new ID and populated fields
+	 * @param targetId the targetId
+	 * @param author the Author
+	 * @param content the Content
+	 */
+	public Comment(UUID targetId, String author, String content) {
+		this(); 
+		this.targetId = targetId;
+		this.author = author;
+		this.content = content;
 	}
 	
 	/**
@@ -44,19 +68,17 @@ public class Comment {
 	 * @param author the Author
 	 * @param content the Content
 	 */
-	public Comment(UUID webId, UUID targetId, String author, String content) {
-		this.webId = webId;
-		this.targetId = targetId;
-		this.author = author;
-		this.content = content;
+	public Comment(UUID id, UUID targetId, String author, String content) {
+		this(targetId, author, content);
+		this._id = id;
 	}
 
-	public UUID getWebId() {
-		return webId;
+	public UUID getId() {
+		return _id;
 	}
 
-	public void setWebId(UUID webId) {
-		this.webId = webId;
+	public void setId(UUID id) {
+		this._id = id;
 	}
 
 	public UUID getTargetId() {
@@ -81,5 +103,75 @@ public class Comment {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	/**
+	 * Returns the decoded bitmap from the image.
+	 * Or null if image is null.
+	 * @return Decoded image or null if no image.
+	 */
+	public Bitmap decodeImage() {
+		return image == null ? null : image.decodeBitmap();
+	}
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
+	public void setImage(String bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
+	}
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
+	public void setImage(Bitmap bitmap) {
+		if (bitmap == null)
+			this.image = null;
+		else if (this.image == null)
+			this.image = new Image(this.getId(), bitmap);
+		else
+			this.image.setBitmap(bitmap);
+	}
+	
+	public Image getImage() {
+		return image;
+	}
+	
+    /**
+     * Gets a formatted timestamp string
+     *
+     * @return Timestamp in a DateTime format
+     */
+	public String getFormattedTimestamp() {
+		DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp);
+		return dateFormat.format(cal.getTime());
+	}
+	
+	public void updateTimestamp() {
+		this.timestamp = System.currentTimeMillis();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj == null || obj.getClass() != this.getClass())
+			return false;
+		
+		Comment c = (Comment) obj;
+		
+		return _id == null ? c._id == null : _id.equals(c._id)
+			&& targetId == null ? c.targetId == null : targetId.equals(c.targetId)
+			&& author == null ? c.author == null : author.equals(c.author)
+			&& content == null ? c.content == null : content.equals(c.content);
 	}
 }

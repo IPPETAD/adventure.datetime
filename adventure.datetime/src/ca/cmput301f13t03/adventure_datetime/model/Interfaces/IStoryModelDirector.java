@@ -25,6 +25,7 @@ package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 import java.util.UUID;
 
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
@@ -60,7 +61,7 @@ public interface IStoryModelDirector
 	 * @return Success value
 	 */
 	public boolean putStory(Story story);
-	
+
 	/**
 	 * Creates a new story with a head fragment
 	 */
@@ -95,8 +96,8 @@ public interface IStoryModelDirector
 	public Story getStory(UUID storyId);
 
 	/**
-	*	Save a bookmark to the database
-	*/
+	 *	Save a bookmark to the database
+	 */
 	public void setBookmark();
 
 	/**
@@ -110,9 +111,24 @@ public interface IStoryModelDirector
 	public Bookmark getBookmark(UUID bookmarkId);
 
 	/**
-	 * Deletes a bookmark by StoryID
+	 * Uploads current story to the web storage
+	 */
+	public void uploadCurrentStory();
+
+	/* Deletes a bookmark by StoryID
 	 * 
 	 * @param storyId UUID of the story to delete
 	 */
-	public void deleteBookmark(UUID storyId);
+	public void deleteBookmark();
+
+	/**
+	 * Downloads current story to local database
+	 */
+	public void download();
+
+	/**
+	 *  Publishes a comment to the server
+	 * @param comment
+	 */
+	public void addComment(Comment comment);
 }

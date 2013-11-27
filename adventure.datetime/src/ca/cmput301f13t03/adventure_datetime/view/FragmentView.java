@@ -28,6 +28,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,11 +62,13 @@ import java.util.List;
  */
 public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentView";
+	public static final String FOR_SERVER = "emagherd.server";
 
 	private HorizontalScrollView _filmstrip;
 	private TextView _content;
 	private LinearLayout _filmLayout;
 	private Button _choices;
+	private boolean forServerEh;
 
 	private StoryFragment _fragment;
 
@@ -90,9 +94,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_view);
+		forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
 		setUpView();
 	}
-
 	public void setUpView() {
 		if (_fragment == null) return;
 
@@ -135,7 +139,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			li.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					startActivity(new Intent(FragmentView.this, FullScreen_Image.class));
+					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
+					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
+					startActivity(intent);
 				}
 			});
 		}
@@ -147,6 +153,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 				choices.add(choice.getText());
 			choices.add("I'm feeling lucky.");
 
+			_choices.setText("Actions");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -174,6 +181,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		} else {
 			/** End of story **/
+			Locator.getUserController().deleteBookmark();
 			_choices.setText("The End");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override
@@ -199,6 +207,25 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		}
 
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		if (forServerEh)
+			getMenuInflater().inflate(R.menu.fragment_menu, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_comment:
+			/* Open comments activity */
+			Intent intent = new Intent(this, CommentsView.class);
+			intent.putExtra(CommentsView.COMMENT_TYPE, false);
+			startActivity(intent);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

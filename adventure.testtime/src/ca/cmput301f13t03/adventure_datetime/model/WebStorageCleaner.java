@@ -22,40 +22,26 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.ClientConfig;
+import java.util.List;
 
-/**
- * Container class for ElasticSearch singletons
- */
-public class ES {
+import android.test.AndroidTestCase;
+
+public class WebStorageCleaner extends AndroidTestCase {
+
+	WebStorage es;
 	
-	/**
-	 * The JEST client for ElasticSearch
-	 */
-	public static class Client {
-		
-		private static final String CON_URL = 
-			"http://cmput301.softwareprocess.es:8080";
-		private static JestClient jestClient;
-		
-		/**
-		 * Gets the HTTP JestClient singleton for:
-		 * http://cmput301.softwareprocess.es:8080/cmput301f13t03/
-		 * @return JestClient for our ES server
-		 */
-		public static JestClient getClient() {
-			if (jestClient == null) {
-				ClientConfig clientConfig = new ClientConfig.Builder(CON_URL).multiThreaded(true).build();
-				JestClientFactory factory = new JestClientFactory();
-				factory.setClientConfig(clientConfig);
-				jestClient = factory.getObject();
-			}
-			
-			return jestClient;
-		}
-		
+	protected void setUp() throws Exception {
+		super.setUp();
+		es = new WebStorage();
+		es.setIndex("testing");
 	}
+	
+	public void testCleanUp() throws Exception {
+		List<Story> stories = es.getStories(0, 10);
 		
+		for (Story s : stories) {
+			es.deleteStory(s.getId());
+		}
+	}
+
 }

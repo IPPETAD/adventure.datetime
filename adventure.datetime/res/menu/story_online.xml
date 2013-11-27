@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_download"
+        android:icon="@drawable/ic_action_download"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:title="Download"/>
+    <item
+        android:id="@+id/action_comment"
+        android:icon="@drawable/ic_action_chat"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        android:title="Comments"/>
+
+</menu>

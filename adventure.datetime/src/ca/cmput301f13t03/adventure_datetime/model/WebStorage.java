@@ -31,6 +31,7 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,24 +46,60 @@ public class WebStorage implements IWebStorage {
 	
 	private static final String MATCH_ALL = 
 		"{\n" +
-		"  \"query\" : {\n" +
-		"    \"match_all\" : { }\n" +
-		"  }\n" +
+		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
+		"  		\"query\" : {\n" +
+		"    		\"match_all\" : {}\n" +
+		"  		}\n" +
 		"}";
 	
-	private static final String MATCH_ID =
+	private static final String MATCH =
 		"{\n" +
-		"  \"query\" : {\n" +
-		"    \"match\" : {\n" +
-		"      \"%s\" : {\n" +
-		"        \"query\" : \"%s\",\n" +
-		"        \"type\" : \"boolean\"\n" +
-		"      }\n" +
-		"    }\n" +
-		"  }\n" +
+		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
+		"  		\"query\" : {\n" +
+		"    		\"match\": {\n" +
+		"      			\"%s\" : {\n" +
+		"        			\"query\" : \"%s\",\n" +
+		"        				\"type\" : \"boolean\"\n" +
+		"     	 		}\n" +
+		"    		}\n" +
+		"  		}\n" +
 		"}";
 	
-	private static final String defaultIndex = "cmput301f13t03";;
+	private static final String MULTI_MATCH =
+		"{\n" +
+	    "	\"from\" : %s, \"size\" : %s,\n" +
+	    "%s" + // For an optional SORT. No newline on purpose
+	    "	\"query\" : {\n" +
+	    "    	\"multi_match\" : {\n" +
+	    "       	\"query\" : \"%s\",\n" +
+	    "      		\"fields\" : [\"author^3\", \"title^3\", \"tags^2\", \"synopsis\"]\n" +
+	    "    	}\n" +
+	    "	}\n" +
+		"}";
+	
+	private static final String MULTI_ID = 
+		"{\n" +
+		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
+		"	\"query\" : {\n" +
+		"		\"ids\" : {\n" +
+		"			\"values\" : [%s]\n" +
+		"		}\n" +
+		"	}\n" +
+		"}";
+	
+	private static final String SORT = 
+	    "	\"sort\": [\n" +
+	    "		{\n" +
+	    "			\"%s\": {\n" +
+	    "				\"order\": \"%s\"\n" +
+		"			}\n" +
+		"		}\n" +
+		"	],\n";  
+	
+	private static final String defaultIndex = "cmput301f13t03";
 	
 	private JestClient client;
 	private String errorMessage;
@@ -84,21 +121,50 @@ public class WebStorage implements IWebStorage {
 	public Story getStory(UUID storyId) throws Exception {
 		Get get = new Get.Builder(_index, storyId.toString()).type("story").build();
 		JestResult result = execute(get);
-		return result.getSourceAsObject(Story.class);
+		Story story = result.getSourceAsObject(Story.class);
+		
+		Image image = getImage(storyId);
+		if (image != null)
+			story.setThumbnail(image.getEncodedBitmap());
+		
+		return story;
 	}
 	
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllStories()
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getStories(int, int)
 	 */
 	@Override
-	public List<Story> getAllStories() throws Exception {
-		Search search = new Search.Builder(MATCH_ALL)
+	public List<Story> getStories(int from, int size) throws Exception {
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MATCH_ALL, from, size, sort);
+		Search search = new Search.Builder(query)
 			.addIndex(_index)
 			.addType("story")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Story.class);
+		List<Story> stories = result.getSourceAsObjectList(Story.class); 
+		mapImagesToStories(stories);
+				
+		return stories;
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#queryStories(Java.lang.String, int, int)
+	 */
+	public List<Story> queryStories(String filter, int from, int size) throws Exception {
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MULTI_MATCH, from, size, sort, filter);
+		Search search = new Search.Builder(query)
+			.addIndex(_index)
+			.addType("story")
+			.build();
+		
+		JestResult result = execute(search);
+		List<Story> stories = result.getSourceAsObjectList(Story.class); 
+		mapImagesToStories(stories);
+				
+		return stories;
 	}
 	
 	/* (non-Javadoc)
@@ -112,12 +178,12 @@ public class WebStorage implements IWebStorage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getAllFragmentsForStory(java.util.UUID)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getFragmentsForStory(java.util.UUID, int, int)
 	 */
 	@Override
-	public List<StoryFragment> getAllFragmentsForStory(UUID storyId) throws Exception {
+	public List<StoryFragment> getFragmentsForStory(UUID storyId, int from, int size) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH_ID, "storyId", storyId.toString()))
+				String.format(MATCH, from, size, "", "storyId", storyId))
 			.addIndex(_index)
 			.addType("fragment")
 			.build();
@@ -127,18 +193,22 @@ public class WebStorage implements IWebStorage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getComments(java.util.UUID)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getComments(java.util.UUID, int from, int size)
 	 */
 	@Override
-	public List<Comment> getComments(UUID targetId) throws Exception {
-		Search search = new Search.Builder(
-				String.format(MATCH_ID, "targetId", targetId.toString()))
+	public List<Comment> getComments(UUID targetId, int from, int size) throws Exception {
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MATCH, from, size, sort, "targetId", targetId);
+		Search search = new Search.Builder(query)
 			.addIndex(_index)
 			.addType("comment")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Comment.class);
+		List<Comment> comments = result.getSourceAsObjectList(Comment.class);
+		mapImagesToComments(comments);
+		
+		return comments;
 	}
 
 	/* (non-Javadoc)
@@ -149,10 +219,16 @@ public class WebStorage implements IWebStorage {
 		Index index = new Index.Builder(comment)
 			.index(_index)
 			.type("comment")
-			.id(comment.getWebId().toString())
+			.id(comment.getId().toString())
 			.build();
 		JestResult result = execute(index);
-		return result.isSucceeded();
+		
+		boolean success = result.isSucceeded();
+		if (comment.getImage() != null) {
+			success &= putImage(comment.getImage());
+		}
+		
+		return success;
 	}
 	
 	/* (non-Javadoc)
@@ -163,6 +239,15 @@ public class WebStorage implements IWebStorage {
 		JestResult result = execute(new Delete.Builder(commentId.toString())
 			.index(_index)
 			.type("comment").build());
+		
+		// try to delete Image
+		try {
+			deleteImage(commentId);
+		}
+		catch (Exception e) {
+			// I don't care if this fails
+		}
+		
 		return result.isSucceeded();
 	}
 	
@@ -171,8 +256,7 @@ public class WebStorage implements IWebStorage {
 	 */
 	@Override
 	public boolean publishStory(Story story, List<StoryFragment> fragments) throws Exception {
-		// TODO: make this more clear on what part failed if it does fail
-		// TODO: change getId and getFragmentId to getWebId when it is implemented
+		boolean succeeded;
 		
 		// I am not cleaning up old fragments because I am assuming we do not support
 		// deleting fragments. If we do support that, then I will have to clean them up.
@@ -181,18 +265,120 @@ public class WebStorage implements IWebStorage {
 			.type("story")
 			.id(story.getId().toString())
 			.build();
-		JestResult resultStory = execute(index);
+		JestResult result = execute(index);
+		succeeded = result.isSucceeded();
+		
+		if (story.getThumbnail() != null) {
+			succeeded &= putImage(story.getThumbnail());
+		}
 		
 		Bulk.Builder bulkBuilder = new Bulk.Builder()
 			.defaultIndex(_index)
 			.defaultType("fragment");
 		
-		for (StoryFragment f : fragments) {
-			bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID().toString()).build());
+		if (fragments != null) {
+			for (StoryFragment f : fragments) {
+				bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID().toString()).build());
+			}
+		
+			result = execute(bulkBuilder.build());
+			succeeded &= result.isSucceeded();
 		}
 		
-		JestResult resultFragments = execute(bulkBuilder.build());
-		return resultStory.isSucceeded() && resultFragments.isSucceeded();
+		return succeeded;
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#getImage(java.util.UUID)
+	 */
+	@Override
+	public Image getImage(UUID imageId) throws Exception {
+		Get get = new Get.Builder(_index, imageId.toString()).type("image").build();
+		JestResult result = execute(get);
+		return result.getSourceAsObject(Image.class);
+	}
+	
+	/**
+	 * Gets images in bulk
+	 * @param imageIds the list of images to retrieve
+	 * @return A list of images
+	 * @throws Exception
+	 */
+	public List<Image> getImages(List<UUID> imageIds) throws Exception {
+		StringBuilder ids = new StringBuilder(); 
+		for (UUID id : imageIds) {
+			ids.append(String.format("\"%s\", ", id));
+		}
+		
+		// Trim the last comma and space
+		ids.delete(ids.length() - 2, ids.length());
+		
+		Search search = new Search.Builder(
+				String.format(MULTI_ID, 0, imageIds.size(), "", ids))
+			.addIndex(_index)
+			.addType("image")
+			.build();
+		
+		JestResult result = execute(search);
+		return result.getSourceAsObjectList(Image.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#putImage(ca.cmput301f13t03.adventure_datetime.model.Image)
+	 */
+	@Override
+	public boolean putImage(Image image) throws Exception {
+		Index index = new Index.Builder(image)
+			.index(_index)
+			.type("image")
+			.id(image.getId().toString())
+			.build();
+		JestResult result = execute(index);
+		return result.isSucceeded();
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteImage(java.util.UUID)
+	 */
+	@Override
+	public boolean deleteImage(UUID imageId) throws Exception {
+		Delete delete = new Delete.Builder(imageId.toString())
+			.index(_index)
+			.type("image")
+			.build();
+		JestResult result = execute(delete);
+		return result.isSucceeded();
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteStory(java.util.UUID)
+	 */
+	@Override
+	public boolean deleteStory(UUID storyId) throws Exception {
+		JestResult result = execute(new Delete.Builder(storyId.toString())
+			.index(_index)
+			.type("story").build());
+		
+		// try to delete Image
+		try {
+			deleteImage(storyId);
+		}
+		catch (Exception e) {
+			// I don't care if this fails
+		}
+		
+		return result.isSucceeded();
+	}
+	
+	/* (non-Javadoc)
+	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteFragment(java.util.UUID)
+	 */
+	@Override
+	public boolean deleteFragment(UUID fragId) throws Exception {
+		JestResult result = execute(new Delete.Builder(fragId.toString())
+			.index(_index)
+			.type("fragment").build());
+		return result.isSucceeded();
 	}
 
 	/**
@@ -249,5 +435,49 @@ public class WebStorage implements IWebStorage {
 		this.errorMessage = result.getErrorMessage();
 		this.jsonString = result.getJsonString();
 		return result;
+	}
+	
+	private void mapImagesToStories(List<Story> stories) throws Exception {
+		if (stories == null || stories.size() == 0)
+			return;
+		
+		// Get the thumbnails
+		List<UUID> ids = new ArrayList<UUID>();
+		for (Story s : stories) {
+			ids.add(s.getId());
+		}
+		
+		List<Image> images = getImages(ids);
+		
+		for (Image i : images) {
+			for (Story s : stories) {
+				if (s.getId().equals(i.getId())) {
+					s.setThumbnail(i.getEncodedBitmap());
+					break;
+				}
+			}
+		}
+	}
+	
+	private void mapImagesToComments(List<Comment> comments) throws Exception {
+		if (comments == null || comments.size() == 0)
+			return;
+		
+		// Get the thumbnails
+		List<UUID> ids = new ArrayList<UUID>();
+		for (Comment c : comments) {
+			ids.add(c.getId());
+		}
+		
+		List<Image> images = getImages(ids);
+		
+		for (Image i : images) {
+			for (Comment c : comments) {
+				if (c.getId().equals(i.getId())) {
+					c.setImage(i.getEncodedBitmap());
+					break;
+				}
+			}
+		}
 	}
 }

@@ -22,6 +22,8 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
+import java.util.UUID;
+
 /**
  * Presents the model information to an external package such as a view. Only supplies data
  * in a readonly format.
@@ -43,7 +45,9 @@ public interface IStoryModelPresenter
     /**
 	 * Listens for change on the current list of stories
 	 */
-    void Subscribe(IStoryListListener storyListListener);
+    void Subscribe(ILocalStoriesListener storyListListener);
+    
+    void Subscribe(IOnlineStoriesListener storyListListener);
     
     /**
 	 * Listens for change on the bookmark list
@@ -55,7 +59,10 @@ public interface IStoryModelPresenter
      */
     void Subscribe(IAllFragmentsListener allFragmentsListener);
     
-    //===========================================================
+    /**
+     * Listens for changes to the comments for the specified id
+     */
+    void Subscribe(ICommentsListener commentsListener, UUID id);
     
     /**
 	 * Stop listening for changes on the current fragment
@@ -70,15 +77,22 @@ public interface IStoryModelPresenter
     /**
 	 * Stop listening for changes on the current story list
 	 */
-    void Unsubscribe(IStoryListListener storyListListener);
+    void Unsubscribe(ILocalStoriesListener storyListListener);
     
+    void Unsubscribe(IOnlineStoriesListener storyListListener);
     /**
 	 * Stop listening for changes on the current bookmark list
 	 */
     void Unsubscribe(IBookmarkListListener bookmarkListListener);
     
-    /*
+    /**
      * Stop listening for changes on the current set of fragments
      */
     void Unsubscribe(IAllFragmentsListener allFragmentsListener);
+    
+    /**
+     * Stop listening for changes to the comments
+     */
+    void Unsubscribe(UUID id);
+
 }

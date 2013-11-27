@@ -37,6 +37,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -139,6 +140,15 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		_content.addTextChangedListener(this);
 
 		_addChoiceBtn.setOnClickListener(this);
+		
+		_media.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), FullScreen_Image.class);
+				intent.putExtra(FullScreen_Image.TAG_AUTHOR, true);
+				startActivity(intent);	
+			}
+		});
 
 		_choiceList.setClickable(false);
 		m_adapter = new ChoiceAdapter(	m_activity, 
