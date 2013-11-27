@@ -98,9 +98,15 @@ IFragmentSelected
 			@Override
 			public void onTabSelected(Tab tab, FragmentTransaction ft) 
 			{
-				_viewPager.setCurrentItem(tab.getPosition());
+				int index = tab.getPosition();
+				if(index != OVERVIEW_INDEX)
+				{
+					_adapter.CancelActions();
+				}
+				
 				invalidateOptionsMenu();
-				_adapter.CancelActions();
+				
+				_viewPager.setCurrentItem(index);
 			}
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
@@ -123,7 +129,11 @@ IFragmentSelected
 			{
 				getActionBar().setSelectedNavigationItem(position);
 				invalidateOptionsMenu();
-				_adapter.CancelActions();
+				
+				if(_viewPager.getCurrentItem() != OVERVIEW_INDEX)
+				{
+					_adapter.CancelActions();
+				}
 			}
 		});
 
