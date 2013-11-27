@@ -345,14 +345,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     }
 
     public Image getImage(UUID imageID) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(STORY_IMAGE_TABLE_NAME,
-                new String[] {COLUMN_GUID, STORY_IMAGE_COLUMN_IMAGE},
-                COLUMN_GUID + " = ?",
-                new String[] {imageID.toString()},
-                null,
-                null,
-                null);
+        Cursor cursor = getImageCursor(imageID);
 
         Image image;
         if(cursor.moveToFirst()) {
@@ -361,25 +354,33 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         else {
             image = null;
         }
+
+        cursor.close();
         return image;
     }
 
-    public ArrayList<Image> getImages(UUID imageID) {
+    private Cursor getImageCursor(UUID imageID) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(STORY_IMAGE_TABLE_NAME,
+        return db.query(STORY_IMAGE_TABLE_NAME,
                 new String[] {COLUMN_GUID, STORY_IMAGE_COLUMN_IMAGE},
                 COLUMN_GUID + " = ?",
                 new String[] {imageID.toString()},
                 null,
                 null,
                 null);
+    }
+
+    public ArrayList<Image> getImages(UUID imageID) {
+        Cursor cursor = getImageCursor(imageID);
 
         ArrayList<Image> images = new ArrayList<Image>();
-        if(cursor.moveToFirst())
+        if(cursor.moveToFirst()) {
             do {
                 images.add(createImage(cursor));
             } while(cursor.moveToNext());
+        }
 
+        cursor.close();
         return images;
     }
 
