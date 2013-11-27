@@ -47,10 +47,16 @@ import android.view.ViewGroup;
 public class AuthorEdit_Overview extends Fragment
 {
 	private IFragmentSelected m_fragmentCallback = null;
+	private AuthorEdit.OnCreatedCallback m_creationCallback = null;
 	
 	public void SetFragmentSelectionCallback(IFragmentSelected callback)
 	{
 		m_fragmentCallback = callback;
+	}
+	
+	public void SetOnCreatedCallback(AuthorEdit.OnCreatedCallback callback)
+	{
+		m_creationCallback = callback;
 	}
 	
 	@Override
@@ -62,6 +68,11 @@ public class AuthorEdit_Overview extends Fragment
 		
 		TreeView treeView = (TreeView)(rootView.findViewById(R.id.v_treeViewBase));
 		treeView.SetFragmentCallback(m_fragmentCallback);
+		
+		if(m_creationCallback != null)
+		{
+			m_creationCallback.OnCreated(treeView);
+		}
 		
 		return rootView;
 	}

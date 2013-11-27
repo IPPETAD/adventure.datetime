@@ -28,6 +28,7 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.AlertDialog;
@@ -103,10 +104,10 @@ public class AuthorEdit extends FragmentActivity
 		};
 
 		actionBar.addTab(actionBar.newTab()
-				.setText("Edit")
+				.setText("Overview")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
-				.setText("Overview")
+				.setText("Edit")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
 				.setText("Preview")
@@ -199,8 +200,14 @@ public class AuthorEdit extends FragmentActivity
 		getActionBar().setSelectedNavigationItem(EDIT_INDEX);
 		Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
 	}
+	
+	// fuck this is ugly
+	public interface OnCreatedCallback
+	{
+		public void OnCreated(TreeView newTreeView);
+	}
 
-	public class ViewPagerAdapter extends FragmentPagerAdapter 
+	public class ViewPagerAdapter extends FragmentPagerAdapter implements OnCreatedCallback
 	{
 
 		private AuthorEdit_Edit _edit;
@@ -209,9 +216,14 @@ public class AuthorEdit extends FragmentActivity
 
 		public ViewPagerAdapter(FragmentManager fm, IFragmentSelected callback) {
 			super(fm);
-			_edit = new AuthorEdit_Edit();
+			
 			_overview = new AuthorEdit_Overview();
 			_overview.SetFragmentSelectionCallback(callback);
+			_overview.SetOnCreatedCallback(this);
+			
+			_edit = new AuthorEdit_Edit();
+			_edit.SetActionBar(getActionBar());
+			
 			_preview = new AuthorEdit_Preview();
 		}
 
@@ -255,6 +267,11 @@ public class AuthorEdit extends FragmentActivity
 			case PREVIEW_INDEX: return "Preview";
 			default: return "It be a Pirate!";
 			}
+		}
+
+		public void OnCreated(TreeView newTreeView) 
+		{
+			_edit.SetTreeView(newTreeView);
 		}
 	}
 }

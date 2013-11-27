@@ -44,27 +44,22 @@
             android:textSize="24sp" />
 
         <!-- Horizontal Div -->
-        <View
+        <View
             android:layout_width="fill_parent"
             android:layout_height="1dip"
             android:background="#000000" />
 
-        <RelativeLayout
+        <ListView
+            android:id="@+id/choicesList"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal" 
-            android:background="#DBDBDB">
+            android:layout_gravity="center_horizontal" />
 
-            <ListView
-                android:id="@+id/choicesList"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
-            <Button 
-                android:id="@+id/addChoice_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
+        <Button
+            android:id="@+id/addChoice_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:text="Add Choice"/>
     </LinearLayout>
 
 </ScrollView>

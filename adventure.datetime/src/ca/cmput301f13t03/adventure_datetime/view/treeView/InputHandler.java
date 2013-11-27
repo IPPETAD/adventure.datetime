@@ -64,6 +64,11 @@ class InputHandler
 		m_selectionCallback = callback;
 	}
 	
+	public IFragmentSelected GetSelectionCallback()
+	{
+		return m_selectionCallback;
+	}
+	
 	private boolean HandleTouchUp(MotionEvent event, int pointerId, int pointerIndex)
 	{
 		boolean result = false;

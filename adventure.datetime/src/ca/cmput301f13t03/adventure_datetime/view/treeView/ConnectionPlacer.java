@@ -14,15 +14,15 @@ public final class ConnectionPlacer
 {
 	private static final int DEPTH_LIMIT = 100;
 	private static final String TAG = "ConnectionPlacer";
-	
-	public int m_horizontalOffset = 0; // TODO::JT set as public for testing purposes
-	public int m_verticalOffset = 0; // TODO::JT set as public for testing purposes
+
+	private int m_horizontalOffset = 0;
+	private int m_verticalOffset = 0;
 	private int m_mapWidth = 0;
 	private int m_mapHeight = 0;
 	private int m_actualHeight = 0;
 	private int m_actualWidth = 0;
 	private int m_gridSize = 0;
-	public boolean[][] m_map = null; // TODO::JT set as public for testing purposes
+	private boolean[][] m_map = null;
 
 	public ConnectionPlacer(ArrayList<GridSegment> gridSegments, int gridSize)
 	{
@@ -127,6 +127,15 @@ public final class ConnectionPlacer
 
 	public void PlaceConnection(FragmentConnection connection, FragmentNode originFrag, FragmentNode targetFrag)
 	{
+		// TODO::JT need to handle the special case that a fragmentNode is connected to itself!
+		// it should loop back but be visible!
+		if(originFrag.GetFragment().getFragmentID().equals(targetFrag.GetFragment().getFragmentID()))
+		{
+			// hax
+			connection.SetPath(new Path());
+			return;
+		}
+
 		// Transform the x and y cords to local map space
 		Location start = new Location(	originFrag.x - m_horizontalOffset + originFrag.width / 2, 
 				originFrag.y - m_verticalOffset + originFrag.height / 2);
@@ -217,7 +226,7 @@ public final class ConnectionPlacer
 
 			currentDepth += m_gridSize;
 		}
-		
+
 		if(currentDepth >= DEPTH_LIMIT)
 		{
 			Log.w(TAG, "Failed to find a path before hitting the depth limit!");
@@ -403,20 +412,21 @@ public final class ConnectionPlacer
 	{
 		Location m_target = null;
 		Location m_start = null;
-		int m_targetVariance = 0;
+		int m_gridWidth = 0;
 		boolean[][] m_map = null;
 
-		public FullPathBuilder(Location start, Location target, int targetVariance, boolean[][] map)
+		public FullPathBuilder(Location start, Location target, int gridWidth, boolean[][] map)
 		{
-			this.m_start = start;
-			this.m_target = target;
-			this.m_targetVariance = (int) Math.round(targetVariance * targetVariance * 1.5); // technically the value is only needed to be sqrt(2), but this is close enough
-			this.m_map = map;
+			m_start = start;
+			m_target = target;
+			m_gridWidth = gridWidth;
+			m_map = map;
 		}
 
 		public boolean TestForDestination(Location loc) 
 		{
-			return m_target.DistanceSquared(loc) <= m_targetVariance;
+			return 	(loc.x > m_target.x) && (loc.x < (m_target.x + m_gridWidth)) &&
+					(loc.y > m_target.y) && (loc.y < (m_target.y + m_gridWidth));
 		}
 
 		public Path BuildPath(LocationNode endNode) 

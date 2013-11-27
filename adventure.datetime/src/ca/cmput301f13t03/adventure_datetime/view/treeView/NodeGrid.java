@@ -235,8 +235,9 @@ class NodeGrid
 				{
 					linkedFrags.add(frag);
 					links.addAll(frag.getChoices());
-					links.remove(0);
 				}
+				
+				links.remove(0);
 			}while(!links.isEmpty());
 		}
 		

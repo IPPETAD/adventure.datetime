@@ -95,6 +95,11 @@ public class TreeView extends SurfaceView
 		m_touchHandler.SetSelectionCallback(selectionCallback);
 	}
 	
+	public IFragmentSelected GetFragmentCallback()
+	{
+		return m_touchHandler.GetSelectionCallback();
+	}
+	
 	private void AfterDataAvailable()
 	{
 		if(m_grid != null)
