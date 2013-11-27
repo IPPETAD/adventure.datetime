@@ -688,7 +688,13 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	}
 
     private Image createImage(Cursor cursor) {
-        return null;
+        UUID id;
+        String bitmap;
+
+        id = UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID)));
+        bitmap = cursor.getString(cursor.getColumnIndex(STORY_IMAGE_COLUMN_IMAGE));
+
+        return new Image(id, bitmap);
     }
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
