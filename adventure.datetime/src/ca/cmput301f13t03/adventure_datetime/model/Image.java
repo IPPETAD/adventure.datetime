@@ -14,6 +14,7 @@ public class Image {
 	private UUID _id;
 	private String encodedBitmap;
 	private transient Bitmap bitmap;
+	private transient boolean dirty;
 	
 	public Image(String bitmap) {
 		this._id = UUID.randomUUID();
@@ -39,14 +40,29 @@ public class Image {
 		return _id;
 	}
 	
+	public void setId(UUID id) {
+		this._id = id;
+	}
+	
 	public String getEncodedBitmap() {
 		return encodedBitmap;
 	}
 	
+	public void setBitmap(String bitmap) {
+		this.dirty = true;
+		this.encodedBitmap = bitmap;
+	}
+	
+	public void setBitmap(Bitmap bitmap) {
+		this.dirty = true;
+		encodeBitmap(bitmap);
+	}
+	
 	public Bitmap decodeBitmap() {
-		if (bitmap == null) {
+		if (dirty || bitmap == null) {
 			byte[] decodedThumbnail = Base64.decode(this.encodedBitmap, 0);
 			this.bitmap = BitmapFactory.decodeByteArray(decodedThumbnail, 0, decodedThumbnail.length);
+			this.dirty = false;
 		}
 		
 		return bitmap;

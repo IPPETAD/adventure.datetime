@@ -20,12 +20,14 @@ package ca.cmput301f13t03.adventure_datetime.model;/*
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import junit.framework.Assert;
 
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 
 /**
@@ -75,6 +77,25 @@ public class StoryDBTest extends AndroidTestCase {
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 
+		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
+		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
+
+        database.deleteStory(story.getId());
+
+        story2 = database.getStory(story.getId());
+
+        Assert.assertNull("Story not null", story2);
+	}
+	
+	public void testSetStory_Thumbnail() throws Exception {
+		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
+		UUID uuid = story.getId();
+        story.setHeadFragmentId(UUID.randomUUID());
+        story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
+		Assert.assertTrue("Error inserting story", database.setStory(story));
+		Story story2 = database.getStory(story.getId());
+		assertEquals(story.getThumbnail().getEncodedBitmap(), story2.getThumbnail().getEncodedBitmap());
+		
 		Assert.assertEquals("Not equivalent story ids", story.getId(), story2.getId());
 		Assert.assertEquals("Not equivalent uuids", uuid, story.getId());
 
