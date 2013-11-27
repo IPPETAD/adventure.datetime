@@ -345,11 +345,42 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     }
 
     public Image getImage(UUID imageID) {
-        return null;
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = db.query(STORY_IMAGE_TABLE_NAME,
+                new String[] {COLUMN_GUID, STORY_IMAGE_COLUMN_IMAGE},
+                COLUMN_GUID + " = ?",
+                new String[] {imageID.toString()},
+                null,
+                null,
+                null);
+
+        Image image;
+        if(cursor.moveToFirst()) {
+            image = createImage(cursor);
+        }
+        else {
+            image = null;
+        }
+        return image;
     }
 
     public ArrayList<Image> getImages(UUID imageID) {
-        return null;
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = db.query(STORY_IMAGE_TABLE_NAME,
+                new String[] {COLUMN_GUID, STORY_IMAGE_COLUMN_IMAGE},
+                COLUMN_GUID + " = ?",
+                new String[] {imageID.toString()},
+                null,
+                null,
+                null);
+
+        ArrayList<Image> images = new ArrayList<Image>();
+        if(cursor.moveToFirst())
+            do {
+                images.add(createImage(cursor));
+            } while(cursor.moveToNext());
+
+        return images;
     }
 
 	/* (non-Javadoc)
@@ -655,6 +686,10 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		return new Bookmark(fragmentID, storyID, date);
 	}
+
+    private Image createImage(Cursor cursor) {
+        return null;
+    }
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
