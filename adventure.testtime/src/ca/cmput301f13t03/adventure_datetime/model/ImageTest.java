@@ -30,6 +30,9 @@ public class ImageTest extends AndroidTestCase {
 		assertEquals(image.getId(), image2.getId());
 		assertEquals(image.getEncodedBitmap(), image2.getEncodedBitmap());
 		
+		image.setBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.launch_icon));
+		assertFalse(bitmap.equals(image.decodeBitmap()));
+		
 	}
 
 }

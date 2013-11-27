@@ -27,11 +27,15 @@ import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
@@ -52,6 +56,7 @@ public class MainView extends Activity implements IBookmarkListListener {
 	private static final String TAG = "MainView";
 	
 	private Button _browseBookmarks, _browseStories, _authorBrowse;
+	private AnimationDrawable _unicorn;
 
 	@Override
 	public void OnBookmarkListChange(Map<UUID, Bookmark> newBookmarks) {
@@ -69,6 +74,14 @@ public class MainView extends Activity implements IBookmarkListListener {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);		
+		
+		/** Unicorn **/
+		ImageView iUnicorn = (ImageView) findViewById(R.id.unicorn);
+		Animation aUnicorn = AnimationUtils.loadAnimation(this, R.anim.unicorn);
+		iUnicorn.setBackgroundResource(R.drawable.unicorn_animation);
+		_unicorn = (AnimationDrawable) iUnicorn.getBackground();
+		_unicorn.start();
+		iUnicorn.startAnimation(aUnicorn);
 		
 		_browseBookmarks = (Button) findViewById(R.id.btn_browseBookmarks);
 		_browseBookmarks.setVisibility(View.INVISIBLE);
