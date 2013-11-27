@@ -75,7 +75,10 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	public static final String BOOKMARK_COLUMN_FRAGMENTID = "FragmentID";
 	public static final String BOOKMARK_COLUMN_DATE = "Date";
 
-    public static final String AUTHORED_STORIES_TABLE_NAME = "AuthoredStories";
+    public static final String AUTHORED_STORY_TABLE_NAME = "AuthoredStory";
+
+    public static final String STORY_IMAGE_TABLE_NAME = "StoryImage";
+    public static final String STORY_IMAGE_COLUMN_IMAGE = "Image";
 
 	private StoryDBHelper mDbHelper;
 
@@ -302,7 +305,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     @Override
     public boolean getAuthoredStory(UUID storyId) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+        Cursor cursor = db.query(AUTHORED_STORY_TABLE_NAME,
                 new String[] {COLUMN_GUID},
                 COLUMN_GUID + " = ?",
                 new String[] {storyId.toString()},
@@ -320,7 +323,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     @Override
     public ArrayList<UUID> getAuthoredStories() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+        Cursor cursor = db.query(AUTHORED_STORY_TABLE_NAME,
                 new String[] {COLUMN_GUID},
                 null,
                 null,
@@ -481,7 +484,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
         values.put(COLUMN_GUID, story.getId().toString());
 
-        long insert = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+        long insert = db.insert(AUTHORED_STORY_TABLE_NAME, null, values);
 
         db.close();
 
@@ -560,7 +563,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     public boolean deleteAuthoredStory(UUID storyID) {
         int authoredStory;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        authoredStory = db.delete(AUTHORED_STORIES_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {storyID.toString()});
+        authoredStory = db.delete(AUTHORED_STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {storyID.toString()});
         Log.v(TAG, authoredStory + " authored story deleted, with storyId " + storyID);
         db.close();
         return authoredStory == 1;
@@ -644,7 +647,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 5;
+		public static final int DATABASE_VERSION = 6;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -686,12 +689,18 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
 				+ "))";
 
-        private static final String CREATE_AUTHORED_STORIES_TABLE =
-                "CREATE TABLE " + AUTHORED_STORIES_TABLE_NAME + " ("
+        private static final String CREATE_AUTHORED_STORY_TABLE =
+                "CREATE TABLE " + AUTHORED_STORY_TABLE_NAME + " ("
                 + _ID + " INTEGER PRIMARY KEY, "
                 + COLUMN_GUID + " TEXT, "
                 + "FOREIGN KEY(" + COLUMN_GUID + ") REFERENCES "
                 + STORY_TABLE_NAME + "(" + COLUMN_GUID + "))";
+
+        private static final String CREATE_STORY_IMAGE_TABLE =
+                "CREATE TABLE " + STORY_IMAGE_TABLE_NAME + " ("
+                + _ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_GUID + " TEXT, "
+                + STORY_IMAGE_COLUMN_IMAGE + " TEXT)";
 
 		private static final String DELETE_STORY_TABLE =
 				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
@@ -702,8 +711,11 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		private static final String DELETE_BOOKMARK_TABLE =
 				"DROP TABLE IF EXISTS " + BOOKMARK_TABLE_NAME;
 
-        private static final String DELETE_AUTHORED_STORIES_TABLE =
-                "DROP TABLE IF EXISTS " + AUTHORED_STORIES_TABLE_NAME;
+        private static final String DELETE_AUTHORED_STORY_TABLE =
+                "DROP TABLE IF EXISTS " + AUTHORED_STORY_TABLE_NAME;
+
+        private static final String DELETE_STORY_IMAGE_TABLE =
+                "DROP TABLE IF EXISTS " + STORY_IMAGE_TABLE_NAME;
 
 		public StoryDBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -715,7 +727,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(CREATE_STORY_TABLE);
 			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
 			db.execSQL(CREATE_BOOKMARK_TABLE);
-            db.execSQL(CREATE_AUTHORED_STORIES_TABLE);
+            db.execSQL(CREATE_AUTHORED_STORY_TABLE);
+            db.execSQL(CREATE_STORY_IMAGE_TABLE);
 			populateDB(db);
 		}
 
@@ -724,7 +737,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(DELETE_STORYFRAGMENT_TABLE);
 			db.execSQL(DELETE_STORY_TABLE);
 			db.execSQL(DELETE_BOOKMARK_TABLE);
-            db.execSQL(DELETE_AUTHORED_STORIES_TABLE);
+            db.execSQL(DELETE_AUTHORED_STORY_TABLE);
+            db.execSQL(DELETE_STORY_IMAGE_TABLE);
 		}
 
 		@Override
@@ -787,7 +801,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			Log.d(TAG, String.valueOf(inserted));
             values = new ContentValues();
             values.put(COLUMN_GUID, story.getId().toString());
-            inserted = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+            inserted = db.insert(AUTHORED_STORY_TABLE_NAME, null, values);
             Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
 			db.endTransaction();
