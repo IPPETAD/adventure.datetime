@@ -764,7 +764,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     private Image createImage(Cursor cursor) {
         UUID id;
         String bitmap;
-        String test = cursor.getString(cursor.getColumnIndex(COLUMN_GUID));
         id = UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID)));
         bitmap = cursor.getString(cursor.getColumnIndex(STORY_IMAGE_COLUMN_IMAGE));
 
