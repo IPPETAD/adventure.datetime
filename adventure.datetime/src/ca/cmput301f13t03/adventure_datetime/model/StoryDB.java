@@ -299,6 +299,40 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		return bookmarks;
 	}
 
+    public boolean getAuthoredStory(UUID storyId) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+                new String[] {COLUMN_GUID},
+                COLUMN_GUID + " = ?",
+                new String[] {storyId.toString()},
+                null,
+                null,
+                null);
+
+        return cursor.moveToFirst();
+    }
+
+    public ArrayList<UUID> getAuthoredStories() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+                new String[] {COLUMN_GUID},
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        ArrayList<UUID> authoredStories = new ArrayList<UUID>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                authoredStories.add(UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID))));
+            } while(cursor.moveToNext());
+        }
+
+        return authoredStories;
+    }
+
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#setBookmark(ca.cmput301f13t03.adventure_datetime.model.Bookmark)
 	 */
