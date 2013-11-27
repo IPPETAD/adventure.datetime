@@ -412,21 +412,20 @@ public final class ConnectionPlacer
 	{
 		Location m_target = null;
 		Location m_start = null;
-		int m_gridWidth = 0;
+		int m_variance = 0;
 		boolean[][] m_map = null;
 
 		public FullPathBuilder(Location start, Location target, int gridWidth, boolean[][] map)
 		{
 			m_start = start;
 			m_target = target;
-			m_gridWidth = gridWidth;
+			m_variance = (int) (gridWidth * gridWidth * (2.30f));
 			m_map = map;
 		}
 
 		public boolean TestForDestination(Location loc) 
 		{
-			return 	(loc.x > m_target.x) && (loc.x < (m_target.x + m_gridWidth)) &&
-					(loc.y > m_target.y) && (loc.y < (m_target.y + m_gridWidth));
+			return loc.DistanceSquared(m_target) <= m_variance;
 		}
 
 		public Path BuildPath(LocationNode endNode) 

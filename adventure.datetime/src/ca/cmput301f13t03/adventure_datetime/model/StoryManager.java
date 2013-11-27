@@ -261,6 +261,19 @@ public final class StoryManager implements IStoryModelPresenter,
 		
 		return newStory;
 	}
+	
+	public StoryFragment CreateNewStoryFragment()
+	{
+		StoryFragment newFrag = new StoryFragment(m_currentStory.getId(), "");
+		
+		m_fragmentList.put(newFrag.getFragmentID(), newFrag);
+		m_currentStory.addFragment(newFrag);
+		
+		PublishCurrentStoryChanged();
+		PublishAllFragmentsChanged();
+		
+		return newFrag;
+	}
 
 	public boolean putStory(Story story) {
 		// Set default image if needed

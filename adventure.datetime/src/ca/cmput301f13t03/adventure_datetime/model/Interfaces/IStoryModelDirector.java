@@ -65,6 +65,8 @@ public interface IStoryModelDirector
 	 * Creates a new story with a head fragment
 	 */
 	public Story CreateNewStory();
+	
+	public StoryFragment CreateNewStoryFragment();
 
 	/**
 	 * Delete a story from the database

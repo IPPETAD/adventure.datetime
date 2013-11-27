@@ -30,6 +30,9 @@ class NodeGrid
 	private ArrayList<FragmentConnection> m_connections = new ArrayList<FragmentConnection>();
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
 	
+	private StoryFragment m_selectedFrag = null;
+	private FragmentNode m_selectedNode = null;
+	
 	private Resources m_res = null;
 	private FragmentNode m_headNode = null;
 	
@@ -58,18 +61,9 @@ class NodeGrid
 				
 				if(m_reloadView)
 				{
-					// clear the list of segments as we rebuild
-					m_segments.clear();
-					m_connections.clear();
-					m_nodes.clear();
-
-					SetupNodes(m_fragments);
-					SetupConnections();
-					
+					RebuildView();
 					FragmentNode headNode = GetTopLevelFragment(m_headFragmentId);
 					camera.LookAt(headNode.x + headNode.width / 2, headNode.y + headNode.height / 2);
-					
-					m_reloadView = false;
 				}
 				
 				for(FragmentConnection connection : m_connections)
@@ -89,6 +83,20 @@ class NodeGrid
 		}
 	}
 	
+	private void RebuildView()
+	{
+		// clear the list of segments as we rebuild
+		m_segments.clear();
+		m_connections.clear();
+		m_nodes.clear();
+
+		SetupNodes(m_fragments);
+		SetupConnections();
+		
+		m_reloadView = false;
+		SelectFragment(m_selectedFrag);
+	}
+	
 	/**
 	 * Set the fragments that are to be displayed by this component
 	 */
@@ -102,6 +110,30 @@ class NodeGrid
 		}
 		
 		m_syncLock.unlock();
+	}
+	
+	public void SelectFragment(StoryFragment frag)
+	{
+		if(frag == null) return;
+		
+		if(m_selectedNode != null)
+		{
+			m_selectedNode.SetIsSelected(false);
+		}
+		
+		m_selectedFrag = frag;
+		
+		if(m_nodes != null)
+		{
+			for(FragmentNode node : m_nodes)
+			{
+				if(node.GetFragment().getFragmentID().equals(frag.getFragmentID()))
+				{
+					m_selectedNode = node;
+					m_selectedNode.SetIsSelected(true);
+				}
+			}
+		}
 	}
 	
 	public FragmentNode GetNodeAtLocation(int x, int y)

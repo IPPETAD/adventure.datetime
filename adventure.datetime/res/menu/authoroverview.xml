@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_back"
+        android:icon="@drawable/ic_action_back"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:title="Back"/>
+    <item
+        android:id="@+id/action_addFragment"
+        android:icon="@drawable/ic_action_new"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        android:title="Add"/>
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_action_save"
+        android:orderInCategory="3"
+        android:showAsAction="always"
+        android:title="Save"/>
+    <item
+        android:id="@+id/action_discard"
+        android:icon="@drawable/ic_action_discard"
+        android:orderInCategory="4"
+        android:showAsAction="always"
+        android:title="Discard"/>
+
+</menu>

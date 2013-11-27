@@ -6,6 +6,7 @@ import java.util.UUID;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
@@ -21,6 +22,7 @@ import android.view.SurfaceView;
 
 public class TreeView extends SurfaceView 
 	implements 	IAllFragmentsListener, 
+				ICurrentFragmentListener,
 				ICurrentStoryListener,
 				SurfaceHolder.Callback, 
 				Runnable
@@ -90,6 +92,11 @@ public class TreeView extends SurfaceView
 		}
 	}
 	
+	public void OnCurrentFragmentChange(StoryFragment newFragment) 
+	{
+		m_grid.SelectFragment(newFragment);
+	}
+	
 	public void SetFragmentCallback(IFragmentSelected selectionCallback)
 	{
 		m_touchHandler.SetSelectionCallback(selectionCallback);
@@ -119,6 +126,7 @@ public class TreeView extends SurfaceView
 	{
 		Locator.getPresenter().Subscribe((ICurrentStoryListener)(this));
 		Locator.getPresenter().Subscribe((IAllFragmentsListener)(this));
+		Locator.getPresenter().Subscribe((ICurrentFragmentListener)(this));
 		
 		m_isDrawing = true;
 		m_surface = surface;
@@ -131,6 +139,7 @@ public class TreeView extends SurfaceView
 	{
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)(this));
 		Locator.getPresenter().Unsubscribe((IAllFragmentsListener)(this));
+		Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)(this));
 		
 		m_isDrawing = false;
 		if(m_drawingThread != null)
@@ -194,7 +203,7 @@ public class TreeView extends SurfaceView
 			m_touchHandler.OnTouchAction(event);
 		}
 		
-		//TODO::JT HAX!
+		//Must return true or we stop receiving input events!
 		return true;
 	}
 	

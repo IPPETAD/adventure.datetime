@@ -57,6 +57,11 @@ public class AuthorController {
 	{
 		return m_storyDirector.CreateNewStory();
 	}
+	
+	public StoryFragment CreateFragment()
+	{
+		return m_storyDirector.CreateNewStoryFragment();
+	}
 
     /**
      * Saves a story to the local storage

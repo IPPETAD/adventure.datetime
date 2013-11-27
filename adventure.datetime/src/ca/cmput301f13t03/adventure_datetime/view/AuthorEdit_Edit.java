@@ -142,7 +142,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		setUpView();
 	}
 
-	public void saveFragment() 
+	public void saveFragment()
 	{
 		_fragment.setStoryText(_content.getText().toString());
 		_story.updateTimestamp();
@@ -227,6 +227,9 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 
 		// we should get this callback exactly once and no more
 		RestoreTreeView();
+		
+		m_selectedChoice = null;
+		m_choiceTxt = null;
 	}
 
 	private class ChoiceAdapter extends ArrayAdapter<Choice>
@@ -289,6 +292,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 				else if(btn.getId() == R.id.choices_edit_btn)
 				{
 					m_isEditingChoice = true;
+					m_selectedChoice = m_choice;
 					LaunchTreeView();
 				}
 				else
