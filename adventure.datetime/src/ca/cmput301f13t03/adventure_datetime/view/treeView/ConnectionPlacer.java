@@ -452,6 +452,7 @@ public final class ConnectionPlacer
 
 			// first simplify the node list
 			nodes = SimplifyPath(nodes);
+			CenterNodes(nodes);
 
 			// Code courtesy of stack overflow
 			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516
@@ -508,6 +509,15 @@ public final class ConnectionPlacer
 			}
 
 			return result;
+		}
+		
+		private void CenterNodes(List<LocationNode> nodes)
+		{
+			for(LocationNode node : nodes)
+			{
+				node.location.x += m_gridSize / 2;
+				node.location.y += m_gridSize / 2;
+			}
 		}
 
 		public Path BuildDefaultPath() 
