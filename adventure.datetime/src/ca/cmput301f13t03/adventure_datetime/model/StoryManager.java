@@ -639,5 +639,3 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 	}
 }
-
-}
