@@ -299,6 +299,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		return bookmarks;
 	}
 
+    @Override
     public boolean getAuthoredStory(UUID storyId) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
@@ -316,6 +317,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         return authoredStory;
     }
 
+    @Override
     public ArrayList<UUID> getAuthoredStories() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
@@ -459,6 +461,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	}
 
+    @Override
     public boolean setAuthoredStory(Story story) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -553,6 +556,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         return bookmark == 1;
     }
 
+    @Override
     public boolean deleteAuthoredStory(UUID storyID) {
         int authoredStory;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
