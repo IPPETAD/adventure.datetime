@@ -107,12 +107,6 @@ IFragmentSelected
 				invalidateOptionsMenu();
 				
 				_viewPager.setCurrentItem(index);
-				
-				// hax
-				if(index == EDIT_INDEX)
-				{
-					_adapter._edit.ForceRefresh();
-				}
 			}
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}

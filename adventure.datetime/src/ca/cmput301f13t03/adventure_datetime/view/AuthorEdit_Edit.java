@@ -121,15 +121,6 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 			m_choiceTxt = null;
 		}
 	}
-	
-	// HAX!
-	public void ForceRefresh()
-	{
-		if(_rootView != null)
-		{
-			_rootView.invalidate();
-		}
-	}
 
 	private void setUpView() 
 	{

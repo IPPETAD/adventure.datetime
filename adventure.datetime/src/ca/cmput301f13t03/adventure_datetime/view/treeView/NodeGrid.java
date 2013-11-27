@@ -86,8 +86,12 @@ class NodeGrid
 	public void RefreshView()
 	{
 		// TODO::JT make this more full featured
+		// TODO::JT need to make this more exhaustive!
 		
-		
+		for(FragmentNode node : m_nodes)
+		{
+			node.RefreshContents();
+		}
 	}
 	
 	private void RebuildView()

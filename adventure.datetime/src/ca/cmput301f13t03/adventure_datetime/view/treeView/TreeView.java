@@ -109,7 +109,7 @@ public class TreeView extends SurfaceView
 	
 	public void RefreshView()
 	{
-		
+		m_grid.RefreshView();
 	}
 	
 	private void AfterDataAvailable()
