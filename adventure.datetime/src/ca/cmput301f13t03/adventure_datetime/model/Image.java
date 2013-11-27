@@ -19,7 +19,7 @@ public class Image {
     public static String compressBitmap(Bitmap bit, int qual) {
         Bitmap bitmapex = bit;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmapex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmapex.compress(Bitmap.CompressFormat.JPEG, qual, baos);
         return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
     }
 	

@@ -42,6 +42,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -264,7 +265,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
                     is = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bit = BitmapFactory.decodeStream(is);
                     is.close();
-                    _story.setThumbnail(bit);
+                    _story.setThumbnail(Image.compressBitmap(bit, 85));
                     Locator.getAuthorController().saveStory(_story);
 
                 }
