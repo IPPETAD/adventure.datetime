@@ -86,7 +86,7 @@ public class AuthorEdit_Preview extends Fragment {
 		TextView content = (TextView) _rootView.findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<Uri>());
+			_fragment.setStoryMedia(new ArrayList<Image>());
 		
 		/** Programmatically set filmstrip height **/
 		// TODO : Unshitify this, aka not static value

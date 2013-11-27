@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -106,7 +107,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 if(!picDir.exists()) picDir.mkdirs();
                 File pic = new File(picDir.getPath(), File.separator + _fragment.getFragmentID().toString()
                         + "-" + _fragment.getStoryMedia().size());
-                Uri location = Uri.fromFile(pic);
+                Image location = Uri.fromFile(pic);
                 Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 i.putExtra(MediaStore.EXTRA_OUTPUT, location);
                 _fragment.addMedia(location);
@@ -168,7 +169,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
         switch (requestCode) {
             case GALLERY:
-                Uri selectedImage = imageReturnedIntent.getData();
+                Image selectedImage = imageReturnedIntent.getData();
                 _fragment.addMedia(selectedImage);
                 Locator.getAuthorController().saveFragment(_fragment);
                 break;
@@ -182,15 +183,15 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
     private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
-        private List<Uri> _illustrations;
+        private List<Image> _illustrations;
         private boolean _author;
 
         public StoryPagerAdapter(FragmentManager fm) {
             super(fm);
-            _illustrations = new ArrayList<Uri>();
+            _illustrations = new ArrayList<Image>();
         }
 
-        public void setIllustrations(List<Uri> illustrationIDs, boolean author) {
+        public void setIllustrations(List<Image> illustrationIDs, boolean author) {
             _illustrations = illustrationIDs;
             _author = author;
             notifyDataSetChanged();
@@ -213,14 +214,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
     public static class IllustrationFragment extends Fragment {
 
         private View _rootView;
-        private Uri _sID;
+        private Image _sID;
         private String _position;
         private boolean _author;
 
         public void onCreate(Bundle bundle) {
             super.onCreate(bundle);
         }
-        public void init(Uri id, int position, int total, boolean author) {
+        public void init(Image id, int position, int total, boolean author) {
             _sID = id;
             _position = (position+1) + "/" + total;
             _author = author;

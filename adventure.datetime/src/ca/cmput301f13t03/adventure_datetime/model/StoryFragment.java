@@ -48,7 +48,7 @@ public class StoryFragment {
 	/**
 	 * The list of all Story Media associated with the fragment
 	 */
-	private ArrayList<Uri> storyMedia;
+	private ArrayList<Image> storyMedia;
 	/**
 	 * The text content of the fragment
 	 */
@@ -68,7 +68,7 @@ public class StoryFragment {
      * @param choices List of Choices associated with the Story Fragment
      */
 	public StoryFragment(UUID storyID, UUID fragmentID, String storyText,
-	                     ArrayList<Uri> storyMedia, ArrayList<Choice> choices) {
+	                     ArrayList<Image> storyMedia, ArrayList<Choice> choices) {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
@@ -90,7 +90,7 @@ public class StoryFragment {
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<Uri>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -105,7 +105,7 @@ public class StoryFragment {
 		this.fragmentID = UUID.randomUUID();
 		this.storyText = storyText;
 		this.choices = new ArrayList<Choice>();
-		this.storyMedia = new ArrayList<Uri>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -122,7 +122,7 @@ public class StoryFragment {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<Uri>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -148,7 +148,7 @@ public class StoryFragment {
      *
      * @return List of all Media
      */
-	public ArrayList<Uri> getStoryMedia() {
+	public ArrayList<Image> getStoryMedia() {
 		return storyMedia;
 	}
 
@@ -157,7 +157,7 @@ public class StoryFragment {
      *
      * @param storyMedia The new list of media
      */
-	public void setStoryMedia(ArrayList<Uri> storyMedia) {
+	public void setStoryMedia(ArrayList<Image> storyMedia) {
 		this.storyMedia = storyMedia;
 	}
 
@@ -166,7 +166,7 @@ public class StoryFragment {
      *
      * @param media Media to add
      */
-	public void addMedia(Uri media) {
+	public void addMedia(Image media) {
 		storyMedia.add(media);
 	}
 
@@ -190,7 +190,7 @@ public class StoryFragment {
      *
      * @return The media
      */
-	public Uri getMedia(int id) {
+	public Image getMedia(int id) {
 		return storyMedia.get(id);
 	}
 

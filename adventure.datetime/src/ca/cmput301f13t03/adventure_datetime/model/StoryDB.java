@@ -344,6 +344,14 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         return authoredStories;
     }
 
+    public Image getImage(UUID imageID) {
+        return null;
+    }
+
+    public ArrayList<Image> getImages(UUID imageID) {
+        return null;
+    }
+
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#setBookmark(ca.cmput301f13t03.adventure_datetime.model.Bookmark)
 	 */
@@ -577,17 +585,19 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	 * @return A Story instance from the Database
 	 */
 	private Story createStory(Cursor cursor) {
-		String title, author, synopsis, thumbnail;
+		String title, author, synopsis;
 		UUID headFragmentId, id;
 		long timestamp;
+        Image thumbnail;
 
 		id = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID)));
 		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
 		headFragmentId = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT)));
 		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
-		thumbnail = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TIMESTAMP));
+
+        thumbnail = getImage(id);
 		
 		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 		
@@ -612,16 +622,17 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		UUID storyID, fragmentID;
 		String storyText;
 		ArrayList<Choice> choices;
+        ArrayList<Image> images;
 		storyID = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID)));
 		fragmentID = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID)));
 		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
-		/* TODO figure out JSON serialization for choices and media */
 		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
 		Gson gson = new Gson();
 		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
 		choices = gson.fromJson(json, collectionType);
+        images = getImages(fragmentID);
 
-		return new StoryFragment(choices, storyID, fragmentID, storyText);
+		return new StoryFragment(storyID, fragmentID, storyText, images, choices);
 	}
 
 	/**
@@ -755,9 +766,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			String storyText = "You wake up. The room is spinning very gently round your head. Or at least it would be "
 					+ "if you could see it which you can't";
 			StoryFragment frag = new StoryFragment(story.getId(), UUID.fromString("5582f797-29b8-4d9d-83bf-88c434c1944a"), storyText,
-					new ArrayList<Uri>(), new ArrayList<Choice>());
+					new ArrayList<Image>(), new ArrayList<Choice>());
 			StoryFragment frag2 = new StoryFragment(story.getId(), UUID.fromString("b10ef8ca-1180-44f6-b11b-170fef5ec071"), "You break" +
-					" your neck in the dark.", new ArrayList<Uri>(), new ArrayList<Choice>());
+					" your neck in the dark.", new ArrayList<Image>(), new ArrayList<Choice>());
 			Choice choice = new Choice("Get out of bed", frag2.getFragmentID());
 			frag.addChoice(choice);
 			story.addFragment(frag);
@@ -775,9 +786,14 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 			values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 			values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getEncodedBitmap());
+			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getId().toString());
 			values.put(COLUMN_GUID, story.getId().toString());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(COLUMN_GUID, story.getThumbnail().getId().toString());
+            values.put(STORY_IMAGE_COLUMN_IMAGE, story.getThumbnail().getEncodedBitmap());
+            inserted = db.insert(STORY_IMAGE_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID().toString());

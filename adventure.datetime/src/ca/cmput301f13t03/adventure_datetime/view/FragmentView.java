@@ -108,7 +108,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		_content = (TextView) findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<Uri>());
+			_fragment.setStoryMedia(new ArrayList<Image>());
 
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
