@@ -113,7 +113,7 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					//TODO::JF send search to server
+					Locator.getUserController().search(txtSearch.getText().toString());
 					txtSearch.setText("");
 					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 				    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
@@ -125,7 +125,7 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 		btnSearch.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//TODO::JF send search to server
+				Locator.getUserController().search(txtSearch.getText().toString());
 				txtSearch.setText("");
 				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
