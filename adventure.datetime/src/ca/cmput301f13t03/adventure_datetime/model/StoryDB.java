@@ -745,6 +745,10 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(COLUMN_GUID, story.getId().toString());
+            inserted = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
