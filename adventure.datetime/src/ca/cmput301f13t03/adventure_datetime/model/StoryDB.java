@@ -309,7 +309,11 @@ public class StoryDB implements BaseColumns, ILocalStorage {
                 null,
                 null);
 
-        return cursor.moveToFirst();
+        boolean authoredStory = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+
+        return authoredStory;
     }
 
     public ArrayList<UUID> getAuthoredStories() {
@@ -329,6 +333,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
                 authoredStories.add(UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID))));
             } while(cursor.moveToNext());
         }
+        cursor.close();
+        db.close();
 
         return authoredStories;
     }
