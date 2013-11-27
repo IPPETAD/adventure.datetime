@@ -202,7 +202,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		m_treeview.SetFragmentCallback(this);
 		m_actionBar.setSelectedNavigationItem(AuthorEdit.OVERVIEW_INDEX);
 		
-		Toast.makeText(m_activity, "Select a fragment to connect the choice to", 5).show();
+		Toast.makeText(m_activity, "Select a fragment to connect the choice to", Toast.LENGTH_LONG).show();
 	}
 
 	private void RestoreTreeView()
@@ -214,7 +214,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 	
 	private void RefreshTreeView()
 	{
-		// TODO::JT tree view will not reflect updates until this is implemented
+		m_treeview.RefreshView();
 	}
 
 	public void OnFragmentSelected(StoryFragment selectedFragment) 
