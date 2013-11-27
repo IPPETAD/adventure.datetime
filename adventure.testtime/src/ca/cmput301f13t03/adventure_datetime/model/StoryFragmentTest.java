@@ -44,7 +44,7 @@ public class StoryFragmentTest extends TestCase {
 
 	public void testCreation() throws Exception {
 		StoryFragment frag = new StoryFragment(UUID.randomUUID(), UUID.randomUUID(),
-				"test", new ArrayList<Uri>(), new ArrayList<Choice>());
+				"test", new ArrayList<Image>(), new ArrayList<Choice>());
 		Assert.assertNotNull("Frag is null", frag);
 
 		frag = new StoryFragment(UUID.randomUUID(), "test",

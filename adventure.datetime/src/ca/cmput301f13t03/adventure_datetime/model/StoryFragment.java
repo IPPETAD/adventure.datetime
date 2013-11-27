@@ -152,6 +152,15 @@ public class StoryFragment {
 		return storyMedia;
 	}
 
+    public String getStoryMediaInJson() {
+        ArrayList<UUID> uuids = new ArrayList<UUID>();
+        for(Image image : storyMedia) {
+            uuids.add(image.getId());
+        }
+        Gson gson = new Gson();
+        return gson.toJson(uuids);
+    }
+
     /**
      * Sets the list of all story media
      *
