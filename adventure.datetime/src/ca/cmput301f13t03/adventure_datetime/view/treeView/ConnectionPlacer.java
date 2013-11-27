@@ -12,7 +12,7 @@ import android.util.Log;
 
 public final class ConnectionPlacer 
 {
-	private static final int DEPTH_LIMIT = 100;
+	private static final int DEPTH_LIMIT = 5000;
 	private static final String TAG = "ConnectionPlacer";
 
 	private int m_horizontalOffset = 0;
@@ -169,6 +169,7 @@ public final class ConnectionPlacer
 		SortedLocationList openList = new SortedLocationList(m_map, m_gridSize);
 		Set<Location> closedList = new HashSet<Location>();
 		int currentDepth = 0;
+		int approxDistanceFromStart = 0;
 
 		LocationNode startPoint = new LocationNode(start, target, currentDepth, null);
 		openList.add(startPoint);
@@ -208,23 +209,24 @@ public final class ConnectionPlacer
 						xLeft = Clamp(xLeft, 0, m_actualWidth - m_gridSize);
 
 						// construct adjacent nodes
-						LocationNode up = new LocationNode(new Location(baseX, yUp), target, currentDepth, currentLocation);
-						LocationNode down = new LocationNode(new Location(baseX, yDown), target, currentDepth, currentLocation);
-						LocationNode left = new LocationNode(new Location(xLeft, baseY), target, currentDepth, currentLocation);
-						LocationNode right = new LocationNode(new Location(xRight, baseY), target, currentDepth, currentLocation);
+						LocationNode up = new LocationNode(new Location(baseX, yUp), target, approxDistanceFromStart, currentLocation);
+						LocationNode down = new LocationNode(new Location(baseX, yDown), target, approxDistanceFromStart, currentLocation);
+						LocationNode left = new LocationNode(new Location(xLeft, baseY), target, approxDistanceFromStart, currentLocation);
+						LocationNode right = new LocationNode(new Location(xRight, baseY), target, approxDistanceFromStart, currentLocation);
 
 						// add all adjacent nodes to this list
-						AddToClosedList(up, openList, closedList);
-						AddToClosedList(down, openList, closedList);
-						AddToClosedList(left, openList, closedList);
-						AddToClosedList(right, openList, closedList);
+						AddToSortedList(up, openList, closedList);
+						AddToSortedList(down, openList, closedList);
+						AddToSortedList(left, openList, closedList);
+						AddToSortedList(right, openList, closedList);
 
 						// now lets keep searching!
 					}
 				}
 			}
 
-			currentDepth += m_gridSize;
+			currentDepth++;
+			approxDistanceFromStart = currentDepth * m_gridSize;
 		}
 
 		if(currentDepth >= DEPTH_LIMIT)
@@ -237,7 +239,7 @@ public final class ConnectionPlacer
 		return builder.BuildDefaultPath();
 	}
 
-	private void AddToClosedList(LocationNode node, SortedLocationList openList, Set<Location> closedList)
+	private void AddToSortedList(LocationNode node, SortedLocationList openList, Set<Location> closedList)
 	{
 		if(!closedList.contains(node.location))
 		{
@@ -397,7 +399,7 @@ public final class ConnectionPlacer
 				else
 				{
 					// then we have all we need
-					break;
+					//break;
 				}
 			}
 
@@ -538,6 +540,7 @@ public final class ConnectionPlacer
 					if(IsStraightLineReachable(currentBase.location, nextNode.location))
 					{
 						// then we'll just ignore it and continue with the next node
+						prev = nextNode;
 						continue;
 					}
 					else
@@ -545,7 +548,6 @@ public final class ConnectionPlacer
 						// the current node cannnot be reached from the base, therefore
 						// we need to rebase from prev and continue
 						simplifiedList.add(prev);
-						prev = currentBase;
 						currentBase = nextNode;
 					}
 				}
@@ -570,6 +572,8 @@ public final class ConnectionPlacer
 		 */
 		private boolean IsStraightLineReachable(Location p1, Location p2)
 		{
+			final float VAR = 0.01f;
+
 			boolean result = true; 	// assuming the Titanic will not sink until we hit the iceberg
 			// (or Buckingham palace, as the case may be)
 
@@ -584,12 +588,24 @@ public final class ConnectionPlacer
 			// technically speaking rise/v_step and run/hstep should be equal
 			// but I figured it current hurt to average them in case the floating
 			// point values are off by a hair, also easier to debug this way!
-			float steps = (float) Math.ceil(((rise / v_step) + (run / h_step)) / 2.0f);
+			float steps = 0.0f;
+			if(Math.abs(v_step) <= VAR)
+			{
+				steps = (float)(run / h_step);
+			}
+			else if(Math.abs(h_step) <= VAR)
+			{
+				steps = (float)(rise / v_step);
+			}
+			else
+			{
+				steps = (float) Math.ceil(((rise / v_step) + (run / h_step)) / 2.0f);
+			}
 
 			for(float step = 0 ; step < steps ; ++step)
 			{
-				int testPointX = (int) (step * h_step);
-				int testPointY = (int) (step * v_step);
+				int testPointX = (int) (((step * h_step) + p1.x) / m_gridSize);
+				int testPointY = (int) (((step * v_step) + p1.y) / m_gridSize);
 
 				if(this.m_map[testPointX][testPointY])
 				{

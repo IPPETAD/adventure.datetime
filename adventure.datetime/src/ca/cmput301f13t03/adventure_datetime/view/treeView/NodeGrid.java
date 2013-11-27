@@ -85,15 +85,21 @@ class NodeGrid
 	
 	public void RefreshView()
 	{
-		// TODO::JT make this more full featured
-		// TODO::JT need to make this more exhaustive!
-		
-		// HAX! not efficient at all, but good enough for now
-		RebuildView();
-		
-		for(FragmentNode node : m_nodes)
+		try
 		{
-			node.RefreshContents();
+			m_syncLock.lock();
+			
+			// TODO::JT make this more full featured
+			// TODO::JT need to make this more exhaustive!
+			
+			for(FragmentNode node : m_nodes)
+			{
+				node.RefreshContents();
+			}
+		}
+		finally
+		{
+			m_syncLock.unlock();
 		}
 	}
 	
