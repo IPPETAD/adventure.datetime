@@ -531,6 +531,35 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         return insert != -1;
     }
 
+    public boolean setImage(Image image) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Image image2 = getImage(image.getId());
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GUID, image.getId().toString());
+        values.put(STORY_IMAGE_COLUMN_IMAGE, image.getEncodedBitmap());
+        long inserted;
+        if(image2 == null) {
+            inserted = db.insert(STORY_IMAGE_TABLE_NAME, null, values);
+            db.close();
+            return inserted != -1;
+        }
+        else {
+            inserted = db.update(STORY_IMAGE_TABLE_NAME, values, COLUMN_GUID + " = ?",
+                    new String[] {image.getId().toString()});
+            db.close();
+            return inserted == 1;
+        }
+    }
+
+    public boolean setImages(ArrayList<Image> images) {
+        boolean result = true;
+        for(Image image : images) {
+            result &= setImage(image);
+        }
+
+        return result;
+    }
+
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteStory(java.util.UUID)
 	 */
