@@ -343,12 +343,12 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-		values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime()/1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp()/1000);
 
 		long updated;
 		if(cursor.moveToFirst()) {
 			Bookmark bookmark1 = createBookmark(cursor);
-			if(bookmark.getDate().compareTo(bookmark1.getDate()) > 0) {
+			if(bookmark.getTimestamp() > bookmark1.getTimestamp()) {
 				updated = db.update(BOOKMARK_TABLE_NAME,values,BOOKMARK_COLUMN_STORYID + " = ?",
 						new String[] {BOOKMARK_COLUMN_STORYID});
                 Log.v(TAG, updated + " Bookmarks updated");
@@ -718,7 +718,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-			values.put(BOOKMARK_COLUMN_DATE, bookmark.getDate().getTime() / 1000L);
+			values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp() / 1000L);
 			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
