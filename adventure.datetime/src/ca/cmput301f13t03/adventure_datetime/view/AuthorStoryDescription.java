@@ -169,7 +169,8 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			_story.setTitle(_title.getText().toString());
 			_story.setSynopsis(_content.getText().toString());
 			_story.updateTimestamp();
-			Locator.getAuthorController().saveStory(_story);
+			Locator.getAuthorController().selectStory(_story.getId());
+			Locator.getAuthorController().saveStory();
 			Toast.makeText(getApplicationContext(), "Story saved!", Toast.LENGTH_SHORT).show();
 			break;
 		default:

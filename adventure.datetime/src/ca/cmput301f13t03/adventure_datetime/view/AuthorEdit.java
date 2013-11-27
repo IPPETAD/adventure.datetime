@@ -186,7 +186,7 @@ IFragmentSelected
 			finish();
 			break;
 		case R.id.action_save:
-			_adapter.saveFragment();
+			Locator.getAuthorController().saveStory();
 			Toast.makeText(getApplicationContext(), "Saved Fragment!", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.action_discard:
@@ -298,10 +298,6 @@ IFragmentSelected
 		public void setFragment(StoryFragment sf) {
 			_edit.setFragment(sf);
 			_preview.setFragment(sf);
-		}
-		public void saveFragment() {
-			_edit.saveFragment();
-			_preview.saveFragment();
 		}
 		
 		public void CancelActions()

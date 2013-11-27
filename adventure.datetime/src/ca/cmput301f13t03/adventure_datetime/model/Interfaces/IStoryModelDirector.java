@@ -60,7 +60,7 @@ public interface IStoryModelDirector
 	 * @param story
 	 * @return Success value
 	 */
-	public boolean putStory(Story story);
+	public boolean SaveStory();
 
 	/**
 	 * Creates a new story with a head fragment

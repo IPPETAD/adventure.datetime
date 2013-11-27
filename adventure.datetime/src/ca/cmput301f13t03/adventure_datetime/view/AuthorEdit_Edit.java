@@ -173,7 +173,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		_fragment.setStoryText(_content.getText().toString());
 		_story.updateTimestamp();
 		Locator.getAuthorController().saveFragment(_fragment);
-		Locator.getAuthorController().saveStory(_story);
+		Locator.getAuthorController().saveStory();
 	}
 
 	public void onClick(View v)

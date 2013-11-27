@@ -68,8 +68,9 @@ public class AuthorController {
      * @param story The Story to save
      * @return Whether or not the save was successful
      */
-	public boolean saveStory(Story story) {
-		return m_storyDirector.putStory(story);
+	public boolean saveStory() 
+	{
+		return m_storyDirector.SaveStory();
 	}
 
     /**

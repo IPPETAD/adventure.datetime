@@ -124,8 +124,9 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 		switch (item.getItemId()) {
 		case R.id.action_new:
 			Story story = Locator.getAuthorController().CreateStory();
+			Locator.getAuthorController().selectStory(story.getId());
 			story.setAuthor(AccountService.getUserName(getContentResolver()));
-			Locator.getAuthorController().saveStory(story);
+			Locator.getAuthorController().saveStory();
 			Locator.getAuthorController().selectStory(story.getId());
 			
 			Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
