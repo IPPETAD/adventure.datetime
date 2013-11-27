@@ -459,6 +459,32 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	}
 
+    public boolean setAuthoredStory(Story story) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        Story story2 = getStory(story.getId());
+
+        if(story2 == null) {
+            Log.v(TAG, "Story doesn't exist in local DB!");
+            return false;
+        }
+
+        if(getAuthoredStory(story.getId())) {
+            Log.v(TAG, "Story already in AuthoredStory table");
+            return true;
+        }
+
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_GUID, story.getId().toString());
+
+        long insert = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+
+        db.close();
+
+        return insert != -1;
+    }
+
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#deleteStory(java.util.UUID)
 	 */
