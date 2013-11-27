@@ -492,6 +492,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         boolean fragments;
         fragments = deleteStoryFragments(id);
         deleteBookmarkByStory(id);
+        deleteAuthoredStory(id);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int story;
         story = db.delete(STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id.toString()});
@@ -550,6 +551,15 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         Log.v(TAG, bookmark + " bookmark deleted, with fragmentID " + fragmentID);
         db.close();
         return bookmark == 1;
+    }
+
+    public boolean deleteAuthoredStory(UUID storyID) {
+        int authoredStory;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        authoredStory = db.delete(AUTHORED_STORIES_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {storyID.toString()});
+        Log.v(TAG, authoredStory + " authored story deleted, with storyId " + storyID);
+        db.close();
+        return authoredStory == 1;
     }
 
 	/**
