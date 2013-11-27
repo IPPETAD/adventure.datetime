@@ -31,6 +31,7 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +47,7 @@ public class WebStorage implements IWebStorage {
 	private static final String MATCH_ALL = 
 		"{\n" +
 		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
 		"  		\"query\" : {\n" +
 		"    		\"match_all\" : {}\n" +
 		"  		}\n" +
@@ -54,8 +56,9 @@ public class WebStorage implements IWebStorage {
 	private static final String MATCH =
 		"{\n" +
 		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
 		"  		\"query\" : {\n" +
-		"    		\"match\" : {\n" +
+		"    		\"match\": {\n" +
 		"      			\"%s\" : {\n" +
 		"        			\"query\" : \"%s\",\n" +
 		"        				\"type\" : \"boolean\"\n" +
@@ -66,14 +69,35 @@ public class WebStorage implements IWebStorage {
 	
 	private static final String MULTI_MATCH =
 		"{\n" +
-	    "	\"from\": %s, \"size\": %s,\n" +
-	    "	\"query\": {\n" +
-	    "    	\"multi_match\": {\n" +
-	    "       	\"query\": \"%s\",\n" +
-	    "      		\"fields\": [\"author^3\", \"title^3\", \"tags^2\", \"synopsis\"]\n" +
+	    "	\"from\" : %s, \"size\" : %s,\n" +
+	    "%s" + // For an optional SORT. No newline on purpose
+	    "	\"query\" : {\n" +
+	    "    	\"multi_match\" : {\n" +
+	    "       	\"query\" : \"%s\",\n" +
+	    "      		\"fields\" : [\"author^3\", \"title^3\", \"tags^2\", \"synopsis\"]\n" +
 	    "    	}\n" +
 	    "	}\n" +
 		"}";
+	
+	private static final String MULTI_ID = 
+		"{\n" +
+		"	\"from\" : %s, \"size\" : %s,\n" +
+		"%s" + // For an optional SORT. No newline on purpose
+		"	\"query\" : {\n" +
+		"		\"ids\" : {\n" +
+		"			\"values\" : [%s]\n" +
+		"		}\n" +
+		"	}\n" +
+		"}";
+	
+	private static final String SORT = 
+	    "	\"sort\": [\n" +
+	    "		{\n" +
+	    "			\"%s\": {\n" +
+	    "				\"order\": \"%s\"\n" +
+		"			}\n" +
+		"		}\n" +
+		"	],\n";  
 	
 	private static final String defaultIndex = "cmput301f13t03";
 	
@@ -97,7 +121,13 @@ public class WebStorage implements IWebStorage {
 	public Story getStory(UUID storyId) throws Exception {
 		Get get = new Get.Builder(_index, storyId.toString()).type("story").build();
 		JestResult result = execute(get);
-		return result.getSourceAsObject(Story.class);
+		Story story = result.getSourceAsObject(Story.class);
+		
+		Image image = getImage(storyId);
+		if (image != null)
+			story.setThumbnail(image.getEncodedBitmap());
+		
+		return story;
 	}
 	
 	/* (non-Javadoc)
@@ -105,28 +135,36 @@ public class WebStorage implements IWebStorage {
 	 */
 	@Override
 	public List<Story> getStories(int from, int size) throws Exception {
-		Search search = new Search.Builder(
-				String.format(MATCH_ALL, from, size))
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MATCH_ALL, from, size, sort);
+		Search search = new Search.Builder(query)
 			.addIndex(_index)
 			.addType("story")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Story.class);
+		List<Story> stories = result.getSourceAsObjectList(Story.class); 
+		mapImagesToStories(stories);
+				
+		return stories;
 	}
 	
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#queryStories(Java.lang.String, int, int)
 	 */
 	public List<Story> queryStories(String filter, int from, int size) throws Exception {
-		Search search = new Search.Builder(
-				String.format(MULTI_MATCH, from, size, filter))
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MULTI_MATCH, from, size, sort, filter);
+		Search search = new Search.Builder(query)
 			.addIndex(_index)
 			.addType("story")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Story.class);
+		List<Story> stories = result.getSourceAsObjectList(Story.class); 
+		mapImagesToStories(stories);
+				
+		return stories;
 	}
 	
 	/* (non-Javadoc)
@@ -145,7 +183,7 @@ public class WebStorage implements IWebStorage {
 	@Override
 	public List<StoryFragment> getFragmentsForStory(UUID storyId, int from, int size) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH, from, size, "storyId", storyId.toString()))
+				String.format(MATCH, from, size, "", "storyId", storyId))
 			.addIndex(_index)
 			.addType("fragment")
 			.build();
@@ -159,14 +197,18 @@ public class WebStorage implements IWebStorage {
 	 */
 	@Override
 	public List<Comment> getComments(UUID targetId, int from, int size) throws Exception {
-		Search search = new Search.Builder(
-				String.format(MATCH, from, size, "targetId", targetId.toString()))
+		String sort = String.format(SORT, "timestamp", "desc");
+		String query = String.format(MATCH, from, size, sort, "targetId", targetId);
+		Search search = new Search.Builder(query)
 			.addIndex(_index)
 			.addType("comment")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(Comment.class);
+		List<Comment> comments = result.getSourceAsObjectList(Comment.class);
+		mapImagesToComments(comments);
+		
+		return comments;
 	}
 
 	/* (non-Javadoc)
@@ -180,7 +222,13 @@ public class WebStorage implements IWebStorage {
 			.id(comment.getId().toString())
 			.build();
 		JestResult result = execute(index);
-		return result.isSucceeded();
+		
+		boolean success = result.isSucceeded();
+		if (comment.getImage() != null) {
+			success &= putImage(comment.getImage());
+		}
+		
+		return success;
 	}
 	
 	/* (non-Javadoc)
@@ -191,6 +239,15 @@ public class WebStorage implements IWebStorage {
 		JestResult result = execute(new Delete.Builder(commentId.toString())
 			.index(_index)
 			.type("comment").build());
+		
+		// try to delete Image
+		try {
+			deleteImage(commentId);
+		}
+		catch (Exception e) {
+			// I don't care if this fails
+		}
+		
 		return result.isSucceeded();
 	}
 	
@@ -210,6 +267,10 @@ public class WebStorage implements IWebStorage {
 			.build();
 		JestResult result = execute(index);
 		succeeded = result.isSucceeded();
+		
+		if (story.getThumbnail() != null) {
+			succeeded &= putImage(story.getThumbnail());
+		}
 		
 		Bulk.Builder bulkBuilder = new Bulk.Builder()
 			.defaultIndex(_index)
@@ -235,6 +296,31 @@ public class WebStorage implements IWebStorage {
 		Get get = new Get.Builder(_index, imageId.toString()).type("image").build();
 		JestResult result = execute(get);
 		return result.getSourceAsObject(Image.class);
+	}
+	
+	/**
+	 * Gets images in bulk
+	 * @param imageIds the list of images to retrieve
+	 * @return A list of images
+	 * @throws Exception
+	 */
+	public List<Image> getImages(List<UUID> imageIds) throws Exception {
+		StringBuilder ids = new StringBuilder(); 
+		for (UUID id : imageIds) {
+			ids.append(String.format("\"%s\", ", id));
+		}
+		
+		// Trim the last comma and space
+		ids.delete(ids.length() - 2, ids.length());
+		
+		Search search = new Search.Builder(
+				String.format(MULTI_ID, 0, imageIds.size(), "", ids))
+			.addIndex(_index)
+			.addType("image")
+			.build();
+		
+		JestResult result = execute(search);
+		return result.getSourceAsObjectList(Image.class);
 	}
 	
 	/* (non-Javadoc)
@@ -272,6 +358,15 @@ public class WebStorage implements IWebStorage {
 		JestResult result = execute(new Delete.Builder(storyId.toString())
 			.index(_index)
 			.type("story").build());
+		
+		// try to delete Image
+		try {
+			deleteImage(storyId);
+		}
+		catch (Exception e) {
+			// I don't care if this fails
+		}
+		
 		return result.isSucceeded();
 	}
 	
@@ -340,5 +435,49 @@ public class WebStorage implements IWebStorage {
 		this.errorMessage = result.getErrorMessage();
 		this.jsonString = result.getJsonString();
 		return result;
+	}
+	
+	private void mapImagesToStories(List<Story> stories) throws Exception {
+		if (stories == null || stories.size() == 0)
+			return;
+		
+		// Get the thumbnails
+		List<UUID> ids = new ArrayList<UUID>();
+		for (Story s : stories) {
+			ids.add(s.getId());
+		}
+		
+		List<Image> images = getImages(ids);
+		
+		for (Image i : images) {
+			for (Story s : stories) {
+				if (s.getId().equals(i.getId())) {
+					s.setThumbnail(i.getEncodedBitmap());
+					break;
+				}
+			}
+		}
+	}
+	
+	private void mapImagesToComments(List<Comment> comments) throws Exception {
+		if (comments == null || comments.size() == 0)
+			return;
+		
+		// Get the thumbnails
+		List<UUID> ids = new ArrayList<UUID>();
+		for (Comment c : comments) {
+			ids.add(c.getId());
+		}
+		
+		List<Image> images = getImages(ids);
+		
+		for (Image i : images) {
+			for (Comment c : comments) {
+				if (c.getId().equals(i.getId())) {
+					c.setImage(i.getEncodedBitmap());
+					break;
+				}
+			}
+		}
 	}
 }

@@ -22,16 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
+
+import android.graphics.Bitmap;
 
 /**
  * A model for an entire Choose-Your-Own-Adventure story
@@ -66,14 +61,11 @@ public class Story {
 	 * The synopsis of the Story
 	 */
 	private String synopsis;
+	
 	/**
-	 * The bitmap image of the Story
+	 * The thumbnail for the story
 	 */
-	private String thumbnail;
-	
-	private transient Bitmap thumbnailDecoded;
-	
-	private transient boolean thumbnailDirty;
+	private transient Image thumbnail;
 	
 	/**
 	 * A collection of Tags for the Story
@@ -102,13 +94,13 @@ public class Story {
 		this.author = author;
 		this.timestamp = timestamp;
 		this.synopsis = synopsis;
-		this.thumbnail = thumbnail;
+		this.thumbnail = new Image(this.id, thumbnail);
 		this.title = title;
 		fragmentIDs = new HashSet<UUID>();
 		fragmentIDs.add(this.headFragmentId);
 	}
 	
-    /**
+	/**
      * Creates a new Story, used by @link{StoryDB}
      *
      * @param headFragmentId UUID of the head StoryFragment of the Story
@@ -126,7 +118,7 @@ public class Story {
 		this.author = author;
 		this.timestamp = timestamp;
 		this.synopsis = synopsis;
-		this.setThumbnail(thumbnail);
+		this.thumbnail = new Image(this.id, thumbnail);
 		this.title = title;
 		fragmentIDs = new HashSet<UUID>();
 		fragmentIDs.add(this.headFragmentId);
@@ -148,7 +140,7 @@ public class Story {
 		this(UUID.fromString(headFragmentId), UUID.fromString(id), author, timestamp, synopsis, thumbnail, title);
 	}
 	
-    /**
+	/**
      * Creates a new Story, used by @link{StoryDB}
      *
      * @param headFragmentId UUID of the head StoryFragment of the Story
@@ -163,7 +155,6 @@ public class Story {
 	             Bitmap thumbnail, String title) {
 		this(UUID.fromString(headFragmentId), UUID.fromString(id), author, timestamp, synopsis, thumbnail, title);
 	}
-
 
     /**
      * Creates a new Story, used by @link{StoryManager}
@@ -268,60 +259,47 @@ public class Story {
 	public void setHeadFragmentId(StoryFragment frag) {
 		setHeadFragmentId(frag.getFragmentID());
 	}
-
-    /**
-     * Gets the Story thumbnail
-     *
-     * @return Story thumbnail
-     */
-	public String getThumbnail() {
-		return thumbnail;
-	}
 	
 	/**
 	 * Decodes the thumbnail and returns it as a bitmap
 	 * @return A decoded bitmap of the thumbnail
 	 */
 	public Bitmap decodeThumbnail() {
-		if (thumbnail == null)
-			return null;
-		
-		if (thumbnailDirty || this.thumbnailDecoded == null) {
-			byte[] decodedThumbnail = Base64.decode(this.thumbnail, 0);
-			this.thumbnailDecoded = BitmapFactory.decodeByteArray(decodedThumbnail, 0, decodedThumbnail.length);
-			thumbnailDirty = false;
-		}
-		
-		return thumbnailDecoded;
+		return thumbnail == null ? null : thumbnail.decodeBitmap();
 	}
-
-    /**
-     * Sets the new Story thumbnail
-     *
-     * @param bitmap New Story thumbnail file name
-     */
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
 	public void setThumbnail(String bitmap) {
-		thumbnailDirty = true;
-		this.thumbnail = bitmap;
+		if (bitmap == null)
+			this.thumbnail = null;
+		else if (this.thumbnail == null)
+			this.thumbnail = new Image(this.id, bitmap);
+		else
+			this.thumbnail.setBitmap(bitmap);
 	}
-
-    /**
-     * Sets the new Story thumbnail
-     *
-     * @param bitmap New Story thumbnail
-     */
+	
+	/**
+	 * Set the bitmap to the internal image object
+	 * @param bitmap the bitmap to set
+	 */
 	public void setThumbnail(Bitmap bitmap) {
-		thumbnailDirty = true;
-		Bitmap bitmapex = bitmap;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bitmapex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-		this.thumbnail = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-		
-		try {
-			baos.close();
-		} catch (IOException e) {
-			Log.e("Story", "Error closing stream", e);
-		}
+		if (bitmap == null)
+			this.thumbnail = null;
+		else if (this.thumbnail == null)
+			this.thumbnail = new Image(this.id, bitmap);
+		else
+			this.thumbnail.setBitmap(bitmap);
+	}
+	
+	/**
+	 * Gets the thumbnail image object
+	 * @return The Image object of the thumbnail
+	 */
+	public Image getThumbnail() {
+		return this.thumbnail;
 	}
 
     /**
@@ -468,7 +446,6 @@ public class Story {
         	&& author == null ? s.getAuthor() == null : author.equals(s.getAuthor())
         	&& title == null ? s.getTitle() == null : title.equals(s.getTitle())
         	&& synopsis == null ? s.getSynopsis() == null : synopsis.equals(s.getSynopsis())
-        	&& thumbnail == null ? s.getThumbnail() == null : thumbnail.equals(s.getThumbnail())
         	&& tags == null ? s.getTags() == null : tags.equals(s.getTags())
         	&& fragmentIDs == null ? s.getFragmentIds() == null : fragmentIDs.equals(s.getFragmentIds());      
     }
