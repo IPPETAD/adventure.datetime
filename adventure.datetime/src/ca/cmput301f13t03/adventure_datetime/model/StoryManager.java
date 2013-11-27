@@ -623,5 +623,34 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		}
 	}
+	
+	public void search(String searchTerm) {
+		m_onlineStories = new HashMap<UUID, Story>();
+		final String finalTerm = searchTerm;
+		// Fetch stories from web asynchronously.
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+					
+					List<Story> onlineStories;
+					int size = 10;
+					int i = 0;
+					
+					while(size == 10) {
+						onlineStories = m_webStorage.queryStories(finalTerm, i, 10);
+						for(Story story : onlineStories)
+						{
+							m_onlineStories.put(story.getId(), story);
+						}
+						size = onlineStories.size();
+						i += 10;
+					}
+					PublishOnlineStoriesChanged();
+				} catch (Exception e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+		});
+	}
 
 }
