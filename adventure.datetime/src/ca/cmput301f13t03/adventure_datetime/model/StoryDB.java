@@ -75,6 +75,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	public static final String BOOKMARK_COLUMN_FRAGMENTID = "FragmentID";
 	public static final String BOOKMARK_COLUMN_DATE = "Date";
 
+    public static final String AUTHORED_STORIES_TABLE_NAME = "AuthoredStories";
+
 	private StoryDBHelper mDbHelper;
 
 	public StoryDB(Context context) {
@@ -236,34 +238,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		db.close();
 		return fragments;
 	}
-
-	/**
-	 * Get a Bookmark from the Story ID and Fragment ID
-	 * @param storyid The _ID of the story
-	 * @param fragmentid The _ID of the story fragment
-	 * @return a Bookmark object from the database
-	public Bookmark getBookmark(long storyid, long fragmentid) {
-		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-		Cursor cursor = db.query(BOOKMARK_TABLE_NAME,
-				new String[] {_ID, BOOKMARK_COLUMN_STORYID, BOOKMARK_COLUMN_FRAGMENTID},
-				BOOKMARK_COLUMN_FRAGMENTID + " = ? AND " + BOOKMARK_COLUMN_STORYID + " = ?",
-				new String[] {String.valueOf(fragmentid), String.valueOf(storyid)},
-				null,
-				null,
-				null);
-
-		Bookmark bookmark;
-
-		if(cursor.moveToFirst())
-			bookmark = createBookmark(cursor);
-		else
-			bookmark = null;
-
-		cursor.close();
-		db.close();
-		return bookmark;
-	}*/
 
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.ILocalDatabase#getBookmark(java.util.UUID)
@@ -590,7 +564,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 4;
+		public static final int DATABASE_VERSION = 5;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -632,6 +606,13 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
 				+ "))";
 
+        private static final String CREATE_AUTHORED_STORIES_TABLE =
+                "CREATE TABLE " + AUTHORED_STORIES_TABLE_NAME + " ("
+                + _ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_GUID + " TEXT, "
+                + "FOREIGN KEY(" + COLUMN_GUID + ") REFERENCES "
+                + STORY_TABLE_NAME + "(" + COLUMN_GUID + "))";
+
 		private static final String DELETE_STORY_TABLE =
 				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
 
@@ -640,6 +621,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		private static final String DELETE_BOOKMARK_TABLE =
 				"DROP TABLE IF EXISTS " + BOOKMARK_TABLE_NAME;
+
+        private static final String DELETE_AUTHORED_STORIES_TABLE =
+                "DROP TABLE IF EXISTS " + AUTHORED_STORIES_TABLE_NAME;
 
 		public StoryDBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -651,6 +635,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(CREATE_STORY_TABLE);
 			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
 			db.execSQL(CREATE_BOOKMARK_TABLE);
+            db.execSQL(CREATE_AUTHORED_STORIES_TABLE);
 			populateDB(db);
 		}
 
@@ -659,6 +644,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(DELETE_STORYFRAGMENT_TABLE);
 			db.execSQL(DELETE_STORY_TABLE);
 			db.execSQL(DELETE_BOOKMARK_TABLE);
+            db.execSQL(DELETE_AUTHORED_STORIES_TABLE);
 		}
 
 		@Override
@@ -683,11 +669,11 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			story.addFragment(frag);
 			story.addFragment(frag2);
 			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(1383652800 * 1000);
+			cal.setTimeInMillis(1383652800L * 1000L);
 			Bookmark bookmark = new Bookmark(frag2.getFragmentID(), story.getId(), cal.getTime());
 
 			db.beginTransaction();
-			long inserted = 0;
+			long inserted;
 
 			ContentValues values = new ContentValues();
 			values.put(STORY_COLUMN_TITLE, story.getTitle());
@@ -699,7 +685,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(COLUMN_GUID, story.getId().toString());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
-			inserted = 0;
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID().toString());
 			values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
@@ -707,7 +692,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(COLUMN_GUID, frag.getFragmentID().toString());
 			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
-			inserted = 0;
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag2.getStoryID().toString());
 			values.put(STORYFRAGMENT_COLUMN_CONTENT, frag2.getStoryText());
@@ -715,7 +699,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(COLUMN_GUID, frag2.getFragmentID().toString());
 			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
-			inserted = 0;
 			values = new ContentValues();
 			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
