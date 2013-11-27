@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
@@ -38,6 +39,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +51,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -59,7 +61,7 @@ import android.widget.Toast;
  * @author James Finlay
  *
  */
-public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragmentSelected
+public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragmentSelected, TextWatcher
 {
 	private static final String TAG = "AuthorEdit_Edit";
 
@@ -134,6 +136,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		_content = (EditText) _rootView.findViewById(R.id.content);
 
 		_content.setText(_fragment.getStoryText());
+		_content.addTextChangedListener(this);
 
 		_addChoiceBtn.setOnClickListener(this);
 
@@ -161,7 +164,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		Locator.getAuthorController().saveStory(_story);
 	}
 
-	public void onClick(View v) 
+	public void onClick(View v)
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this.getActivity());
 
@@ -244,6 +247,21 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		m_selectedChoice = null;
 		m_choiceTxt = null;
 	}
+	
+	public void afterTextChanged(Editable s) 
+	{
+		_fragment.setStoryText(s.toString());
+		m_treeview.RefreshView();
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count,
+			int after) 
+	{	} // Dont' care
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) 
+	{	} // Don't care
 
 	private class ChoiceAdapter extends ArrayAdapter<Choice>
 	{
@@ -271,19 +289,20 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 			/** Layout Items **/
 			ImageButton deleteBtn = (ImageButton)rowView.findViewById(R.id.choice_remove_btn);
 			ImageButton choiceBtn = (ImageButton)rowView.findViewById(R.id.choices_edit_btn);
-			TextView txt = (TextView)rowView.findViewById(R.id.choice_txt);
+			EditText txt = (EditText)rowView.findViewById(R.id.choice_txt);
 
 			ChoiceButtonCallback callback = new ChoiceButtonCallback(_fragment, item);	
 			m_callbacks.add(callback);
 
 			txt.setText(item.getText());
+			txt.addTextChangedListener(callback);
 			deleteBtn.setOnClickListener(callback);
 			choiceBtn.setOnClickListener(callback);
 
 			return rowView;
 		}
 
-		private class ChoiceButtonCallback implements OnClickListener
+		private class ChoiceButtonCallback implements OnClickListener, TextWatcher
 		{
 			private StoryFragment m_origin = null;
 			private Choice m_choice = null;
@@ -312,6 +331,30 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 				{
 					Log.e(TAG, "Somehow clicked on a button that shouldn't exist...?");
 				}
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) 
+			{
+				m_choice.setText(s.toString());
+			}
+
+			@Override
+			public void beforeTextChanged(	CharSequence s, 
+											int start, 
+											int count,
+											int after) 
+			{
+				// Do nothing, don't care
+			}
+
+			@Override
+			public void onTextChanged(	CharSequence s, 
+										int start, 
+										int before,
+										int count) 
+			{
+				// Do nothing, don't care
 			}
 		}
 	}
