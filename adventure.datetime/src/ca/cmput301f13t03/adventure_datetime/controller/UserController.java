@@ -80,8 +80,8 @@ public class UserController {
     /**
      * Creates a bookmark at the current location
      */
-	public void SetBookmark() {
-		m_storyDirector.setBookmark();
+	public void SetBookmark(UUID fragmentId) {
+		m_storyDirector.setBookmark(fragmentId);
 	}
 
     /**
@@ -100,7 +100,7 @@ public class UserController {
      */
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
-		m_storyDirector.setBookmark();
+		m_storyDirector.setBookmark(choice.getTarget());
 	}
 	
 	public void download() 
