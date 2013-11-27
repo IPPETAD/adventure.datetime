@@ -83,6 +83,13 @@ class NodeGrid
 		}
 	}
 	
+	public void RefreshView()
+	{
+		// TODO::JT make this more full featured
+		
+		
+	}
+	
 	private void RebuildView()
 	{
 		// clear the list of segments as we rebuild

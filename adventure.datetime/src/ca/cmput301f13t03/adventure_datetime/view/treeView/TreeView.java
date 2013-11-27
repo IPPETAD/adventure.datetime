@@ -107,6 +107,11 @@ public class TreeView extends SurfaceView
 		return m_touchHandler.GetSelectionCallback();
 	}
 	
+	public void RefreshView()
+	{
+		
+	}
+	
 	private void AfterDataAvailable()
 	{
 		if(m_grid != null)
