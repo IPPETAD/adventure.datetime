@@ -60,17 +60,17 @@ import android.widget.Toast;
  *
  */
 public class AuthorEdit extends FragmentActivity 
-	implements 	ICurrentFragmentListener, 
-				ICurrentStoryListener,
-				IFragmentSelected
+implements 	ICurrentFragmentListener, 
+ICurrentStoryListener,
+IFragmentSelected
 {
-	
+
 	public static final int OVERVIEW_INDEX = 0;
 	public static final int EDIT_INDEX = 1;
 	public static final int PREVIEW_INDEX = 2;
 	// make sure to update this if we add a tab!
 	public static final int INDEX_COUNT = 3;
-	
+
 	private static final String TAG = "AuthorEdit";
 
 	private ViewPager _viewPager;
@@ -97,7 +97,11 @@ public class AuthorEdit extends FragmentActivity
 
 			@Override
 			public void onTabSelected(Tab tab, FragmentTransaction ft) {
-				_viewPager.setCurrentItem(tab.getPosition());
+				if(tab.getPosition() != _viewPager.getCurrentItem())
+				{
+					_viewPager.setCurrentItem(tab.getPosition());
+					invalidateOptionsMenu();
+				}
 			}
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
@@ -133,7 +137,7 @@ public class AuthorEdit extends FragmentActivity
 	}
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		super.onPause();
 	}
@@ -148,8 +152,17 @@ public class AuthorEdit extends FragmentActivity
 		_story = newStory;
 	}
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.authoredit, menu);
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		if(_viewPager.getCurrentItem() == OVERVIEW_INDEX)
+		{
+			getMenuInflater().inflate(R.menu.authoroverview, menu);
+		}
+		else
+		{
+			getMenuInflater().inflate(R.menu.authoredit, menu);
+		}
+
 		return true;		
 	}
 
@@ -165,6 +178,26 @@ public class AuthorEdit extends FragmentActivity
 			Toast.makeText(getApplicationContext(), "Saved Fragment!", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.action_discard:
+			DoDeleteFragment();
+			break;
+		case R.id.action_addFragment:
+			StoryFragment newFrag = Locator.getAuthorController().CreateFragment();
+			Locator.getAuthorController().selectFragment(newFrag.getFragmentID());
+			_viewPager.setCurrentItem(EDIT_INDEX);
+			break;
+		default:
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void DoDeleteFragment()
+	{
+		if(_viewPager.getCurrentItem() == OVERVIEW_INDEX)
+		{
+			// TODO::JT gotta handle selection
+		}
+		else
+		{
 			/* Ensure user is not retarded and actually wants to do this */
 			new AlertDialog.Builder(this)
 			.setTitle("Delete Story Fragment")
@@ -189,18 +222,15 @@ public class AuthorEdit extends FragmentActivity
 				}
 			})
 			.create().show();
-			break;
-		default:
 		}
-		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void OnFragmentSelected(StoryFragment selectedFragment) 
 	{
 		getActionBar().setSelectedNavigationItem(EDIT_INDEX);
 		Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
 	}
-	
+
 	// fuck this is ugly
 	public interface OnCreatedCallback
 	{
@@ -209,21 +239,20 @@ public class AuthorEdit extends FragmentActivity
 
 	public class ViewPagerAdapter extends FragmentPagerAdapter implements OnCreatedCallback
 	{
-
 		private AuthorEdit_Edit _edit;
 		private AuthorEdit_Overview _overview;
 		private AuthorEdit_Preview _preview;
 
 		public ViewPagerAdapter(FragmentManager fm, IFragmentSelected callback) {
 			super(fm);
-			
+
 			_overview = new AuthorEdit_Overview();
 			_overview.SetFragmentSelectionCallback(callback);
 			_overview.SetOnCreatedCallback(this);
-			
+
 			_edit = new AuthorEdit_Edit();
 			_edit.SetActionBar(getActionBar());
-			
+
 			_preview = new AuthorEdit_Preview();
 		}
 
