@@ -236,6 +236,34 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		return fragments;
 	}
 
+    private ArrayList<UUID> getStoryFragmentIDs(UUID storyID) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
+                new String[]{COLUMN_GUID},
+                STORYFRAGMENT_COLUMN_STORYID + " = ?",
+                new String[]{storyID.toString()},
+                null,
+                null,
+                null);
+
+        ArrayList<UUID> fragmentIDs = new ArrayList<UUID>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                Log.v(TAG, "StoryFragment with id " + cursor.getString(cursor.getColumnIndex(COLUMN_GUID))
+                        + " retrieved");
+                fragmentIDs.add(UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID))));
+            } while(cursor.moveToNext());
+        }
+
+        Log.v(TAG, fragmentIDs.size() + " StoryFragments retrieved");
+
+        cursor.close();
+        db.close();
+        return fragmentIDs;
+    }
+
 	/**
 	 * Get a Bookmark from the Story ID and Fragment ID
 	 * @param storyid The _ID of the story
@@ -533,9 +561,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		
 		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 		
-		ArrayList<StoryFragment> referencedFragments = this.getStoryFragments(id);
+		ArrayList<UUID> referencedFragments = this.getStoryFragmentIDs(id);
 		
-		for(StoryFragment frag : referencedFragments)
+		for(UUID frag : referencedFragments)
 		{
 			newStory.addFragment(frag);
 		}
