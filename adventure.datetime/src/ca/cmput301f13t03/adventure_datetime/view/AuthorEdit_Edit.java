@@ -49,6 +49,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Fragment controlled by AuthorEdit view
@@ -109,6 +110,16 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		_rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 		setUpView();
 		return _rootView;
+	}
+	
+	public void CancelPendingActions()
+	{
+		if(m_isEditingChoice)
+		{
+			RestoreTreeView();
+			m_selectedChoice = null;
+			m_choiceTxt = null;
+		}
 	}
 
 	private void setUpView() 
@@ -190,6 +201,8 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		m_oldListener = m_treeview.GetFragmentCallback();
 		m_treeview.SetFragmentCallback(this);
 		m_actionBar.setSelectedNavigationItem(AuthorEdit.OVERVIEW_INDEX);
+		
+		Toast.makeText(m_activity, "Select a fragment to connect the choice to", 5).show();
 	}
 
 	private void RestoreTreeView()

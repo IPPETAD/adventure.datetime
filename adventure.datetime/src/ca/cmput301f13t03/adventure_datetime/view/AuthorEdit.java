@@ -96,12 +96,11 @@ IFragmentSelected
 			public void onTabReselected(Tab tab, FragmentTransaction ft) {}
 
 			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
-				if(tab.getPosition() != _viewPager.getCurrentItem())
-				{
-					_viewPager.setCurrentItem(tab.getPosition());
-					invalidateOptionsMenu();
-				}
+			public void onTabSelected(Tab tab, FragmentTransaction ft) 
+			{
+				_viewPager.setCurrentItem(tab.getPosition());
+				invalidateOptionsMenu();
+				_adapter.CancelActions();
 			}
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
@@ -120,8 +119,11 @@ IFragmentSelected
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
-			public void onPageSelected(int position) {
+			public void onPageSelected(int position) 
+			{
 				getActionBar().setSelectedNavigationItem(position);
+				invalidateOptionsMenu();
+				_adapter.CancelActions();
 			}
 		});
 
@@ -198,10 +200,19 @@ IFragmentSelected
 		}
 		else
 		{
+			final int TXT_LIMIT = 10;
+			
+			String fragText = _fragment.getStoryText();
+			
+			if(fragText.length() > TXT_LIMIT)
+			{
+				fragText = fragText.substring(0, TXT_LIMIT) + "...";
+			}
+			
 			/* Ensure user is not retarded and actually wants to do this */
 			new AlertDialog.Builder(this)
 			.setTitle("Delete Story Fragment")
-			.setMessage("Deletes only currently selected fragment.\nYou cannot undo.")
+			.setMessage("This will delete \"" + fragText + "\"\nYou cannot undo.")
 			.setCancelable(true)
 			.setPositiveButton("Delete", new OnClickListener() {
 				@Override
@@ -281,6 +292,11 @@ IFragmentSelected
 		public void saveFragment() {
 			_edit.saveFragment();
 			_preview.saveFragment();
+		}
+		
+		public void CancelActions()
+		{
+			_edit.CancelPendingActions();
 		}
 
 		@Override
