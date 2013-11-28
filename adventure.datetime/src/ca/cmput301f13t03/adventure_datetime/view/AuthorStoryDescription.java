@@ -265,7 +265,10 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
                     is = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bit = BitmapFactory.decodeStream(is);
                     is.close();
-                    _story.setThumbnail(Image.compressBitmap(bit, 85));
+                    int size = bit.getHeight() > bit.getWidth() ? bit.getWidth()*3/4 : bit.getHeight()*3/4;
+                    bit = Bitmap.createBitmap(bit, bit.getWidth()/8, bit.getHeight()/8, size, size);
+                    String bitmap = Image.compressBitmap(bit, 50);
+                    _story.setThumbnail(bitmap);
                     Locator.getAuthorController().saveStory(_story);
 
                 }
