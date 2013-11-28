@@ -172,7 +172,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 try {
                     InputStream is = getContentResolver().openInputStream(imageReturnedIntent.getData());
                     Bitmap bit = BitmapFactory.decodeStream(is);
-                    Image selectedImage = new Image(bit);
+                    Image selectedImage = new Image(Image.compressBitmap(bit, 85));
                     _fragment.addMedia(selectedImage);
                     Locator.getAuthorController().saveFragment(_fragment);
                 }
@@ -184,7 +184,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 try {
                     InputStream is = getContentResolver().openInputStream(_newImage);
                     Bitmap bit = BitmapFactory.decodeStream(is);
-                    Image selectedImage = new Image(bit);
+                    Image selectedImage = new Image(Image.compressBitmap(bit, 85));
                     _fragment.addMedia(selectedImage);
                     Locator.getAuthorController().saveFragment(_fragment);
                 }
