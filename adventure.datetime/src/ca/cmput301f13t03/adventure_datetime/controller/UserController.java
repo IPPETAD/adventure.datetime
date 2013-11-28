@@ -100,11 +100,17 @@ public class UserController {
      */
 	public void MakeChoice(Choice choice) {
 		m_storyDirector.selectFragment(choice.getTarget());
+		m_storyDirector.setBookmark();
 	}
 	
 	public void download() 
 	{
 		m_storyDirector.download();
+	}
+
+	public void deleteBookmark() {
+		m_storyDirector.deleteBookmark();
+		
 	}
 
 }

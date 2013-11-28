@@ -182,6 +182,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		} else {
 			/** End of story **/
+			Locator.getUserController().deleteBookmark();
 			_choices.setText("The End");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override

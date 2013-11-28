@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class Bookmark {
 	/**
 	 * The date of creation of the Bookmark
 	 */
-	private Date date;
+	private Long timestamp;
 
     /**
      * Creates a new bookmark with the given Story, StoryFragment, and current time
@@ -56,7 +57,7 @@ public class Bookmark {
 	public Bookmark(UUID storyID, UUID fragmentID) {
 		this.fragmentID = fragmentID;
 		this.storyID = storyID;
-		this.date = Calendar.getInstance().getTime();
+		this.timestamp = System.currentTimeMillis();
 	}
 
     /**
@@ -68,7 +69,7 @@ public class Bookmark {
 	public Bookmark(UUID fragmentID, UUID storyID, Date date) {
 		this.fragmentID = fragmentID;
 		this.storyID = storyID;
-		this.date = date;
+		this.timestamp = System.currentTimeMillis();
 	}
 
     /**
@@ -87,24 +88,6 @@ public class Bookmark {
      */
 	public void setFragmentID(UUID fragmentID) {
 		this.fragmentID = fragmentID;
-	}
-
-    /**
-     * Gets the Date associated with the Bookmark
-     *
-     * @return Date the bookmark was set
-     */
-	public Date getDate() {
-		return date;
-	}
-
-    /**
-     * Sets a new date for the Bookmark
-     *
-     * @param date The Date the bookmark will be set to
-     */
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
     /**
@@ -132,7 +115,17 @@ public class Bookmark {
      * @return The date, formatted as "mm/dd/yyyy"
      */
 	public String getFormattedTimestamp() {
-		SimpleDateFormat format = new SimpleDateFormat("mm/dd/yyyy");
-		return format.format(date);
+		DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp);
+		return dateFormat.format(cal.getTime());
+	}
+	
+	public void updateTimestamp() {
+		this.timestamp = System.currentTimeMillis();
+	}
+	
+	public long getTimestamp() {
+		return timestamp;
 	}
 }
