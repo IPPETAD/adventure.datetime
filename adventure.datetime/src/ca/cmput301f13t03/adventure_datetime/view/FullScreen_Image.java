@@ -22,9 +22,16 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
@@ -49,198 +56,229 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * 
+ *
  * View accessed by clicking image in filmstrip
- * 
+ *
  * Show fullscreen version of image / play video
- * 
+ *
  * @author James Finlay
  *
  */
 public class FullScreen_Image extends FragmentActivity implements ICurrentFragmentListener {
-	private static final String TAG = "FragmentActivity";
-	public static final String TAG_AUTHOR = "yolo.swag.AuthorEh";
-	public static final int GALLERY = 42;
-	public static final int CAMERA = 23;
+    private static final String TAG = "FragmentActivity";
+    public static final String TAG_AUTHOR = "yolo.swag.AuthorEh";
+    public static final int GALLERY = 42;
+    public static final int CAMERA = 23;
 
-	private StoryFragment _fragment;
-	private ViewPager _viewPager;
-	private StoryPagerAdapter _pageAdapter;
+    private StoryFragment _fragment;
+    private ViewPager _viewPager;
+    private StoryPagerAdapter _pageAdapter;
 
-	@Override
-	public void OnCurrentFragmentChange(StoryFragment newFragment) {
-		_fragment = newFragment;
-		setUpView();
-	}
+    @Override
+    public void OnCurrentFragmentChange(StoryFragment newFragment) {
+        _fragment = newFragment;
+        setUpView();
+    }
 
-	private void setUpView() {
-		if (_fragment == null) return;
-		if (_pageAdapter == null) return;
+    private void setUpView() {
+        if (_fragment == null) return;
+        if (_pageAdapter == null) return;
 
-		//_pageAdapter.setIllustrations(_fragment.getStoryMedia());
-		ArrayList<String> list = new ArrayList<String>();
-		for (int i=0; i<5; i++) list.add(""+i);
-		_pageAdapter.setIllustrations(list, getIntent().
-				getBooleanExtra(TAG_AUTHOR, false));
-	}
-	@Override
-	public void onSaveInstanceState(Bundle outState) {}
+        Button gallery = (Button) findViewById(R.id.gallery);
+        Button camera = (Button)  findViewById(R.id.camera);
+        Button delete = (Button)  findViewById(R.id.action_delete);
 
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Fullscreen
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-		setContentView(R.layout.viewpager);
+        gallery.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, GALLERY);
+            }
 
 
-		_pageAdapter = new StoryPagerAdapter(getSupportFragmentManager());
-		_viewPager = (ViewPager) findViewById(R.id.pager);
-		_viewPager.setAdapter(_pageAdapter);
-
-		setUpView();
-	}
-
-	@Override
-	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
-		super.onResume();
-	}
-	@Override
-	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
-	}
-	private class StoryPagerAdapter extends FragmentStatePagerAdapter {
-
-		private List<String> _illustrations;
-		private boolean _author;
-
-		public StoryPagerAdapter(FragmentManager fm) {
-			super(fm);
-			_illustrations = new ArrayList<String>();
-		}
-
-		public void setIllustrations(List<String> illustrationIDs, boolean author) {
-			_illustrations = illustrationIDs;
-			_author = author;
-			notifyDataSetChanged();
-		}
-
-		@Override
-		public Fragment getItem(int pos) {
-			IllustrationFragment frag = new IllustrationFragment();
-			frag.init(_illustrations.get(pos), pos, _illustrations.size(), _author);
-
-			return frag;
-		}
-
-		@Override
-		public int getCount() {
-			return _illustrations.size();
-		}
-
-	}
-	public static class IllustrationFragment extends Fragment {
-
-		private View _rootView;
-		private String _sID;
-		private String _position;
-		private boolean _author;
-
-		public void onCreate(Bundle bundle) {
-			super.onCreate(bundle);
-		}
-		public void init(String id, int position, int total, boolean author) {
-			_sID = id;
-			_position = (position+1) + "/" + total;
-			_author = author;
-			setUpView();
-		}
-		@Override
-		public View onCreateView(LayoutInflater inflater, 
-				ViewGroup container, Bundle savedInstanceState) {
-
-			_rootView = inflater.inflate(R.layout.fullscreen_illustration, 
-					container, false);
-
-			setUpView();
-
-			return _rootView;
-		}
-		private void setUpView() {
-			if (_sID == null) return;
-			if (_rootView == null) return;
-
-			/** Layout items **/
-			ImageView image = (ImageView) _rootView.findViewById(R.id.image);
-			Button gallery = (Button) _rootView.findViewById(R.id.gallery);
-			Button camera = (Button) _rootView.findViewById(R.id.camera);
-			Button delete = (Button) _rootView.findViewById(R.id.action_delete);
-			TextView counter = (TextView) _rootView.findViewById(R.id.count);
-
-			// TODO: Set counter by location
-
-			image.setBackgroundResource(R.drawable.grumpy_cat2);
-			counter.setText(_position);
-
-			gallery.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent i = new Intent(Intent.ACTION_PICK,
-							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-					startActivityForResult(i, GALLERY);
-				}
-			});
-			camera.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-					startActivityForResult(i, CAMERA);
-				}
-			});
-
-			// turn off author buttons if necessary
-			if (!_author) {
-				gallery.setVisibility(View.GONE);
-				camera.setVisibility(View.GONE);
-				delete.setVisibility(View.GONE);
-			}
-		}
-		@Override
-		public void onActivityResult(int requestCode, int resultCode,
-				Intent imageReturnedIntent) {
-			super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
-			if (resultCode != RESULT_OK) return;
-
-			switch (requestCode) {
-			case GALLERY:
-				/*Uri selectedImage = imageReturnedIntent.getData();
-		            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-		            Cursor cursor = getContentResolver().query(
-		                               selectedImage, filePathColumn, null, null, null);
-		            cursor.moveToFirst();
-
-		            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-		            String filePath = cursor.getString(columnIndex);
-		            cursor.close();
+        });
+        camera.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "adventure.datetime");
+                if(!picDir.exists()) picDir.mkdirs();
+                File pic = new File(picDir.getPath(), File.separator + _fragment.getFragmentID().toString()
+                        + "-" + _fragment.getStoryMedia().size());
+                Uri location = Uri.fromFile(pic);
+                Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, location);
+                _fragment.addMedia(location);
+                startActivityForResult(i, CAMERA);
+            }
+        });
 
 
-		            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-				 */ 
-				break;
-			case CAMERA:
+        _pageAdapter.setIllustrations(_fragment.getStoryMedia(), getIntent().getBooleanExtra(TAG_AUTHOR, false));
+      /*  ArrayList<String> list = new ArrayList<String>();
+        for (int i=0; i<5; i++) list.add(""+i);
+        _pageAdapter.setIllustrations(list, getIntent().
+                getBooleanExtra(TAG_AUTHOR, false));*/
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {}
 
-				break;
-			}
-		}
-	}
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setContentView(R.layout.fullscreen_image);
 
 
+        _pageAdapter = new StoryPagerAdapter(getSupportFragmentManager());
+        _viewPager = (ViewPager) findViewById(R.id.author_pager);
+        _viewPager.setAdapter(_pageAdapter);
+
+        setUpView();
+    }
+
+    @Override
+    public void onResume() {
+        Locator.getPresenter().Subscribe(this);
+        super.onResume();
+    }
+    @Override
+    public void onPause() {
+        Locator.getPresenter().Unsubscribe(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        if (resultCode != RESULT_OK) {
+            if(requestCode == CAMERA) {
+                _fragment.removeMedia(_fragment.getStoryMedia().size() - 1);
+            }
+            return;
+        }
+
+        switch (requestCode) {
+            case GALLERY:
+                Uri selectedImage = imageReturnedIntent.getData();
+                _fragment.addMedia(selectedImage);
+                Locator.getAuthorController().saveFragment(_fragment);
+                break;
+            case CAMERA:
+                //Uri location = imageReturnedIntent.getData();
+                //_fragment.addMedia(location);
+                Locator.getAuthorController().saveFragment(_fragment);
+                break;
+        }
+    }
+
+    private class StoryPagerAdapter extends FragmentStatePagerAdapter {
+
+        private List<Uri> _illustrations;
+        private boolean _author;
+
+        public StoryPagerAdapter(FragmentManager fm) {
+            super(fm);
+            _illustrations = new ArrayList<Uri>();
+        }
+
+        public void setIllustrations(List<Uri> illustrationIDs, boolean author) {
+            _illustrations = illustrationIDs;
+            _author = author;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public Fragment getItem(int pos) {
+            IllustrationFragment frag = new IllustrationFragment();
+            frag.init(_illustrations.get(pos), pos, _illustrations.size(), _author);
+
+            return frag;
+        }
+
+        @Override
+        public int getCount() {
+            return _illustrations.size();
+        }
+
+    }
+    public static class IllustrationFragment extends Fragment {
+
+        private View _rootView;
+        private Uri _sID;
+        private String _position;
+        private boolean _author;
+
+        public void onCreate(Bundle bundle) {
+            super.onCreate(bundle);
+        }
+        public void init(Uri id, int position, int total, boolean author) {
+            _sID = id;
+            _position = (position+1) + "/" + total;
+            _author = author;
+            setUpView();
+        }
+        @Override
+        public View onCreateView(LayoutInflater inflater,
+                                 ViewGroup container, Bundle savedInstanceState) {
+
+            _rootView = inflater.inflate(R.layout.fullscreen_illustration,
+                    container, false);
+
+            setUpView();
+
+            return _rootView;
+        }
+        private void setUpView() {
+            if (_sID == null) return;
+            if (_rootView == null) return;
+
+            /** Layout items **/
+            ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+
+            TextView counter = (TextView) _rootView.findViewById(R.id.count);
+
+            // TODO: Set counter by location
+
+            //image.setBackgroundResource(R.drawable.grumpy_cat2);
+
+            Bitmap bit = null;
+
+            InputStream is = null;
+            try {
+                is = getActivity().getContentResolver().openInputStream(_sID);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+            bit = BitmapFactory.decodeStream(is);
+
+
+            //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
+            image.setImageBitmap(bit);
+            counter.setText(_position);
+
+            Button gallery = (Button) _rootView.findViewById(R.id.gallery);
+            Button camera = (Button)  _rootView.findViewById(R.id.camera);
+            Button delete = (Button)  _rootView.findViewById(R.id.action_delete);
+
+
+
+            // turn off author buttons if necessary
+            if (!_author) {
+                gallery.setVisibility(View.GONE);
+                camera.setVisibility(View.GONE);
+                delete.setVisibility(View.GONE);
+            }
+        }
+
+    }
 }

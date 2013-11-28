@@ -123,7 +123,7 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 	}
 	@Override
 	public void onPause() {
-		Locator.getPresenter().Subscribe((ICurrentFragmentListener)this);
+		Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
 		Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
 		super.onPause();
 	}

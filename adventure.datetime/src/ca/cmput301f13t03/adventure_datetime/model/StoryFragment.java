@@ -1,27 +1,28 @@
 /*
- *        Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
- *         Evan DeGraff
+ * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+ * Evan DeGraff
  *
- *         Permission is hereby granted, free of charge, to any person obtaining a copy of
- *         this software and associated documentation files (the "Software"), to deal in
- *         the Software without restriction, including without limitation the rights to
- *         use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- *         the Software, and to permit persons to whom the Software is furnished to do so,
- *         subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
  *
- *         The above copyright notice and this permission notice shall be included in all
- *         copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
- *         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *         IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- *         FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- *         COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- *         IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.net.Uri;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class StoryFragment {
 	/**
 	 * The list of all Story Media associated with the fragment
 	 */
-	private ArrayList<String> storyMedia;
+	private ArrayList<Uri> storyMedia;
 	/**
 	 * The text content of the fragment
 	 */
@@ -67,7 +68,7 @@ public class StoryFragment {
      * @param choices List of Choices associated with the Story Fragment
      */
 	public StoryFragment(UUID storyID, UUID fragmentID, String storyText,
-	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
+	                     ArrayList<Uri> storyMedia, ArrayList<Choice> choices) {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
@@ -89,7 +90,7 @@ public class StoryFragment {
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Uri>();
 	}
 
     /**
@@ -104,7 +105,7 @@ public class StoryFragment {
 		this.fragmentID = UUID.randomUUID();
 		this.storyText = storyText;
 		this.choices = new ArrayList<Choice>();
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Uri>();
 	}
 
     /**
@@ -121,7 +122,7 @@ public class StoryFragment {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Uri>();
 	}
 
     /**
@@ -147,7 +148,7 @@ public class StoryFragment {
      *
      * @return List of all Media
      */
-	public ArrayList<String> getStoryMedia() {
+	public ArrayList<Uri> getStoryMedia() {
 		return storyMedia;
 	}
 
@@ -156,7 +157,7 @@ public class StoryFragment {
      *
      * @param storyMedia The new list of media
      */
-	public void setStoryMedia(ArrayList<String> storyMedia) {
+	public void setStoryMedia(ArrayList<Uri> storyMedia) {
 		this.storyMedia = storyMedia;
 	}
 
@@ -165,7 +166,7 @@ public class StoryFragment {
      *
      * @param media Media to add
      */
-	public void addMedia(String media) {
+	public void addMedia(Uri media) {
 		storyMedia.add(media);
 	}
 
@@ -178,6 +179,10 @@ public class StoryFragment {
 		storyMedia.remove(media);
 	}
 
+    public void removeMedia(int media) {
+        storyMedia.remove(media);
+    }
+
     /**
      * Gets media at a certain index of the list
      *
@@ -185,7 +190,7 @@ public class StoryFragment {
      *
      * @return The media
      */
-	public String getMedia(int id) {
+	public Uri getMedia(int id) {
 		return storyMedia.get(id);
 	}
 
