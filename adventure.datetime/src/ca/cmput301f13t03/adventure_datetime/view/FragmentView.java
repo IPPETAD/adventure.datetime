@@ -75,7 +75,12 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_fragment = newFragment;
-		setUpView();
+		this.runOnUiThread(new Runnable() {  
+            @Override
+            public void run() {
+            	setUpView();
+            }
+        });	
 	}
 
 	@Override
