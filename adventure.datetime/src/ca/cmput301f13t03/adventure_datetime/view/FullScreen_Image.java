@@ -258,30 +258,12 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
             /** Layout items **/
             ImageView image = (ImageView) _rootView.findViewById(R.id.image);
-
             TextView counter = (TextView) _rootView.findViewById(R.id.count);
-
-            // TODO: Set counter by location
-
-
-
 
             //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
             image.setImageBitmap(_sID.decodeBitmap());
             counter.setText(_position);
 
-            Button gallery = (Button) _rootView.findViewById(R.id.gallery);
-            Button camera = (Button)  _rootView.findViewById(R.id.camera);
-            Button delete = (Button)  _rootView.findViewById(R.id.action_delete);
-
-
-
-            // turn off author buttons if necessary
-            if (!_author) {
-                gallery.setVisibility(View.GONE);
-                camera.setVisibility(View.GONE);
-                delete.setVisibility(View.GONE);
-            }
         }
 
     }

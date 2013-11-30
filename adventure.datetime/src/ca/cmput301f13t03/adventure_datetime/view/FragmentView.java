@@ -66,6 +66,8 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	private static final String TAG = "FragmentView";
 	public static final String FOR_SERVER = "emagherd.server";
 
+    private static final int FILM_STRIP_SIZE = 300;
+
 	private HorizontalScrollView _filmstrip;
 	private TextView _content;
 	private LinearLayout _filmLayout;
@@ -113,7 +115,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 		/** Programmatically set filmstrip height **/
 		if (_fragment.getStoryMedia().size() > 0)
-		    _filmstrip.getLayoutParams().height = 300;
+		    _filmstrip.getLayoutParams().height = FILM_STRIP_SIZE;
 
 
 		_content.setText(_fragment.getStoryText());
@@ -126,12 +128,14 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
 			ImageView li = new ImageView(this);
 			li.setScaleType(ScaleType.CENTER_INSIDE);
-            li.setImage
+            li.setImageBitmap(_fragment.getStoryMedia().get(i).decodeBitmap());
 			_filmLayout.addView(li);
 
 			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
 			lp.setMargins(10, 10, 10, 10);
-			lp.width = LayoutParams.WRAP_CONTENT;
+            lp.height = FILM_STRIP_SIZE;
+            lp.width = FILM_STRIP_SIZE;
+			//lp.width = LayoutParams.WRAP_CONTENT;
 			lp.gravity = Gravity.CENTER_VERTICAL;
 			li.setLayoutParams(lp);
 
