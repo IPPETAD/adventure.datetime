@@ -111,9 +111,8 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			_fragment.setStoryMedia(new ArrayList<Uri>());
 
 		/** Programmatically set filmstrip height **/
-		// TODO::JF Unshitify this, aka not static value
-		//if (_fragment.getStoryMedia().size() > 0)
-		_filmstrip.getLayoutParams().height = 300;
+		if (_fragment.getStoryMedia().size() > 0)
+		    _filmstrip.getLayoutParams().height = 300;
 
 
 		_content.setText(_fragment.getStoryText());
@@ -123,12 +122,10 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		// 2) Set appropriate Layout Params to ImageView
 		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
-		//for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
-		for (int i = 0; i < 5; i++) {
-			// TODO::JF Get images from fragment
+		for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
 			ImageView li = new ImageView(this);
 			li.setScaleType(ScaleType.CENTER_INSIDE);
-			li.setImageResource(R.drawable.grumpy_cat2);
+            li.setImage
 			_filmLayout.addView(li);
 
 			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
