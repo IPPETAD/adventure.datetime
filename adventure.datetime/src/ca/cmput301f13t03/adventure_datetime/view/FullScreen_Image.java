@@ -115,12 +115,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             }
         });
 
+        // turn off author buttons if necessary
+        if (!getIntent().getBooleanExtra(TAG_AUTHOR, false)) {
+            gallery.setVisibility(View.GONE);
+            camera.setVisibility(View.GONE);
+            delete.setVisibility(View.GONE);
+        }
 
         _pageAdapter.setIllustrations(_fragment.getStoryMedia(), getIntent().getBooleanExtra(TAG_AUTHOR, false));
-      /*  ArrayList<String> list = new ArrayList<String>();
-        for (int i=0; i<5; i++) list.add(""+i);
-        _pageAdapter.setIllustrations(list, getIntent().
-                getBooleanExtra(TAG_AUTHOR, false));*/
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {}
@@ -258,7 +260,13 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
             /** Layout items **/
             ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+
             TextView counter = (TextView) _rootView.findViewById(R.id.count);
+
+            // TODO: Set counter by location
+
+
+
 
             //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
             image.setImageBitmap(_sID.decodeBitmap());

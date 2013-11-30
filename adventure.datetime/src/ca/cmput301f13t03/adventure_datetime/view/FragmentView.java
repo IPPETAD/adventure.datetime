@@ -116,9 +116,12 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		/** Programmatically set filmstrip height **/
 		if (_fragment.getStoryMedia().size() > 0)
 		    _filmstrip.getLayoutParams().height = FILM_STRIP_SIZE;
+        else
+            _filmstrip.getLayoutParams().height = 0;
 
 
 		_content.setText(_fragment.getStoryText());
+        _filmLayout.removeAllViews();
 
 
 		// 1) Create new ImageView and add to the LinearLayout
