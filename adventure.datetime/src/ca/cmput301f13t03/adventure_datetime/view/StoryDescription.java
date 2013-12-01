@@ -108,6 +108,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		/** Layout items **/
 		Button play = (Button) findViewById(R.id.play); 
 		Button restart = (Button) findViewById(R.id.restart);
+        ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
 		TextView title  = (TextView) findViewById(R.id.title);
 		TextView author  = (TextView) findViewById(R.id.author);
 		TextView datetime = (TextView) findViewById(R.id.datetime);
@@ -119,6 +120,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 		fragments.setText("Fragments: " + _story.getFragmentIds().size());
 		content.setText(_story.getSynopsis());
+
+        thumbnail.setImageBitmap(_story.getThumbnail().decodeBitmap());
 
 		if (_bookmarks.containsKey(_story.getId())) {
 			play.setText("Continue Story");

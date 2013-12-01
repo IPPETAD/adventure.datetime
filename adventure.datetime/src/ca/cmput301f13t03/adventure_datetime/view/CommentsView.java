@@ -67,10 +67,10 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	protected void onPause() {
 		if (forStoryEh) {
 			Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
-			Locator.getPresenter().Unsubscribe(_story.getId());
+            if (_story != null)	Locator.getPresenter().Unsubscribe(_story.getId());
 		} else {
 			Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
-			Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
+            if (_fragment != null) Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
 		}
 		
 		super.onPause();
@@ -272,12 +272,13 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			TextView content = (TextView) rowView.findViewById(R.id.content);
             ImageView image = (ImageView) rowView.findViewById(R.id.image);
 
-			// TODO::JF use actual data
-			
 			author.setText(item.getAuthor());
 			content.setText(item.getContent());
 			date.setText(item.getFormattedTimestamp());
-			image.setImageBitmap(item.decodeImage());
+            if (item.decodeImage() == null)
+               image.setVisibility(View.GONE);
+            else
+			    image.setImageBitmap(item.decodeImage());
 			layImage.setVisibility(View.GONE);
 			btnImage.setOnClickListener(new ShowOnClickListener().
 					setUp(layImage, btnImage));
