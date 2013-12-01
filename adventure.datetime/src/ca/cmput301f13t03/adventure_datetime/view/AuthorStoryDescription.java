@@ -187,7 +187,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
                 _story.setTitle(_title.getText().toString());
                 _story.setSynopsis(_content.getText().toString());
                 _story.updateTimestamp();
-                Locator.getAuthorController().saveStory(_story);
+                Locator.getAuthorController().saveStory();
                 Toast.makeText(getApplicationContext(), "Story saved!", Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -267,7 +267,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
                     Bitmap bit = BitmapFactory.decodeStream(is);
                     is.close();
                     _story.setThumbnail(bit);
-                    Locator.getAuthorController().saveStory(_story);
+                    Locator.getAuthorController().saveStory();
 
                 }
                 catch(Exception e) {
