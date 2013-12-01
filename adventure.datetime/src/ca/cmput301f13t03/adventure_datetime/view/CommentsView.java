@@ -37,6 +37,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
     private static final int PICTURE_REQUEST = 1;
 	
 	private ListView _listView;
+    private ProgressBar _bar;
 	private Story _story;
 	private StoryFragment _fragment;
 	private List<Comment> _comments;
@@ -47,11 +48,12 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view);
+		setContentView(R.layout.browse);
 		
 		forStoryEh = getIntent().getBooleanExtra(COMMENT_TYPE, true);
 		
 		_listView = (ListView) findViewById(R.id.list_view);
+        _bar = (ProgressBar) findViewById(R.id.progressBar);
 		
 		setUpView();
 	}
@@ -204,16 +206,15 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		if (_story == null && forStoryEh) return;
 		if (_fragment == null && !forStoryEh) return;
 
-		// TODO: Send diff comments whether from story or fragment
-
 		runOnUiThread(new Runnable() {
 			public void run() {
 				_adapter = new RowArrayAdapter(getApplicationContext(), 
 						R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
-				_listView.setAdapter(_adapter);					
+				_listView.setAdapter(_adapter);
+                _bar.setVisibility(View.GONE);
 			}
 		});
-		
+
 	}
 
     @Override
