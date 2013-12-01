@@ -22,6 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -36,20 +41,21 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * View containing description of story create by author.
@@ -63,53 +69,55 @@ import java.util.List;
  * @author Andrew Fontaine
  */
 public class AuthorStoryDescription extends Activity implements ICurrentStoryListener {
-    private static final String TAG = "AuthorStoryDescription";
-    private static final int PICTURE_REQUEST = 1;
-    private Story _story;
-    private EditText _title, _content;
-    private Uri _newThumbnail;
+	private static final String TAG = "AuthorStoryDescription";
+	private static final int PICTURE_REQUEST = 1;
+	private Story _story;
+	private EditText _title, _content;
+	private Uri _newThumbnail;
 
-    @Override
-    public void OnCurrentStoryChange(Story story) {
-        _story = story;
-        setUpView();
-    }
+	@Override
+	public void OnCurrentStoryChange(Story story) {
+		_story = story;
+		setUpView();
+	}
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.author_descript);
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.author_descript);
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.authordesc, menu);
-        return true;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.authordesc, menu);
+		return true;
+	}
 
-    private void setUpView() {
-        if(_story == null) return;
+	private void setUpView() {
+		if(_story == null) return;
 
-        /** Action bar **/
-        getActionBar().setTitle(_story.getTitle());
+		/** Action bar **/
+		getActionBar().setTitle(_story.getTitle());
 
-        /** Layout items **/
-        ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
-        _title = (EditText) findViewById(R.id.title);
-        TextView author = (TextView) findViewById(R.id.author);
-        _content = (EditText) findViewById(R.id.content);
-        TextView datetime = (TextView) findViewById(R.id.datetime);
-        TextView fragments = (TextView) findViewById(R.id.fragments);
-        RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
+		/** Layout items **/
+		ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
+		_title = (EditText) findViewById(R.id.title);
+		TextView author = (TextView) findViewById(R.id.author);
+		_content = (EditText) findViewById(R.id.content);
+		TextView datetime = (TextView) findViewById(R.id.datetime);
+		TextView fragments = (TextView) findViewById(R.id.fragments);
+		RelativeLayout header = (RelativeLayout) findViewById(R.id.header);
 
 		/* Text */
-        thumbnail.setImageBitmap(_story.decodeThumbnail());
-        _title.setText(_story.getTitle());
-        author.setText("Creator: " + _story.getAuthor());
-        datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
-        fragments.setText("Fragments: " + _story.getFragmentIds().size());
-        _content.setText(_story.getSynopsis());
+		thumbnail.setImageBitmap(_story.decodeThumbnail());
+		_title.setText(_story.getTitle());
+		author.setText("Creator: " + _story.getAuthor());
+		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
+		fragments.setText("Fragments: " + _story.getFragmentIds().size());
+		_content.setText(_story.getSynopsis());
 
+		_content.addTextChangedListener(new SynopsisWatcher(_story));
+		_title.addTextChangedListener(new TitleWatcher(_story));
 
 		/*	switch (_story.) {
         case STATUS_UNPUBLISHED:
@@ -132,148 +140,191 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		}
 		 */
 
-			Locator.getAuthorController().selectStory(_story.getId());
+		Locator.getAuthorController().selectStory(_story.getId());
+		Locator.getAuthorController().saveStory();
+
+	}
+
+	@Override
+	public void onResume() {
+		Locator.getPresenter().Subscribe(this);
+		super.onResume();
+	}
+
+	@Override
+	public void onPause() {
+		Locator.getPresenter().Unsubscribe(this);
+		super.onPause();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch(item.getItemId()) {
+		case R.id.action_editfragments:
+			Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
+			Intent intent = new Intent(this, AuthorEdit.class);
+			startActivity(intent);
+			break;
+		case R.id.action_upload:
+			Locator.getAuthorController().upload();
+			Toast.makeText(getApplicationContext(), "Uploaded!", Toast.LENGTH_LONG).show();
+			break;
+		case R.id.action_discard:
+			/* Ensure user is not retarded and actually wants to do this */
+			new AlertDialog.Builder(this)
+			.setTitle("Delete Story")
+			.setMessage("This will kill the story.\nAction cannot be undone.")
+			.setCancelable(true)
+			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Locator.getAuthorController().deleteStory(_story.getId());
+					finish();
+				}
+			})
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			})
+			.create().show();
+			break;
+		case R.id.action_save:
+			_story.setTitle(_title.getText().toString());
+			_story.setSynopsis(_content.getText().toString());
+			_story.updateTimestamp();
 			Locator.getAuthorController().saveStory();
+			Toast.makeText(getApplicationContext(), "Story saved!", Toast.LENGTH_SHORT).show();
+			break;
+		default:
+			Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");
+			break;
+		}
 
-    }
+		return super.onOptionsItemSelected(item);
+	}
 
-    @Override
-    public void onResume() {
-        Locator.getPresenter().Subscribe(this);
-        super.onResume();
-    }
+	public void getImage(View v) {
+		File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"adventure.datetime");
+		if(!picDir.exists()) picDir.mkdirs();
+		File pic = new File(picDir.getPath(), File.separator + _story.getId().toString());
+		Uri location = Uri.fromFile(pic);
 
-    @Override
-    public void onPause() {
-        Locator.getPresenter().Unsubscribe(this);
-        super.onPause();
-    }
+		final List<Intent> cameraIntents = new ArrayList<Intent>();
+		final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		final PackageManager packageManager = getPackageManager();
+		final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+		for(ResolveInfo res : listCam) {
+			final String packageName = res.activityInfo.packageName;
+			final Intent intent = new Intent(captureIntent);
+			intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+			intent.setPackage(packageName);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, location);
+			_newThumbnail = location;
+			cameraIntents.add(intent);
+		}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+		// Filesystem.
+		final Intent galleryIntent = new Intent();
+		galleryIntent.setType("image/*");
+		galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-        switch(item.getItemId()) {
-            case R.id.action_editfragments:
-                Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
-                Intent intent = new Intent(this, AuthorEdit.class);
-                startActivity(intent);
-                break;
-            case R.id.action_upload:
-                Locator.getAuthorController().upload();
-                Toast.makeText(getApplicationContext(), "Uploaded!", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.action_discard:
-            /* Ensure user is not retarded and actually wants to do this */
-                new AlertDialog.Builder(this)
-                        .setTitle("Delete Story")
-                        .setMessage("This will kill the story.\nAction cannot be undone.")
-                        .setCancelable(true)
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Locator.getAuthorController().deleteStory(_story.getId());
-                                finish();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .create().show();
-                break;
-            case R.id.action_save:
-                _story.setTitle(_title.getText().toString());
-                _story.setSynopsis(_content.getText().toString());
-                _story.updateTimestamp();
-                Locator.getAuthorController().saveStory();
-                Toast.makeText(getApplicationContext(), "Story saved!", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Log.e(TAG, "onOptionsItemSelected -> Unknown MenuItem");
-                break;
-        }
+		// Chooser of filesystem options.
+		final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
 
-        return super.onOptionsItemSelected(item);
-    }
+		// Add the camera options.
+		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
 
-    public void getImage(View v) {
-        File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "adventure.datetime");
-        if(!picDir.exists()) picDir.mkdirs();
-        File pic = new File(picDir.getPath(), File.separator + _story.getId().toString());
-        Uri location = Uri.fromFile(pic);
+		startActivityForResult(chooserIntent, PICTURE_REQUEST);
 
-        final List<Intent> cameraIntents = new ArrayList<Intent>();
-        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        final PackageManager packageManager = getPackageManager();
-        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for(ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            final Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, location);
-            _newThumbnail = location;
-            cameraIntents.add(intent);
-        }
+		//_fragment.addMedia(location);
 
-        // Filesystem.
-        final Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+	}
 
-        // Chooser of filesystem options.
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode == RESULT_OK) {
+			if(requestCode == PICTURE_REQUEST) {
+				final boolean isCamera;
+				if(data == null) {
+					isCamera = true;
+				}
+				else {
+					final String action = data.getAction();
+					if(action == null) {
+						isCamera = false;
+					}
+					else {
+						isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					}
+				}
 
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+				Uri selectedImageUri;
+				if(isCamera) {
+					selectedImageUri = _newThumbnail;
+				}
+				else {
+					selectedImageUri = data == null ? null : data.getData();
+				}
+				InputStream is;
+				try {
+					is = getContentResolver().openInputStream(selectedImageUri);
+					Bitmap bit = BitmapFactory.decodeStream(is);
+					is.close();
+					_story.setThumbnail(bit);
+					Locator.getAuthorController().saveStory();
 
-        startActivityForResult(chooserIntent, PICTURE_REQUEST);
+				}
+				catch(Exception e) {
+					Log.e(TAG, "Error setting bitmap", e);
+				}
+			}
+		}
+	}
 
-        //_fragment.addMedia(location);
+	private class TitleWatcher implements TextWatcher
+	{
+		private Story m_story = null;
 
-    }
+		public TitleWatcher(Story story)
+		{
+			this.m_story = story;
+		}
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            if(requestCode == PICTURE_REQUEST) {
-                final boolean isCamera;
-                if(data == null) {
-                    isCamera = true;
-                }
-                else {
-                    final String action = data.getAction();
-                    if(action == null) {
-                        isCamera = false;
-                    }
-                    else {
-                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    }
-                }
+		public void afterTextChanged(Editable s) 
+		{
+			this.m_story.setTitle(s.toString());
+		}
 
-                Uri selectedImageUri;
-                if(isCamera) {
-                    selectedImageUri = _newThumbnail;
-                }
-                else {
-                    selectedImageUri = data == null ? null : data.getData();
-                }
-                InputStream is;
-                try {
-                    is = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bit = BitmapFactory.decodeStream(is);
-                    is.close();
-                    _story.setThumbnail(bit);
-                    Locator.getAuthorController().saveStory();
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {/*Don't care*/}
 
-                }
-                catch(Exception e) {
-                    Log.e(TAG, "Error setting bitmap", e);
-                }
-            }
-        }
-    }
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {/*Don't care*/}
+
+	}
+
+	private class SynopsisWatcher implements TextWatcher
+	{
+		private Story m_story = null;
+
+		public SynopsisWatcher(Story story)
+		{
+			this.m_story = story;
+		}
+
+		public void afterTextChanged(Editable s) 
+		{
+			this.m_story.setSynopsis(s.toString());
+		}
+
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {/*Don't care*/}
+
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {/*Don't care*/}
+	}
 }

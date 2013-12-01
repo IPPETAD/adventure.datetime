@@ -170,12 +170,12 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             case GALLERY:
                 Uri selectedImage = imageReturnedIntent.getData();
                 _fragment.addMedia(selectedImage);
-                Locator.getAuthorController().saveFragment(_fragment);
+                Locator.getAuthorController().saveStory();
                 break;
             case CAMERA:
                 //Uri location = imageReturnedIntent.getData();
                 //_fragment.addMedia(location);
-                Locator.getAuthorController().saveFragment(_fragment);
+            	Locator.getAuthorController().saveStory();
                 break;
         }
     }

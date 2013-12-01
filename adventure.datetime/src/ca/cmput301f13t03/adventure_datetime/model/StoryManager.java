@@ -332,13 +332,28 @@ IStoryModelDirector {
 		if (m_currentStory.getThumbnail() == null)
 			m_currentStory.setThumbnail(BitmapFactory.decodeResource(
 					m_context.getResources(), R.drawable.grumpy_cat));
+		m_currentStory.updateTimestamp();
 		boolean result = m_db.setStory(m_currentStory);
 		if(result)
 		{
 			m_stories.put(m_currentStory.getId(), m_currentStory);
+			SaveAllFrags();
 			PublishStoriesChanged();
 		}
 		return result;
+	}
+	
+	private void SaveAllFrags()
+	{
+		Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
+		
+		for(StoryFragment frag : currentFrags.values())
+		{
+			if(!m_db.setStoryFragment(frag))
+			{
+				Log.w(TAG, "Failed to save fragment to database!");
+			}
+		}
 	}
 
 	/**

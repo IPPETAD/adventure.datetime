@@ -70,7 +70,6 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 	
 	private View _rootView;
 	private StoryFragment _fragment;
-	private Story _story;
 
 	private Button _addChoiceBtn;
 	private EditText _content;
@@ -101,10 +100,6 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		setUpView();
 	}
 
-	public void setStory(Story st) {
-		_story = st;
-		setUpView();
-	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) {
@@ -166,14 +161,6 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		
 		m_activity = activity;
 		setUpView();
-	}
-
-	public void saveFragment()
-	{
-		_fragment.setStoryText(_content.getText().toString());
-		_story.updateTimestamp();
-		Locator.getAuthorController().saveFragment(_fragment);
-		Locator.getAuthorController().saveStory();
 	}
 
 	public void onClick(View v)
