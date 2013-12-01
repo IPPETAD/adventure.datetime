@@ -25,9 +25,16 @@ package ca.cmput301f13t03.adventure_datetime.controller;
 
 import java.util.HashSet;
 import java.util.UUID;
+
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
  * Controller for aspects of authoring a story
@@ -142,9 +149,7 @@ public class AuthorController {
 		m_storyDirector.selectFragment(fragmentId);
 	}
 	
-	public void upload()
-	{
+	public void upload(){
 		m_storyDirector.uploadCurrentStory();
 	}
-	
 }

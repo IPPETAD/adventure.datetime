@@ -115,7 +115,8 @@ public interface IStoryModelDirector
 	 */
 	public void uploadCurrentStory();
 
-	/* Deletes a bookmark by StoryID
+	/**
+     *  Deletes a bookmark by StoryID
 	 * 
 	 * @param storyId UUID of the story to delete
 	 */
