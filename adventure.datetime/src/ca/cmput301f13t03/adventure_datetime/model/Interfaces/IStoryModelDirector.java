@@ -131,4 +131,11 @@ public interface IStoryModelDirector
 	 * @param comment
 	 */
 	public void addComment(Comment comment);
+	
+	/**
+	 * Changes a downloaded story to author mode
+	 * @param storyId
+	 * @return new UUID for the story
+	 */
+	public UUID setStoryToAuthor(UUID storyId);
 }

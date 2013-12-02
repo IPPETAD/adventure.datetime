@@ -142,8 +142,19 @@ public class AuthorController {
 	{
 		m_storyDirector.selectFragment(fragmentId);
 	}
-	
+	/**
+	 * Uploads a story to the server
+	 */
 	public void upload(){
 		m_storyDirector.uploadCurrentStory();
+	}
+	
+	/**
+	 * Changes a downloaded story to author mode
+	 * @param storyId
+	 * @return new UUID for the story
+	 */
+	public void setStoryToAuthor(UUID storyId) {
+		selectStory(m_storyDirector.setStoryToAuthor(storyId));
 	}
 }

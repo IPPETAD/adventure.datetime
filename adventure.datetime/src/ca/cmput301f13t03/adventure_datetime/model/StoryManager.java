@@ -300,6 +300,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		newStory.setHeadFragmentId(headFragment);
 		
 		m_stories.put(newStory.getId(), newStory);
+		m_db.setAuthoredStory(newStory);
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 		
 		PublishCurrentStoryChanged();
@@ -374,24 +375,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Get a fragment from the database
 	 */
-	public StoryFragment getFragment(UUID fragmentId) {
-		// The fragment should be part of the current story
-		HashSet<UUID> fragmentIds = m_currentStory.getFragments();
-		UUID theId = null;
+	public StoryFragment getFragment(UUID theId) {
 		StoryFragment result = null;
-		
-		// verify that the id is indeed part of the current story!
-		for(UUID id : fragmentIds)
-		{
-			if(fragmentId.equals(id))
-				theId = id;
-		}
-		
-		if(theId == null)
-		{
-			// Then you requested an id not attached to the current story!
-			throw new RuntimeException("Requested Fragment Id not attached to current story!");
-		}
 		
 		if(m_fragmentList.containsKey(theId))
 		{
@@ -622,6 +607,38 @@ public final class StoryManager implements IStoryModelPresenter,
 				getFragmentOnline(fragmentId, true);
 			}
 		}
+	}
+
+	@Override
+	public UUID setStoryToAuthor(UUID storyId) {
+		if(m_db.getAuthoredStory(storyId))
+			return storyId;
+		
+		Story story = getStory(storyId).newId();
+		List<StoryFragment> newFragments = new ArrayList<StoryFragment>();
+		Map<UUID,UUID> oldToNew = new HashMap<UUID, UUID>();
+		
+		for(UUID fragmentId : story.getFragments()) {
+			StoryFragment fragment = getFragment(fragmentId).newId();
+			newFragments.add(fragment);
+			oldToNew.put(fragmentId, fragment.getFragmentID());
+		}
+		
+		for(StoryFragment fragment : newFragments) {
+			for(Choice choice : fragment.getChoices()) {
+				choice.setTarget(oldToNew.get(choice.getTarget()));
+			}
+			m_db.setStoryFragment(fragment);
+			m_fragmentList.put(fragment.getFragmentID(), fragment);
+			story.addFragment(fragment);
+		}
+		
+		story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
+		m_stories.put(story.getId(), story);
+		m_db.setStory(story);
+		m_db.setAuthoredStory(story);
+		
+		return story.getId();
 	}
 
 }

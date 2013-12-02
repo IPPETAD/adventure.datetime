@@ -77,7 +77,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				Locator.getAuthorController().selectStory(item.getId());
+				Locator.getAuthorController().setStoryToAuthor(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				startActivity(intent);	

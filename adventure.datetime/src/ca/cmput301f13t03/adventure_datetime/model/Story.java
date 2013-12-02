@@ -44,7 +44,7 @@ public class Story {
 	/**
 	 * The GUID of the story, -1 if there is no _ID
 	 */
-	final private UUID id;
+	private UUID id;
 	/**
 	 * The UNIX time of the last time the Story was updated/downloaded
 	 */
@@ -219,6 +219,14 @@ public class Story {
      */
 	public UUID getId() {
 		return id;
+	}
+	
+	/**
+     * Sets the UUID of the Story
+     * @param UUID id
+     */
+	public void setId(UUID storyId) {
+		this.id = storyId;
 	}
 
     /**
@@ -487,4 +495,10 @@ public class Story {
         result = 31 * result + (fragmentIDs == null ? 0 : fragmentIDs.hashCode());
         return result;
     }
+
+	public Story newId() {
+		this.id = UUID.randomUUID();
+		getThumbnail().setId(UUID.randomUUID());
+		return this;
+	}
 }
