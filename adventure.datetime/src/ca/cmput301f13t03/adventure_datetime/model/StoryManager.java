@@ -302,6 +302,11 @@ IStoryModelDirector {
 		StoryFragment headFragment = new StoryFragment(newStory.getId(), DEFAULT_FRAGMENT_TEXT);
 
 		newStory.setHeadFragmentId(headFragment);
+		
+		if(m_stories == null)
+		{
+			LoadStories();
+		}
 
 		m_stories.put(newStory.getId(), newStory);
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
