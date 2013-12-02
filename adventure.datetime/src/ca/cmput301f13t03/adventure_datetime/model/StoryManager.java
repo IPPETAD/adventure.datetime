@@ -287,7 +287,6 @@ public final class StoryManager implements IStoryModelPresenter,
 			getFragmentOnline(fragmentId, false);
 			getNextFragments(fragmentId);
 		}
-		setBookmark();
 	}
 	
 	/**
@@ -467,16 +466,17 @@ public final class StoryManager implements IStoryModelPresenter,
 		return m_bookmarkList.get(id);
 	}
 
-	public void setBookmark() {
-		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), m_currentFragment.getFragmentID());
+	public void setBookmark(UUID fragmentId) {
+		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), fragmentId);
 		m_bookmarkList.remove(m_currentStory.getId());
 		m_bookmarkList.put(m_currentStory.getId(), newBookmark);
 		m_db.setBookmark(newBookmark);
 		PublishBookmarkListChanged();
 	}
 	
-	public void deleteBookmark(UUID storyId) {
-		m_db.deleteBookmarkByStory(storyId);
+	public void deleteBookmark() {
+		m_db.deleteBookmarkByStory(m_currentStory.getId());
+		m_bookmarkList.remove(m_currentStory.getId());
 		PublishBookmarkListChanged();
 	}
 	

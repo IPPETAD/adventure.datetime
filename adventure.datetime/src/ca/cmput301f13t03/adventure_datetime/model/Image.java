@@ -37,6 +37,13 @@ public class Image {
 	private String encodedBitmap;
 	private transient Bitmap bitmap;
 	private transient boolean dirty;
+
+    public static String compressBitmap(Bitmap bit, int qual) {
+        Bitmap bitmapex = bit;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmapex.compress(Bitmap.CompressFormat.JPEG, qual, baos);
+        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+    }
 	
 	public Image(String bitmap) {
 		this._id = UUID.randomUUID();

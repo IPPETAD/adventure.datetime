@@ -15,9 +15,11 @@
             android:layout_width="95dp"
             android:layout_height="95dp"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"
             android:contentDescription="Thumbnail"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:onClick="getImage"
+            android:padding="10dp"
             android:src="@drawable/grumpy_cat" />
 
         <LinearLayout

@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.net.Uri;
 import android.util.Log;
 import com.google.gson.Gson;
 import junit.framework.Assert;
@@ -43,7 +44,7 @@ public class StoryFragmentTest extends TestCase {
 
 	public void testCreation() throws Exception {
 		StoryFragment frag = new StoryFragment(UUID.randomUUID(), UUID.randomUUID(),
-				"test", new ArrayList<String>(), new ArrayList<Choice>());
+				"test", new ArrayList<Image>(), new ArrayList<Choice>());
 		Assert.assertNotNull("Frag is null", frag);
 
 		frag = new StoryFragment(UUID.randomUUID(), "test",

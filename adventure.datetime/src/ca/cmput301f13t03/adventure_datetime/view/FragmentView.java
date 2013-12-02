@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -43,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -75,7 +77,12 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 	@Override
 	public void OnCurrentFragmentChange(StoryFragment newFragment) {
 		_fragment = newFragment;
-		setUpView();
+		this.runOnUiThread(new Runnable() {  
+            @Override
+            public void run() {
+            	setUpView();
+            }
+        });	
 	}
 
 	@Override
@@ -107,7 +114,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		_content = (TextView) findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<String>());
+			_fragment.setStoryMedia(new ArrayList<Image>());
 
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
@@ -181,6 +188,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 			});
 		} else {
 			/** End of story **/
+			Locator.getUserController().deleteBookmark();
 			_choices.setText("The End");
 			_choices.setOnClickListener(new OnClickListener() {
 				@Override

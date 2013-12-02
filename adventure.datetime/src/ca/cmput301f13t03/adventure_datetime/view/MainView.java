@@ -70,7 +70,7 @@ public class MainView extends Activity implements IBookmarkListListener {
 
 		Locator.initializeLocator(getApplicationContext());
 		
-		Locator.initializeLocator(getApplicationContext());
+		//Locator.initializeLocator(getApplicationContext());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);		

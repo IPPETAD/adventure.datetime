@@ -92,6 +92,22 @@ public interface ILocalStorage {
 	 */
 	public abstract ArrayList<Bookmark> getAllBookmarks();
 
+    /**
+     * Checks if a Story id is in the AuthoredStories table
+     *
+     * @param storyId ID of story to check for
+     *
+     * @return Whether or not the Story is there
+     */
+    public abstract boolean getAuthoredStory(UUID storyId);
+
+    /**
+     * Gets the list of all AuthoredStories
+     *
+     * @return List containing all UUIDs in the AuthoredStories table
+     */
+    public abstract ArrayList<UUID> getAuthoredStories();
+
 	/**
 	 * Inserts or updates a bookmark into the Database
 	 *
@@ -118,6 +134,15 @@ public interface ILocalStorage {
 	 * @return True if successful, false if not
 	 */
 	public abstract boolean setStoryFragment(StoryFragment frag);
+
+    /**
+     * Inserts a Story id to AuthoredStories
+     *
+     * @param story The story to set to Authored
+     *
+     * @return True if successful, false if not
+     */
+    public abstract boolean setAuthoredStory(Story story);
 	
     /**
      * Deletes a story and all it's related things (StoryFragments, Bookmark) from the database
@@ -153,4 +178,11 @@ public interface ILocalStorage {
      * @return Roughly whether or not a bookmark was deleted
      */
     public boolean deleteBookmarkByFragment(UUID fragmentID);
+
+    /**
+     * Deletes the story from AuthoredStories with the given UUID
+     * @param storyID The UUID of the Story
+     * @return Roughly whether or not an AuthoredStory was deleted
+     */
+    public boolean deleteAuthoredStory(UUID storyID);
 }

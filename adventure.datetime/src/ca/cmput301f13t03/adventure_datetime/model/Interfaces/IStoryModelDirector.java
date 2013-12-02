@@ -95,8 +95,9 @@ public interface IStoryModelDirector
 
 	/**
 	 *	Save a bookmark to the database
+	 * @param uuid 
 	 */
-	public void setBookmark();
+	public void setBookmark(UUID uuid);
 
 	/**
 	 * Fetch a bookmark ID by its ID
@@ -113,11 +114,12 @@ public interface IStoryModelDirector
 	 */
 	public void uploadCurrentStory();
 
-	/* Deletes a bookmark by StoryID
+	/**
+     *  Deletes a bookmark by StoryID
 	 * 
 	 * @param storyId UUID of the story to delete
 	 */
-	public void deleteBookmark(UUID storyId);
+	public void deleteBookmark();
 
 	/**
 	 * Downloads current story to local database

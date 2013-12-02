@@ -34,6 +34,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IOnlineStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
@@ -60,7 +61,7 @@ import android.widget.TextView;
  *
  */
 public class ContinueView extends Activity implements IBookmarkListListener,
-														ILocalStoriesListener {
+														ILocalStoriesListener, IOnlineStoriesListener {
 	private static final String TAG = "ContinueView";
 
 	private ListView _listView;
@@ -68,6 +69,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	
 	private Map<UUID, Bookmark> _bookmarks;
 	private Map<UUID, Story> _stories;
+	private Map<UUID, Story> _onlineStories;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -99,16 +101,29 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 		_stories = newStories;
 		setUpView();
 	}
+	public void OnOnlineStoriesChange(Map<UUID, Story> newStories) {
+		_onlineStories = newStories;
+		this.runOnUiThread(new Runnable() {  
+			@Override
+			public void run() {
+				setUpView();
+			}
+		}); 
+	}
 	private void setUpView() {
 		if (_bookmarks == null) return;
 		if (_stories == null) return;
+		if (_onlineStories == null) return;
 		
 		Map<UUID, Story> hStories = _stories;
+		Map<UUID, Story> hOnlineStories = _onlineStories;
 		
 		List<Story> relevants = new ArrayList<Story>();
 		for (Bookmark bookmark : _bookmarks.values()) {
 			if (hStories.containsKey(bookmark.getStoryID()))
 				relevants.add(hStories.get(bookmark.getStoryID()));
+			if (hOnlineStories.containsKey(bookmark.getStoryID()))
+				relevants.add(hOnlineStories.get(bookmark.getStoryID()));
 		}
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem, 
 				relevants.toArray(new Story[relevants.size()]));
@@ -118,12 +133,14 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	public void onResume() {
 		Locator.getPresenter().Subscribe((IBookmarkListListener)this);
 		Locator.getPresenter().Subscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Subscribe((IOnlineStoriesListener)this);
 		super.onResume();
 	}
 	@Override
 	public void onPause() {
 		Locator.getPresenter().Unsubscribe((IBookmarkListListener)this);
 		Locator.getPresenter().Unsubscribe((ILocalStoriesListener)this);
+		Locator.getPresenter().Unsubscribe((IOnlineStoriesListener)this);
 		super.onPause();
 	}
 
