@@ -63,175 +63,183 @@ import java.util.List;
  * @author James Finlay
  */
 public class FragmentView extends Activity implements ICurrentFragmentListener {
-	private static final String TAG = "FragmentView";
-	public static final String FOR_SERVER = "emagherd.server";
+    private static final String TAG = "FragmentView";
+    public static final String FOR_SERVER = "emagherd.server";
 
     private static final int FILM_STRIP_SIZE = 300;
 
-	private HorizontalScrollView _filmstrip;
-	private TextView _content;
-	private LinearLayout _filmLayout;
-	private Button _choices;
-	private boolean forServerEh;
+    private HorizontalScrollView _filmstrip;
+    private TextView _content;
+    private LinearLayout _filmLayout;
+    private Button _choices;
+    private boolean forServerEh;
 
-	private StoryFragment _fragment;
+    private StoryFragment _fragment;
 
-	@Override
-	public void OnCurrentFragmentChange(StoryFragment newFragment) {
-		_fragment = newFragment;
-		setUpView();
-	}
+    @Override
+    public void OnCurrentFragmentChange(StoryFragment newFragment) {
+        _fragment = newFragment;
+        setUpView();
+    }
 
-	@Override
-	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
-		super.onResume();
-	}
+    @Override
+    public void onResume() {
+        Locator.getPresenter().Subscribe(this);
+        super.onResume();
+    }
 
-	@Override
-	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
-	}
+    @Override
+    public void onPause() {
+        Locator.getPresenter().Unsubscribe(this);
+        super.onPause();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_view);
-		forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
-		setUpView();
-	}
-	public void setUpView() {
-		if (_fragment == null) return;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_view);
+        forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
+        setUpView();
+    }
+    public void setUpView() {
+        if (_fragment == null) return;
 
-		/** Layout items **/
-		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
-		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
-		_choices = (Button) findViewById(R.id.choices);
-		_content = (TextView) findViewById(R.id.content);
+        /** Layout items **/
+        _filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
+        _filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
+        _choices = (Button) findViewById(R.id.choices);
+        _content = (TextView) findViewById(R.id.content);
 
-		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<Image>());
+        if (_fragment.getStoryMedia() == null)
+            _fragment.setStoryMedia(new ArrayList<Image>());
 
-		/** Programmatically set filmstrip height **/
-		if (_fragment.getStoryMedia().size() > 0)
-		    _filmstrip.getLayoutParams().height = FILM_STRIP_SIZE;
-        else
-            _filmstrip.getLayoutParams().height = 0;
-
-
-		_content.setText(_fragment.getStoryText());
-        _filmLayout.removeAllViews();
+        /* Run on UI Thread for server stuff */
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
 
-		// 1) Create new ImageView and add to the LinearLayout
-		// 2) Set appropriate Layout Params to ImageView
-		// 3) Give onClickListener for going to fullscreen
-		LinearLayout.LayoutParams lp;
-		for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
-			ImageView li = new ImageView(this);
-			li.setScaleType(ScaleType.CENTER_INSIDE);
-            li.setImageBitmap(_fragment.getStoryMedia().get(i).decodeBitmap());
-			_filmLayout.addView(li);
+                /** Programmatically set filmstrip height **/
+                if (_fragment.getStoryMedia().size() > 0)
+                    _filmstrip.getLayoutParams().height = FILM_STRIP_SIZE;
+                else
+                    _filmstrip.getLayoutParams().height = 0;
 
-			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
-			lp.setMargins(10, 10, 10, 10);
-            lp.height = FILM_STRIP_SIZE;
-            lp.width = FILM_STRIP_SIZE;
-			//lp.width = LayoutParams.WRAP_CONTENT;
-			lp.gravity = Gravity.CENTER_VERTICAL;
-			li.setLayoutParams(lp);
 
-			li.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
-					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
-					startActivity(intent);
-				}
-			});
-		}
+                _content.setText(_fragment.getStoryText());
+                _filmLayout.removeAllViews();
 
-		if (_fragment.getChoices().size() > 0) {
-			/** Choices **/
-			final List<String> choices = new ArrayList<String>();
-			for (Choice choice : _fragment.getChoices())
-				choices.add(choice.getText());
-			choices.add("I'm feeling lucky.");
 
-			_choices.setText("Actions");
-			_choices.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					new AlertDialog.Builder(v.getContext())
-					.setTitle("Actions")
-					.setCancelable(true)
-					.setItems(choices.toArray(new String[choices.size()]), 
-							new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
+                // 1) Create new ImageView and add to the LinearLayout
+                // 2) Set appropriate Layout Params to ImageView
+                // 3) Give onClickListener for going to fullscreen
+                LinearLayout.LayoutParams lp;
+                for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
+                    ImageView li = new ImageView(getParent());
+                    li.setScaleType(ScaleType.CENTER_INSIDE);
+                    li.setImageBitmap(_fragment.getStoryMedia().get(i).decodeBitmap());
+                    _filmLayout.addView(li);
 
-							/** You feeling lucky, punk? **/
-							if (which == _fragment.getChoices().size())
-								which = (int) (Math.random() * _fragment.getChoices().size());
+                    lp = (LinearLayout.LayoutParams) li.getLayoutParams();
+                    lp.setMargins(10, 10, 10, 10);
+                    lp.height = FILM_STRIP_SIZE;
+                    lp.width = FILM_STRIP_SIZE;
+                    //lp.width = LayoutParams.WRAP_CONTENT;
+                    lp.gravity = Gravity.CENTER_VERTICAL;
+                    li.setLayoutParams(lp);
 
-							Choice choice = _fragment.getChoices().get(which);
+                    li.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
+                            intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
+                            startActivity(intent);
+                        }
+                    });
+                }
 
-							Toast.makeText(getApplicationContext(), 
-									choice.getText(), Toast.LENGTH_LONG).show();
-							Locator.getUserController().MakeChoice(choice);
-						}
-					})
-					.create().show();
-				}
-			});
-		} else {
-			/** End of story **/
-			Locator.getUserController().deleteBookmark();
-			_choices.setText("The End");
-			_choices.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					new AlertDialog.Builder(v.getContext())
-					.setTitle("La Fin")
-					.setCancelable(true)
-					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							Locator.getUserController().StartStory(_fragment.getStoryID());							
-						}
-					})
-					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-					.create().show();
-					
-				}
-			});
-		}
+                if (_fragment.getChoices().size() > 0) {
+                    /** Choices **/
+                    final List<String> choices = new ArrayList<String>();
+                    for (Choice choice : _fragment.getChoices())
+                        choices.add(choice.getText());
+                    choices.add("I'm feeling lucky.");
 
-	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		if (forServerEh)
-			getMenuInflater().inflate(R.menu.fragment_menu, menu);
-		return true;
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_comment:
+                    _choices.setText("Actions");
+                    _choices.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle("Actions")
+                                    .setCancelable(true)
+                                    .setItems(choices.toArray(new String[choices.size()]),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    /** You feeling lucky, punk? **/
+                                                    if (which == _fragment.getChoices().size())
+                                                        which = (int) (Math.random() * _fragment.getChoices().size());
+
+                                                    Choice choice = _fragment.getChoices().get(which);
+
+                                                    Toast.makeText(getApplicationContext(),
+                                                            choice.getText(), Toast.LENGTH_LONG).show();
+                                                    Locator.getUserController().MakeChoice(choice);
+                                                }
+                                            })
+                                    .create().show();
+                        }
+                    });
+                } else {
+                    /** End of story **/
+                    Locator.getUserController().deleteBookmark();
+                    _choices.setText("The End");
+                    _choices.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle("La Fin")
+                                    .setCancelable(true)
+                                    .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Locator.getUserController().StartStory(_fragment.getStoryID());
+                                        }
+                                    })
+                                    .setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    })
+                                    .create().show();
+
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if (forServerEh)
+            getMenuInflater().inflate(R.menu.fragment_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_comment:
 			/* Open comments activity */
-			Intent intent = new Intent(this, CommentsView.class);
-			intent.putExtra(CommentsView.COMMENT_TYPE, false);
-			startActivity(intent);
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+                Intent intent = new Intent(this, CommentsView.class);
+                intent.putExtra(CommentsView.COMMENT_TYPE, false);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
