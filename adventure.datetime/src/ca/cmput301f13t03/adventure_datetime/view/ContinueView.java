@@ -87,7 +87,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				
 				Locator.getUserController().ResumeStory(item.getId());
 				
-				Intent intent = new Intent(ContinueView.this, FragmentView.class);
+				Intent intent = new Intent(ContinueView.this, FragmentViewActivity.class);
 				startActivity(intent);
 			}
 		});

@@ -38,7 +38,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector
  */
 public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
-
+	private static final String TAG = "USER_CONTROLLER";
 
 	public UserController(IStoryModelDirector director, ILocalStorage storage) {
 		m_storyDirector = director;
@@ -98,9 +98,17 @@ public class UserController {
      *
      * @param choice The choice made
      */
-	public void MakeChoice(Choice choice) {
-		m_storyDirector.selectFragment(choice.getTarget());
-		m_storyDirector.setBookmark(choice.getTarget());
+	public void MakeChoice(Choice choice) 
+	{
+		try
+		{
+			m_storyDirector.selectFragment(choice.getTarget());
+			m_storyDirector.setBookmark();
+		}
+		catch(RuntimeException ex)
+		{
+			Log.e(TAG, "Failed to make a choice!", ex);
+		}
 	}
 	
 	public void download() 

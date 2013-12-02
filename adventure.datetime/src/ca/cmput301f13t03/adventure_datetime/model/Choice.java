@@ -103,7 +103,8 @@ public class Choice {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() 
+    {
         int result = text.hashCode();
         result = 31 * result + target.hashCode();
         return result;

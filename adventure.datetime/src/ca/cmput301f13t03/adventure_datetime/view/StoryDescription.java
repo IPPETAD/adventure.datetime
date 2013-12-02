@@ -133,8 +133,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			public void onClick(View v) {
 				// Launch Story
 				Locator.getUserController().ResumeStory(_story.getId());
-				Intent intent = new Intent(StoryDescription.this, FragmentView.class);
-				intent.putExtra(FragmentView.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
+				Intent intent = new Intent(StoryDescription.this, FragmentViewActivity.class);
+				intent.putExtra(FragmentViewActivity.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
 				startActivity(intent);
 			}
 		});
@@ -144,8 +144,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			public void onClick(View v) {
 				// Restart & Launch Story
 				Locator.getUserController().StartStory(_story.getId());
-				Intent intent = new Intent(StoryDescription.this, FragmentView.class);
-				intent.putExtra(FragmentView.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
+				Intent intent = new Intent(StoryDescription.this, FragmentViewActivity.class);
+				intent.putExtra(FragmentViewActivity.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
 				startActivity(intent);
 			}
 		});

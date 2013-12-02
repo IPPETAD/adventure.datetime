@@ -25,7 +25,6 @@ package ca.cmput301f13t03.adventure_datetime.model;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
@@ -43,7 +42,7 @@ import java.util.UUID;
  * Fetches and caches Stories and StoryFragments
  */
 public final class StoryManager implements IStoryModelPresenter,
-		IStoryModelDirector {
+IStoryModelDirector {
 	final String DEFAULT_FRAGMENT_TEXT = "<insert content here...>";
 	private static final String TAG = "StoryManager";
 
@@ -55,13 +54,13 @@ public final class StoryManager implements IStoryModelPresenter,
 	// Current focus
 	private Story m_currentStory = null;
 	private StoryFragment m_currentFragment = null;
-	
+
 	private Map<UUID, Story> m_stories = null;
 	private Map<UUID, Story> m_onlineStories = null;
 	private Map<UUID, Bookmark> m_bookmarkList = null;
 	private Map<UUID, StoryFragment> m_fragmentList = null;
 	private Map<UUID, List<Comment>> m_comments = null;
-	
+
 	// Listeners
 	private Set<ICurrentFragmentListener> m_fragmentListeners = new HashSet<ICurrentFragmentListener>();
 	private Set<ICurrentStoryListener> m_storyListeners = new HashSet<ICurrentStoryListener>();
@@ -75,12 +74,12 @@ public final class StoryManager implements IStoryModelPresenter,
 	 * Create a new story manager and initializes other components using the provided context.
 	 * The provided context MUST be the application context
 	 */
-	 public StoryManager(Context context) {
+	public StoryManager(Context context) {
 		m_context = context;
 		m_db = new StoryDB(context);
 		m_webStorage = new WebStorage();
 		m_threadPool = new ThreadPool();
-		
+
 		m_fragmentList = new HashMap<UUID, StoryFragment>();
 		m_comments = new HashMap<UUID, List<Comment>>();
 	}
@@ -145,7 +144,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			PublishBookmarkListChanged();
 		}
 	}
-	
+
 	public void Subscribe(IAllFragmentsListener allFragmentsListener)
 	{
 		m_allFragmentListeners.add(allFragmentsListener);
@@ -155,7 +154,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			allFragmentsListener.OnAllFragmentsChange(currentFrags);
 		}
 	}
-	
+
 	public void Subscribe(ICommentsListener commentsListener, UUID id) {
 		m_commentsListeners.put(id, commentsListener);
 		LoadComments(id);
@@ -174,7 +173,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(ICurrentStoryListener storyListener) {
 		m_storyListeners.remove(storyListener);
 	}
-	
+
 	/**
 	 * Unsubscribe from callbakcs when the current list of stories changes
 	 */
@@ -187,12 +186,12 @@ public final class StoryManager implements IStoryModelPresenter,
 	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
 		m_bookmarkListListeners.remove(bookmarkListListener);
 	}
-	
+
 	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
 	{
 		m_allFragmentListeners.remove(allFragmentsListener);
 	}
-	
+
 	public void Unsubscribe(UUID id) {
 		m_commentsListeners.remove(id);
 	}
@@ -210,7 +209,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		for (ICurrentStoryListener storyListener : m_storyListeners) {
 			storyListener.OnCurrentStoryChange(m_currentStory);
 		}
-		
+
 		// whenever the current story changes so does the list of current fragments
 		PublishAllFragmentsChanged();
 	}
@@ -232,7 +231,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			localStoriesListener.OnLocalStoriesChange(m_stories);
 		}
 	}
-	
+
 	private void PublishOnlineStoriesChanged() {
 		for (IOnlineStoriesListener onlineStoriesListener : m_onlineStoriesListeners) {
 			onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
@@ -244,17 +243,17 @@ public final class StoryManager implements IStoryModelPresenter,
 			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
 		}
 	}
-	
+
 	private void PublishCommentsChanged(UUID finalId) {
 		m_commentsListeners.get(finalId).OnCommentsChange(m_comments.get(finalId));
 	}
-	
+
 	private void PublishAllFragmentsChanged()
 	{
 		if(m_currentStory != null && m_fragmentList != null)
 		{
 			Map<UUID, StoryFragment> currentStoryFragments = GetAllCurrentFragments();
-			
+
 			for(IAllFragmentsListener allFragListener : m_allFragmentListeners)
 			{
 				allFragListener.OnAllFragmentsChange(currentStoryFragments);
@@ -271,9 +270,14 @@ public final class StoryManager implements IStoryModelPresenter,
 	/**
 	 * Select a story
 	 */
-	public void selectStory(UUID storyId) {
-		m_currentStory = getStory(storyId);
-		PublishCurrentStoryChanged();
+	public void selectStory(UUID storyId) 
+	{
+		Story newStory = getStory(storyId);
+		if(newStory != m_currentStory)
+		{
+			m_currentStory = newStory;
+			PublishCurrentStoryChanged();
+		}
 	}
 
 	/**
@@ -288,38 +292,73 @@ public final class StoryManager implements IStoryModelPresenter,
 			getNextFragments(fragmentId);
 		}
 	}
-	
+
 	/**
-	* Create a new story and head fragment and insert them into the local database
-	*/
+	 * Create a new story and head fragment and insert them into the local database
+	 */
 	public Story CreateNewStory()
 	{
 		Story newStory = new Story();
 		StoryFragment headFragment = new StoryFragment(newStory.getId(), DEFAULT_FRAGMENT_TEXT);
-		
+
 		newStory.setHeadFragmentId(headFragment);
 		
+		if(m_stories == null)
+		{
+			LoadStories();
+		}
+
 		m_stories.put(newStory.getId(), newStory);
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
-		
+
 		PublishCurrentStoryChanged();
-		
+
 		return newStory;
 	}
 
-	public boolean putStory(Story story) {
+	public StoryFragment CreateNewStoryFragment()
+	{
+		StoryFragment newFrag = new StoryFragment(m_currentStory.getId(), "");
+
+		m_fragmentList.put(newFrag.getFragmentID(), newFrag);
+		m_currentStory.addFragment(newFrag);
+
+		PublishCurrentStoryChanged();
+		PublishAllFragmentsChanged();
+
+		return newFrag;
+	}
+
+	public boolean SaveStory() 
+	{
 		// Set default image if needed
-		if(story == null) 
+		if(m_currentStory == null) 
 			return false;
-		if (story.getThumbnail() == null)
-			story.setThumbnail(BitmapFactory.decodeResource(
+		if (m_currentStory.getThumbnail() == null)
+			m_currentStory.setThumbnail(BitmapFactory.decodeResource(
 					m_context.getResources(), R.drawable.grumpy_cat));
-		boolean result = m_db.setStory(story);
-		if(result){
-			m_stories.put(story.getId(), story);
+		m_currentStory.updateTimestamp();
+		boolean result = m_db.setStory(m_currentStory);
+		if(result)
+		{
+			m_stories.put(m_currentStory.getId(), m_currentStory);
+			SaveAllFrags();
 			PublishStoriesChanged();
 		}
 		return result;
+	}
+	
+	private void SaveAllFrags()
+	{
+		Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
+		
+		for(StoryFragment frag : currentFrags.values())
+		{
+			if(!m_db.setStoryFragment(frag))
+			{
+				Log.w(TAG, "Failed to save fragment to database!");
+			}
+		}
 	}
 
 	/**
@@ -327,8 +366,8 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void deleteStory(UUID storyId) {
 		m_db.deleteStory(storyId);
-        m_stories.remove(storyId);
-        PublishStoriesChanged();
+		m_stories.remove(storyId);
+		PublishStoriesChanged();
 	}
 
 	/**
@@ -349,16 +388,16 @@ public final class StoryManager implements IStoryModelPresenter,
 	 * Save a fragment to the database
 	 */
 	public boolean putFragment(StoryFragment fragment) {
-		
+
 		// this really should be transactional...
 		boolean result = m_db.setStoryFragment(fragment);
 		if(result)
 		{
 			result = m_db.setStory(m_currentStory);
-			
+
 			PublishAllFragmentsChanged();
 		}
-		
+
 		return result;
 	}
 
@@ -367,8 +406,34 @@ public final class StoryManager implements IStoryModelPresenter,
 	 */
 	public void deleteFragment(UUID fragmentId) {
 		m_db.deleteStoryFragment(fragmentId);
-        m_fragmentList.remove(fragmentId);
-        PublishAllFragmentsChanged();
+		m_fragmentList.remove(fragmentId);
+		
+		List<Choice> choicesToRemove = new ArrayList<Choice>();
+		
+		// Now iterate over all fragments and find those that referenced this one
+		// remove those choices so they cannot be selected
+		for(StoryFragment frag : m_fragmentList.values())
+		{
+			choicesToRemove.clear();
+			
+			for(Choice choice : frag.getChoices())
+			{
+				if(choice.getTarget().equals(fragmentId))
+				{
+					choicesToRemove.add(choice);
+				}
+			}
+			
+			for(Choice choice : choicesToRemove)
+			{
+				frag.removeChoice(choice);
+			}
+		}
+		
+		// have to save after a deletion or the memory and database will be out of sync
+		SaveStory();
+		
+		PublishAllFragmentsChanged();
 	}
 
 	/**
@@ -379,20 +444,23 @@ public final class StoryManager implements IStoryModelPresenter,
 		HashSet<UUID> fragmentIds = m_currentStory.getFragments();
 		UUID theId = null;
 		StoryFragment result = null;
-		
+
 		// verify that the id is indeed part of the current story!
 		for(UUID id : fragmentIds)
 		{
 			if(fragmentId.equals(id))
+			{
 				theId = id;
+				break;
+			}
 		}
-		
+
 		if(theId == null)
 		{
 			// Then you requested an id not attached to the current story!
 			throw new RuntimeException("Requested Fragment Id not attached to current story!");
 		}
-		
+
 		if(m_fragmentList.containsKey(theId))
 		{
 			// great we have it cached!
@@ -402,36 +470,54 @@ public final class StoryManager implements IStoryModelPresenter,
 		{
 			//Try loading from db
 			result = m_db.getStoryFragment(theId);
-			if(result == null)
-				return result;
-			else
+			if(result != null)
+			{
 				m_fragmentList.put(result.getFragmentID(), result);
+			}
+			else
+			{
+				// TODO check webstorage...?
+				Log.w(TAG, "Attempted to load a fragment that wasn't cached or in the database!");
+			}
 		}
-		
+
 		return result;
 	}
-	
-	private void getFragmentOnline(UUID fragmentId, boolean storeDB) {
+
+	private void getFragmentOnline(UUID fragmentId, boolean storeDB) 
+	{
 		// Fetch fragment asynchronously
 		final UUID finalId = fragmentId;
 		final boolean finalStoreDB = storeDB;
-		m_threadPool.execute(new Runnable() {
-			public void run() {
-				try {
-					m_currentFragment = m_webStorage.getFragment(finalId);
-					// afterwards place into cache
-					m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
-					PublishCurrentFragmentChanged();
-					if(finalStoreDB) {
-						m_db.setStoryFragment(m_currentFragment);
+		m_threadPool.execute(
+				new Runnable() 
+				{
+					public void run() {
+						try 
+						{
+							m_currentFragment = m_webStorage.getFragment(finalId);
+							if(m_currentFragment != null)
+							{
+								// afterwards place into cache
+								m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
+								PublishCurrentFragmentChanged();
+								if(finalStoreDB) 
+								{
+									m_db.setStoryFragment(m_currentFragment);
+								}
+							}
+							else
+							{
+								Log.e(TAG, "Rx'd a NULL value from the webstorage for a fragment!");
+							}
+						} catch (Exception e) 
+						{
+							Log.e(TAG, "StoryManager: ", e);
+						}
 					}
-				} catch (Exception e) {
-					Log.e(TAG, "StoryManager: ", e);
-				}
-			}
-		});
+				});
 	}
-	
+
 	private void getNextFragments(UUID fragmentId){
 	}
 
@@ -440,9 +526,9 @@ public final class StoryManager implements IStoryModelPresenter,
 		{
 			LoadStories();
 		}
-		
+
 		ArrayList<Story> results = new ArrayList<Story>();
-		
+
 		for(Story story : m_stories.values())
 		{
 			if(author.equalsIgnoreCase(story.getAuthor()))
@@ -450,7 +536,7 @@ public final class StoryManager implements IStoryModelPresenter,
 				results.add(story);
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -462,7 +548,7 @@ public final class StoryManager implements IStoryModelPresenter,
 		{
 			LoadBookmarks();
 		}
-		
+
 		return m_bookmarkList.get(id);
 	}
 
@@ -473,13 +559,13 @@ public final class StoryManager implements IStoryModelPresenter,
 		m_db.setBookmark(newBookmark);
 		PublishBookmarkListChanged();
 	}
-	
+
 	public void deleteBookmark() {
 		m_db.deleteBookmarkByStory(m_currentStory.getId());
 		m_bookmarkList.remove(m_currentStory.getId());
 		PublishBookmarkListChanged();
 	}
-	
+
 	public void addComment(Comment comment) {
 		final Comment finalComment = comment;
 		m_threadPool.execute(new Runnable() {
@@ -493,32 +579,32 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		});
 	}
-	
+
 	private void LoadStories()
 	{
 		m_stories = new HashMap<UUID, Story>();
 		ArrayList<Story> localStories = m_db.getStories();
-		
+
 		for(Story story : localStories)
 		{
 			m_stories.put(story.getId(), story);
 		}
-		
+
 	}
-	
+
 	private void LoadOnlineStories()
 	{
 		m_onlineStories = new HashMap<UUID, Story>();
-		
+
 		// Fetch stories from web asynchronously.
 		m_threadPool.execute(new Runnable() {
 			public void run() {
 				try {
-					
+
 					List<Story> onlineStories;
 					int size = 10;
 					int i = 0;
-					
+
 					while(size == 10) {
 						onlineStories = m_webStorage.getStories(i, 10);
 						for(Story story : onlineStories)
@@ -535,19 +621,19 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		});		
 	}
-	
+
 	private void LoadBookmarks()
 	{
 		m_bookmarkList = new HashMap<UUID, Bookmark>();
 		ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
-		
+
 		for(Bookmark bookmark : bookmarks)
 		{
 			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
 		}
-		
+
 	}
-	
+
 	private void LoadComments(UUID id)
 	{
 		final UUID finalId = id;
@@ -556,12 +642,12 @@ public final class StoryManager implements IStoryModelPresenter,
 				try {
 					if(m_comments.get(finalId) != null)
 						m_comments.remove(finalId);
-					
+
 					List<Comment> tempComments;
 					List<Comment> onlineComments = new ArrayList<Comment>();
 					int size = 10;
 					int i = 0;
-					
+
 					while(size == 10) {
 						tempComments = m_webStorage.getComments(finalId, i, 10);
 						for(Comment comment : tempComments)
@@ -578,18 +664,17 @@ public final class StoryManager implements IStoryModelPresenter,
 				}
 			}
 		});
-		
+
 	}
-	
 	private Map<UUID, StoryFragment> GetAllCurrentFragments()
 	{
 		Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
-		
+
 		for(UUID fragmentId : m_currentStory.getFragments())
 		{
 			// first try to fetch from local cache
 			StoryFragment frag = this.getFragment(fragmentId);
-			
+
 			if(frag != null)
 			{
 				currentFragments.put(frag.getFragmentID(), frag);
@@ -599,7 +684,7 @@ public final class StoryManager implements IStoryModelPresenter,
 				Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
 			}
 		}
-		
+
 		return currentFragments;
 	}
 	public void uploadCurrentStory() {
@@ -613,7 +698,7 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		});
 	}
-	
+
 	public void download() {
 		if(m_currentStory != null) {
 			m_stories.put(m_currentStory.getId(), m_currentStory);
@@ -623,5 +708,4 @@ public final class StoryManager implements IStoryModelPresenter,
 			}
 		}
 	}
-
 }

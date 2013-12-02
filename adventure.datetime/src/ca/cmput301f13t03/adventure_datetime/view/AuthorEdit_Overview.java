@@ -22,99 +22,58 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+
 
 /**
  * 
  * Fragment owned by the AuthorEdit view
  * 
- * Shows a dynamically-created tree represetning
+ * Shows a dynamically-created tree representing
  * the nodes of the current story.
  * 
- * TODO : Everything.
+ * TODO : Not quite everything.
  * 
- * @author James Finlay
+ * @author James Finlay + Jesse Tucker
  *
  */
-public class AuthorEdit_Overview extends Fragment {
+public class AuthorEdit_Overview extends Fragment
+{
+	private IFragmentSelected m_fragmentCallback = null;
+	private AuthorEdit.OnCreatedCallback m_creationCallback = null;
 	
-	private Button _btnAdd, _btnOther;
-	private StoryFragment _fragment;
-	private ListView _listView;
-	private Story _story;
-	
-	public void setFragment(StoryFragment sf) {
-		_fragment = sf;
-		setUpView();
+	public void SetFragmentSelectionCallback(IFragmentSelected callback)
+	{
+		m_fragmentCallback = callback;
 	}
-	public void saveFragment() {}
-	public void setStory(Story st) {
-		_story = st;
-		setUpView();
+	
+	public void SetOnCreatedCallback(AuthorEdit.OnCreatedCallback callback)
+	{
+		m_creationCallback = callback;
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater,
-			ViewGroup container, Bundle savedInstanceState) {
-		
+	public View onCreateView(	LayoutInflater inflater,
+								ViewGroup container, 
+								Bundle savedInstanceState) 
+	{
 		View rootView = inflater.inflate(R.layout.overview_edit, container, false);
 		
-		_btnAdd = (Button) rootView.findViewById(R.id.add);
-		_btnOther = (Button) rootView.findViewById(R.id.other);
-		_listView = (ListView) rootView.findViewById(R.id.list_view);
+		TreeView treeView = (TreeView)(rootView.findViewById(R.id.v_treeViewBase));
+		treeView.SetFragmentCallback(m_fragmentCallback);
 		
-		_btnAdd.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				StoryFragment frag = new StoryFragment(_story.getId(),
-						"", null);
-				_story.addFragment(frag);
-				Locator.getAuthorController().saveFragment(frag);
-				Locator.getAuthorController().saveStory(_story);
-				Toast.makeText(getActivity().getApplicationContext(),
-						"Created fragment!", Toast.LENGTH_SHORT).show();
-			}
-		});
-		_btnOther.setText("Add Choice");
-		_btnOther.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Choice choice = new Choice("Unset", _fragment.getFragmentID());
-				_fragment.addChoice(choice);
-				Locator.getAuthorController().saveFragment(_fragment);
-				Toast.makeText(getActivity().getApplicationContext(),
-						"Choice created!", Toast.LENGTH_SHORT).show();
-			}
-		});
-		
-		setUpView();
+		if(m_creationCallback != null)
+		{
+			m_creationCallback.OnCreated(treeView);
+		}
 		
 		return rootView;
 	}
-	
-	private void setUpView() {
-		if (_listView ==  null) return;
-		if (_story == null) return;
-		if (_fragment == null) return;
-		
-	/*	for (UUID fragId : _story.) {
-			
-		} */
-	}
-
 }

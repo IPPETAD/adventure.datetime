@@ -35,7 +35,8 @@ import java.util.UUID;
  * @version 1.0
  * @since 23/10/13
  */
-public class StoryFragment {
+public class StoryFragment implements Comparable<StoryFragment>
+{
 
 	/**
 	 * The UUID of the story linked to the fragment
@@ -276,6 +277,12 @@ public class StoryFragment {
      */
 	public Choice getChoice(int id) {
 		return (Choice) choices.toArray()[id];
+	}
+
+	@Override
+	public int compareTo(StoryFragment other) 
+	{
+		return this.fragmentID.compareTo(other.fragmentID);
 	}
 
     @Override
