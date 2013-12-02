@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import android.graphics.Path;
+import android.graphics.Path.Direction;
 import android.util.Log;
 
 public final class ConnectionPlacer 
@@ -131,8 +132,11 @@ public final class ConnectionPlacer
 		// it should loop back but be visible!
 		if(originFrag.GetFragment().getFragmentID().equals(targetFrag.GetFragment().getFragmentID()))
 		{
-			// hax
-			connection.SetPath(new Path());
+			Path newPath = new Path();
+			newPath.addCircle(	originFrag.x + originFrag.width / 8, 
+								originFrag.y + originFrag.height / 4, 
+								originFrag.width / 5, Direction.CW);
+			connection.SetPath(newPath);
 			return;
 		}
 
