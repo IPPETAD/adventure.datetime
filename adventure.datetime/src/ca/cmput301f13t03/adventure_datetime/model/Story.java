@@ -99,6 +99,30 @@ public class Story {
 		fragmentIDs = new HashSet<UUID>();
 		fragmentIDs.add(this.headFragmentId);
 	}
+
+    /**
+     * Creates a new Story, used by @link{StoryDB}
+     *
+     * @param headFragmentId UUID of the head StoryFragment of the Story
+     * @param id UUID of the Story
+     * @param author Name of author of Story
+     * @param timestamp Time Story was last modified
+     * @param synopsis Synopsis of Story
+     * @param thumbnail Thumbnail of Story
+     * @param title Title of Story
+     */
+    protected Story(UUID headFragmentId, UUID id, String author, long timestamp, String synopsis,
+                    Image thumbnail, String title) {
+        this.headFragmentId = headFragmentId;
+        this.id = id;
+        this.author = author;
+        this.timestamp = timestamp;
+        this.synopsis = synopsis;
+        this.thumbnail = thumbnail;
+        this.title = title;
+        fragmentIDs = new HashSet<UUID>();
+        fragmentIDs.add(this.headFragmentId);
+    }
 	
 	/**
      * Creates a new Story, used by @link{StoryDB}

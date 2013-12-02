@@ -114,6 +114,8 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			Button okay = (Button) dia.findViewById(R.id.okay);
 			Button cancel = (Button) dia.findViewById(R.id.cancel);
             Button photo = (Button) dia.findViewById(R.id.media);
+            /* Set image to null in case 2 comments are made */
+            _commentPic = null;
 			
 			okay.setOnClickListener(new OnClickListener() {
 				@Override

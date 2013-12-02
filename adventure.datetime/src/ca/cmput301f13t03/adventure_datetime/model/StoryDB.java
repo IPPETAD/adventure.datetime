@@ -36,7 +36,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
@@ -69,13 +68,17 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	public static final String STORYFRAGMENT_COLUMN_STORYID = "StoryID";
 	public static final String STORYFRAGMENT_COLUMN_CONTENT = "Content";
 	public static final String STORYFRAGMENT_COLUMN_CHOICES = "Choices";
+    public static final String STORYFRAGMENT_COLUMN_IMAGES = "Images";
 
 	public static final String BOOKMARK_TABLE_NAME = "Bookmark";
 	public static final String BOOKMARK_COLUMN_STORYID = "StoryID";
 	public static final String BOOKMARK_COLUMN_FRAGMENTID = "FragmentID";
 	public static final String BOOKMARK_COLUMN_DATE = "Date";
 
-    public static final String AUTHORED_STORIES_TABLE_NAME = "AuthoredStories";
+    public static final String AUTHORED_STORY_TABLE_NAME = "AuthoredStory";
+
+    public static final String STORY_IMAGE_TABLE_NAME = "StoryImage";
+    public static final String STORY_IMAGE_COLUMN_IMAGE = "Image";
 
 	private StoryDBHelper mDbHelper;
 
@@ -186,7 +189,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[] {_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				new String[] {_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT, STORYFRAGMENT_COLUMN_IMAGES},
 				COLUMN_GUID + " = ?",
 				new String[] {id.toString()},
 				null,
@@ -215,7 +218,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
-				new String[]{_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT},
+				new String[]{_ID, COLUMN_GUID, STORYFRAGMENT_COLUMN_STORYID, STORYFRAGMENT_COLUMN_CHOICES, STORYFRAGMENT_COLUMN_CONTENT, STORYFRAGMENT_COLUMN_IMAGES},
 				STORYFRAGMENT_COLUMN_STORYID + " = ?",
 				new String[]{storyid.toString()},
 				null,
@@ -330,7 +333,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     @Override
     public boolean getAuthoredStory(UUID storyId) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+        Cursor cursor = db.query(AUTHORED_STORY_TABLE_NAME,
                 new String[] {COLUMN_GUID},
                 COLUMN_GUID + " = ?",
                 new String[] {storyId.toString()},
@@ -348,7 +351,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     @Override
     public ArrayList<UUID> getAuthoredStories() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.query(AUTHORED_STORIES_TABLE_NAME,
+        Cursor cursor = db.query(AUTHORED_STORY_TABLE_NAME,
                 new String[] {COLUMN_GUID},
                 null,
                 null,
@@ -367,6 +370,48 @@ public class StoryDB implements BaseColumns, ILocalStorage {
         db.close();
 
         return authoredStories;
+    }
+
+    public Image getImage(UUID imageID) {
+        Cursor cursor = getImageCursor(imageID);
+
+        Image image;
+        if(cursor.moveToFirst()) {
+            image = createImage(cursor);
+        }
+        else {
+            image = null;
+        }
+
+        cursor.close();
+        return image;
+    }
+
+    private Cursor getImageCursor(UUID imageID) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        return db.query(STORY_IMAGE_TABLE_NAME,
+                new String[] {COLUMN_GUID, STORY_IMAGE_COLUMN_IMAGE},
+                COLUMN_GUID + " = ?",
+                new String[] {imageID.toString()},
+                null,
+                null,
+                null);
+    }
+
+    public ArrayList<Image> getImages(ArrayList<UUID> imageIDs) {
+        ArrayList<Image> images = new ArrayList<Image>();
+        if(imageIDs == null)
+            return images;
+        Cursor cursor;
+
+        for(UUID imageID : imageIDs) {
+            cursor = getImageCursor(imageID);
+            if(cursor.moveToFirst())
+                images.add(createImage(cursor));
+            cursor.close();
+        }
+
+        return images;
     }
 
 	/* (non-Javadoc)
@@ -426,7 +471,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 		values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 		values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-		values.put(STORY_COLUMN_THUMBNAIL, (story.getThumbnail() == null ? null : story.getThumbnail().getEncodedBitmap()));
+		values.put(STORY_COLUMN_THUMBNAIL, (story.getThumbnail() == null ? null : story.getThumbnail().getId().toString()));
 		values.put(COLUMN_GUID, story.getId().toString());
 
 		Cursor cursor = db.query(STORY_TABLE_NAME,
@@ -443,14 +488,14 @@ public class StoryDB implements BaseColumns, ILocalStorage {
             Log.v(TAG, updated + " stories updated");
 			cursor.close();
 			db.close();
-			return updated == 1;
+			return updated == 1 && setImage(story.getThumbnail());
 		}
 		cursor.close();
 		long inserted;
 		inserted = db.insert(STORY_TABLE_NAME, null, values);
         Log.v(TAG, inserted + " story inserted");
 		db.close();
-		return inserted != -1;
+		return inserted != -1 && setImage(story.getThumbnail());
 	}
 
 	/* (non-Javadoc)
@@ -464,6 +509,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
 		values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
 		values.put(COLUMN_GUID, frag.getFragmentID().toString());
+        values.put(STORYFRAGMENT_COLUMN_IMAGES, frag.getStoryMediaInJson());
 
 		Cursor cursor = db.query(STORYFRAGMENT_TABLE_NAME,
 				new String[] {_ID, STORYFRAGMENT_COLUMN_STORYID},
@@ -479,13 +525,13 @@ public class StoryDB implements BaseColumns, ILocalStorage {
             Log.v(TAG, updated + " fragments updated");
 			cursor.close();
 			db.close();
-			return updated == 1;
+			return updated == 1 && setImages(frag.getStoryMedia());
 		}
 		long inserted;
 		inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
         Log.v(TAG, inserted + " fragment inserted");
 		db.close();
-		return inserted != -1;
+		return inserted != -1 && setImages(frag.getStoryMedia());
 
 	}
 
@@ -509,11 +555,40 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
         values.put(COLUMN_GUID, story.getId().toString());
 
-        long insert = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+        long insert = db.insert(AUTHORED_STORY_TABLE_NAME, null, values);
 
         db.close();
 
         return insert != -1;
+    }
+
+    public boolean setImage(Image image) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Image image2 = getImage(image.getId());
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GUID, image.getId().toString());
+        values.put(STORY_IMAGE_COLUMN_IMAGE, image.getEncodedBitmap());
+        long inserted;
+        if(image2 == null) {
+            inserted = db.insert(STORY_IMAGE_TABLE_NAME, null, values);
+            db.close();
+            return inserted != -1;
+        }
+        else {
+            inserted = db.update(STORY_IMAGE_TABLE_NAME, values, COLUMN_GUID + " = ?",
+                    new String[] {image.getId().toString()});
+            db.close();
+            return inserted == 1;
+        }
+    }
+
+    public boolean setImages(ArrayList<Image> images) {
+        boolean result = true;
+        for(Image image : images) {
+            result &= setImage(image);
+        }
+
+        return result;
     }
 
 	/* (non-Javadoc)
@@ -588,10 +663,19 @@ public class StoryDB implements BaseColumns, ILocalStorage {
     public boolean deleteAuthoredStory(UUID storyID) {
         int authoredStory;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        authoredStory = db.delete(AUTHORED_STORIES_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {storyID.toString()});
+        authoredStory = db.delete(AUTHORED_STORY_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {storyID.toString()});
         Log.v(TAG, authoredStory + " authored story deleted, with storyId " + storyID);
         db.close();
         return authoredStory == 1;
+    }
+
+    public boolean deleteImages(UUID id) {
+        int images;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        images = db.delete(STORY_IMAGE_TABLE_NAME, COLUMN_GUID + " = ?", new String[] {id.toString()});
+        Log.v(TAG, images + " images deleted, with UUID " + id);
+
+        return images != 0;
     }
 
 	/**
@@ -602,17 +686,19 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 	 * @return A Story instance from the Database
 	 */
 	private Story createStory(Cursor cursor) {
-		String title, author, synopsis, thumbnail;
+		String title, author, synopsis;
 		UUID headFragmentId, id;
 		long timestamp;
+        Image thumbnail;
 
 		id = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID)));
 		title = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TITLE));
 		headFragmentId = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_HEAD_FRAGMENT)));
 		author = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_AUTHOR));
 		synopsis = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_SYNOPSIS));
-		thumbnail = cursor.getString(cursor.getColumnIndex(StoryDB.STORY_COLUMN_THUMBNAIL));
 		timestamp = cursor.getLong(cursor.getColumnIndex(StoryDB.STORY_COLUMN_TIMESTAMP));
+
+        thumbnail = getImage(id);
 		
 		Story newStory = new Story(headFragmentId, id, author, timestamp, synopsis, thumbnail, title);
 		
@@ -637,16 +723,21 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		UUID storyID, fragmentID;
 		String storyText;
 		ArrayList<Choice> choices;
+        ArrayList<Image> images;
+        ArrayList<UUID> uuids;
 		storyID = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_STORYID)));
 		fragmentID = UUID.fromString(cursor.getString(cursor.getColumnIndex(StoryDB.COLUMN_GUID)));
 		storyText = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CONTENT));
-		/* TODO figure out JSON serialization for choices and media */
 		String json = cursor.getString(cursor.getColumnIndex(StoryDB.STORYFRAGMENT_COLUMN_CHOICES));
 		Gson gson = new Gson();
 		Type collectionType = new TypeToken<Collection<Choice>>(){}.getType();
 		choices = gson.fromJson(json, collectionType);
+        json = cursor.getString(cursor.getColumnIndex(STORYFRAGMENT_COLUMN_IMAGES));
+        collectionType = new TypeToken<Collection<UUID>>(){}.getType();
+        uuids = gson.fromJson(json, collectionType);
+        images = getImages(uuids);
 
-		return new StoryFragment(choices, storyID, fragmentID, storyText);
+		return new StoryFragment(storyID, fragmentID, storyText, images, choices);
 	}
 
 	/**
@@ -670,9 +761,18 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		return new Bookmark(fragmentID, storyID, date);
 	}
 
+    private Image createImage(Cursor cursor) {
+        UUID id;
+        String bitmap;
+        id = UUID.fromString(cursor.getString(cursor.getColumnIndex(COLUMN_GUID)));
+        bitmap = cursor.getString(cursor.getColumnIndex(STORY_IMAGE_COLUMN_IMAGE));
+
+        return new Image(id, bitmap);
+    }
+
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 5;
+		public static final int DATABASE_VERSION = 6;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -698,6 +798,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				+ STORYFRAGMENT_COLUMN_STORYID + " INTEGER, "
 				+ STORYFRAGMENT_COLUMN_CONTENT + " TEXT, "
 				+ STORYFRAGMENT_COLUMN_CHOICES + " BLOB, "
+                + STORYFRAGMENT_COLUMN_IMAGES + " BLOB, "
 				+ "FOREIGN KEY(" + STORYFRAGMENT_COLUMN_STORYID
 				+ ") REFERENCES " + STORY_TABLE_NAME + "("
 				+ COLUMN_GUID + "))";
@@ -714,12 +815,18 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 				+ ") REFERENCES " + STORY_TABLE_NAME + "(" + COLUMN_GUID
 				+ "))";
 
-        private static final String CREATE_AUTHORED_STORIES_TABLE =
-                "CREATE TABLE " + AUTHORED_STORIES_TABLE_NAME + " ("
+        private static final String CREATE_AUTHORED_STORY_TABLE =
+                "CREATE TABLE " + AUTHORED_STORY_TABLE_NAME + " ("
                 + _ID + " INTEGER PRIMARY KEY, "
                 + COLUMN_GUID + " TEXT, "
                 + "FOREIGN KEY(" + COLUMN_GUID + ") REFERENCES "
                 + STORY_TABLE_NAME + "(" + COLUMN_GUID + "))";
+
+        private static final String CREATE_STORY_IMAGE_TABLE =
+                "CREATE TABLE " + STORY_IMAGE_TABLE_NAME + " ("
+                + _ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_GUID + " TEXT, "
+                + STORY_IMAGE_COLUMN_IMAGE + " TEXT)";
 
 		private static final String DELETE_STORY_TABLE =
 				"DROP TABLE IF EXISTS " + STORY_TABLE_NAME;
@@ -730,8 +837,11 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		private static final String DELETE_BOOKMARK_TABLE =
 				"DROP TABLE IF EXISTS " + BOOKMARK_TABLE_NAME;
 
-        private static final String DELETE_AUTHORED_STORIES_TABLE =
-                "DROP TABLE IF EXISTS " + AUTHORED_STORIES_TABLE_NAME;
+        private static final String DELETE_AUTHORED_STORY_TABLE =
+                "DROP TABLE IF EXISTS " + AUTHORED_STORY_TABLE_NAME;
+
+        private static final String DELETE_STORY_IMAGE_TABLE =
+                "DROP TABLE IF EXISTS " + STORY_IMAGE_TABLE_NAME;
 
 		public StoryDBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -743,7 +853,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(CREATE_STORY_TABLE);
 			db.execSQL(CREATE_STORYFRAGMENT_TABLE);
 			db.execSQL(CREATE_BOOKMARK_TABLE);
-            db.execSQL(CREATE_AUTHORED_STORIES_TABLE);
+            db.execSQL(CREATE_AUTHORED_STORY_TABLE);
+            db.execSQL(CREATE_STORY_IMAGE_TABLE);
 			populateDB(db);
 		}
 
@@ -752,7 +863,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			db.execSQL(DELETE_STORYFRAGMENT_TABLE);
 			db.execSQL(DELETE_STORY_TABLE);
 			db.execSQL(DELETE_BOOKMARK_TABLE);
-            db.execSQL(DELETE_AUTHORED_STORIES_TABLE);
+            db.execSQL(DELETE_AUTHORED_STORY_TABLE);
+            db.execSQL(DELETE_STORY_IMAGE_TABLE);
 		}
 
 		@Override
@@ -769,9 +881,9 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			String storyText = "You wake up. The room is spinning very gently round your head. Or at least it would be "
 					+ "if you could see it which you can't";
 			StoryFragment frag = new StoryFragment(story.getId(), UUID.fromString("5582f797-29b8-4d9d-83bf-88c434c1944a"), storyText,
-					new ArrayList<Uri>(), new ArrayList<Choice>());
+					new ArrayList<Image>(), new ArrayList<Choice>());
 			StoryFragment frag2 = new StoryFragment(story.getId(), UUID.fromString("b10ef8ca-1180-44f6-b11b-170fef5ec071"), "You break" +
-					" your neck in the dark.", new ArrayList<Uri>(), new ArrayList<Choice>());
+					" your neck in the dark.", new ArrayList<Image>(), new ArrayList<Choice>());
 			Choice choice = new Choice("Get out of bed", frag2.getFragmentID());
 			frag.addChoice(choice);
 			story.addFragment(frag);
@@ -789,9 +901,14 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
 			values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
 			values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
-			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getEncodedBitmap());
+			values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getId().toString());
 			values.put(COLUMN_GUID, story.getId().toString());
 			inserted = db.insert(STORY_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(COLUMN_GUID, story.getThumbnail().getId().toString());
+            values.put(STORY_IMAGE_COLUMN_IMAGE, story.getThumbnail().getEncodedBitmap());
+            inserted = db.insert(STORY_IMAGE_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
 			values = new ContentValues();
 			values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID().toString());
@@ -815,7 +932,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			Log.d(TAG, String.valueOf(inserted));
             values = new ContentValues();
             values.put(COLUMN_GUID, story.getId().toString());
-            inserted = db.insert(AUTHORED_STORIES_TABLE_NAME, null, values);
+            inserted = db.insert(AUTHORED_STORY_TABLE_NAME, null, values);
             Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
 			db.endTransaction();

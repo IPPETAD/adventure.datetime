@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -73,6 +74,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
     private StoryFragment _fragment;
     private ViewPager _viewPager;
     private StoryPagerAdapter _pageAdapter;
+    private Uri _newImage;
 
     @Override
     public void OnCurrentFragmentChange(StoryFragment newFragment) {
@@ -106,10 +108,9 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 if(!picDir.exists()) picDir.mkdirs();
                 File pic = new File(picDir.getPath(), File.separator + _fragment.getFragmentID().toString()
                         + "-" + _fragment.getStoryMedia().size());
-                Uri location = Uri.fromFile(pic);
+                _newImage = Uri.fromFile(pic);
                 Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                i.putExtra(MediaStore.EXTRA_OUTPUT, location);
-                _fragment.addMedia(location);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, _newImage);
                 startActivityForResult(i, CAMERA);
             }
         });
@@ -168,29 +169,43 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
         switch (requestCode) {
             case GALLERY:
-                Uri selectedImage = imageReturnedIntent.getData();
-                _fragment.addMedia(selectedImage);
-                Locator.getAuthorController().saveFragment(_fragment);
+                try {
+                    InputStream is = getContentResolver().openInputStream(imageReturnedIntent.getData());
+                    Bitmap bit = BitmapFactory.decodeStream(is);
+                    Image selectedImage = new Image(Image.compressBitmap(bit, 85));
+                    _fragment.addMedia(selectedImage);
+                    Locator.getAuthorController().saveFragment(_fragment);
+                }
+                catch(Exception e) {
+                    Log.e(TAG, "Error getting new image", e);
+                }
                 break;
             case CAMERA:
-                //Uri location = imageReturnedIntent.getData();
-                //_fragment.addMedia(location);
-                Locator.getAuthorController().saveFragment(_fragment);
+                try {
+                    InputStream is = getContentResolver().openInputStream(_newImage);
+                    Bitmap bit = BitmapFactory.decodeStream(is);
+                    Image selectedImage = new Image(Image.compressBitmap(bit, 85));
+                    _fragment.addMedia(selectedImage);
+                    Locator.getAuthorController().saveFragment(_fragment);
+                }
+                catch(Exception e) {
+                    Log.e(TAG, "Error getting new image", e);
+                }
                 break;
         }
     }
 
     private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
-        private List<Uri> _illustrations;
+        private List<Image> _illustrations;
         private boolean _author;
 
         public StoryPagerAdapter(FragmentManager fm) {
             super(fm);
-            _illustrations = new ArrayList<Uri>();
+            _illustrations = new ArrayList<Image>();
         }
 
-        public void setIllustrations(List<Uri> illustrationIDs, boolean author) {
+        public void setIllustrations(List<Image> illustrationIDs, boolean author) {
             _illustrations = illustrationIDs;
             _author = author;
             notifyDataSetChanged();
@@ -213,14 +228,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
     public static class IllustrationFragment extends Fragment {
 
         private View _rootView;
-        private Uri _sID;
+        private Image _sID;
         private String _position;
         private boolean _author;
 
         public void onCreate(Bundle bundle) {
             super.onCreate(bundle);
         }
-        public void init(Uri id, int position, int total, boolean author) {
+        public void init(Image id, int position, int total, boolean author) {
             _sID = id;
             _position = (position+1) + "/" + total;
             _author = author;
@@ -248,22 +263,11 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
             // TODO: Set counter by location
 
-            //image.setBackgroundResource(R.drawable.grumpy_cat2);
 
-            Bitmap bit = null;
-
-            InputStream is = null;
-            try {
-                is = getActivity().getContentResolver().openInputStream(_sID);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-            bit = BitmapFactory.decodeStream(is);
 
 
             //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
-            image.setImageBitmap(bit);
+            image.setImageBitmap(_sID.decodeBitmap());
             counter.setText(_position);
 
             Button gallery = (Button) _rootView.findViewById(R.id.gallery);

@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
@@ -108,7 +109,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		_content = (TextView) findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<Uri>());
+			_fragment.setStoryMedia(new ArrayList<Image>());
 
 		/** Programmatically set filmstrip height **/
 		// TODO::JF Unshitify this, aka not static value
