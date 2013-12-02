@@ -306,8 +306,8 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			author.setText(item.getAuthor());
 			content.setText(item.getContent());
 			date.setText(item.getFormattedTimestamp());
-            if (item.decodeImage() == null)
-               image.setVisibility(View.GONE);
+            if (item.getImage() == null)
+               btnImage.setVisibility(View.GONE);
             else
 			    image.setImageBitmap(item.decodeImage());
 			layImage.setVisibility(View.GONE);
