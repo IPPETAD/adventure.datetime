@@ -163,8 +163,8 @@ IFragmentSelected
 		_adapter.setFragment(newFragment);
 	}
 	@Override
-	public void OnCurrentStoryChange(Story newStory) {
-		_adapter.setStory(newStory);
+	public void OnCurrentStoryChange(Story newStory) 
+	{
 		_story = newStory;
 	}
 	@Override
@@ -280,7 +280,7 @@ IFragmentSelected
 	{
 		private AuthorEdit_Edit _edit;
 		private AuthorEdit_Overview _overview;
-		private AuthorEdit_Preview _preview;
+		private FragmentView _preview;
 
 		public ViewPagerAdapter(FragmentManager fm, IFragmentSelected callback) {
 			super(fm);
@@ -292,7 +292,8 @@ IFragmentSelected
 			_edit = new AuthorEdit_Edit();
 			_edit.SetActionBar(getActionBar());
 
-			_preview = new AuthorEdit_Preview();
+			_preview = new FragmentView();
+			_preview.SetIsEditing(true);
 		}
 
 		@Override
@@ -309,13 +310,8 @@ IFragmentSelected
 				return null;
 			}
 		}
-		public void setStory(Story st) 
-		{
-			_preview.setStory(st);
-		}
 		public void setFragment(StoryFragment sf) {
 			_edit.setFragment(sf);
-			_preview.setFragment(sf);
 		}
 		
 		public void CancelActions()

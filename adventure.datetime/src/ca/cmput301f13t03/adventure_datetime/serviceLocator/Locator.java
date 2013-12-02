@@ -29,7 +29,7 @@ public final class Locator
 	{
 		StoryManager manager = new StoryManager(applicationContext);
 		// TODO: Find person below how to "TODO" properly. Oh, and I murdered IReaderStorage
-		ILocalStorage localDatabase = null; // todo::jt fill this in
+		ILocalStorage localDatabase = null;
 		
 		s_director = manager;
 		s_presenter = manager;

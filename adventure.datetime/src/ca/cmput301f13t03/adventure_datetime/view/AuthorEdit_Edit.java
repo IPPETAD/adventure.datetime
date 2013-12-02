@@ -100,8 +100,8 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
-			ViewGroup container, Bundle savedInstanceState) {
-
+			ViewGroup container, Bundle savedInstanceState) 
+	{
 		_rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 		setUpView();
 		return _rootView;
