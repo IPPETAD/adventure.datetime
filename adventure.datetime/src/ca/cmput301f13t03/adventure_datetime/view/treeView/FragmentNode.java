@@ -19,8 +19,8 @@ import ca.cmput301f13t03.adventure_datetime.view.treeView.Region;
  */
 class FragmentNode extends Region
 {
-	private static final int MAX_TXT_FOR_FIRST_LINE = 20;
-	private static final int MAX_TXT_FOR_SECOND_LINE = 15;
+	private static final int MAX_TXT_FOR_FIRST_LINE = 18;
+	private static final int MAX_TXT_FOR_SECOND_LINE = 14;
 
 	private Bitmap m_currentBackground = null;
 	private Bitmap m_backgroundImage = null;
@@ -41,7 +41,7 @@ class FragmentNode extends Region
 		s_textPaint = new Paint();
 		s_textPaint.setColor(Color.BLACK);
 		s_textPaint.setTextAlign(Align.CENTER);
-		s_textPaint.setTextSize(40);
+		s_textPaint.setTextSize(35);
 	}
 
 	public FragmentNode(StoryFragment fragment, Resources res)
