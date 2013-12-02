@@ -113,11 +113,17 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
         if (_fragment.getStoryMedia() == null)
             _fragment.setStoryMedia(new ArrayList<Image>());
 
+        /** Programmatically set filmstrip height **/
+        // TODO::JF Unshitify this, aka not static value
+        //if (_fragment.getStoryMedia().size() > 0)
+        _filmstrip.getLayoutParams().height = 300;
+
         /* Run on UI Thread for server stuff */
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
+                _content.setText(_fragment.getStoryText());
 
                 /** Programmatically set filmstrip height **/
                 if (_fragment.getStoryMedia().size() > 0)
@@ -125,15 +131,13 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
                 else
                     _filmstrip.getLayoutParams().height = 0;
 
-
                 _content.setText(_fragment.getStoryText());
                 _filmLayout.removeAllViews();
-
-
                 // 1) Create new ImageView and add to the LinearLayout
                 // 2) Set appropriate Layout Params to ImageView
                 // 3) Give onClickListener for going to fullscreen
                 LinearLayout.LayoutParams lp;
+                //for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
                 for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
                     ImageView li = new ImageView(getParent());
                     li.setScaleType(ScaleType.CENTER_INSIDE);
@@ -142,9 +146,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
                     lp = (LinearLayout.LayoutParams) li.getLayoutParams();
                     lp.setMargins(10, 10, 10, 10);
-                    lp.height = FILM_STRIP_SIZE;
-                    lp.width = FILM_STRIP_SIZE;
-                    //lp.width = LayoutParams.WRAP_CONTENT;
+                    lp.width = LayoutParams.WRAP_CONTENT;
                     lp.gravity = Gravity.CENTER_VERTICAL;
                     li.setLayoutParams(lp);
 

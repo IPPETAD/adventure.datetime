@@ -95,8 +95,9 @@ public interface IStoryModelDirector
 
 	/**
 	 *	Save a bookmark to the database
+	 * @param uuid 
 	 */
-	public void setBookmark();
+	public void setBookmark(UUID uuid);
 
 	/**
 	 * Fetch a bookmark ID by its ID
