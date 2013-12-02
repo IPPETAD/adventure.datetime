@@ -27,9 +27,7 @@ import java.util.List;
 
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 
 import android.app.ActionBar;
@@ -230,6 +228,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 				// then we are making a new choice
 				Choice newChoice = new Choice(m_choiceTxt, selectedFragment.getFragmentID());
 				_fragment.addChoice(newChoice);
+				m_treeview.AddChoice(_fragment, newChoice);
 			}
 			else
 			{
@@ -319,6 +318,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 					m_origin.removeChoice(m_choice);
 					RefreshTreeView();
 					m_adapter.notifyDataSetChanged();
+					m_treeview.RemoveChoice(m_origin, m_choice);
 				}
 				else if(btn.getId() == R.id.choices_edit_btn)
 				{

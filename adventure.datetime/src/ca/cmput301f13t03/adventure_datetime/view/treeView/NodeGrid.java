@@ -30,6 +30,8 @@ class NodeGrid
 	private ArrayList<FragmentConnection> m_connections = new ArrayList<FragmentConnection>();
 	private ArrayList<FragmentNode> m_nodes = new ArrayList<FragmentNode>();
 	
+	ConnectionPlacer m_connectionPlacer = null;
+	
 	private StoryFragment m_selectedFrag = null;
 	private FragmentNode m_selectedNode = null;
 	
@@ -89,9 +91,6 @@ class NodeGrid
 		{
 			m_syncLock.lock();
 			
-			// TODO::JT make this more full featured
-			// TODO::JT need to make this more exhaustive!
-			
 			for(FragmentNode node : m_nodes)
 			{
 				node.RefreshContents();
@@ -103,12 +102,87 @@ class NodeGrid
 		}
 	}
 	
+	public void AddChoice(StoryFragment origin, Choice choice)
+	{
+		try
+		{
+			m_syncLock.lock();
+			
+			FragmentConnection newConnection = 
+					new FragmentConnection(	origin.getFragmentID(),
+											choice.getTarget());
+			FragmentNode originNode = GetNode(origin.getFragmentID());
+			FragmentNode targetNode = GetNode(choice.getTarget());
+			
+			if(originNode != null && targetNode != null)
+			{
+				m_connectionPlacer.PlaceConnection(newConnection, originNode, targetNode);
+				m_connections.add(newConnection);
+			}
+		}
+		finally
+		{
+			m_syncLock.unlock();
+		}
+	}
+	
+	public void RemoveChoice(StoryFragment origin, Choice choice)
+	{
+		try
+		{
+			m_syncLock.lock();
+			
+			int toDelete = 0;
+			int index = 0;
+			UUID originId = origin.getFragmentID();
+			UUID targetId = choice.getTarget();
+			
+			for(FragmentConnection connection : m_connections)
+			{
+				if(	connection.GetOrigin().equals(originId) &&
+					connection.GetTarget().equals(targetId))
+				{
+					toDelete = index;
+					break;
+				}
+				
+				++index;
+			}
+			
+			if(toDelete < m_connections.size())
+			{
+				m_connections.remove(toDelete);
+			}
+		}
+		finally
+		{
+			m_syncLock.unlock();
+		}
+	}
+	
+	private FragmentNode GetNode(UUID fragId)
+	{
+		FragmentNode result = null;
+		
+		for(FragmentNode node : m_nodes)
+		{
+			if(node.GetFragment().getFragmentID().equals(fragId))
+			{
+				result = node;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	private void RebuildView()
 	{
 		// clear the list of segments as we rebuild
 		m_segments.clear();
 		m_connections.clear();
 		m_nodes.clear();
+		m_connectionPlacer = null;
 
 		SetupNodes(m_fragments);
 		SetupConnections();
@@ -123,13 +197,16 @@ class NodeGrid
 	public void SetFragments(Map<UUID, StoryFragment> fragments, UUID headFragmentId)
 	{
 		m_syncLock.lock();
+		try
 		{
 			m_headFragmentId = headFragmentId;
 			m_fragments = fragments;
 			m_reloadView = true;
 		}
-		
-		m_syncLock.unlock();
+		finally
+		{
+			m_syncLock.unlock();
+		}
 	}
 	
 	public void SelectFragment(StoryFragment frag)
@@ -233,13 +310,17 @@ class NodeGrid
 	
 	private void SetupConnections()
 	{
-		ConnectionPlacer placer = new ConnectionPlacer(this.m_segments, GridSegment.GRID_SIZE);
 		Map<UUID, FragmentNode> lookupList = new HashMap<UUID, FragmentNode>();
 		
 		// construct the lookup map
 		for(FragmentNode node : m_nodes)
 		{
 			lookupList.put(node.GetFragment().getFragmentID(), node);
+		}
+		
+		if(m_connectionPlacer == null)
+		{
+			m_connectionPlacer = new ConnectionPlacer(this.m_segments, GridSegment.GRID_SIZE);
 		}
 		
 		// now iterate over each fragment node and connect it with its choices
@@ -253,8 +334,10 @@ class NodeGrid
 				// lookup the node
 				if(lookupList.containsKey(key))
 				{
-					FragmentConnection connection = new FragmentConnection();
-					placer.PlaceConnection(connection, node, lookupList.get(key));
+					FragmentConnection connection = 
+							new FragmentConnection(	node.GetFragment().getFragmentID(), 
+													choice.getTarget());
+					m_connectionPlacer.PlaceConnection(connection, node, lookupList.get(key));
 					this.m_connections.add(connection);
 				}
 				else

@@ -3,6 +3,7 @@ package ca.cmput301f13t03.adventure_datetime.view.treeView;
 import java.util.Map;
 import java.util.UUID;
 
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
@@ -105,6 +106,16 @@ public class TreeView extends SurfaceView
 	public IFragmentSelected GetFragmentCallback()
 	{
 		return m_touchHandler.GetSelectionCallback();
+	}
+	
+	public void AddChoice(StoryFragment origin, Choice choice)
+	{
+		m_grid.AddChoice(origin, choice);
+	}
+	
+	public void RemoveChoice(StoryFragment origin, Choice choice)
+	{
+		m_grid.RemoveChoice(origin, choice);
 	}
 	
 	public void RefreshView()
