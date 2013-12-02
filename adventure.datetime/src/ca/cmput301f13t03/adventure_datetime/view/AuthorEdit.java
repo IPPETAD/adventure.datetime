@@ -22,13 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.AlertDialog;
@@ -45,6 +38,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 
 /**
  * 

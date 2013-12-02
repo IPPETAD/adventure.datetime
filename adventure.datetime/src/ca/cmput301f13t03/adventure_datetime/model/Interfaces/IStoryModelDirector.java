@@ -22,12 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+
+import java.util.UUID;
 
 /**
  * Class provides an interface for controllers to interact with the model and to direct its behaviour

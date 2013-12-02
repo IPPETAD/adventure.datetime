@@ -22,14 +22,8 @@ package ca.cmput301f13t03.adventure_datetime.controller;
  */
 
 
-import java.util.UUID;
-
-import junit.framework.Assert;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 
 /**

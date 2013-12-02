@@ -1,18 +1,11 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
-import java.util.UUID;
-
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PathMeasure;
+import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
 import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.Camera;
+
+import java.util.UUID;
 
 /**
  * Represents a connection between two fragments

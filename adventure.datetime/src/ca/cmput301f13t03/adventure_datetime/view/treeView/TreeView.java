@@ -1,17 +1,5 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
-import java.util.Map;
-import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
-import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,6 +8,17 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IAllFragmentsListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
+
+import java.util.Map;
+import java.util.UUID;
 
 public class TreeView extends SurfaceView 
 	implements 	IAllFragmentsListener, 

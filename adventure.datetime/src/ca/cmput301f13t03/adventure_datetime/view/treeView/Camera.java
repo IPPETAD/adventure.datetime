@@ -1,10 +1,6 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 
 class Camera
 {

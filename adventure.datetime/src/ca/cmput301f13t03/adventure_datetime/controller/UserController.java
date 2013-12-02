@@ -23,15 +23,14 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.util.UUID;
-
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
-
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
+import java.util.UUID;
 
 /**
  * Controller for aspects of playing through stories
@@ -103,7 +102,7 @@ public class UserController {
 		try
 		{
 			m_storyDirector.selectFragment(choice.getTarget());
-			m_storyDirector.setBookmark();
+			m_storyDirector.setBookmark(choice.getTarget());
 		}
 		catch(RuntimeException ex)
 		{

@@ -22,7 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.net.Uri;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

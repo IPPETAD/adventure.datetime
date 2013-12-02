@@ -1,16 +1,10 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.graphics.Paint.Align;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.Camera;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.Region;
 
 /**
  * Represents a story fragment on the tree view

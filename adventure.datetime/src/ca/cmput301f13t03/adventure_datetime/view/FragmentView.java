@@ -1,32 +1,27 @@
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import android.widget.ImageView.ScaleType;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentView extends Fragment implements ICurrentFragmentListener
 {
@@ -51,10 +46,10 @@ public class FragmentView extends Fragment implements ICurrentFragmentListener
 	public void OnCurrentFragmentChange(StoryFragment newFragment) 
 	{
 		_fragment = newFragment;
-		this.runOnUiThread(new Runnable() {  
+		this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            	setUpView();
+                SetUpView();
             }
         });	
 	}
@@ -80,7 +75,7 @@ public class FragmentView extends Fragment implements ICurrentFragmentListener
 		_isEditing = isEditing;
 	}
 	
-	private void SetUpView() 
+	private void SetUpView()
 	{
 		if (_fragment == null) return;
 		if(_rootView == null) return;

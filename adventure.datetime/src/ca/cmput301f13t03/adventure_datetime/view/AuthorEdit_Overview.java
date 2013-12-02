@@ -22,14 +22,13 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 
 
 /**

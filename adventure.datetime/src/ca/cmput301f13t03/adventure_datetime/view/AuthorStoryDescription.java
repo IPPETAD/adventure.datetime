@@ -22,11 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -47,17 +42,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View containing description of story create by author.
@@ -179,18 +174,18 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 			.setMessage("This will kill the story.\nAction cannot be undone.")
 			.setCancelable(true)
 			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Locator.getAuthorController().deleteStory(_story.getId());
-					finish();
-				}
-			})
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Locator.getAuthorController().deleteStory(_story.getId());
+                    finish();
+                }
+            })
 			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			})
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            })
 			.create().show();
 			break;
 		case R.id.action_save:
@@ -280,7 +275,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
                     bit = Bitmap.createBitmap(bit, bit.getWidth()/8, bit.getHeight()/8, size, size);
                     String bitmap = Image.compressBitmap(bit, 50);
                     _story.setThumbnail(bitmap);
-                    Locator.getAuthorController().saveStory(_story);
+                    Locator.getAuthorController().saveStory();
 
 				}
 				catch(Exception e) {

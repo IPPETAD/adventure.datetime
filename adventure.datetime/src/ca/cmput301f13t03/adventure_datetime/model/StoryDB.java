@@ -22,13 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -39,9 +32,11 @@ import android.graphics.Color;
 import android.provider.BaseColumns;
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * The local database containing all stories, fragments, bookmarks, and subscriptions
@@ -433,7 +428,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 		values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
 		values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-		values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp()/1000);
+		values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp() / 1000);
 
 		long updated;
 		if(cursor.moveToFirst()) {

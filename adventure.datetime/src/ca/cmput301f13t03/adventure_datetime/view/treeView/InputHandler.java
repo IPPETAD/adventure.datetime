@@ -1,7 +1,7 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
-import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
 import android.view.MotionEvent;
+import ca.cmput301f13t03.adventure_datetime.view.IFragmentSelected;
 
 class InputHandler 
 {

@@ -1,15 +1,10 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.util.Log;
+
+import java.util.*;
 
 public final class ConnectionPlacer 
 {

@@ -1,12 +1,11 @@
 package ca.cmput301f13t03.adventure_datetime.view.treeView;
 
+import ca.cmput301f13t03.adventure_datetime.model.Choice;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
-import ca.cmput301f13t03.adventure_datetime.view.treeView.GridSegment;
 
 class NodePlacer
 {

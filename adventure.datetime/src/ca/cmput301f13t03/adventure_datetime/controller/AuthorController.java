@@ -23,12 +23,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Controller for aspects of authoring a story
