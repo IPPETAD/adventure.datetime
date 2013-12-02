@@ -31,32 +31,34 @@ class Camera
 	
 	private Object m_syncLock = new Object();
 	
-	public Camera()
-	{
-		
-	}
-	
 	public void DrawLocal(Canvas canvas, Paint paint, Path p)
 	{
-		p.transform(this.GetTransform());
-		canvas.drawPath(p, paint);
-		p.transform(this.GetInverseTransform());
+		synchronized (m_syncLock) 
+		{
+			p.transform(this.GetTransform());
+			canvas.drawPath(p, paint);
+			p.transform(this.GetInverseTransform());
+		}
 	}
 	
 	public void DrawLocal(Canvas canvas, Paint paint, Bitmap image, int x, int y)
 	{
-		Matrix trans = new Matrix(GetTransform());
-		trans.setTranslate(x - this.x, y - this.y);
-		canvas.drawBitmap(image, trans, paint);
+		synchronized (m_syncLock) 
+		{
+			Matrix trans = new Matrix(GetTransform());
+			trans.setTranslate(x - this.x, y - this.y);
+			canvas.drawBitmap(image, trans, paint);
+		}
 	}
 	
 	public void DrawLocal(Canvas canvas, Paint paint, String text, int centerX, int centerY)
 	{
-		float points[] = { centerX, centerY };
-		
-		this.GetTransform().mapPoints(points);
-		
-		canvas.drawText(text, points[0], points[1], paint);
+		synchronized (m_syncLock) 
+		{
+			float points[] = { centerX, centerY };
+			this.GetTransform().mapPoints(points);
+			canvas.drawText(text, points[0], points[1], paint);
+		}
 	}
 	
 	private Matrix GetTransform()
@@ -138,6 +140,9 @@ class Camera
 	
 	public void ScreenCordsToWorldCords(float[] screenCords)
 	{
-		GetInverseTransform().mapPoints(screenCords);
+		synchronized (m_syncLock) 
+		{
+			GetInverseTransform().mapPoints(screenCords);
+		}
 	}
 }
