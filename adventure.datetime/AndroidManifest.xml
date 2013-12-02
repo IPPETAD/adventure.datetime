@@ -36,7 +36,7 @@
             android:label="Browse"
             android:parentActivityName=".view.MainView" />
         <activity
-            android:name=".view.FragmentView"
+            android:name=".view.FragmentViewActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".view.AuthorStories"
@@ -48,7 +48,8 @@
             android:parentActivityName=".view.AuthorStories" />
         <activity
             android:name=".view.AuthorEdit"
-            android:label="@string/app_name" />
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".view.StoryDescription"
             android:label="@string/app_name"

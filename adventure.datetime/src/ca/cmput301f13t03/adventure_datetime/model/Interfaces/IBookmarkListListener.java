@@ -22,10 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+
 import java.util.Map;
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 
 /**
  * 

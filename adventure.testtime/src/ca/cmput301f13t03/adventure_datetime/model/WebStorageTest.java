@@ -1,13 +1,13 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import ca.cmput301f13t03.adventure_datetime.R;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class WebStorageTest extends AndroidTestCase {
 

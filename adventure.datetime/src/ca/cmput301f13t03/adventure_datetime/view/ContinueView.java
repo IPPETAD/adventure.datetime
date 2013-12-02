@@ -22,35 +22,27 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IOnlineStoriesListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IOnlineStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * View holding list of bookmarks. Accessed from MainView
@@ -87,7 +79,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 				
 				Locator.getUserController().ResumeStory(item.getId());
 				
-				Intent intent = new Intent(ContinueView.this, FragmentView.class);
+				Intent intent = new Intent(ContinueView.this, FragmentViewActivity.class);
 				startActivity(intent);
 			}
 		});
@@ -103,12 +95,12 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 	}
 	public void OnOnlineStoriesChange(Map<UUID, Story> newStories) {
 		_onlineStories = newStories;
-		this.runOnUiThread(new Runnable() {  
-			@Override
-			public void run() {
-				setUpView();
-			}
-		}); 
+		this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setUpView();
+            }
+        });
 	}
 	private void setUpView() {
 		if (_bookmarks == null) return;

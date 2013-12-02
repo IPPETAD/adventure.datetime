@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import ca.cmput301f13t03.adventure_datetime.R;
-
 import com.google.gson.Gson;
 
 public class ImageTest extends AndroidTestCase {

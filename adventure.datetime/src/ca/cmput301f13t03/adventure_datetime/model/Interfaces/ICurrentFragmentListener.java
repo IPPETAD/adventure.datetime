@@ -22,7 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import ca.cmput301f13t03.adventure_datetime.model.*;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
 /**
  *   Interface for listening for changes to the currently selected story

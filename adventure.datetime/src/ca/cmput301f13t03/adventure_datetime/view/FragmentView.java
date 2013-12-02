@@ -1,47 +1,18 @@
-/*
- *	Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
- * 	Evan DeGraff
- *
- * 	Permission is hereby granted, free of charge, to any person obtaining a copy of
- * 	this software and associated documentation files (the "Software"), to deal in
- * 	the Software without restriction, including without limitation the rights to
- * 	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * 	the Software, and to permit persons to whom the Software is furnished to do so,
- * 	subject to the following conditions:
- *
- * 	The above copyright notice and this permission notice shall be included in all
- * 	copies or substantial portions of the Software.
- *
- * 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * 	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * 	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * 	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
+import android.widget.*;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Image;
@@ -50,68 +21,72 @@ import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-/**
- * View Accessed via MainView > Continue > ~Select Item~ or via MainView > BrowseView > StoryDescription > ~Play /
- * Continue item ~
- * <p/>
- * Holds Horizontal filmstrip containing illustrations at top of page, story fragment text in the view, and an actions
- * buttons at the bottom of the page.
- *
- * @author James Finlay
- */
-public class FragmentView extends Activity implements ICurrentFragmentListener {
-	private static final String TAG = "FragmentView";
+public class FragmentView extends Fragment implements ICurrentFragmentListener
+{
 	public static final String FOR_SERVER = "emagherd.server";
 
 	private HorizontalScrollView _filmstrip;
 	private TextView _content;
 	private LinearLayout _filmLayout;
 	private Button _choices;
-	private boolean forServerEh;
+	private View _rootView = null;
 
+	private boolean _isEditing = false;
 	private StoryFragment _fragment;
-
+	
+	public void SetFragment(StoryFragment frag)
+	{
+		_fragment = frag;
+		SetUpView();
+	}
+	
 	@Override
-	public void OnCurrentFragmentChange(StoryFragment newFragment) {
+	public void OnCurrentFragmentChange(StoryFragment newFragment) 
+	{
 		_fragment = newFragment;
-		this.runOnUiThread(new Runnable() {  
+		this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            	setUpView();
+                SetUpView();
             }
         });	
 	}
-
-	@Override
-	public void onResume() {
+	
+	public View onCreateView(LayoutInflater inflater, 
+			ViewGroup container, Bundle savedInstanceState) 
+	{
+		_rootView = inflater.inflate(R.layout.fragment_view, container, false);
 		Locator.getPresenter().Subscribe(this);
-		super.onResume();
+		SetUpView();
+		return _rootView;
 	}
-
+	
 	@Override
-	public void onPause() {
+	public void onDestroyView()
+	{
 		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
+		super.onDestroyView();
 	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_view);
-		forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
-		setUpView();
+	
+	public void SetIsEditing(boolean isEditing)
+	{
+		_isEditing = isEditing;
 	}
-	public void setUpView() {
+	
+	private void SetUpView()
+	{
 		if (_fragment == null) return;
-
+		if(_rootView == null) return;
+		
 		/** Layout items **/
-		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
-		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
-		_choices = (Button) findViewById(R.id.choices);
-		_content = (TextView) findViewById(R.id.content);
+		
+		_filmLayout = (LinearLayout) _rootView.findViewById(R.id.filmstrip);
+		_filmstrip = (HorizontalScrollView) _rootView.findViewById(R.id.filmstrip_wrapper);
+		_choices = (Button) _rootView.findViewById(R.id.choices);
+		
+		_content = (TextView) _rootView.findViewById(R.id.content);
 
 		if (_fragment.getStoryMedia() == null)
 			_fragment.setStoryMedia(new ArrayList<Image>());
@@ -121,18 +96,17 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 		//if (_fragment.getStoryMedia().size() > 0)
 		_filmstrip.getLayoutParams().height = 300;
 
-
 		_content.setText(_fragment.getStoryText());
-
 
 		// 1) Create new ImageView and add to the LinearLayout
 		// 2) Set appropriate Layout Params to ImageView
 		// 3) Give onClickListener for going to fullscreen
 		LinearLayout.LayoutParams lp;
 		//for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) 
+		{
 			// TODO::JF Get images from fragment
-			ImageView li = new ImageView(this);
+			ImageView li = new ImageView(this.getActivity());
 			li.setScaleType(ScaleType.CENTER_INSIDE);
 			li.setImageResource(R.drawable.grumpy_cat2);
 			_filmLayout.addView(li);
@@ -145,8 +119,9 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 			li.setOnClickListener(new OnClickListener() {
 				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
+				public void onClick(View v) 
+				{
+					Intent intent = new Intent(getActivity(), FullScreen_Image.class);
 					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
 					startActivity(intent);
 				}
@@ -178,7 +153,7 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 
 							Choice choice = _fragment.getChoices().get(which);
 
-							Toast.makeText(getApplicationContext(), 
+							Toast.makeText(FragmentView.this.getActivity(), 
 									choice.getText(), Toast.LENGTH_LONG).show();
 							Locator.getUserController().MakeChoice(choice);
 						}
@@ -202,37 +177,20 @@ public class FragmentView extends Activity implements ICurrentFragmentListener {
 							Locator.getUserController().StartStory(_fragment.getStoryID());							
 						}
 					})
-					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() 
+					{
 						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
+						public void onClick(DialogInterface dialog, int which) 
+						{
+							if(!_isEditing)
+							{
+								getActivity().onBackPressed();
+							}
 						}
 					})
 					.create().show();
-					
 				}
 			});
 		}
-
 	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		if (forServerEh)
-			getMenuInflater().inflate(R.menu.fragment_menu, menu);
-		return true;
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_comment:
-			/* Open comments activity */
-			Intent intent = new Intent(this, CommentsView.class);
-			intent.putExtra(CommentsView.COMMENT_TYPE, false);
-			startActivity(intent);
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
 }

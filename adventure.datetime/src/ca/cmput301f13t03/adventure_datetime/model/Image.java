@@ -22,14 +22,14 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.UUID;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 public class Image {
 	

@@ -22,10 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.ArrayList;
-import java.util.UUID;
 
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * A model for a fragment of the Choose-Your-Own-Adventure
@@ -34,7 +35,8 @@ import com.google.gson.Gson;
  * @version 1.0
  * @since 23/10/13
  */
-public class StoryFragment {
+public class StoryFragment implements Comparable<StoryFragment>
+{
 
 	/**
 	 * The UUID of the story linked to the fragment
@@ -194,10 +196,6 @@ public class StoryFragment {
     public void removeMedia(int media) {
         storyMedia.remove(media);
     }
-    
-    public void removeMedia(UUID mediaId) {
-    	
-    }
 
     /**
      * Gets media at a certain index of the list
@@ -301,6 +299,12 @@ public class StoryFragment {
 		for (Image i : this.storyMedia) {
 			this.mediaIds.add(i.getId());
 		}
+	}
+
+	@Override
+	public int compareTo(StoryFragment other) 
+	{
+		return this.fragmentID.compareTo(other.fragmentID);
 	}
 
     @Override

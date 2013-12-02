@@ -22,13 +22,13 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.List;
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
 import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface IWebStorage {
 

@@ -22,14 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.AlertDialog;
@@ -46,6 +38,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import ca.cmput301f13t03.adventure_datetime.view.treeView.TreeView;
 
 /**
  * 
@@ -54,19 +53,28 @@ import android.widget.Toast;
  *  - AuthorEdit_Overview
  *  - AuthorEdit_Edit
  * 
- * TODO: Load data from the model
- * TODO: Send changes to the controller
- * 
  * @author James Finlay
  *
  */
-public class AuthorEdit extends FragmentActivity implements ICurrentFragmentListener, ICurrentStoryListener {
+public class AuthorEdit extends FragmentActivity 
+implements 	ICurrentFragmentListener, 
+ICurrentStoryListener,
+IFragmentSelected
+{
+
+	public static final int OVERVIEW_INDEX = 0;
+	public static final int EDIT_INDEX = 1;
+	public static final int PREVIEW_INDEX = 2;
+	// make sure to update this if we add a tab!
+	public static final int INDEX_COUNT = 3;
+
 	private static final String TAG = "AuthorEdit";
 
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
 	private Story _story;
 	private StoryFragment _fragment;
+	private boolean _deletingFragment = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +82,14 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		setContentView(R.layout.viewpager);
 
 		/* Set up View Pager */
-		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
+		_adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
+		
+		if(_fragment != null)
+		{
+			_adapter.setFragment(_fragment);
+		}
 
 		/* Set up Tabs */
 		final ActionBar actionBar = getActionBar();
@@ -86,18 +99,27 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 			public void onTabReselected(Tab tab, FragmentTransaction ft) {}
 
 			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
-				_viewPager.setCurrentItem(tab.getPosition());
+			public void onTabSelected(Tab tab, FragmentTransaction ft) 
+			{
+				int index = tab.getPosition();
+				if(index != OVERVIEW_INDEX)
+				{
+					_adapter.CancelActions();
+				}
+				
+				invalidateOptionsMenu();
+				
+				_viewPager.setCurrentItem(index);
 			}
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
 		};
 
 		actionBar.addTab(actionBar.newTab()
-				.setText("Edit")
+				.setText("Overview")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
-				.setText("Overview")
+				.setText("Edit")
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab()
 				.setText("Preview")
@@ -106,13 +128,21 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		/* Change tabs when View Pager swiped */
 		_viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
-			public void onPageSelected(int position) {
+			public void onPageSelected(int position) 
+			{
 				getActionBar().setSelectedNavigationItem(position);
+				invalidateOptionsMenu();
+				
+				_deletingFragment = false;
+				if(_viewPager.getCurrentItem() != OVERVIEW_INDEX)
+				{
+					_adapter.CancelActions();
+				}
 			}
 		});
 
 		// Select 'Overview' at start
-		getActionBar().setSelectedNavigationItem(1);
+		getActionBar().setSelectedNavigationItem(OVERVIEW_INDEX);
 
 	}
 	@Override
@@ -133,13 +163,22 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 		_adapter.setFragment(newFragment);
 	}
 	@Override
-	public void OnCurrentStoryChange(Story newStory) {
-		_adapter.setStory(newStory);
+	public void OnCurrentStoryChange(Story newStory) 
+	{
 		_story = newStory;
 	}
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.authoredit, menu);
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		if(_viewPager.getCurrentItem() == OVERVIEW_INDEX)
+		{
+			getMenuInflater().inflate(R.menu.authoroverview, menu);
+		}
+		else
+		{
+			getMenuInflater().inflate(R.menu.authoredit, menu);
+		}
+
 		return true;		
 	}
 
@@ -151,96 +190,153 @@ public class AuthorEdit extends FragmentActivity implements ICurrentFragmentList
 			finish();
 			break;
 		case R.id.action_save:
-			_adapter.saveFragment();
+			Locator.getAuthorController().saveStory();
 			Toast.makeText(getApplicationContext(), "Saved Fragment!", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.action_discard:
-			/* Ensure user is not retarded and actually wants to do this */
-			new AlertDialog.Builder(this)
-			.setTitle("Delete Story Fragment")
-			.setMessage("Deletes only currently selected fragment.\nYou cannot undo.")
-			.setCancelable(true)
-			.setPositiveButton("Delete", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (_story.getHeadFragmentId().equals(_fragment.getFragmentID())) {
-						Toast.makeText(getApplicationContext(), 
-								"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
-					} else {
-						Locator.getAuthorController().deleteFragment(_fragment.getFragmentID());
-						Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
-					}
-				}
-			})
-			.setNegativeButton("Cancel", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			})
-			.create().show();
+			DoDeleteFragment();
+			break;
+		case R.id.action_addFragment:
+			StoryFragment newFrag = Locator.getAuthorController().CreateFragment();
+			Locator.getAuthorController().selectFragment(newFrag.getFragmentID());
+			_viewPager.setCurrentItem(EDIT_INDEX);
 			break;
 		default:
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	public class ViewPagerAdapter extends FragmentPagerAdapter {
+	private void DoDeleteFragment()
+	{
+		if(_viewPager.getCurrentItem() == OVERVIEW_INDEX)
+		{
+			_deletingFragment = true;
+			Toast.makeText(getApplicationContext(), "Select a Fragment to delete...", Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			DeleteFragment(_fragment);
+		}
+	}
+	
+	private void DeleteFragment(final StoryFragment frag)
+	{
+		final int TXT_LIMIT = 10;
+		
+		String fragText = frag.getStoryText();
+		
+		if(fragText.length() > TXT_LIMIT)
+		{
+			fragText = fragText.substring(0, TXT_LIMIT) + "...";
+		}
+		
+		/* Ensure user is not retarded and actually wants to do this */
+		new AlertDialog.Builder(this)
+		.setTitle("Delete Story Fragment")
+		.setMessage("This will delete \"" + fragText + "\"\nYou cannot undo.")
+		.setCancelable(true)
+		.setPositiveButton("Delete", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (_story.getHeadFragmentId().equals(frag.getFragmentID())) {
+					Toast.makeText(getApplicationContext(), 
+							"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
+				} else {
+					Locator.getAuthorController().deleteFragment(frag.getFragmentID());
+					Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
+				}
+			}
+		})
+		.setNegativeButton("Cancel", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		})
+		.create().show();
+	}
 
+	public void OnFragmentSelected(StoryFragment selectedFragment) 
+	{
+		if(_deletingFragment)
+		{
+			_deletingFragment = false;
+			DeleteFragment(selectedFragment);
+		}
+		else
+		{
+			getActionBar().setSelectedNavigationItem(EDIT_INDEX);
+			Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
+		}
+	}
+
+	// fuck this is ugly
+	public interface OnCreatedCallback
+	{
+		public void OnCreated(TreeView newTreeView);
+	}
+
+	public class ViewPagerAdapter extends FragmentPagerAdapter implements OnCreatedCallback
+	{
 		private AuthorEdit_Edit _edit;
 		private AuthorEdit_Overview _overview;
-		private AuthorEdit_Preview _preview;
+		private FragmentView _preview;
 
-		public ViewPagerAdapter(FragmentManager fm) {
+		public ViewPagerAdapter(FragmentManager fm, IFragmentSelected callback) {
 			super(fm);
-			_edit = new AuthorEdit_Edit();
+
 			_overview = new AuthorEdit_Overview();
-			_preview = new AuthorEdit_Preview();
+			_overview.SetFragmentSelectionCallback(callback);
+			_overview.SetOnCreatedCallback(this);
+
+			_edit = new AuthorEdit_Edit();
+			_edit.SetActionBar(getActionBar());
+
+			_preview = new FragmentView();
+			_preview.SetIsEditing(true);
 		}
 
 		@Override
 		public Fragment getItem(int i) {
 			switch (i) {
-			case 0:
-				return _edit;
-			case 1:
+			case OVERVIEW_INDEX:
 				return _overview;
-			case 2:
+			case EDIT_INDEX:
+				return _edit;
+			case PREVIEW_INDEX:
 				return _preview;
 			default:
 				Log.e(TAG, "invalid item #");
 				return null;
 			}
 		}
-		public void setStory(Story st) {
-			_edit.setStory(st);
-			_overview.setStory(st);
-			_preview.setStory(st);
-		}
 		public void setFragment(StoryFragment sf) {
 			_edit.setFragment(sf);
-			_overview.setFragment(sf);
-			_preview.setFragment(sf);
 		}
-		public void saveFragment() {
-			_edit.saveFragment();
-			_overview.saveFragment();
-			_preview.saveFragment();
+		
+		public void CancelActions()
+		{
+			_edit.CancelPendingActions();
 		}
 
 		@Override
 		public int getCount() {
-			return 3;
+			return INDEX_COUNT;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
-			case 0: return "Edit";
-			case 1: return "Overview";
-			case 2: return "Preview";
+			case EDIT_INDEX: return "Edit";
+			case OVERVIEW_INDEX: return "Overview";
+			case PREVIEW_INDEX: return "Preview";
 			default: return "It be a Pirate!";
 			}
+		}
+
+		public void OnCreated(TreeView newTreeView) 
+		{
+			_edit.SetTreeView(newTreeView);
 		}
 	}
 }
