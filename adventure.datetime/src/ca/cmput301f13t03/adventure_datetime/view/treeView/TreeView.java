@@ -171,7 +171,6 @@ public class TreeView extends SurfaceView
 				Log.w(TAG, "Interrupted while Joining! " + e.getMessage());
 			}
 			m_drawingThread = null;
-			m_grid = null;
 		}
 	}
 	

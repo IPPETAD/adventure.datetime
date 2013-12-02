@@ -35,6 +35,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -70,6 +71,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 	private StoryFragment _fragment;
 
 	private Button _addChoiceBtn;
+	private Button _mediaBtn;
 	private EditText _content;
 	private ListView _choiceList = null;
 
@@ -127,15 +129,14 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 		_addChoiceBtn = (Button) _rootView.findViewById(R.id.addChoice_btn);
 		_choiceList = (ListView) _rootView.findViewById(R.id.choicesList);
 		_content = (EditText) _rootView.findViewById(R.id.content);
+		_mediaBtn = (Button) _rootView.findViewById(R.id.btn_addMedia);
 
 		_content.setText(_fragment.getStoryText());
 		_content.addTextChangedListener(this);
 
 		_addChoiceBtn.setOnClickListener(this);
 		
-		// TODO::JT fix James' stuffz
-		/*
-		_media.setOnClickListener(new OnClickListener() {
+		_mediaBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), FullScreen_Image.class);
@@ -143,7 +144,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 				startActivity(intent);	
 			}
 		});
-		*/
+		
 
 		_choiceList.setClickable(false);
 		m_adapter = new ChoiceAdapter(	m_activity, 
