@@ -1,65 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/wrapper"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true" >
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:orientation="vertical" >
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="3"
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true"
         android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/btn_addMedia"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:text="Organize Media" />
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/synopsis"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="Content:"
-            android:textSize="22sp" />
+            <Button
+                android:id="@+id/btn_addMedia"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:text="Organize Media" />
 
-        <EditText
-            android:id="@+id/content"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Content..."
-            android:padding="10dp"
-            android:singleLine="false"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/synopsis"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Content:"
+                android:textSize="22sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choices:"
-            android:textSize="24sp" />
+            <EditText
+                android:id="@+id/content"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Content..."
+                android:padding="10dp"
+                android:singleLine="false"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
 
-        <!-- Horizontal Div -->
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="#000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choices:"
+        android:textSize="24sp" />
 
-        <ListView
-            android:id="@+id/choicesList"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
+    <!-- Horizontal Div -->
 
-        <Button
-            android:id="@+id/addChoice_btn"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
-            android:text="Add Choice"/>
-    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#000000" />
 
-</ScrollView>
+    <ListView
+        android:id="@+id/choicesList"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="2" />
+
+    <Button
+        android:id="@+id/addChoice_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Choice" />
+
+</LinearLayout>
