@@ -41,8 +41,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,9 +52,6 @@ import android.widget.Toast;
  *  - AuthorEdit_Preview
  *  - AuthorEdit_Overview
  *  - AuthorEdit_Edit
- * 
- * TODO: Load data from the model
- * TODO: Send changes to the controller
  * 
  * @author James Finlay
  *
@@ -79,6 +74,7 @@ IFragmentSelected
 	private ViewPagerAdapter _adapter;
 	private Story _story;
 	private StoryFragment _fragment;
+	private boolean _deletingFragment = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +128,7 @@ IFragmentSelected
 				getActionBar().setSelectedNavigationItem(position);
 				invalidateOptionsMenu();
 				
+				_deletingFragment = false;
 				if(_viewPager.getCurrentItem() != OVERVIEW_INDEX)
 				{
 					_adapter.CancelActions();
@@ -208,50 +205,64 @@ IFragmentSelected
 	{
 		if(_viewPager.getCurrentItem() == OVERVIEW_INDEX)
 		{
-			// TODO::JT gotta handle selection
+			_deletingFragment = true;
+			Toast.makeText(getApplicationContext(), "Select a Fragment to delete...", Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
-			final int TXT_LIMIT = 10;
-			
-			String fragText = _fragment.getStoryText();
-			
-			if(fragText.length() > TXT_LIMIT)
-			{
-				fragText = fragText.substring(0, TXT_LIMIT) + "...";
-			}
-			
-			/* Ensure user is not retarded and actually wants to do this */
-			new AlertDialog.Builder(this)
-			.setTitle("Delete Story Fragment")
-			.setMessage("This will delete \"" + fragText + "\"\nYou cannot undo.")
-			.setCancelable(true)
-			.setPositiveButton("Delete", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (_story.getHeadFragmentId().equals(_fragment.getFragmentID())) {
-						Toast.makeText(getApplicationContext(), 
-								"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
-					} else {
-						Locator.getAuthorController().deleteFragment(_fragment.getFragmentID());
-						Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
-					}
-				}
-			})
-			.setNegativeButton("Cancel", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			})
-			.create().show();
+			DeleteFragment(_fragment);
 		}
+	}
+	
+	private void DeleteFragment(final StoryFragment frag)
+	{
+		final int TXT_LIMIT = 10;
+		
+		String fragText = frag.getStoryText();
+		
+		if(fragText.length() > TXT_LIMIT)
+		{
+			fragText = fragText.substring(0, TXT_LIMIT) + "...";
+		}
+		
+		/* Ensure user is not retarded and actually wants to do this */
+		new AlertDialog.Builder(this)
+		.setTitle("Delete Story Fragment")
+		.setMessage("This will delete \"" + fragText + "\"\nYou cannot undo.")
+		.setCancelable(true)
+		.setPositiveButton("Delete", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (_story.getHeadFragmentId().equals(frag.getFragmentID())) {
+					Toast.makeText(getApplicationContext(), 
+							"Cannot delete Head Fragment", Toast.LENGTH_LONG).show();
+				} else {
+					Locator.getAuthorController().deleteFragment(frag.getFragmentID());
+					Locator.getAuthorController().selectFragment(_story.getHeadFragmentId());
+				}
+			}
+		})
+		.setNegativeButton("Cancel", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		})
+		.create().show();
 	}
 
 	public void OnFragmentSelected(StoryFragment selectedFragment) 
 	{
-		getActionBar().setSelectedNavigationItem(EDIT_INDEX);
-		Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
+		if(_deletingFragment)
+		{
+			_deletingFragment = false;
+			DeleteFragment(selectedFragment);
+		}
+		else
+		{
+			getActionBar().setSelectedNavigationItem(EDIT_INDEX);
+			Locator.getAuthorController().selectFragment(selectedFragment.getFragmentID());
+		}
 	}
 
 	// fuck this is ugly

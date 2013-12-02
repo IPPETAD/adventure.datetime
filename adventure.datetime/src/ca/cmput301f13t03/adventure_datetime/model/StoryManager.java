@@ -407,6 +407,32 @@ IStoryModelDirector {
 	public void deleteFragment(UUID fragmentId) {
 		m_db.deleteStoryFragment(fragmentId);
 		m_fragmentList.remove(fragmentId);
+		
+		List<Choice> choicesToRemove = new ArrayList<Choice>();
+		
+		// Now iterate over all fragments and find those that referenced this one
+		// remove those choices so they cannot be selected
+		for(StoryFragment frag : m_fragmentList.values())
+		{
+			choicesToRemove.clear();
+			
+			for(Choice choice : frag.getChoices())
+			{
+				if(choice.getTarget().equals(fragmentId))
+				{
+					choicesToRemove.add(choice);
+				}
+			}
+			
+			for(Choice choice : choicesToRemove)
+			{
+				frag.removeChoice(choice);
+			}
+		}
+		
+		// have to save after a deletion or the memory and database will be out of sync
+		SaveStory();
+		
 		PublishAllFragmentsChanged();
 	}
 

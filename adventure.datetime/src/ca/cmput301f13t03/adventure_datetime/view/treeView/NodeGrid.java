@@ -403,7 +403,7 @@ class NodeGrid
 				StoryFragment frag = allFrags.get(link.getTarget());
 
 				// if we don't already have it then add it to the list
-				if(!linkedFrags.contains(frag))
+				if(frag != null && !linkedFrags.contains(frag))
 				{
 					linkedFrags.add(frag);
 					links.addAll(frag.getChoices());
