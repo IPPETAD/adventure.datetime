@@ -43,8 +43,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 /**
- * View accessed via MainView > ~Browse button~
- * 
+ *
  * Contains three fragments/tabs where user can see list of cached stories, 
  * authored stories, and online stories.
  * 

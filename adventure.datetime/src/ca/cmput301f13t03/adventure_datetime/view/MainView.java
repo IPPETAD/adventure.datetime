@@ -42,13 +42,8 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListen
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
- * The first and main activity of the application.
- * 
- * Contains three buttons:
- *  - ContinueView (list of bookmarks)
- *  - BrowseView (list of stories)
- *  - Author (create & edit stories)
- * 
+ * The first and main activity of the application. User can then navigate to the different sections.
+ *
  * @author James Finlay
  *
  */

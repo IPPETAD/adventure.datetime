@@ -59,14 +59,10 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListen
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 /**
- * 
- * View accessed via MainView > BrowseView > ~Select item~
- * 
  * Show synopsis & more details about selected story. User can then play the selected story.
  * Utilizes fragments to allow swiping through available stories.
  * 
  * @author James Finlay
- *
  */
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";

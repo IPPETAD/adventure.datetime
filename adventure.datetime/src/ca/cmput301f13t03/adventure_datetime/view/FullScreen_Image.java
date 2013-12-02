@@ -58,9 +58,7 @@ import android.widget.TextView;
 
 /**
  *
- * View accessed by clicking image in filmstrip
- *
- * Show fullscreen version of image / play video
+ * View accessed by clicking image in filmstrip. Provides image/video in full screen.
  *
  * @author James Finlay
  *

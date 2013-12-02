@@ -54,9 +54,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * View Accessed via MainView > Continue > ~Select Item~ or via MainView > BrowseView > StoryDescription > ~Play /
- * Continue item ~
- * <p/>
+ *
  * Holds Horizontal filmstrip containing illustrations at top of page, story fragment text in the view, and an actions
  * buttons at the bottom of the page.
  *

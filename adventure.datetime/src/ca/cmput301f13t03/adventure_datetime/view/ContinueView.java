@@ -53,9 +53,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * View holding list of bookmarks. Accessed from MainView
- * 
- * TODO: Load from model
+ * View holding list of bookmarks. Accessed from MainView. Contains bookmarks for online and local.
+ *
  * 
  * @author James Finlay
  *

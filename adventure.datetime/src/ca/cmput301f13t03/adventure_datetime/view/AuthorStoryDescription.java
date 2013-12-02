@@ -54,11 +54,6 @@ import java.util.List;
 
 /**
  * View containing description of story create by author.
- * <p/>
- * User can swipe between the fragments to view other stories
- * in list.
- * <p/>
- * TODO: Link with model, controller
  *
  * @author James Finlay
  * @author Andrew Fontaine
