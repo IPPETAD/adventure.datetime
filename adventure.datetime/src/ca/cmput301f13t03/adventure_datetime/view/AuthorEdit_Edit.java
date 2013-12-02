@@ -121,7 +121,7 @@ public class AuthorEdit_Edit extends Fragment implements OnClickListener, IFragm
 	{
 		if (_rootView == null) return;
 		if (_fragment == null) return;
-		if (m_activity == null) return;
+		if (m_activity == null && (m_activity = this.getActivity()) == null) return;
 
 		/** Layout items **/
 		_addChoiceBtn = (Button) _rootView.findViewById(R.id.addChoice_btn);

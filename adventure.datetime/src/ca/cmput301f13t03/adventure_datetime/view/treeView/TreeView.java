@@ -135,6 +135,7 @@ public class TreeView extends SurfaceView
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
 	{
 		m_camera.ResizeView(width, height);
+		m_camera.LookAt(0, 0);
 	}
 
 	@Override

@@ -113,6 +113,9 @@ class Camera
 		{
 			m_viewWidth = width;
 			m_viewHeight = height;
+			
+			m_inverse = null;
+			m_transform = null;
 		}
 		
 		LookAt(m_xTarget, m_yTarget);

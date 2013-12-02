@@ -85,6 +85,11 @@ IFragmentSelected
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
 		_viewPager = (ViewPager) findViewById(R.id.pager);
 		_viewPager.setAdapter(_adapter);
+		
+		if(_fragment != null)
+		{
+			_adapter.setFragment(_fragment);
+		}
 
 		/* Set up Tabs */
 		final ActionBar actionBar = getActionBar();
