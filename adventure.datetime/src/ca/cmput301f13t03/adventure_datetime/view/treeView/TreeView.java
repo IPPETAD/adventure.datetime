@@ -28,7 +28,7 @@ public class TreeView extends SurfaceView
 				SurfaceHolder.Callback, 
 				Runnable
 {
-	private static final float FPS = 120.0f; // TODO::JT strictly speaking this isn't being calculated quite right...
+	private static final float FPS = 120.0f; // strictly speaking this isn't being calculated quite right...
 	private static final String TAG = "TreeView";
 	
 	private Thread m_drawingThread = null;

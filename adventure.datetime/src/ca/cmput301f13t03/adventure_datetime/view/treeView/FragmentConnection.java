@@ -31,7 +31,7 @@ final class FragmentConnection
 	private PathMeasure m_measure = null;
 	private Path m_connectionPath = null;
 	private float m_length = 0.0f;
-	private float m_animationProgress = 0.0f;
+	private float m_animationProgress = 1.0f;
 	
 	private UUID m_originId = null;
 	private UUID m_targetId = null;
@@ -41,7 +41,7 @@ final class FragmentConnection
 		s_pathStyle = new Paint();
 		s_pathStyle.setAntiAlias(true);
 		s_pathStyle.setAlpha(200);
-		s_pathStyle.setColor(Color.CYAN); // TODO::JT get a better colour!
+		s_pathStyle.setColor(Color.CYAN);
 		s_pathStyle.setStyle(Style.STROKE);
 		s_pathStyle.setStrokeWidth(3.0f);
 		
@@ -80,12 +80,12 @@ final class FragmentConnection
 								(int)(pos[1]) - PARTICLE_V_OFFSET);
 		}
 		
-		if(m_animationProgress >= 1.0f)
+		if(m_animationProgress <= 0.0f)
 		{
-			m_animationProgress = 0.0f;
+			m_animationProgress = 1.0f;
 		}
 		
-		m_animationProgress += FRAME_ANIMATION_SPEED;
+		m_animationProgress -= FRAME_ANIMATION_SPEED;
 	}
 	
 	public UUID GetOrigin()

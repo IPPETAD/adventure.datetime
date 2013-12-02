@@ -128,8 +128,6 @@ public final class ConnectionPlacer
 
 	public void PlaceConnection(FragmentConnection connection, FragmentNode originFrag, FragmentNode targetFrag)
 	{
-		// TODO::JT need to handle the special case that a fragmentNode is connected to itself!
-		// it should loop back but be visible!
 		if(originFrag.GetFragment().getFragmentID().equals(targetFrag.GetFragment().getFragmentID()))
 		{
 			Path newPath = new Path();

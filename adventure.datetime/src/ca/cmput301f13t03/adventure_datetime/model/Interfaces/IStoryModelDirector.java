@@ -50,11 +50,6 @@ public interface IStoryModelDirector
 	 */
 	public void selectFragment(UUID fragmentId);
 
-	// void AddComment(Comment comment); 
-	//public void publish(long storyID);
-	/* Commenting out as I don't want to deal with this right now*/
-	/* TODO need to add in other functionality here! Pieces like authoring, saving, etc.*/
-
 	/**
 	 * Save a story in the database
 	 * @param story
