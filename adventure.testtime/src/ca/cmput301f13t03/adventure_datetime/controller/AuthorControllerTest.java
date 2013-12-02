@@ -23,9 +23,7 @@ package ca.cmput301f13t03.adventure_datetime.controller;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
-import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import junit.framework.Assert;
@@ -59,21 +57,10 @@ public class AuthorControllerTest extends AndroidTestCase {
 		story.setSynopsis("TestSynop");
         story.setHeadFragmentId(UUID.randomUUID());
 
-		Assert.assertTrue("Error inserting story", controller.saveStory(story));
+		Assert.assertTrue("Error inserting story", controller.saveStory());
 		Story story2 = controller.getStory(story.getId());
 
 		Assert.assertEquals("Not equivalent stories", story.getId(), story2.getId());
-	}
-
-	public void testSaveFragment() throws Exception {
-		UUID uuid = UUID.randomUUID();
-		Choice choice = new Choice("test", uuid);
-		StoryFragment fragment = new StoryFragment(uuid, "testing", choice);
-
-		Assert.assertTrue("Error inserting fragment", controller.saveFragment(fragment));
-		StoryFragment fragment2 = manager.getFragment(uuid);
-
-		Assert.assertEquals("Not equivalent fragments", fragment.getFragmentID(), fragment2.getFragmentID());
 	}
 
 	@Override
