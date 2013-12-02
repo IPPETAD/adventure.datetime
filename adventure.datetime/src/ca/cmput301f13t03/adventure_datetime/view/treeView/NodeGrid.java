@@ -110,7 +110,7 @@ class NodeGrid
 
 			FragmentConnection newConnection = 
 					new FragmentConnection(	origin.getFragmentID(),
-							choice.getTarget());
+							choice.getTarget(), m_res);
 			FragmentNode originNode = GetNode(origin.getFragmentID());
 			FragmentNode targetNode = GetNode(choice.getTarget());
 
@@ -373,7 +373,7 @@ class NodeGrid
 				{
 					FragmentConnection connection = 
 							new FragmentConnection(	node.GetFragment().getFragmentID(), 
-									choice.getTarget());
+									choice.getTarget(), m_res);
 					m_connectionPlacer.PlaceConnection(connection, node, lookupList.get(key));
 					this.m_connections.add(connection);
 				}
