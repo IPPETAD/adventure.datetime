@@ -53,9 +53,7 @@ import java.util.List;
 
 /**
  *
- * View accessed by clicking image in filmstrip
- *
- * Show fullscreen version of image / play video
+ * View accessed by clicking image in filmstrip. Provides image/video in full screen.
  *
  * @author James Finlay
  *
@@ -110,12 +108,14 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             }
         });
 
+        // turn off author buttons if necessary
+        if (!getIntent().getBooleanExtra(TAG_AUTHOR, false)) {
+            gallery.setVisibility(View.GONE);
+            camera.setVisibility(View.GONE);
+            delete.setVisibility(View.GONE);
+        }
 
         _pageAdapter.setIllustrations(_fragment.getStoryMedia(), getIntent().getBooleanExtra(TAG_AUTHOR, false));
-      /*  ArrayList<String> list = new ArrayList<String>();
-        for (int i=0; i<5; i++) list.add(""+i);
-        _pageAdapter.setIllustrations(list, getIntent().
-                getBooleanExtra(TAG_AUTHOR, false));*/
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {}
@@ -265,18 +265,6 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             image.setImageBitmap(_sID.decodeBitmap());
             counter.setText(_position);
 
-            Button gallery = (Button) _rootView.findViewById(R.id.gallery);
-            Button camera = (Button)  _rootView.findViewById(R.id.camera);
-            Button delete = (Button)  _rootView.findViewById(R.id.action_delete);
-
-
-
-            // turn off author buttons if necessary
-            if (!_author) {
-                gallery.setVisibility(View.GONE);
-                camera.setVisibility(View.GONE);
-                delete.setVisibility(View.GONE);
-            }
         }
 
     }
