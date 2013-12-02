@@ -36,7 +36,7 @@
             android:label="Browse"
             android:parentActivityName=".view.MainView" />
         <activity
-            android:name=".view.FragmentView"
+            android:name=".view.FragmentViewActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".view.AuthorStories"
