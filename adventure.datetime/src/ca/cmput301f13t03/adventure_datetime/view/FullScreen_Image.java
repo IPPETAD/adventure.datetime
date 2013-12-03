@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -64,7 +65,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
     public static final int GALLERY = 42;
     public static final int CAMERA = 23;
 
-    private StoryFragment _fragment;
+    protected StoryFragment _fragment;
     private ViewPager _viewPager;
     private StoryPagerAdapter _pageAdapter;
     private Uri _newImage;
@@ -81,7 +82,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
 
         Button gallery = (Button) findViewById(R.id.gallery);
         Button camera = (Button)  findViewById(R.id.camera);
-        Button delete = (Button)  findViewById(R.id.action_delete);
+        Button delete = (Button) findViewById(R.id.action_delete);
 
         gallery.setOnClickListener(new OnClickListener() {
             @Override
@@ -105,6 +106,18 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 i.putExtra(MediaStore.EXTRA_OUTPUT, _newImage);
                 startActivityForResult(i, CAMERA);
+            }
+        });
+
+        delete.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IllustrationFragment frag = (IllustrationFragment) _pageAdapter._fragment;
+                if(frag != null) {
+                    Locator.getAuthorController().deleteImage(frag._sID.getId());
+                }
+
+                _pageAdapter.notifyDataSetChanged();
             }
         });
 
@@ -156,9 +169,6 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
         if (resultCode != RESULT_OK) {
-            if(requestCode == CAMERA) {
-                _fragment.removeMedia(_fragment.getStoryMedia().size() - 1);
-            }
             return;
         }
 
@@ -188,28 +198,31 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 }
                 break;
         }
+        _pageAdapter.notifyDataSetChanged();
     }
 
     private class StoryPagerAdapter extends FragmentStatePagerAdapter {
 
         private List<Image> _illustrations;
         private boolean _author;
+        private Fragment _fragment;
 
         public StoryPagerAdapter(FragmentManager fm) {
             super(fm);
             _illustrations = new ArrayList<Image>();
         }
 
-        public void setIllustrations(List<Image> illustrationIDs, boolean author) {
-            _illustrations = illustrationIDs;
+        public void setIllustrations(List<Image> imageIds, boolean author) {
+            _illustrations = imageIds;
             _author = author;
-            notifyDataSetChanged();
+            this.notifyDataSetChanged();
         }
 
         @Override
         public Fragment getItem(int pos) {
             IllustrationFragment frag = new IllustrationFragment();
             frag.init(_illustrations.get(pos), pos, _illustrations.size(), _author);
+            _fragment = frag;
 
             return frag;
         }
@@ -219,12 +232,19 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             return _illustrations.size();
         }
 
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
     }
     public static class IllustrationFragment extends Fragment {
 
         private View _rootView;
         private Image _sID;
-        private String _position;
+        private int _position;
+        private String _positionString;
+        private StoryFragment _fragment;
         private boolean _author;
 
         public void onCreate(Bundle bundle) {
@@ -232,7 +252,8 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         }
         public void init(Image id, int position, int total, boolean author) {
             _sID = id;
-            _position = (position+1) + "/" + total;
+            _position = position;
+            _positionString = (position+1) + "/" + total;
             _author = author;
             setUpView();
         }
@@ -252,18 +273,19 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             if (_rootView == null) return;
 
             /** Layout items **/
-            ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+            final  ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+            final  TextView counter = (TextView) _rootView.findViewById(R.id.count);
 
-            TextView counter = (TextView) _rootView.findViewById(R.id.count);
+            getActivity().runOnUiThread(new Runnable(){
+                @Override
+                public void run() {
 
-            // TODO: Set counter by location
+                    image.setImageBitmap(_sID.decodeBitmap());
+                    counter.setText(_positionString);
+                    image.invalidate();
 
-
-
-
-            //bit = BitmapFactory.decodeFile(pic.getAbsolutePath(), opts);
-            image.setImageBitmap(_sID.decodeBitmap());
-            counter.setText(_position);
+                }
+            });
 
         }
 
