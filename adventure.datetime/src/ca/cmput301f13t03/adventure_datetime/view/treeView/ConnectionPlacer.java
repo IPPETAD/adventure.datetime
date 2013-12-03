@@ -566,11 +566,6 @@ public final class ConnectionPlacer
 				// no point at all!
 				simplifiedList = baseNodes;
 			}
-			
-			if(baseNodes.size() > 1)
-			{
-				simplifiedList.add(baseNodes.get(baseNodes.size() - 1));
-			}
 
 			return simplifiedList;
 		}
