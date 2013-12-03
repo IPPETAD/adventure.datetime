@@ -45,9 +45,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * View holding list of bookmarks. Accessed from MainView
- * 
- * TODO: Load from model
+ * View holding list of bookmarks. Accessed from MainView. Contains bookmarks for online and local.
+ *
  * 
  * @author James Finlay
  *
@@ -163,6 +162,7 @@ public class ContinueView extends Activity implements IBookmarkListListener,
 			TextView author = (TextView) rowView.findViewById(R.id.author);
 			TextView lastPlayed = (TextView) rowView.findViewById(R.id.datetime);
 
+            thumbnail.setImageBitmap(item.decodeThumbnail());
 			title.setText(item.getTitle());
 			author.setText("Author: " + item.getAuthor());
 			lastPlayed.setText("Last played: " + _bookmarks.get(item.getId()).getFormattedTimestamp());
