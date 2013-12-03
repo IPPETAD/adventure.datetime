@@ -703,7 +703,6 @@ IStoryModelDirector {
 			}
 		}
 	}
-<<<<<<< HEAD
 	
 	public void search(String searchTerm) {
 		m_onlineStories = new HashMap<UUID, Story>();
@@ -733,7 +732,4 @@ IStoryModelDirector {
 			}
 		});
 	}
-
-=======
->>>>>>> 2281ebba3c019ffef6d2879dd5ef4f785b1099d4
 }
