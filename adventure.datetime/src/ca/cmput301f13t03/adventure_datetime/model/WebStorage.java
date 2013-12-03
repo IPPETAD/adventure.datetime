@@ -313,6 +313,7 @@ public class WebStorage implements IWebStorage {
 	public List<Image> getImages(List<UUID> imageIds) throws Exception {
 		if (imageIds == null || imageIds.size() == 0)
 			return new ArrayList<Image>();
+
 		StringBuilder ids = new StringBuilder(); 
 		for (UUID id : imageIds) {
 			ids.append(String.format("\"%s\", ", id));
