@@ -291,7 +291,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
-			View rowView = inflater.inflate(R.layout.comment_single, parent, false);
+			View rowView = inflater.  inflate(R.layout.comment_single, parent, false);
 			
 			Comment item = values[position];
 			

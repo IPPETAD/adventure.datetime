@@ -157,6 +157,8 @@ public interface ILocalStorage {
      * @return Roughly whether or not any fragments have been deleted
      */
     public boolean deleteStoryFragments(UUID storyID);
+
+    public boolean deleteImage(UUID imageId);
     
     /**
      * Deletes a fragment with a specific fragment ID

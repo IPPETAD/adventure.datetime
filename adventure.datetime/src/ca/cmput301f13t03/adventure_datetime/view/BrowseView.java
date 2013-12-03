@@ -24,6 +24,7 @@ package ca.cmput301f13t03.adventure_datetime.view;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.content.Context;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IOnlineStoriesListener;
@@ -56,6 +68,7 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 
 	private ViewPager _viewPager;
 	private ViewPagerAdapter _adapter;
+	private LinearLayout _searchBar;
 	
 	@Override
 	public void OnLocalStoriesChange(Map<UUID, Story> newStories) {
@@ -88,7 +101,37 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.viewpager);
+		setContentView(R.layout.browse_viewpager);
+		
+		/* Search bar */
+		final Button btnSearch = (Button) findViewById(R.id.search);
+		final EditText txtSearch = (EditText) findViewById(R.id.content);
+		_searchBar = (LinearLayout) findViewById(R.id.header);
+		_searchBar.setVisibility(View.GONE);
+		txtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					Locator.getUserController().search(txtSearch.getText().toString());
+					txtSearch.setText("");
+					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+					_searchBar.setVisibility(View.GONE);
+				}
+				return false;
+			}
+		});
+		btnSearch.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Locator.getUserController().search(txtSearch.getText().toString());
+				txtSearch.setText("");
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+				_searchBar.setVisibility(View.GONE);
+			}
+		});
+		
 		
 		/* Set up View Pager */
 		_adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -125,9 +168,25 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 			@Override
 			public void onPageSelected(int position) {
 				getActionBar().setSelectedNavigationItem(position);
+				if (position != 2)
+					_searchBar.setVisibility(View.GONE);
 			}
 		});
-
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.search_menu, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_search:
+			getActionBar().setSelectedNavigationItem(2);
+			_searchBar.setVisibility(View.VISIBLE);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 

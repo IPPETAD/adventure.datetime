@@ -22,6 +22,10 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
+import java.util.Collection;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,11 +35,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import java.util.Collection;
 
 
 /**
@@ -133,6 +138,10 @@ public class BrowseFragment extends Fragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+			if (source == SOURCE_ONLINE) {
+				
+			}
+			
 			View rowView = inflater.inflate(R.layout.listviewitem, parent, false);
 
 			ImageView thumbnail = (ImageView) rowView.findViewById(R.id.thumbnail);

@@ -134,7 +134,7 @@ IStoryModelDirector {
 			}
 		}
 	}
-	
+
 	public void Subscribe(IOnlineStoriesListener onlineStoriesListener) {
 		synchronized (syncLock) 
 		{
@@ -456,6 +456,20 @@ IStoryModelDirector {
 		}
 	}
 
+    public void deleteImage(UUID imageId) {
+        m_db.deleteImage(imageId);
+
+        for(Image image : m_currentFragment.getStoryMedia()) {
+
+            if(image.getId().equals(imageId))
+                m_currentFragment.removeMedia(image);
+        }
+
+        SaveStory();
+
+        PublishCurrentFragmentChanged();
+    }
+
 	/**
 	 * Get a story from the database or cloud
 	 */
@@ -658,21 +672,22 @@ IStoryModelDirector {
 	}
 
 	public void addComment(Comment comment) {
-		synchronized (syncLock) 
+		synchronized(syncLock)
 		{
 			final Comment finalComment = comment;
 			m_threadPool.execute(new Runnable() {
-				public void run() {
+				public void run() 
+				{
 					try {
 						m_webStorage.putComment(finalComment);
+						Thread.sleep(1000);
 						LoadComments(finalComment.getTargetId());
 					} catch (Exception e) {
 						Log.e(TAG, "Error: ", e);
 					}
-				}
-			});
+				}});
+			}
 		}
-	}
 
 	private void LoadStories()
 	{
@@ -811,12 +826,42 @@ IStoryModelDirector {
 		synchronized (syncLock) 
 		{
 			if(m_currentStory != null) {
+				m_stories.put(m_currentStory.getId(), m_currentStory);
+				m_db.setStory(m_currentStory);
 				for(UUID fragmentId : m_currentStory.getFragments()) {
 					getFragmentOnline(fragmentId, true);
 				}
 			}
-			SaveStory();
 		}
+	}
+
+	public void search(String searchTerm) {
+		m_onlineStories = new HashMap<UUID, Story>();
+		final String finalTerm = searchTerm;
+		// Fetch stories from web asynchronously.
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+
+					List<Story> onlineStories;
+					int size = 10;
+					int i = 0;
+
+					while(size == 10) {
+						onlineStories = m_webStorage.queryStories(finalTerm, i, 10);
+						for(Story story : onlineStories)
+						{
+							m_onlineStories.put(story.getId(), story);
+						}
+						size = onlineStories.size();
+						i += 10;
+					}
+					PublishOnlineStoriesChanged();
+				} catch (Exception e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+		});
 	}
 
 	@Override

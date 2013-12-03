@@ -113,6 +113,10 @@ public class AuthorController {
 		m_storyDirector.deleteFragment(fragmentId);
 	}
 
+    public void deleteImage(UUID imageId) {
+        m_storyDirector.deleteImage(imageId);
+    }
+
     /**
      * Selects a Story from the local or online storage.
      *

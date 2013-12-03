@@ -52,7 +52,6 @@ public interface IStoryModelDirector
 
 	/**
 	 * Save a story in the database
-	 * @param story
 	 * @return Success value
 	 */
 	public boolean SaveStory();
@@ -69,6 +68,8 @@ public interface IStoryModelDirector
 	 * @param storyId
 	 */
 	public void deleteStory(UUID storyId);
+
+    public void deleteImage(UUID imageId);
 
 	/**
 	 * Save a fragment to the database
@@ -114,7 +115,6 @@ public interface IStoryModelDirector
 	/**
      *  Deletes a bookmark by StoryID
 	 * 
-	 * @param storyId UUID of the story to delete
 	 */
 	public void deleteBookmark();
 
@@ -142,4 +142,9 @@ public interface IStoryModelDirector
 	 */
 	boolean isAuthored(UUID storyId);
 
+	/**
+	 * Sends a search for stories to the server
+	 * @param searchTerm
+	 */
+	public void search(String searchTerm);
 }
