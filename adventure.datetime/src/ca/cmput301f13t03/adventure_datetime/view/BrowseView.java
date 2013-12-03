@@ -72,7 +72,8 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 	
 	@Override
 	public void OnLocalStoriesChange(Map<UUID, Story> newStories) {
-		_adapter.setLocalStories(newStories.values());	
+		_adapter.setLocalStories(Locator.getAuthorController().checkIfNotAuthored(newStories.values()));	
+		_adapter.setAuthorStories(Locator.getAuthorController().checkIfAuthored(newStories.values()));
 	}
 	@Override
 	public void OnOnlineStoriesChange(Map<UUID, Story> newStories) {
@@ -203,6 +204,8 @@ public class BrowseView extends FragmentActivity implements ILocalStoriesListene
 		
 		public void setLocalStories(Collection<Story> stories) {
 			cached.setStories(stories, BrowseFragment.SOURCE_CACHE);
+		}
+		public void setAuthorStories(Collection<Story> stories) {
 			authored.setStories(stories, BrowseFragment.SOURCE_AUTHOR);
 		}
 		public void setOnlineStories(Collection<Story> stories) {

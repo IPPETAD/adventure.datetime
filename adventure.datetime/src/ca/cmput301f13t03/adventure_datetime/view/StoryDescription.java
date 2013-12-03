@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.AccountService;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
@@ -186,6 +187,9 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			break;
 		case R.id.action_edit:
 			/* Move from cache to authorship */
+			Locator.getAuthorController().setStoryToAuthor(_story.getId(), AccountService.getUserName(getContentResolver()));
+			intent = new Intent(StoryDescription.this, AuthorStoryDescription.class);
+			startActivity(intent);	
 			break;
 		}
 		return super.onOptionsItemSelected(item);

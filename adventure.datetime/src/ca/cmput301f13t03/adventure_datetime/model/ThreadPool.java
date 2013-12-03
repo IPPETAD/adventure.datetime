@@ -27,7 +27,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * ThreadPool for asynchronous stuff
+ * @author evandegraff
+ *
+ */
 public class ThreadPool {
 	private static ThreadPoolExecutor threadPool;
 	private final BlockingQueue<Runnable> workQueue;

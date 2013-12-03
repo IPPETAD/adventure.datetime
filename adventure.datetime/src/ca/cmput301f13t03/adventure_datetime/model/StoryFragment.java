@@ -41,11 +41,11 @@ public class StoryFragment implements Comparable<StoryFragment>
 	/**
 	 * The UUID of the story linked to the fragment
 	 */
-	final private UUID storyID;
+	private UUID storyID;
 	/**
 	 * The UUID of the fragment
 	 */
-	final private UUID fragmentID;
+	private UUID fragmentID;
 	/**
 	 * The list of all Story Media associated with the fragment
 	 */
@@ -138,6 +138,14 @@ public class StoryFragment implements Comparable<StoryFragment>
 	public UUID getStoryID() {
 		return storyID;
 	}
+	
+	/**
+	 * Sets the UUID of the Story associated with the StoryFragment
+	 * @param id
+	 */
+	public void setStoryID(UUID id) {
+		this.storyID = id;
+	}
 
     /**
      * Gets the StoryFragment UUID
@@ -146,6 +154,15 @@ public class StoryFragment implements Comparable<StoryFragment>
      */
 	public UUID getFragmentID() {
 		return fragmentID;
+	}
+	
+	/**
+     * Sets the StoryFragment UUID
+     *
+     * @return UUID of the StoryFragment
+     */
+	public void setFragmentID() {
+		this.fragmentID = UUID.randomUUID();
 	}
 
     /**
@@ -158,6 +175,8 @@ public class StoryFragment implements Comparable<StoryFragment>
 	}
 
     public String getStoryMediaInJson() {
+    	if(storyMedia == null)
+    		storyMedia = new ArrayList<Image>();
         ArrayList<UUID> uuids = new ArrayList<UUID>();
         for(Image image : storyMedia) {
             uuids.add(image.getId());
@@ -332,4 +351,12 @@ public class StoryFragment implements Comparable<StoryFragment>
         result = 31 * result + (choices != null ? choices.hashCode() : 0);
         return result;
     }
+
+	public StoryFragment newId() {
+		fragmentID = UUID.randomUUID();
+		for(Image image : getStoryMedia()) {
+			image.setId(UUID.randomUUID());
+		}
+		return this;
+	}
 }

@@ -27,6 +27,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -135,8 +136,48 @@ public class AuthorController {
 	{
 		m_storyDirector.selectFragment(fragmentId);
 	}
-	
+	/**
+	 * Uploads a story to the server
+	 */
 	public void upload(){
 		m_storyDirector.uploadCurrentStory();
 	}
+	
+	/**
+	 * Changes a downloaded story to author mode
+	 * @param storyId
+	 * @return new UUID for the story
+	 */
+	public void setStoryToAuthor(UUID storyId, String username) {
+		m_storyDirector.setStoryToAuthor(storyId, username);
+	}
+
+	/**
+	 * Checks the list of stories to see if the user authored them
+	 * @param stories - list of stories to be checked
+	 * @return list of authored stories
+	 */
+	public Collection<Story> checkIfAuthored(Collection<Story> stories) {
+		Collection<Story> authoredStories = new HashSet<Story>();
+		for(Story story : stories) {
+			if(m_storyDirector.isAuthored(story.getId()))
+				authoredStories.add(story);
+		}
+		return authoredStories;
+	}
+
+	/**
+	 * Checks the list of stories to see if the user didn't author them
+	 * @param stories - list of stories to be checked
+	 * @return list of non-authored stories
+	 */
+	public Collection<Story> checkIfNotAuthored(Collection<Story> stories) {
+		Collection<Story> authoredStories = new HashSet<Story>();
+		for(Story story : stories) {
+			if(!m_storyDirector.isAuthored(story.getId()))
+				authoredStories.add(story);
+		}
+		return authoredStories;
+	}
+
 }

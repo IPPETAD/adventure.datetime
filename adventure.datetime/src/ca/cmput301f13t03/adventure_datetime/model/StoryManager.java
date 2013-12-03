@@ -30,6 +30,8 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 import java.util.*;
 
+import junit.framework.Assert;
+
 /**
  * Manages all transactions between views, controllers, and models.
  * Creates new Stories, StoryFragments, etc.
@@ -377,6 +379,9 @@ IStoryModelDirector {
 			}
 
 			m_stories.put(newStory.getId(), newStory);
+			m_currentStory = newStory;
+			SaveStory();
+			m_db.setAuthoredStory(newStory);
 			m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 
 			PublishCurrentStoryChanged();
@@ -542,29 +547,10 @@ IStoryModelDirector {
 	/**
 	 * Get a fragment from the database
 	 */
-	public StoryFragment getFragment(UUID fragmentId) {
+	public StoryFragment getFragment(UUID theId) {
 		synchronized (syncLock) 
 		{
-			// The fragment should be part of the current story
-			HashSet<UUID> fragmentIds = m_currentStory.getFragments();
-			UUID theId = null;
 			StoryFragment result = null;
-
-			// verify that the id is indeed part of the current story!
-			for(UUID id : fragmentIds)
-			{
-				if(fragmentId.equals(id))
-				{
-					theId = id;
-					break;
-				}
-			}
-
-			if(theId == null)
-			{
-				// Then you requested an id not attached to the current story!
-				throw new RuntimeException("Requested Fragment Id not attached to current story!");
-			}
 
 			if(m_fragmentList.containsKey(theId))
 			{
@@ -703,155 +689,26 @@ IStoryModelDirector {
 			}
 		}
 
-		private void LoadStories()
+	private void LoadStories()
+	{
+		synchronized (syncLock) 
 		{
-			synchronized (syncLock) 
-			{
-				m_stories = new HashMap<UUID, Story>();
-				ArrayList<Story> localStories = m_db.getStories();
+			m_stories = new HashMap<UUID, Story>();
+			ArrayList<Story> localStories = m_db.getStories();
 
-				for(Story story : localStories)
-				{
-					m_stories.put(story.getId(), story);
-				}
+			for(Story story : localStories)
+			{
+				m_stories.put(story.getId(), story);
 			}
 		}
+	}
 
-		private void LoadOnlineStories()
+	private void LoadOnlineStories()
+	{
+		synchronized (syncLock) 
 		{
-			synchronized (syncLock) 
-			{
-				m_onlineStories = new HashMap<UUID, Story>();
-
-				// Fetch stories from web asynchronously.
-				m_threadPool.execute(new Runnable() {
-					public void run() {
-						try {
-
-							List<Story> onlineStories;
-							int size = 10;
-							int i = 0;
-
-							while(size == 10) {
-								onlineStories = m_webStorage.getStories(i, 10);
-								for(Story story : onlineStories)
-								{
-									m_onlineStories.put(story.getId(), story);
-								}
-								size = onlineStories.size();
-								i += 10;
-							}
-							PublishOnlineStoriesChanged();
-						} catch (Exception e) {
-							Log.e(TAG, "Error: ", e);
-						}
-					}
-				});
-			}
-		}
-
-		private void LoadBookmarks()
-		{
-			synchronized (syncLock) 
-			{
-				m_bookmarkList = new HashMap<UUID, Bookmark>();
-				ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
-
-				for(Bookmark bookmark : bookmarks)
-				{
-					m_bookmarkList.put(bookmark.getStoryID(), bookmark);
-				}
-			}
-		}
-
-		private void LoadComments(UUID id)
-		{
-			synchronized (syncLock) 
-			{
-				final UUID finalId = id;
-				m_threadPool.execute(new Runnable() {
-					public void run() {
-						try {
-							if(m_comments.get(finalId) != null)
-								m_comments.remove(finalId);
-
-							List<Comment> tempComments;
-							List<Comment> onlineComments = new ArrayList<Comment>();
-							int size = 10;
-							int i = 0;
-
-							while(size == 10) {
-								tempComments = m_webStorage.getComments(finalId, i, 10);
-								for(Comment comment : tempComments)
-								{
-									onlineComments.add(comment);
-								}
-								size = tempComments.size();
-								i += 10;
-							}
-							m_comments.put(finalId, onlineComments);
-							PublishCommentsChanged(finalId);
-						} catch (Exception e) {
-							Log.e(TAG, "Error: ", e);
-						}
-					}
-				});
-			}
-		}
-		private Map<UUID, StoryFragment> GetAllCurrentFragments()
-		{
-			synchronized (syncLock) 
-			{
-				Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
-
-				for(UUID fragmentId : m_currentStory.getFragments())
-				{
-					// first try to fetch from local cache
-					StoryFragment frag = this.getFragment(fragmentId);
-
-					if(frag != null)
-					{
-						currentFragments.put(frag.getFragmentID(), frag);
-					}
-					else
-					{
-						Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
-					}
-				}
-				return currentFragments;
-			}
-		}
-		public void uploadCurrentStory() {
-			synchronized (syncLock) 
-			{
-				m_threadPool.execute(new Runnable() {
-					public void run() {
-						try {
-							m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
-						} catch (Exception e) {
-							Log.e(TAG, "Error: ", e);
-						}
-					}
-				});
-			}
-		}
-
-		public void download() {
-			synchronized (syncLock) 
-			{
-				if(m_currentStory != null) {
-					m_stories.put(m_currentStory.getId(), m_currentStory);
-					m_db.setStory(m_currentStory);
-					for(UUID fragmentId : m_currentStory.getFragments()) {
-						getFragmentOnline(fragmentId, true);
-					}
-				}
-			}
-		}
-
-		public void search(String searchTerm) {
 			m_onlineStories = new HashMap<UUID, Story>();
-			final String finalTerm = searchTerm;
+
 			// Fetch stories from web asynchronously.
 			m_threadPool.execute(new Runnable() {
 				public void run() {
@@ -862,7 +719,7 @@ IStoryModelDirector {
 						int i = 0;
 
 						while(size == 10) {
-							onlineStories = m_webStorage.queryStories(finalTerm, i, 10);
+							onlineStories = m_webStorage.getStories(i, 10);
 							for(Story story : onlineStories)
 							{
 								m_onlineStories.put(story.getId(), story);
@@ -878,3 +735,184 @@ IStoryModelDirector {
 			});
 		}
 	}
+
+	private void LoadBookmarks()
+	{
+		synchronized (syncLock) 
+		{
+			m_bookmarkList = new HashMap<UUID, Bookmark>();
+			ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
+
+			for(Bookmark bookmark : bookmarks)
+			{
+				m_bookmarkList.put(bookmark.getStoryID(), bookmark);
+			}
+		}
+	}
+
+	private void LoadComments(UUID id)
+	{
+		synchronized (syncLock) 
+		{
+			final UUID finalId = id;
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
+						if(m_comments.get(finalId) != null)
+							m_comments.remove(finalId);
+
+						List<Comment> tempComments;
+						List<Comment> onlineComments = new ArrayList<Comment>();
+						int size = 10;
+						int i = 0;
+
+						while(size == 10) {
+							tempComments = m_webStorage.getComments(finalId, i, 10);
+							for(Comment comment : tempComments)
+							{
+								onlineComments.add(comment);
+							}
+							size = tempComments.size();
+							i += 10;
+						}
+						m_comments.put(finalId, onlineComments);
+						PublishCommentsChanged(finalId);
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
+					}
+				}
+			});
+		}
+	}
+	private Map<UUID, StoryFragment> GetAllCurrentFragments()
+	{
+		synchronized (syncLock) 
+		{
+			Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
+
+			for(UUID fragmentId : m_currentStory.getFragments())
+			{
+				// first try to fetch from local cache
+				StoryFragment frag = this.getFragment(fragmentId);
+
+				if(frag != null)
+				{
+					currentFragments.put(frag.getFragmentID(), frag);
+				}
+				else
+				{
+					Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
+				}
+			}
+			return currentFragments;
+		}
+	}
+	public void uploadCurrentStory() {
+		synchronized (syncLock) 
+		{
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
+						m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
+					}
+				}
+			});
+		}
+	}
+
+	public void download() {
+		synchronized (syncLock) 
+		{
+			if(m_currentStory != null) {
+				m_stories.put(m_currentStory.getId(), m_currentStory);
+				m_db.setStory(m_currentStory);
+				for(UUID fragmentId : m_currentStory.getFragments()) {
+					getFragmentOnline(fragmentId, true);
+				}
+			}
+		}
+	}
+
+	public void search(String searchTerm) {
+		m_onlineStories = new HashMap<UUID, Story>();
+		final String finalTerm = searchTerm;
+		// Fetch stories from web asynchronously.
+		m_threadPool.execute(new Runnable() {
+			public void run() {
+				try {
+
+					List<Story> onlineStories;
+					int size = 10;
+					int i = 0;
+
+					while(size == 10) {
+						onlineStories = m_webStorage.queryStories(finalTerm, i, 10);
+						for(Story story : onlineStories)
+						{
+							m_onlineStories.put(story.getId(), story);
+						}
+						size = onlineStories.size();
+						i += 10;
+					}
+					PublishOnlineStoriesChanged();
+				} catch (Exception e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+		});
+	}
+
+	@Override
+	public UUID setStoryToAuthor(UUID storyId, String username) {
+		synchronized (syncLock) 
+		{
+			if(m_db.getAuthoredStory(storyId))
+				return storyId;
+			
+			Story story = getStory(storyId).newId();
+			List<StoryFragment> newFragments = new ArrayList<StoryFragment>();
+			Map<UUID,UUID> oldToNew = new HashMap<UUID, UUID>();
+			
+			for(UUID fragmentId : story.getFragments()) {
+				try {
+					StoryFragment fragment = getFragment(fragmentId).newId();
+					fragment.setStoryID(story.getId());
+					newFragments.add(fragment);
+					oldToNew.put(fragmentId, fragment.getFragmentID());
+				} catch(NullPointerException e) {
+					Log.e(TAG, "Error: ", e);
+				}
+			}
+			
+			for(StoryFragment fragment : newFragments) {
+				for(Choice choice : fragment.getChoices()) {
+					if(choice != null)
+						choice.setTarget(oldToNew.get(choice.getTarget()));
+				}
+				m_db.setStoryFragment(fragment);
+				m_fragmentList.put(fragment.getFragmentID(), fragment);
+				story.addFragment(fragment);
+			}
+			
+			story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
+			story.setAuthor(username);
+			selectStory(storyId);
+			SaveStory();
+			m_db.setAuthoredStory(story);
+			LoadStories();
+			
+			return story.getId();
+		}
+	}
+
+	@Override
+	public boolean isAuthored(UUID storyId) {
+		synchronized (syncLock) 
+		{
+			return m_db.getAuthoredStory(storyId);
+		}
+	}
+
+}

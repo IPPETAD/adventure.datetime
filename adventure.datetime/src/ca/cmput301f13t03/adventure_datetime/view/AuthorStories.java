@@ -35,6 +35,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListen
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,7 +50,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	private Map<UUID, Story> _stories;
+	private Collection<Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 	}
 	@Override
 	public void OnLocalStoriesChange(Map<UUID, Story> stories) {
-		_stories = stories;
+		_stories = Locator.getAuthorController().checkIfAuthored(stories.values());
 		setUpView();
 	}
 	@Override
@@ -94,7 +95,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 
 
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem,
-				_stories.values().toArray(new Story[_stories.size()]));
+				_stories.toArray(new Story[_stories.size()]));
 
 		_listView.setAdapter(_adapter);
 	}
