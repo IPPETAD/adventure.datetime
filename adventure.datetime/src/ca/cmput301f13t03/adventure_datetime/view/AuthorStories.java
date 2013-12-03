@@ -61,7 +61,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 
 	private ListView _listView;
 	private RowArrayAdapter _adapter;
-	private Map<UUID, Story> _stories;
+	private Collection<Story> _stories;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 				ListView listView = (ListView) parent;
 				Story item = (Story) listView.getItemAtPosition(position);
 
-				Locator.getAuthorController().setStoryToAuthor(item.getId());
+				Locator.getAuthorController().selectStory(item.getId());
 
 				Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);
 				startActivity(intent);	
@@ -87,7 +87,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 	}
 	@Override
 	public void OnLocalStoriesChange(Map<UUID, Story> stories) {
-		_stories = stories;
+		_stories = Locator.getAuthorController().checkIfAuthored(stories.values());
 		setUpView();
 	}
 	@Override
@@ -106,7 +106,7 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 
 
 		_adapter = new RowArrayAdapter(this, R.layout.listviewitem,
-				_stories.values().toArray(new Story[_stories.size()]));
+				_stories.toArray(new Story[_stories.size()]));
 
 		_listView.setAdapter(_adapter);
 	}

@@ -134,8 +134,15 @@ public interface IStoryModelDirector
 	
 	/**
 	 * Changes a downloaded story to author mode
-	 * @param storyId
+	 * @param storyId, username
 	 * @return new UUID for the story
 	 */
-	public UUID setStoryToAuthor(UUID storyId);
+	public UUID setStoryToAuthor(UUID storyId, String username);
+
+	/**
+	 * Checks if story is authored by user
+	 * @return true if authored
+	 */
+	boolean isAuthored(UUID storyId);
+
 }

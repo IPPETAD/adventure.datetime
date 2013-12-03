@@ -610,7 +610,7 @@ public final class StoryManager implements IStoryModelPresenter,
 	}
 
 	@Override
-	public UUID setStoryToAuthor(UUID storyId) {
+	public UUID setStoryToAuthor(UUID storyId, String username) {
 		if(m_db.getAuthoredStory(storyId))
 			return storyId;
 		
@@ -619,14 +619,19 @@ public final class StoryManager implements IStoryModelPresenter,
 		Map<UUID,UUID> oldToNew = new HashMap<UUID, UUID>();
 		
 		for(UUID fragmentId : story.getFragments()) {
-			StoryFragment fragment = getFragment(fragmentId).newId();
-			newFragments.add(fragment);
-			oldToNew.put(fragmentId, fragment.getFragmentID());
+			try {
+				StoryFragment fragment = getFragment(fragmentId).newId();
+				newFragments.add(fragment);
+				oldToNew.put(fragmentId, fragment.getFragmentID());
+			} catch(NullPointerException e) {
+				Log.e(TAG, "Error: ", e);
+			}
 		}
 		
 		for(StoryFragment fragment : newFragments) {
 			for(Choice choice : fragment.getChoices()) {
-				choice.setTarget(oldToNew.get(choice.getTarget()));
+				if(choice != null)
+					choice.setTarget(oldToNew.get(choice.getTarget()));
 			}
 			m_db.setStoryFragment(fragment);
 			m_fragmentList.put(fragment.getFragmentID(), fragment);
@@ -634,11 +639,17 @@ public final class StoryManager implements IStoryModelPresenter,
 		}
 		
 		story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
+		story.setAuthor(username);
 		m_stories.put(story.getId(), story);
 		m_db.setStory(story);
 		m_db.setAuthoredStory(story);
 		
 		return story.getId();
+	}
+
+	@Override
+	public boolean isAuthored(UUID storyId) {
+		return m_db.getAuthoredStory(storyId);
 	}
 
 }

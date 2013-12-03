@@ -23,6 +23,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -154,7 +155,22 @@ public class AuthorController {
 	 * @param storyId
 	 * @return new UUID for the story
 	 */
-	public void setStoryToAuthor(UUID storyId) {
-		selectStory(m_storyDirector.setStoryToAuthor(storyId));
+	public void setStoryToAuthor(UUID storyId, String username) {
+		selectStory(m_storyDirector.setStoryToAuthor(storyId, username));
 	}
+
+	/**
+	 * Checks the list of stories to see if the use authored them
+	 * @param stories - list of stories to be checked
+	 * @return list of authored stories
+	 */
+	public Collection<Story> checkIfAuthored(Collection<Story> stories) {
+		Collection<Story> authoredStories = new HashSet<Story>();
+		for(Story story : stories) {
+			if(m_storyDirector.isAuthored(story.getId()))
+				authoredStories.add(story);
+		}
+		return authoredStories;
+	}
+
 }

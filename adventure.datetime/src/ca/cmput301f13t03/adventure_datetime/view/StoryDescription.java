@@ -51,6 +51,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.AccountService;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
@@ -200,6 +201,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			break;
 		case R.id.action_edit:
 			/* Move from cache to authorship */
+			Locator.getAuthorController().setStoryToAuthor(_story.getId(), AccountService.getUserName(getContentResolver()));
 			break;
 		}
 		return super.onOptionsItemSelected(item);
