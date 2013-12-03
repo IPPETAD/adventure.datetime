@@ -64,11 +64,14 @@ IStoryModelDirector {
 	private Set<IAllFragmentsListener> m_allFragmentListeners = new HashSet<IAllFragmentsListener>();
 	private Map<UUID, ICommentsListener> m_commentsListeners = new HashMap<UUID, ICommentsListener>();
 
+	private Object syncLock = new Object();
+
 	/**
 	 * Create a new story manager and initializes other components using the provided context.
 	 * The provided context MUST be the application context
 	 */
-	public StoryManager(Context context) {
+	public StoryManager(Context context) 
+	{
 		m_context = context;
 		m_db = new StoryDB(context);
 		m_webStorage = new WebStorage();
@@ -92,9 +95,12 @@ IStoryModelDirector {
 	 * Subscribe for changes to the current fragment
 	 */
 	public void Subscribe(ICurrentFragmentListener fragmentListener) {
-		m_fragmentListeners.add(fragmentListener);
-		if (m_currentFragment != null) {
-			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
+		synchronized (syncLock) 
+		{
+			m_fragmentListeners.add(fragmentListener);
+			if (m_currentFragment != null) {
+				fragmentListener.OnCurrentFragmentChange(m_currentFragment);
+			}
 		}
 	}
 
@@ -102,9 +108,12 @@ IStoryModelDirector {
 	 * Subscribe for changes to the current story
 	 */
 	public void Subscribe(ICurrentStoryListener storyListener) {
-		m_storyListeners.add(storyListener);
-		if (m_currentStory != null) {
-			storyListener.OnCurrentStoryChange(m_currentStory);
+		synchronized (syncLock) 
+		{
+			m_storyListeners.add(storyListener);
+			if (m_currentStory != null) {
+				storyListener.OnCurrentStoryChange(m_currentStory);
+			}
 		}
 	}
 
@@ -112,82 +121,119 @@ IStoryModelDirector {
 	 * Subscribe to changes for the current list of stories
 	 */
 	public void Subscribe(ILocalStoriesListener localStoriesListener) {
-		m_localStoriesListeners.add(localStoriesListener);
-		if (m_stories != null) {
-			localStoriesListener.OnLocalStoriesChange(m_stories);
-		} else {
-			LoadStories();
-			PublishStoriesChanged();
+		synchronized (syncLock) 
+		{
+			m_localStoriesListeners.add(localStoriesListener);
+			if (m_stories != null) {
+				localStoriesListener.OnLocalStoriesChange(m_stories);
+			} else {
+				LoadStories();
+				PublishStoriesChanged();
+			}
 		}
 	}
+	
 	public void Subscribe(IOnlineStoriesListener onlineStoriesListener) {
-		m_onlineStoriesListeners.add(onlineStoriesListener);
-		if (m_onlineStories != null) {
-			onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
-		} else {
-			LoadOnlineStories();
+		synchronized (syncLock) 
+		{
+			m_onlineStoriesListeners.add(onlineStoriesListener);
+			if (m_onlineStories != null) {
+				onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
+			} else {
+				LoadOnlineStories();
+			}
 		}
 	}
 
 	public void Subscribe(IBookmarkListListener bookmarkListListener) {
-		m_bookmarkListListeners.add(bookmarkListListener);
-		if (m_bookmarkList != null) {
-			bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
-		} else {
-			LoadBookmarks();
-			PublishBookmarkListChanged();
+		synchronized (syncLock) 
+		{
+			m_bookmarkListListeners.add(bookmarkListListener);
+			if (m_bookmarkList != null) {
+				bookmarkListListener.OnBookmarkListChange(m_bookmarkList);
+			} else {
+				LoadBookmarks();
+				PublishBookmarkListChanged();
+			}
 		}
 	}
 
 	public void Subscribe(IAllFragmentsListener allFragmentsListener)
 	{
-		m_allFragmentListeners.add(allFragmentsListener);
-		if(m_fragmentList != null && m_currentStory != null)
+		synchronized (syncLock) 
 		{
-			Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
-			allFragmentsListener.OnAllFragmentsChange(currentFrags);
+			m_allFragmentListeners.add(allFragmentsListener);
+			if(m_fragmentList != null && m_currentStory != null)
+			{
+				Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
+				allFragmentsListener.OnAllFragmentsChange(currentFrags);
+			}
 		}
 	}
 
 	public void Subscribe(ICommentsListener commentsListener, UUID id) {
-		m_commentsListeners.put(id, commentsListener);
-		LoadComments(id);
+		synchronized (syncLock) 
+		{
+			m_commentsListeners.put(id, commentsListener);
+			LoadComments(id);
+		}
 	}
 
 	/**
 	 * Unsubscribe from callbacks when the current fragment changes
 	 */
 	public void Unsubscribe(ICurrentFragmentListener fragmentListener) {
-		m_fragmentListeners.remove(fragmentListener);
+		synchronized (syncLock) 
+		{
+			m_fragmentListeners.remove(fragmentListener);
+		}
 	}
 
 	/**
 	 * Unsubscribe from callbacks when the current story changes
 	 */
 	public void Unsubscribe(ICurrentStoryListener storyListener) {
-		m_storyListeners.remove(storyListener);
+		synchronized (syncLock) 
+		{
+			m_storyListeners.remove(storyListener);
+		}
 	}
 
 	/**
 	 * Unsubscribe from callbakcs when the current list of stories changes
 	 */
 	public void Unsubscribe(ILocalStoriesListener storyListListener) {
-		m_localStoriesListeners.remove(storyListListener);
+		synchronized (syncLock) 
+		{
+			m_localStoriesListeners.remove(storyListListener);
+		}
 	}
 	public void Unsubscribe(IOnlineStoriesListener storyListListener) {
-		m_onlineStoriesListeners.remove(storyListListener);
+		synchronized (syncLock) 
+		{
+			m_onlineStoriesListeners.remove(storyListListener);
+		}
 	}
 	public void Unsubscribe(IBookmarkListListener bookmarkListListener) {
-		m_bookmarkListListeners.remove(bookmarkListListener);
+		synchronized (syncLock) 
+		{
+			m_bookmarkListListeners.remove(bookmarkListListener);
+		}
 	}
 
 	public void Unsubscribe(IAllFragmentsListener allFragmentsListener)
 	{
-		m_allFragmentListeners.remove(allFragmentsListener);
+		synchronized (syncLock) 
+		{
+			m_allFragmentListeners.remove(allFragmentsListener);
+		}
 	}
 
 	public void Unsubscribe(UUID id) {
-		m_commentsListeners.remove(id);
+		synchronized (syncLock) 
+		{
+			m_commentsListeners.remove(id);
+		}
 	}
 
 	// ============================================================
@@ -200,20 +246,26 @@ IStoryModelDirector {
 	 * Publish a change to the current story to all listeners
 	 */
 	private void PublishCurrentStoryChanged() {
-		for (ICurrentStoryListener storyListener : m_storyListeners) {
-			storyListener.OnCurrentStoryChange(m_currentStory);
-		}
+		synchronized (syncLock) 
+		{
+			for (ICurrentStoryListener storyListener : m_storyListeners) {
+				storyListener.OnCurrentStoryChange(m_currentStory);
+			}
 
-		// whenever the current story changes so does the list of current fragments
-		PublishAllFragmentsChanged();
+			// whenever the current story changes so does the list of current fragments
+			PublishAllFragmentsChanged();
+		}
 	}
 
 	/**
 	 * Publish a change to the current fragment to all listeners
 	 */
 	private void PublishCurrentFragmentChanged() {
-		for (ICurrentFragmentListener fragmentListener : m_fragmentListeners) {
-			fragmentListener.OnCurrentFragmentChange(m_currentFragment);
+		synchronized (syncLock) 
+		{
+			for (ICurrentFragmentListener fragmentListener : m_fragmentListeners) {
+				fragmentListener.OnCurrentFragmentChange(m_currentFragment);
+			}
 		}
 	}
 
@@ -221,36 +273,51 @@ IStoryModelDirector {
 	 * Publish a changed to the current list of stories to all listeners
 	 */
 	private void PublishStoriesChanged() {
-		for (ILocalStoriesListener localStoriesListener : m_localStoriesListeners) {
-			localStoriesListener.OnLocalStoriesChange(m_stories);
+		synchronized (syncLock) 
+		{
+			for (ILocalStoriesListener localStoriesListener : m_localStoriesListeners) {
+				localStoriesListener.OnLocalStoriesChange(m_stories);
+			}
 		}
 	}
 
 	private void PublishOnlineStoriesChanged() {
-		for (IOnlineStoriesListener onlineStoriesListener : m_onlineStoriesListeners) {
-			onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
+		synchronized (syncLock) 
+		{
+			for (IOnlineStoriesListener onlineStoriesListener : m_onlineStoriesListeners) {
+				onlineStoriesListener.OnOnlineStoriesChange(m_onlineStories);
+			}
 		}
 	}
 
 	private void PublishBookmarkListChanged() {
-		for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
-			bookmarkListener.OnBookmarkListChange(m_bookmarkList);
+		synchronized (syncLock) 
+		{
+			for (IBookmarkListListener bookmarkListener : m_bookmarkListListeners) {
+				bookmarkListener.OnBookmarkListChange(m_bookmarkList);
+			}
 		}
 	}
 
 	private void PublishCommentsChanged(UUID finalId) {
-		m_commentsListeners.get(finalId).OnCommentsChange(m_comments.get(finalId));
+		synchronized (syncLock) 
+		{
+			m_commentsListeners.get(finalId).OnCommentsChange(m_comments.get(finalId));
+		}
 	}
 
 	private void PublishAllFragmentsChanged()
 	{
-		if(m_currentStory != null && m_fragmentList != null)
+		synchronized (syncLock) 
 		{
-			Map<UUID, StoryFragment> currentStoryFragments = GetAllCurrentFragments();
-
-			for(IAllFragmentsListener allFragListener : m_allFragmentListeners)
+			if(m_currentStory != null && m_fragmentList != null)
 			{
-				allFragListener.OnAllFragmentsChange(currentStoryFragments);
+				Map<UUID, StoryFragment> currentStoryFragments = GetAllCurrentFragments();
+
+				for(IAllFragmentsListener allFragListener : m_allFragmentListeners)
+				{
+					allFragListener.OnAllFragmentsChange(currentStoryFragments);
+				}
 			}
 		}
 	}
@@ -266,11 +333,14 @@ IStoryModelDirector {
 	 */
 	public void selectStory(UUID storyId) 
 	{
-		Story newStory = getStory(storyId);
-		if(newStory != m_currentStory)
+		synchronized (syncLock) 
 		{
-			m_currentStory = newStory;
-			PublishCurrentStoryChanged();
+			Story newStory = getStory(storyId);
+			if(newStory != m_currentStory)
+			{
+				m_currentStory = newStory;
+				PublishCurrentStoryChanged();
+			}
 		}
 	}
 
@@ -278,12 +348,14 @@ IStoryModelDirector {
 	 * Select a fragment as the current fragment
 	 */
 	public void selectFragment(UUID fragmentId) {
-		m_currentFragment = getFragment(fragmentId);
-		if(m_currentFragment != null)
-			PublishCurrentFragmentChanged();
-		else {
-			getFragmentOnline(fragmentId, false);
-			getNextFragments(fragmentId);
+		synchronized (syncLock) 
+		{
+			m_currentFragment = getFragment(fragmentId);
+			if(m_currentFragment != null)
+				PublishCurrentFragmentChanged();
+			else {
+				getFragmentOnline(fragmentId, false);
+			}
 		}
 	}
 
@@ -292,65 +364,77 @@ IStoryModelDirector {
 	 */
 	public Story CreateNewStory()
 	{
-		Story newStory = new Story();
-		StoryFragment headFragment = new StoryFragment(newStory.getId(), DEFAULT_FRAGMENT_TEXT);
-
-		newStory.setHeadFragmentId(headFragment);
-		
-		if(m_stories == null)
+		synchronized (syncLock) 
 		{
-			LoadStories();
+			Story newStory = new Story();
+			StoryFragment headFragment = new StoryFragment(newStory.getId(), DEFAULT_FRAGMENT_TEXT);
+
+			newStory.setHeadFragmentId(headFragment);
+
+			if(m_stories == null)
+			{
+				LoadStories();
+			}
+
+			m_stories.put(newStory.getId(), newStory);
+			m_fragmentList.put(headFragment.getFragmentID(), headFragment);
+
+			PublishCurrentStoryChanged();
+
+			return newStory;
 		}
-
-		m_stories.put(newStory.getId(), newStory);
-		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
-
-		PublishCurrentStoryChanged();
-
-		return newStory;
 	}
 
 	public StoryFragment CreateNewStoryFragment()
 	{
-		StoryFragment newFrag = new StoryFragment(m_currentStory.getId(), "");
+		synchronized (syncLock) 
+		{
+			StoryFragment newFrag = new StoryFragment(m_currentStory.getId(), "");
 
-		m_fragmentList.put(newFrag.getFragmentID(), newFrag);
-		m_currentStory.addFragment(newFrag);
+			m_fragmentList.put(newFrag.getFragmentID(), newFrag);
+			m_currentStory.addFragment(newFrag);
 
-		PublishCurrentStoryChanged();
-		PublishAllFragmentsChanged();
+			PublishCurrentStoryChanged();
+			PublishAllFragmentsChanged();
 
-		return newFrag;
+			return newFrag;
+		}
 	}
 
 	public boolean SaveStory() 
 	{
-		// Set default image if needed
-		if(m_currentStory == null) 
-			return false;
-		if (m_currentStory.getThumbnail() == null)
-			m_currentStory.setThumbnail(BitmapFactory.decodeResource(
-					m_context.getResources(), R.drawable.grumpy_cat));
-		m_currentStory.updateTimestamp();
-		boolean result = m_db.setStory(m_currentStory);
-		if(result)
+		synchronized (syncLock) 
 		{
-			m_stories.put(m_currentStory.getId(), m_currentStory);
-			SaveAllFrags();
-			PublishStoriesChanged();
+			// Set default image if needed
+			if(m_currentStory == null) 
+				return false;
+			if (m_currentStory.getThumbnail() == null)
+				m_currentStory.setThumbnail(BitmapFactory.decodeResource(
+						m_context.getResources(), R.drawable.grumpy_cat));
+			m_currentStory.updateTimestamp();
+			boolean result = m_db.setStory(m_currentStory);
+			if(result)
+			{
+				m_stories.put(m_currentStory.getId(), m_currentStory);
+				SaveAllFrags();
+				PublishStoriesChanged();
+			}
+			return result;
 		}
-		return result;
 	}
-	
+
 	private void SaveAllFrags()
 	{
-		Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
-		
-		for(StoryFragment frag : currentFrags.values())
+		synchronized (syncLock) 
 		{
-			if(!m_db.setStoryFragment(frag))
+			Map<UUID, StoryFragment> currentFrags = GetAllCurrentFragments();
+
+			for(StoryFragment frag : currentFrags.values())
 			{
-				Log.w(TAG, "Failed to save fragment to database!");
+				if(!m_db.setStoryFragment(frag))
+				{
+					Log.w(TAG, "Failed to save fragment to database!");
+				}
 			}
 		}
 	}
@@ -359,9 +443,12 @@ IStoryModelDirector {
 	 * Delete a story from the database
 	 */
 	public void deleteStory(UUID storyId) {
-		m_db.deleteStory(storyId);
-		m_stories.remove(storyId);
-		PublishStoriesChanged();
+		synchronized (syncLock) 
+		{
+			m_db.deleteStory(storyId);
+			m_stories.remove(storyId);
+			PublishStoriesChanged();
+		}
 	}
 
     public void deleteImage(UUID imageId) {
@@ -382,337 +469,381 @@ IStoryModelDirector {
 	 * Get a story from the database or cloud
 	 */
 	public Story getStory(UUID storyId) {
-		if(m_stories == null)
+		synchronized (syncLock) 
 		{
-			LoadStories();
+			if(m_stories == null)
+			{
+				LoadStories();
+			}
+			Story story = m_stories.get(storyId);
+			if(story == null)
+				story = m_onlineStories.get(storyId);
+			return story;
 		}
-		Story story = m_stories.get(storyId);
-		if(story == null)
-			story = m_onlineStories.get(storyId);
-		return story;
 	}
 
 	/**
 	 * Save a fragment to the database
 	 */
 	public boolean putFragment(StoryFragment fragment) {
-
-		// this really should be transactional...
-		boolean result = m_db.setStoryFragment(fragment);
-		if(result)
+		synchronized (syncLock) 
 		{
-			result = m_db.setStory(m_currentStory);
+			// this really should be transactional...
+			boolean result = m_db.setStoryFragment(fragment);
+			if(result)
+			{
+				result = m_db.setStory(m_currentStory);
 
-			PublishAllFragmentsChanged();
+				PublishAllFragmentsChanged();
+			}
+
+			return result;
 		}
-
-		return result;
 	}
 
 	/**
 	 * Delete a fragment from the database
 	 */
 	public void deleteFragment(UUID fragmentId) {
-		m_db.deleteStoryFragment(fragmentId);
-		m_fragmentList.remove(fragmentId);
-		
-		List<Choice> choicesToRemove = new ArrayList<Choice>();
-		
-		// Now iterate over all fragments and find those that referenced this one
-		// remove those choices so they cannot be selected
-		for(StoryFragment frag : m_fragmentList.values())
+		synchronized (syncLock) 
 		{
-			choicesToRemove.clear();
-			
-			for(Choice choice : frag.getChoices())
+			m_db.deleteStoryFragment(fragmentId);
+			m_fragmentList.remove(fragmentId);
+
+			List<Choice> choicesToRemove = new ArrayList<Choice>();
+
+			// Now iterate over all fragments and find those that referenced this one
+			// remove those choices so they cannot be selected
+			for(StoryFragment frag : m_fragmentList.values())
 			{
-				if(choice.getTarget().equals(fragmentId))
+				choicesToRemove.clear();
+
+				for(Choice choice : frag.getChoices())
 				{
-					choicesToRemove.add(choice);
+					if(choice.getTarget().equals(fragmentId))
+					{
+						choicesToRemove.add(choice);
+					}
+				}
+
+				for(Choice choice : choicesToRemove)
+				{
+					frag.removeChoice(choice);
 				}
 			}
-			
-			for(Choice choice : choicesToRemove)
-			{
-				frag.removeChoice(choice);
-			}
+
+			// have to save after a deletion or the memory and database will be out of sync
+			SaveStory();
+
+			PublishAllFragmentsChanged();
 		}
-		
-		// have to save after a deletion or the memory and database will be out of sync
-		SaveStory();
-		
-		PublishAllFragmentsChanged();
 	}
 
 	/**
 	 * Get a fragment from the database
 	 */
 	public StoryFragment getFragment(UUID fragmentId) {
-		// The fragment should be part of the current story
-		HashSet<UUID> fragmentIds = m_currentStory.getFragments();
-		UUID theId = null;
-		StoryFragment result = null;
-
-		// verify that the id is indeed part of the current story!
-		for(UUID id : fragmentIds)
+		synchronized (syncLock) 
 		{
-			if(fragmentId.equals(id))
+			// The fragment should be part of the current story
+			HashSet<UUID> fragmentIds = m_currentStory.getFragments();
+			UUID theId = null;
+			StoryFragment result = null;
+
+			// verify that the id is indeed part of the current story!
+			for(UUID id : fragmentIds)
 			{
-				theId = id;
-				break;
+				if(fragmentId.equals(id))
+				{
+					theId = id;
+					break;
+				}
 			}
-		}
 
-		if(theId == null)
-		{
-			// Then you requested an id not attached to the current story!
-			throw new RuntimeException("Requested Fragment Id not attached to current story!");
-		}
-
-		if(m_fragmentList.containsKey(theId))
-		{
-			// great we have it cached!
-			result = m_fragmentList.get(theId);
-		}
-		else
-		{
-			//Try loading from db
-			result = m_db.getStoryFragment(theId);
-			if(result != null)
+			if(theId == null)
 			{
-				m_fragmentList.put(result.getFragmentID(), result);
+				// Then you requested an id not attached to the current story!
+				throw new RuntimeException("Requested Fragment Id not attached to current story!");
+			}
+
+			if(m_fragmentList.containsKey(theId))
+			{
+				// great we have it cached!
+				result = m_fragmentList.get(theId);
 			}
 			else
 			{
-				// TODO check webstorage...?
-				Log.w(TAG, "Attempted to load a fragment that wasn't cached or in the database!");
+				//Try loading from db
+				result = m_db.getStoryFragment(theId);
+				if(result != null)
+				{
+					m_fragmentList.put(result.getFragmentID(), result);
+				}
+				else
+				{
+					// TODO check webstorage...?
+					Log.w(TAG, "Attempted to load a fragment that wasn't cached or in the database!");
+				}
 			}
-		}
 
-		return result;
+			return result;
+		}
 	}
 
 	private void getFragmentOnline(UUID fragmentId, boolean storeDB) 
 	{
-		// Fetch fragment asynchronously
-		final UUID finalId = fragmentId;
-		final boolean finalStoreDB = storeDB;
-		m_threadPool.execute(
-				new Runnable() 
-				{
-					public void run() {
-						try 
-						{
-							m_currentFragment = m_webStorage.getFragment(finalId);
-							if(m_currentFragment != null)
+		synchronized (syncLock) 
+		{
+			// Fetch fragment asynchronously
+			final UUID finalId = fragmentId;
+			final boolean finalStoreDB = storeDB;
+			m_threadPool.execute(
+					new Runnable() 
+					{
+						public void run() {
+							try 
 							{
-								// afterwards place into cache
-								m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
-								PublishCurrentFragmentChanged();
-								if(finalStoreDB) 
+								m_currentFragment = m_webStorage.getFragment(finalId);
+								if(m_currentFragment != null)
 								{
-									m_db.setStoryFragment(m_currentFragment);
+									// afterwards place into cache
+									m_fragmentList.put(m_currentFragment.getFragmentID(), m_currentFragment);
+									PublishCurrentFragmentChanged();
+									if(finalStoreDB) 
+									{
+										m_db.setStoryFragment(m_currentFragment);
+									}
 								}
-							}
-							else
+								else
+								{
+									Log.e(TAG, "Rx'd a NULL value from the webstorage for a fragment!");
+								}
+							} catch (Exception e) 
 							{
-								Log.e(TAG, "Rx'd a NULL value from the webstorage for a fragment!");
+								Log.e(TAG, "StoryManager: ", e);
 							}
-						} catch (Exception e) 
-						{
-							Log.e(TAG, "StoryManager: ", e);
 						}
-					}
-				});
-	}
-
-	private void getNextFragments(UUID fragmentId){
+					});
+		}
 	}
 
 	public ArrayList<Story> getStoriesAuthoredBy(String author) {
-		if(m_stories == null)
+		synchronized (syncLock) 
 		{
-			LoadStories();
-		}
-
-		ArrayList<Story> results = new ArrayList<Story>();
-
-		for(Story story : m_stories.values())
-		{
-			if(author.equalsIgnoreCase(story.getAuthor()))
+			if(m_stories == null)
 			{
-				results.add(story);
+				LoadStories();
 			}
-		}
 
-		return results;
+			ArrayList<Story> results = new ArrayList<Story>();
+
+			for(Story story : m_stories.values())
+			{
+				if(author.equalsIgnoreCase(story.getAuthor()))
+				{
+					results.add(story);
+				}
+			}
+
+			return results;
+
+		}
 	}
 
 	/**
 	 * Fetch a bookmark from local database
 	 */
 	public Bookmark getBookmark(UUID id) {
-		if(m_bookmarkList == null)
+		synchronized (syncLock) 
 		{
-			LoadBookmarks();
-		}
+			if(m_bookmarkList == null)
+			{
+				LoadBookmarks();
+			}
 
-		return m_bookmarkList.get(id);
+			return m_bookmarkList.get(id);
+		}
 	}
 
 	public void setBookmark(UUID fragmentId) {
-		Bookmark newBookmark = new Bookmark(m_currentStory.getId(), fragmentId);
-		m_bookmarkList.remove(m_currentStory.getId());
-		m_bookmarkList.put(m_currentStory.getId(), newBookmark);
-		m_db.setBookmark(newBookmark);
-		PublishBookmarkListChanged();
+		synchronized (syncLock) 
+		{
+			Bookmark newBookmark = new Bookmark(m_currentStory.getId(), fragmentId);
+			m_bookmarkList.remove(m_currentStory.getId());
+			m_bookmarkList.put(m_currentStory.getId(), newBookmark);
+			m_db.setBookmark(newBookmark);
+			PublishBookmarkListChanged();
+		}
 	}
 
 	public void deleteBookmark() {
-		m_db.deleteBookmarkByStory(m_currentStory.getId());
-		m_bookmarkList.remove(m_currentStory.getId());
-		PublishBookmarkListChanged();
+		synchronized (syncLock) 
+		{
+			m_db.deleteBookmarkByStory(m_currentStory.getId());
+			m_bookmarkList.remove(m_currentStory.getId());
+			PublishBookmarkListChanged();
+		}
 	}
 
 	public void addComment(Comment comment) {
-		final Comment finalComment = comment;
-		m_threadPool.execute(new Runnable() {
-			public void run() {
-				try {
-					m_webStorage.putComment(finalComment);
-					LoadComments(finalComment.getTargetId());
-				} catch (Exception e) {
-					Log.e(TAG, "Error: ", e);
+		synchronized (syncLock) 
+		{
+			final Comment finalComment = comment;
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
+						m_webStorage.putComment(finalComment);
+						LoadComments(finalComment.getTargetId());
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private void LoadStories()
 	{
-		m_stories = new HashMap<UUID, Story>();
-		ArrayList<Story> localStories = m_db.getStories();
-
-		for(Story story : localStories)
+		synchronized (syncLock) 
 		{
-			m_stories.put(story.getId(), story);
-		}
+			m_stories = new HashMap<UUID, Story>();
+			ArrayList<Story> localStories = m_db.getStories();
 
+			for(Story story : localStories)
+			{
+				m_stories.put(story.getId(), story);
+			}
+		}
 	}
 
 	private void LoadOnlineStories()
 	{
-		m_onlineStories = new HashMap<UUID, Story>();
+		synchronized (syncLock) 
+		{
+			m_onlineStories = new HashMap<UUID, Story>();
 
-		// Fetch stories from web asynchronously.
-		m_threadPool.execute(new Runnable() {
-			public void run() {
-				try {
+			// Fetch stories from web asynchronously.
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
 
-					List<Story> onlineStories;
-					int size = 10;
-					int i = 0;
+						List<Story> onlineStories;
+						int size = 10;
+						int i = 0;
 
-					while(size == 10) {
-						onlineStories = m_webStorage.getStories(i, 10);
-						for(Story story : onlineStories)
-						{
-							m_onlineStories.put(story.getId(), story);
+						while(size == 10) {
+							onlineStories = m_webStorage.getStories(i, 10);
+							for(Story story : onlineStories)
+							{
+								m_onlineStories.put(story.getId(), story);
+							}
+							size = onlineStories.size();
+							i += 10;
 						}
-						size = onlineStories.size();
-						i += 10;
+						PublishOnlineStoriesChanged();
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
 					}
-					PublishOnlineStoriesChanged();
-				} catch (Exception e) {
-					Log.e(TAG, "Error: ", e);
 				}
-			}
-		});		
+			});
+		}
 	}
 
 	private void LoadBookmarks()
 	{
-		m_bookmarkList = new HashMap<UUID, Bookmark>();
-		ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
-
-		for(Bookmark bookmark : bookmarks)
+		synchronized (syncLock) 
 		{
-			m_bookmarkList.put(bookmark.getStoryID(), bookmark);
-		}
+			m_bookmarkList = new HashMap<UUID, Bookmark>();
+			ArrayList<Bookmark> bookmarks = m_db.getAllBookmarks();
 
+			for(Bookmark bookmark : bookmarks)
+			{
+				m_bookmarkList.put(bookmark.getStoryID(), bookmark);
+			}
+		}
 	}
 
 	private void LoadComments(UUID id)
 	{
-		final UUID finalId = id;
-		m_threadPool.execute(new Runnable() {
-			public void run() {
-				try {
-					if(m_comments.get(finalId) != null)
-						m_comments.remove(finalId);
+		synchronized (syncLock) 
+		{
+			final UUID finalId = id;
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
+						if(m_comments.get(finalId) != null)
+							m_comments.remove(finalId);
 
-					List<Comment> tempComments;
-					List<Comment> onlineComments = new ArrayList<Comment>();
-					int size = 10;
-					int i = 0;
+						List<Comment> tempComments;
+						List<Comment> onlineComments = new ArrayList<Comment>();
+						int size = 10;
+						int i = 0;
 
-					while(size == 10) {
-						tempComments = m_webStorage.getComments(finalId, i, 10);
-						for(Comment comment : tempComments)
-						{
-							onlineComments.add(comment);
+						while(size == 10) {
+							tempComments = m_webStorage.getComments(finalId, i, 10);
+							for(Comment comment : tempComments)
+							{
+								onlineComments.add(comment);
+							}
+							size = tempComments.size();
+							i += 10;
 						}
-						size = tempComments.size();
-						i += 10;
+						m_comments.put(finalId, onlineComments);
+						PublishCommentsChanged(finalId);
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
 					}
-					m_comments.put(finalId, onlineComments);
-					PublishCommentsChanged(finalId);
-				} catch (Exception e) {
-					Log.e(TAG, "Error: ", e);
 				}
-			}
-		});
-
+			});
+		}
 	}
 	private Map<UUID, StoryFragment> GetAllCurrentFragments()
 	{
-		Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
-
-		for(UUID fragmentId : m_currentStory.getFragments())
+		synchronized (syncLock) 
 		{
-			// first try to fetch from local cache
-			StoryFragment frag = this.getFragment(fragmentId);
+			Map<UUID, StoryFragment> currentFragments = new HashMap<UUID, StoryFragment>();
 
-			if(frag != null)
+			for(UUID fragmentId : m_currentStory.getFragments())
 			{
-				currentFragments.put(frag.getFragmentID(), frag);
-			}
-			else
-			{
-				Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
-			}
-		}
+				// first try to fetch from local cache
+				StoryFragment frag = this.getFragment(fragmentId);
 
-		return currentFragments;
-	}
-	public void uploadCurrentStory() {
-		m_threadPool.execute(new Runnable() {
-			public void run() {
-				try {
-					m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
-				} catch (Exception e) {
-					Log.e(TAG, "Error: ", e);
+				if(frag != null)
+				{
+					currentFragments.put(frag.getFragmentID(), frag);
+				}
+				else
+				{
+					Log.w(TAG, "Attempted to fetch fragments that aren't cached or in local DB!");
 				}
 			}
-		});
+			return currentFragments;
+		}
+	}
+	public void uploadCurrentStory() {
+		synchronized (syncLock) 
+		{
+			m_threadPool.execute(new Runnable() {
+				public void run() {
+					try {
+						m_webStorage.publishStory(m_currentStory, new ArrayList<StoryFragment>(GetAllCurrentFragments().values()));
+					} catch (Exception e) {
+						Log.e(TAG, "Error: ", e);
+					}
+				}
+			});
+		}
 	}
 
 	public void download() {
-		if(m_currentStory != null) {
-			m_stories.put(m_currentStory.getId(), m_currentStory);
-			m_db.setStory(m_currentStory);
-			for(UUID fragmentId : m_currentStory.getFragments()) {
-				getFragmentOnline(fragmentId, true);
+		synchronized (syncLock) 
+		{
+			if(m_currentStory != null) {
+				m_stories.put(m_currentStory.getId(), m_currentStory);
+				m_db.setStory(m_currentStory);
+				for(UUID fragmentId : m_currentStory.getFragments()) {
+					getFragmentOnline(fragmentId, true);
+				}
 			}
 		}
 	}

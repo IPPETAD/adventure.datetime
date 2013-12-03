@@ -133,7 +133,7 @@ public class AuthorStoryDescription extends Activity implements ICurrentStoryLis
 		 */
 
 		Locator.getAuthorController().selectStory(_story.getId());
-		Locator.getAuthorController().saveStory();
+		//Locator.getAuthorController().saveStory();
 
 	}
 
