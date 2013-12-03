@@ -498,7 +498,7 @@ public class Story {
 
 	public Story newId() {
 		this.id = UUID.randomUUID();
-		//getThumbnail().setId(UUID.randomUUID());
+		getThumbnail().setId(UUID.randomUUID());
 		return this;
 	}
 }

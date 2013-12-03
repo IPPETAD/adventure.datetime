@@ -86,6 +86,8 @@ public class Choice {
      * @param target UUID of the new target
      */
 	public void setTarget(UUID target) {
+		if(target == null)
+			return;
 		this.target = target;
 	}
 

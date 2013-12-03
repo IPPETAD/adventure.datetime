@@ -681,11 +681,10 @@ IStoryModelDirector {
 
 	public void download() {
 		if(m_currentStory != null) {
-			m_stories.put(m_currentStory.getId(), m_currentStory);
-			m_db.setStory(m_currentStory);
 			for(UUID fragmentId : m_currentStory.getFragments()) {
 				getFragmentOnline(fragmentId, true);
 			}
+			SaveStory();
 		}
 	}
 

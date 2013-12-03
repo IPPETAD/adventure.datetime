@@ -149,7 +149,7 @@ public class AuthorController {
 	}
 
 	/**
-	 * Checks the list of stories to see if the use authored them
+	 * Checks the list of stories to see if the user authored them
 	 * @param stories - list of stories to be checked
 	 * @return list of authored stories
 	 */
@@ -157,6 +157,20 @@ public class AuthorController {
 		Collection<Story> authoredStories = new HashSet<Story>();
 		for(Story story : stories) {
 			if(m_storyDirector.isAuthored(story.getId()))
+				authoredStories.add(story);
+		}
+		return authoredStories;
+	}
+
+	/**
+	 * Checks the list of stories to see if the user didn't author them
+	 * @param stories - list of stories to be checked
+	 * @return list of non-authored stories
+	 */
+	public Collection<Story> checkIfNotAuthored(Collection<Story> stories) {
+		Collection<Story> authoredStories = new HashSet<Story>();
+		for(Story story : stories) {
+			if(!m_storyDirector.isAuthored(story.getId()))
 				authoredStories.add(story);
 		}
 		return authoredStories;
