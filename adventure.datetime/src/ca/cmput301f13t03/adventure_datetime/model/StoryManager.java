@@ -870,7 +870,8 @@ IStoryModelDirector {
 		{
 			if(m_db.getAuthoredStory(storyId))
 				return storyId;
-			
+
+            String bit = getStory(storyId).getThumbnail().getEncodedBitmap();
 			Story story = getStory(storyId).newId();
 			List<StoryFragment> newFragments = new ArrayList<StoryFragment>();
 			Map<UUID,UUID> oldToNew = new HashMap<UUID, UUID>();
@@ -895,7 +896,9 @@ IStoryModelDirector {
 				m_fragmentList.put(fragment.getFragmentID(), fragment);
 				story.addFragment(fragment);
 			}
-			
+
+            story.setThumbnail((String)null);
+            story.setThumbnail(bit);
 			story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
 			story.setAuthor(username);
 			selectStory(storyId);
