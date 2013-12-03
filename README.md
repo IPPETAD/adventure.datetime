@@ -23,6 +23,10 @@ books that were popular in the 1970s and 1980s. This application allows users
 to create, collaborate, play, and build their own choose your own adventure
 story.
 
+Video Demo
+==========
+[Hosted on YouTube](http://youtu.be/UMYEitlot9o)
+
 3rd Party Libraries
 ===================
  - Jest 0.0.5 - Apache 2.0 - https://github.com/jviau/Jest (forked from https://github.com/searchbox-io/Jest)
