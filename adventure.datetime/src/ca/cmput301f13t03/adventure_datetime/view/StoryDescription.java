@@ -34,6 +34,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.AccountService;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
@@ -46,14 +47,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 
- * View accessed via MainView > BrowseView > ~Select item~
- * 
  * Show synopsis & more details about selected story. User can then play the selected story.
  * Utilizes fragments to allow swiping through available stories.
  * 
  * @author James Finlay
- *
  */
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
@@ -95,6 +92,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		/** Layout items **/
 		Button play = (Button) findViewById(R.id.play); 
 		Button restart = (Button) findViewById(R.id.restart);
+        ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
 		TextView title  = (TextView) findViewById(R.id.title);
 		TextView author  = (TextView) findViewById(R.id.author);
 		TextView datetime = (TextView) findViewById(R.id.datetime);
@@ -106,6 +104,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 		fragments.setText("Fragments: " + _story.getFragmentIds().size());
 		content.setText(_story.getSynopsis());
+
+        thumbnail.setImageBitmap(_story.getThumbnail().decodeBitmap());
 
 		if (_bookmarks.containsKey(_story.getId())) {
 			play.setText("Continue Story");

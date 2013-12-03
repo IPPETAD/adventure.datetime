@@ -43,8 +43,6 @@ import java.util.UUID;
  * 
  * View containing list of stories created by the author
  * 
- * TODO: Link with Model
- * 
  * @author James Finlay
  *
  */
