@@ -532,8 +532,6 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
     @Override
     public boolean setAuthoredStory(Story story) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         Story story2 = getStory(story.getId());
 
         if(story2 == null) {
@@ -545,6 +543,8 @@ public class StoryDB implements BaseColumns, ILocalStorage {
             Log.v(TAG, "Story already in AuthoredStory table");
             return true;
         }
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
