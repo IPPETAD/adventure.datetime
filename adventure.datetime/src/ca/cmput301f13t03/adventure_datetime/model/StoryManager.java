@@ -366,6 +366,15 @@ IStoryModelDirector {
 
     public void deleteImage(UUID imageId) {
         m_db.deleteImage(imageId);
+
+        for(Image image : m_currentFragment.getStoryMedia()) {
+
+            if(image.getId().equals(imageId))
+                m_currentFragment.removeMedia(image);
+        }
+
+        SaveStory();
+
         PublishCurrentFragmentChanged();
     }
 

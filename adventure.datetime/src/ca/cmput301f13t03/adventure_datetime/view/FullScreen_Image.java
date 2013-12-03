@@ -114,12 +114,10 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             public void onClick(View v) {
                 IllustrationFragment frag = (IllustrationFragment) _pageAdapter._fragment;
                 if(frag != null) {
-                    _fragment.removeMedia(frag._sID);
-                    Locator.getAuthorController().saveStory();
                     Locator.getAuthorController().deleteImage(frag._sID.getId());
-
-
                 }
+
+                _pageAdapter.notifyDataSetChanged();
             }
         });
 
@@ -200,6 +198,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                 }
                 break;
         }
+        _pageAdapter.notifyDataSetChanged();
     }
 
     private class StoryPagerAdapter extends FragmentStatePagerAdapter {
@@ -216,7 +215,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         public void setIllustrations(List<Image> imageIds, boolean author) {
             _illustrations = imageIds;
             _author = author;
-            notifyDataSetChanged();
+
         }
 
         @Override
@@ -231,6 +230,11 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         @Override
         public int getCount() {
             return _illustrations.size();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
 
     }
@@ -272,6 +276,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             ImageView image = (ImageView) _rootView.findViewById(R.id.image);
 
             TextView counter = (TextView) _rootView.findViewById(R.id.count);
+            image.invalidate();
 
 
             image.setImageBitmap(_sID.decodeBitmap());
