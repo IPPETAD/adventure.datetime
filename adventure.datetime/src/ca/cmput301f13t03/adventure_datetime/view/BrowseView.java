@@ -43,8 +43,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * View accessed via MainView > ~Browse button~
- * 
+ *
  * Contains three fragments/tabs where user can see list of cached stories, 
  * authored stories, and online stories.
  * 

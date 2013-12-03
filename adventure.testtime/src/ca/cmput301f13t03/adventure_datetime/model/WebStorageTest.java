@@ -91,7 +91,7 @@ public class WebStorageTest extends AndroidTestCase {
 			assertTrue(es.getErrorMessage(), result);
 		}
 		
-		//give elasticsearch some time, its a bit slow. In the head.
+		// Give elasticsearch some time, its a bit slow. In the head.
 		Thread.sleep(4000);
 		
 		List<Story> result = es.getStories(0, 10);	
@@ -127,7 +127,8 @@ public class WebStorageTest extends AndroidTestCase {
 			assertTrue(es.getErrorMessage(), result);
 		}
 		
-		//give elasticsearch some time, its a bit slow. In the head.
+		// Give elasticsearch some time, it is having a mid life crisis
+		// about if it wants to be a server anymore.
 		Thread.sleep(4000);
 		
 		String filter = "Andrew Fontaine";
@@ -153,6 +154,46 @@ public class WebStorageTest extends AndroidTestCase {
 		}
 	}
 	
+	public void testGetStoryFragments() throws Exception {
+		Story story = createStory(0);
+		List<StoryFragment> fragments = new ArrayList<StoryFragment>();
+		fragments.add(createFragment(story.getId(), 0));
+		story.setHeadFragmentId(fragments.get(0));
+		
+		for (int i = 1; i < 5; i++) {
+			fragments.add(createFragment(story.getId(), i));
+			story.addFragment(fragments.get(i));
+		}
+		
+		boolean result = es.publishStory(story, fragments);
+		assertTrue(es.getErrorMessage(), result);
+		
+		// Elasticsearch must deeply reflect on itself every time you post to it.
+		// You know, evaluate what it means to be a web server. If it is okay
+		// with us just pushing random objects into it. Maybe it feels violated?
+		Thread.sleep(4000);
+		
+		Story story2 = es.getStory(story.getId());
+		List<StoryFragment> fragments2 = es.getFragmentsForStory(story.getId(), 0, 10);
+		
+		try {
+			es.deleteStory(story.getId());
+		}
+		catch (Exception e){}
+		
+		for (StoryFragment f : fragments) {
+			deleteFragment(f);
+		}
+		
+		assertEquals(es.getErrorMessage(), story, story2);
+		assertNotNull(es.getErrorMessage(), fragments2);
+				
+		for (int i = 0; i < fragments.size(); i++) {
+			assertEquals("Image missing", fragments.get(i).getMedia(0).getEncodedBitmap(), 
+					fragments2.get(i).getMedia(0).getEncodedBitmap());
+		}
+	}
+	
 	private Story createStory(int i) {
 		Story story = new Story();
 		
@@ -165,6 +206,13 @@ public class WebStorageTest extends AndroidTestCase {
 		return story;
 	}
 	
+	private StoryFragment createFragment(UUID storyId, int i) {
+		StoryFragment fragment = new StoryFragment(storyId, "Fragment " + i);
+		fragment.addMedia(new Image(bitmap));
+		
+		return fragment;
+	}
+	
 	private Comment createComment(int i, UUID targetId) {
 		Comment comment = new Comment();
 		comment.setTargetId(targetId);
@@ -173,5 +221,16 @@ public class WebStorageTest extends AndroidTestCase {
 		comment.setImage(bitmap);
 		
 		return comment;
+	}
+	
+	private void deleteFragment(StoryFragment fragment) {
+		try {
+			for (UUID id : fragment.getMediaIds()) {
+				es.deleteImage(id);
+			}
+			
+			es.deleteFragment(fragment.getFragmentID());
+		}
+		catch (Exception e) {}
 	}
 }

@@ -22,6 +22,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -48,7 +49,11 @@ public class StoryFragment implements Comparable<StoryFragment>
 	/**
 	 * The list of all Story Media associated with the fragment
 	 */
-	private ArrayList<Image> storyMedia;
+	private transient ArrayList<Image> storyMedia;	
+	/**
+	 * The list of image ID's for JSON serialization.
+	 */
+	private ArrayList<UUID> mediaIds;
 	/**
 	 * The text content of the fragment
 	 */
@@ -184,7 +189,7 @@ public class StoryFragment implements Comparable<StoryFragment>
      *
      * @param media The media to remove
      */
-	public void removeMedia(String media) {
+	public void removeMedia(Image media) {
 		storyMedia.remove(media);
 	}
 
@@ -276,6 +281,24 @@ public class StoryFragment implements Comparable<StoryFragment>
      */
 	public Choice getChoice(int id) {
 		return (Choice) choices.toArray()[id];
+	}
+	
+	public ArrayList<UUID> getMediaIds() {
+		return this.mediaIds;
+	}
+	
+	/**
+	 * Updates the media id's. Call this before serializing to JSON
+	 */
+	public void updateMediaIds() {
+		if (this.storyMedia == null)
+			return;
+		
+		this.mediaIds = new ArrayList<UUID>();
+		
+		for (Image i : this.storyMedia) {
+			this.mediaIds.add(i.getId());
+		}
 	}
 
 	@Override

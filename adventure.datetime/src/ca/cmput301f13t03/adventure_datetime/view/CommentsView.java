@@ -1,3 +1,25 @@
+/*
+ *	Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+ * 	Evan DeGraff
+ *
+ * 	Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * 	this software and associated documentation files (the "Software"), to deal in
+ * 	the Software without restriction, including without limitation the rights to
+ * 	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * 	the Software, and to permit persons to whom the Software is furnished to do so,
+ * 	subject to the following conditions:
+ *
+ * 	The above copyright notice and this permission notice shall be included in all
+ * 	copies or substantial portions of the Software.
+ *
+ * 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * 	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * 	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * 	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package ca.cmput301f13t03.adventure_datetime.view;
 
 import android.app.Activity;
@@ -31,6 +53,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Shows comments available for stories & storfragments. Only available for online stories.
+ *
+ * @author James Finlay
+ */
 public class CommentsView extends Activity implements ICurrentStoryListener,
 									ICurrentFragmentListener, ICommentsListener {
 	private static final String TAG = "CommentsView";
@@ -38,6 +65,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
     private static final int PICTURE_REQUEST = 1;
 	
 	private ListView _listView;
+    private ProgressBar _bar;
 	private Story _story;
 	private StoryFragment _fragment;
 	private List<Comment> _comments;
@@ -48,11 +76,12 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view);
+		setContentView(R.layout.browse);
 		
 		forStoryEh = getIntent().getBooleanExtra(COMMENT_TYPE, true);
 		
 		_listView = (ListView) findViewById(R.id.list_view);
+        _bar = (ProgressBar) findViewById(R.id.progressBar);
 		
 		setUpView();
 	}
@@ -68,10 +97,10 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	protected void onPause() {
 		if (forStoryEh) {
 			Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
-			Locator.getPresenter().Unsubscribe(_story.getId());
+            if (_story != null)	Locator.getPresenter().Unsubscribe(_story.getId());
 		} else {
 			Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
-			Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
+            if (_fragment != null) Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
 		}
 		
 		super.onPause();
@@ -207,16 +236,15 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		if (_story == null && forStoryEh) return;
 		if (_fragment == null && !forStoryEh) return;
 
-		// TODO: Send diff comments whether from story or fragment
-
 		runOnUiThread(new Runnable() {
 			public void run() {
 				_adapter = new RowArrayAdapter(getApplicationContext(), 
 						R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
-				_listView.setAdapter(_adapter);					
+				_listView.setAdapter(_adapter);
+                _bar.setVisibility(View.GONE);
 			}
 		});
-		
+
 	}
 
     @Override
@@ -275,12 +303,13 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			TextView content = (TextView) rowView.findViewById(R.id.content);
             ImageView image = (ImageView) rowView.findViewById(R.id.image);
 
-			// TODO::JF use actual data
-			
 			author.setText(item.getAuthor());
 			content.setText(item.getContent());
 			date.setText(item.getFormattedTimestamp());
-			image.setImageBitmap(item.decodeImage());
+            if (item.getImage() == null)
+               btnImage.setVisibility(View.GONE);
+            else
+			    image.setImageBitmap(item.decodeImage());
 			layImage.setVisibility(View.GONE);
 			btnImage.setOnClickListener(new ShowOnClickListener().
 					setUp(layImage, btnImage));
