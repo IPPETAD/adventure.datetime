@@ -175,6 +175,8 @@ public class StoryFragment implements Comparable<StoryFragment>
 	}
 
     public String getStoryMediaInJson() {
+    	if(storyMedia == null)
+    		storyMedia = new ArrayList<Image>();
         ArrayList<UUID> uuids = new ArrayList<UUID>();
         for(Image image : storyMedia) {
             uuids.add(image.getId());

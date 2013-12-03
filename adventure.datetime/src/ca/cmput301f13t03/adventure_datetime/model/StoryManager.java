@@ -305,8 +305,9 @@ IStoryModelDirector {
 		}
 
 		m_stories.put(newStory.getId(), newStory);
+		m_currentStory = newStory;
+		SaveStory();
 		m_db.setAuthoredStory(newStory);
-		Assert.assertTrue(m_db.getAuthoredStory(newStory.getId()));
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 
 		PublishCurrentStoryChanged();
@@ -700,6 +701,7 @@ IStoryModelDirector {
 		for(UUID fragmentId : story.getFragments()) {
 			try {
 				StoryFragment fragment = getFragment(fragmentId).newId();
+				fragment.setStoryID(story.getId());
 				newFragments.add(fragment);
 				oldToNew.put(fragmentId, fragment.getFragmentID());
 			} catch(NullPointerException e) {
@@ -719,9 +721,9 @@ IStoryModelDirector {
 		
 		story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
 		story.setAuthor(username);
-		m_stories.put(story.getId(), story);
 		m_db.setStory(story);
 		m_db.setAuthoredStory(story);
+		LoadStories();
 		
 		return story.getId();
 	}
