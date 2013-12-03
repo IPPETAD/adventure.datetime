@@ -114,6 +114,10 @@ public class UserController {
 	{
 		m_storyDirector.download();
 	}
+	
+	public void search(String searchTerm) {
+		m_storyDirector.search(searchTerm);
+	}
 
 	public void deleteBookmark() {
 		m_storyDirector.deleteBookmark();

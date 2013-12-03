@@ -128,4 +128,10 @@ public interface IStoryModelDirector
 	 * @param comment
 	 */
 	public void addComment(Comment comment);
+
+	/**
+	 * Sends a search for stories to the server
+	 * @param searchTerm
+	 */
+	public void search(String searchTerm);
 }
