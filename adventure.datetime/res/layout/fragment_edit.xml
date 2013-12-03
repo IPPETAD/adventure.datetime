@@ -36,15 +36,14 @@
                 android:layout_height="wrap_content"
                 android:hint="Content..."
                 android:padding="10dp"
-                android:singleLine="false"
-                android:textSize="18sp" />
+                android:singleLine="false" />
     </ScrollView>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choices:"
-        android:textSize="24sp" />
+        android:textSize="22sp" />
 
     <ListView
         android:id="@+id/choicesList"
