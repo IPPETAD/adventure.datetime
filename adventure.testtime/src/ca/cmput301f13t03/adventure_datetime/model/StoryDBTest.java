@@ -23,12 +23,11 @@ package ca.cmput301f13t03.adventure_datetime.model;/*
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import junit.framework.Assert;
 
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 
 /**
  * @author Andrew Fontaine
@@ -74,6 +73,7 @@ public class StoryDBTest extends AndroidTestCase {
 		Story story = new Story("TestAuthor", "TestTitle", "TestSynop");
 		UUID uuid = story.getId();
         story.setHeadFragmentId(UUID.randomUUID());
+        story.setThumbnail(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.grumpy_cat));
 		Assert.assertTrue("Error inserting story", database.setStory(story));
 		Story story2 = database.getStory(story.getId());
 

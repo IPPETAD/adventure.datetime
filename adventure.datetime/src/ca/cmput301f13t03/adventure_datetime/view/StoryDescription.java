@@ -22,51 +22,34 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ImageView;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
+import java.util.Map;
+import java.util.UUID;
+
 /**
- * 
- * View accessed via MainView > BrowseView > ~Select item~
- * 
  * Show synopsis & more details about selected story. User can then play the selected story.
  * Utilizes fragments to allow swiping through available stories.
  * 
  * @author James Finlay
- *
  */
 public class StoryDescription extends Activity implements ICurrentStoryListener, IBookmarkListListener {
 	private static final String TAG = "StoryDescription";
@@ -108,6 +91,7 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		/** Layout items **/
 		Button play = (Button) findViewById(R.id.play); 
 		Button restart = (Button) findViewById(R.id.restart);
+        ImageView thumbnail = (ImageView) findViewById(R.id.thumbnail);
 		TextView title  = (TextView) findViewById(R.id.title);
 		TextView author  = (TextView) findViewById(R.id.author);
 		TextView datetime = (TextView) findViewById(R.id.datetime);
@@ -119,6 +103,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 		datetime.setText("Last Modified: " + _story.getFormattedTimestamp());
 		fragments.setText("Fragments: " + _story.getFragmentIds().size());
 		content.setText(_story.getSynopsis());
+
+        thumbnail.setImageBitmap(_story.getThumbnail().decodeBitmap());
 
 		if (_bookmarks.containsKey(_story.getId())) {
 			play.setText("Continue Story");
@@ -133,8 +119,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			public void onClick(View v) {
 				// Launch Story
 				Locator.getUserController().ResumeStory(_story.getId());
-				Intent intent = new Intent(StoryDescription.this, FragmentView.class);
-				intent.putExtra(FragmentView.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
+				Intent intent = new Intent(StoryDescription.this, FragmentViewActivity.class);
+				intent.putExtra(FragmentViewActivity.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
 				startActivity(intent);
 			}
 		});
@@ -144,8 +130,8 @@ public class StoryDescription extends Activity implements ICurrentStoryListener,
 			public void onClick(View v) {
 				// Restart & Launch Story
 				Locator.getUserController().StartStory(_story.getId());
-				Intent intent = new Intent(StoryDescription.this, FragmentView.class);
-				intent.putExtra(FragmentView.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
+				Intent intent = new Intent(StoryDescription.this, FragmentViewActivity.class);
+				intent.putExtra(FragmentViewActivity.FOR_SERVER, source==BrowseFragment.SOURCE_ONLINE);
 				startActivity(intent);
 			}
 		});

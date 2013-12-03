@@ -22,37 +22,25 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.AccountService;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.AccountService;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListener;
+import ca.cmput301f13t03.adventure_datetime.model.Story;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 
  * View containing list of stories created by the author
- * 
- * TODO: Link with Model
  * 
  * @author James Finlay
  *
@@ -124,8 +112,9 @@ public class AuthorStories extends FragmentActivity implements ILocalStoriesList
 		switch (item.getItemId()) {
 		case R.id.action_new:
 			Story story = Locator.getAuthorController().CreateStory();
+			Locator.getAuthorController().selectStory(story.getId());
 			story.setAuthor(AccountService.getUserName(getContentResolver()));
-			Locator.getAuthorController().saveStory(story);
+			Locator.getAuthorController().saveStory();
 			Locator.getAuthorController().selectStory(story.getId());
 			
 			Intent intent = new Intent(AuthorStories.this, AuthorStoryDescription.class);

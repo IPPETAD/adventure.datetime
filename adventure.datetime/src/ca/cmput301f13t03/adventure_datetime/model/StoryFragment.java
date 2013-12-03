@@ -1,26 +1,27 @@
 /*
- *        Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
- *         Evan DeGraff
+ * Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+ * Evan DeGraff
  *
- *         Permission is hereby granted, free of charge, to any person obtaining a copy of
- *         this software and associated documentation files (the "Software"), to deal in
- *         the Software without restriction, including without limitation the rights to
- *         use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- *         the Software, and to permit persons to whom the Software is furnished to do so,
- *         subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
  *
- *         The above copyright notice and this permission notice shall be included in all
- *         copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
- *         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *         IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- *         FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- *         COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- *         IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- *         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 package ca.cmput301f13t03.adventure_datetime.model;
+
 
 import com.google.gson.Gson;
 
@@ -34,7 +35,8 @@ import java.util.UUID;
  * @version 1.0
  * @since 23/10/13
  */
-public class StoryFragment {
+public class StoryFragment implements Comparable<StoryFragment>
+{
 
 	/**
 	 * The UUID of the story linked to the fragment
@@ -47,7 +49,11 @@ public class StoryFragment {
 	/**
 	 * The list of all Story Media associated with the fragment
 	 */
-	private ArrayList<String> storyMedia;
+	private transient ArrayList<Image> storyMedia;	
+	/**
+	 * The list of image ID's for JSON serialization.
+	 */
+	private ArrayList<UUID> mediaIds;
 	/**
 	 * The text content of the fragment
 	 */
@@ -67,7 +73,7 @@ public class StoryFragment {
      * @param choices List of Choices associated with the Story Fragment
      */
 	public StoryFragment(UUID storyID, UUID fragmentID, String storyText,
-	                     ArrayList<String> storyMedia, ArrayList<Choice> choices) {
+	                     ArrayList<Image> storyMedia, ArrayList<Choice> choices) {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
@@ -89,7 +95,7 @@ public class StoryFragment {
 		this.choices = new ArrayList<Choice>();
 		this.choices.add(choice);
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -104,7 +110,7 @@ public class StoryFragment {
 		this.fragmentID = UUID.randomUUID();
 		this.storyText = storyText;
 		this.choices = new ArrayList<Choice>();
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -121,7 +127,7 @@ public class StoryFragment {
 		this.storyID = storyID;
 		this.fragmentID = fragmentID;
 		this.storyText = storyText;
-		this.storyMedia = new ArrayList<String>();
+		this.storyMedia = new ArrayList<Image>();
 	}
 
     /**
@@ -147,16 +153,25 @@ public class StoryFragment {
      *
      * @return List of all Media
      */
-	public ArrayList<String> getStoryMedia() {
+	public ArrayList<Image> getStoryMedia() {
 		return storyMedia;
 	}
+
+    public String getStoryMediaInJson() {
+        ArrayList<UUID> uuids = new ArrayList<UUID>();
+        for(Image image : storyMedia) {
+            uuids.add(image.getId());
+        }
+        Gson gson = new Gson();
+        return gson.toJson(uuids);
+    }
 
     /**
      * Sets the list of all story media
      *
      * @param storyMedia The new list of media
      */
-	public void setStoryMedia(ArrayList<String> storyMedia) {
+	public void setStoryMedia(ArrayList<Image> storyMedia) {
 		this.storyMedia = storyMedia;
 	}
 
@@ -165,7 +180,7 @@ public class StoryFragment {
      *
      * @param media Media to add
      */
-	public void addMedia(String media) {
+	public void addMedia(Image media) {
 		storyMedia.add(media);
 	}
 
@@ -174,9 +189,13 @@ public class StoryFragment {
      *
      * @param media The media to remove
      */
-	public void removeMedia(String media) {
+	public void removeMedia(Image media) {
 		storyMedia.remove(media);
 	}
+
+    public void removeMedia(int media) {
+        storyMedia.remove(media);
+    }
 
     /**
      * Gets media at a certain index of the list
@@ -185,7 +204,7 @@ public class StoryFragment {
      *
      * @return The media
      */
-	public String getMedia(int id) {
+	public Image getMedia(int id) {
 		return storyMedia.get(id);
 	}
 
@@ -262,6 +281,30 @@ public class StoryFragment {
      */
 	public Choice getChoice(int id) {
 		return (Choice) choices.toArray()[id];
+	}
+	
+	public ArrayList<UUID> getMediaIds() {
+		return this.mediaIds;
+	}
+	
+	/**
+	 * Updates the media id's. Call this before serializing to JSON
+	 */
+	public void updateMediaIds() {
+		if (this.storyMedia == null)
+			return;
+		
+		this.mediaIds = new ArrayList<UUID>();
+		
+		for (Image i : this.storyMedia) {
+			this.mediaIds.add(i.getId());
+		}
+	}
+
+	@Override
+	public int compareTo(StoryFragment other) 
+	{
+		return this.fragmentID.compareTo(other.fragmentID);
 	}
 
     @Override

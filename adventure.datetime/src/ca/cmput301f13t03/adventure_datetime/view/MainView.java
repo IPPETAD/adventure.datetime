@@ -22,16 +22,13 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.Map;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -41,14 +38,12 @@ import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IBookmarkListListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
+import java.util.Map;
+import java.util.UUID;
+
 /**
- * The first and main activity of the application.
- * 
- * Contains three buttons:
- *  - ContinueView (list of bookmarks)
- *  - BrowseView (list of stories)
- *  - Author (create & edit stories)
- * 
+ * The first and main activity of the application. User can then navigate to the different sections.
+ *
  * @author James Finlay
  *
  */
@@ -70,7 +65,7 @@ public class MainView extends Activity implements IBookmarkListListener {
 
 		Locator.initializeLocator(getApplicationContext());
 		
-		Locator.initializeLocator(getApplicationContext());
+		//Locator.initializeLocator(getApplicationContext());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);		

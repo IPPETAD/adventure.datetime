@@ -1,9 +1,8 @@
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.List;
-import java.util.Map;
-
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
+
+import java.util.List;
 
 public interface ICommentsListener {
 	

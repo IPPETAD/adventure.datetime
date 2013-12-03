@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/choice_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"
+        android:gravity="left"
+        android:hint="Enter Choice"
+        android:textSize="24sp" 
+        android:layout_weight="4"/>
+
+    <ImageButton
+        android:id="@+id/choices_edit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/btn_editChoice"
+        android:src="@drawable/ic_action_edit" 
+        android:layout_weight="1"/>
+
+    <ImageButton
+        android:id="@+id/choice_remove_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/btn_deleteChoice"
+        android:src="@drawable/ic_action_discard" 
+        android:layout_weight="1"
+        android:layout_marginRight="5dp"/>
+
+</LinearLayout>

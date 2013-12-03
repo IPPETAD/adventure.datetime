@@ -1,56 +1,87 @@
+/*
+ *	Copyright (c) 2013 Andrew Fontaine, James Finlay, Jesse Tucker, Jacob Viau, and
+ * 	Evan DeGraff
+ *
+ * 	Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * 	this software and associated documentation files (the "Software"), to deal in
+ * 	the Software without restriction, including without limitation the rights to
+ * 	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * 	the Software, and to permit persons to whom the Software is furnished to do so,
+ * 	subject to the following conditions:
+ *
+ * 	The above copyright notice and this permission notice shall be included in all
+ * 	copies or substantial portions of the Software.
+ *
+ * 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * 	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * 	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * 	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.util.List;
-
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.*;
+import android.view.View.OnClickListener;
+import android.widget.*;
 import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.AccountService;
-import ca.cmput301f13t03.adventure_datetime.model.Comment;
-import ca.cmput301f13t03.adventure_datetime.model.Story;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.model.*;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICommentsListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Shows comments available for stories & storfragments. Only available for online stories.
+ *
+ * @author James Finlay
+ */
 public class CommentsView extends Activity implements ICurrentStoryListener,
 									ICurrentFragmentListener, ICommentsListener {
 	private static final String TAG = "CommentsView";
 	public static final String COMMENT_TYPE = "forStory";
+    private static final int PICTURE_REQUEST = 1;
 	
 	private ListView _listView;
+    private ProgressBar _bar;
 	private Story _story;
 	private StoryFragment _fragment;
 	private List<Comment> _comments;
 	private RowArrayAdapter _adapter;
 	private boolean forStoryEh;
+    private Uri _commentPic;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view);
+		setContentView(R.layout.browse);
 		
 		forStoryEh = getIntent().getBooleanExtra(COMMENT_TYPE, true);
 		
 		_listView = (ListView) findViewById(R.id.list_view);
+        _bar = (ProgressBar) findViewById(R.id.progressBar);
 		
 		setUpView();
 	}
@@ -66,10 +97,10 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	protected void onPause() {
 		if (forStoryEh) {
 			Locator.getPresenter().Unsubscribe((ICurrentStoryListener)this);
-			Locator.getPresenter().Unsubscribe(_story.getId());
+            if (_story != null)	Locator.getPresenter().Unsubscribe(_story.getId());
 		} else {
 			Locator.getPresenter().Unsubscribe((ICurrentFragmentListener)this);
-			Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
+            if (_fragment != null) Locator.getPresenter().Unsubscribe(_fragment.getFragmentID());
 		}
 		
 		super.onPause();
@@ -78,7 +109,7 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 	public void OnCurrentStoryChange(Story story) {
 		_story = story;
 		Log.v(TAG, "subscribe story");
-		Locator.getPresenter().Subscribe((ICommentsListener)this, _story.getId());
+		Locator.getPresenter().Subscribe((ICommentsListener) this, _story.getId());
 		setUpView();
 	}
 	@Override
@@ -109,10 +140,12 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			dia.setCancelable(true);
 			
 			/** Layout items **/
-			Button media = (Button) dia.findViewById(R.id.media);
 			final EditText txt = (EditText) dia.findViewById(R.id.content);
 			Button okay = (Button) dia.findViewById(R.id.okay);
 			Button cancel = (Button) dia.findViewById(R.id.cancel);
+            Button photo = (Button) dia.findViewById(R.id.media);
+            /* Set image to null in case 2 comments are made */
+            _commentPic = null;
 			
 			okay.setOnClickListener(new OnClickListener() {
 				@Override
@@ -123,9 +156,19 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 					c.setContent(txt.getText().toString());
 					if (forStoryEh)	c.setTargetId(_story.getId());
 					else c.setTargetId(_fragment.getFragmentID());
-					//TODO::JF Save attached pic
-					
-					Locator.getUserController().AddComment(c);
+
+                    if(_commentPic != null) {
+                        try {
+                            InputStream is = getContentResolver().openInputStream(_commentPic);
+                            Bitmap bit = BitmapFactory.decodeStream(is);
+                            c.setImage(Image.compressBitmap(bit, 85));
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Locator.getUserController().AddComment(c);
 					
 					dia.dismiss();
 				}				
@@ -136,8 +179,51 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 					dia.dismiss();
 				}
 			});
-			
-			//TODO::AF media from gallery / camera
+
+            photo.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                            "adventure.datetime");
+                    if(!picDir.exists()) picDir.mkdirs();
+                    File pic = null;
+                    try {
+                        pic = File.createTempFile("adventure.comment_", "_temp", picDir);
+                    }
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                    Uri location = Uri.fromFile(pic);
+
+                    final List<Intent> cameraIntents = new ArrayList<Intent>();
+                    final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    final PackageManager packageManager = getPackageManager();
+                    final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+                    for(ResolveInfo res : listCam) {
+                        final String packageName = res.activityInfo.packageName;
+                        final Intent intent = new Intent(captureIntent);
+                        intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                        intent.setPackage(packageName);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, location);
+                        _commentPic = location;
+                        cameraIntents.add(intent);
+                    }
+
+                    // Filesystem.
+                    final Intent galleryIntent = new Intent();
+                    galleryIntent.setType("image/*");
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+                    // Chooser of filesystem options.
+                    final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+                    // Add the camera options.
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+
+                    startActivityForResult(chooserIntent, PICTURE_REQUEST);
+
+                }
+            });
 			dia.show();
 			
 			break;
@@ -150,17 +236,46 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		if (_story == null && forStoryEh) return;
 		if (_fragment == null && !forStoryEh) return;
 
-		// TODO: Send diff comments whether from story or fragment
-
 		runOnUiThread(new Runnable() {
 			public void run() {
 				_adapter = new RowArrayAdapter(getApplicationContext(), 
 						R.layout.comment_single, _comments.toArray(new Comment[_comments.size()]));
-				_listView.setAdapter(_adapter);					
+				_listView.setAdapter(_adapter);
+                _bar.setVisibility(View.GONE);
 			}
 		});
-		
+
 	}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if(requestCode == PICTURE_REQUEST) {
+                final boolean isCamera;
+                if(data == null) {
+                    isCamera = true;
+                }
+                else {
+                    final String action = data.getAction();
+                    if(action == null) {
+                        isCamera = false;
+                    }
+                    else {
+                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+                }
+
+                Uri selectedImageUri;
+                if(isCamera) {
+                    selectedImageUri = _commentPic;
+                }
+                else {
+                    selectedImageUri = data == null ? null : data.getData();
+                }
+                _commentPic = selectedImageUri;
+            }
+        }
+    }
 
 	private class RowArrayAdapter extends ArrayAdapter<Comment> {
 		
@@ -186,13 +301,15 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 			Button btnImage = (Button) rowView.findViewById(R.id.image_button);
 			RelativeLayout layImage = (RelativeLayout) rowView.findViewById(R.id.wrapper);
 			TextView content = (TextView) rowView.findViewById(R.id.content);
-			
-			// TODO::JF use actual data
-			
+            ImageView image = (ImageView) rowView.findViewById(R.id.image);
+
 			author.setText(item.getAuthor());
 			content.setText(item.getContent());
 			date.setText(item.getFormattedTimestamp());
-			// TODO:: Use model image
+            if (item.getImage() == null)
+               btnImage.setVisibility(View.GONE);
+            else
+			    image.setImageBitmap(item.decodeImage());
 			layImage.setVisibility(View.GONE);
 			btnImage.setOnClickListener(new ShowOnClickListener().
 					setUp(layImage, btnImage));
@@ -202,6 +319,8 @@ public class CommentsView extends Activity implements ICurrentStoryListener,
 		}
 		
 	}
+
+
 	
 	private class ShowOnClickListener implements OnClickListener {
 

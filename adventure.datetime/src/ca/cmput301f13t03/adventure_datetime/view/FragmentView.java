@@ -22,33 +22,27 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
+import android.widget.*;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import ca.cmput301f13t03.adventure_datetime.R;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -60,171 +54,181 @@ import java.util.List;
  *
  * @author James Finlay
  */
-public class FragmentView extends Activity implements ICurrentFragmentListener {
-	private static final String TAG = "FragmentView";
-	public static final String FOR_SERVER = "emagherd.server";
+public class FragmentView extends Fragment implements ICurrentFragmentListener {
+    private static final String TAG = "FragmentView";
+    public static final String FOR_SERVER = "emagherd.server";
 
-	private HorizontalScrollView _filmstrip;
-	private TextView _content;
-	private LinearLayout _filmLayout;
-	private Button _choices;
-	private boolean forServerEh;
+    private HorizontalScrollView _filmstrip;
+    private TextView _content;
+    private LinearLayout _filmLayout;
+    private Button _choices;
+    private boolean forServerEh;
+    private View _rootView = null;
+    private boolean _isEditing = false;
+    private StoryFragment _fragment;
 
-	private StoryFragment _fragment;
+    private static final int FILM_STRIP_SIZE = 300;
 
-	@Override
-	public void OnCurrentFragmentChange(StoryFragment newFragment) {
-		_fragment = newFragment;
-		setUpView();
-	}
-
-	@Override
-	public void onResume() {
-		Locator.getPresenter().Subscribe(this);
-		super.onResume();
-	}
-
-	@Override
-	public void onPause() {
-		Locator.getPresenter().Unsubscribe(this);
-		super.onPause();
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_view);
-		forServerEh = getIntent().getBooleanExtra(FOR_SERVER, false);
-		setUpView();
-	}
-	public void setUpView() {
-		if (_fragment == null) return;
-
-		/** Layout items **/
-		_filmLayout = (LinearLayout) findViewById(R.id.filmstrip);
-		_filmstrip = (HorizontalScrollView) findViewById(R.id.filmstrip_wrapper);
-		_choices = (Button) findViewById(R.id.choices);
-		_content = (TextView) findViewById(R.id.content);
-
-		if (_fragment.getStoryMedia() == null)
-			_fragment.setStoryMedia(new ArrayList<String>());
-
-		/** Programmatically set filmstrip height **/
-		// TODO::JF Unshitify this, aka not static value
-		//if (_fragment.getStoryMedia().size() > 0)
-		_filmstrip.getLayoutParams().height = 300;
+    @Override
+    public void OnCurrentFragmentChange(StoryFragment newFragment) {
+        _fragment = newFragment;
+        setUpView();
+    }
+    public void SetFragment(StoryFragment frag)
+    {
+        _fragment = frag;
+        setUpView();
+    }
 
 
-		_content.setText(_fragment.getStoryText());
+    @Override
+    public void onResume() {
+        Locator.getPresenter().Subscribe(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Locator.getPresenter().Unsubscribe(this);
+        super.onPause();
+    }
+    @Override
+    public void onDestroyView()
+    {
+        Locator.getPresenter().Unsubscribe(this);
+        super.onDestroyView();
+    }
+
+    public void SetIsEditing(boolean isEditing)
+    {
+        _isEditing = isEditing;
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        _rootView = inflater.inflate(R.layout.fragment_view, container, false);
+        Locator.getPresenter().Subscribe(this);
+        setUpView();
+        return _rootView;
+    }
+    public void setUpView() {
+        if (_fragment == null) return;
+
+        /** Layout items **/
+        _filmLayout = (LinearLayout) _rootView.findViewById(R.id.filmstrip);
+        _filmstrip = (HorizontalScrollView) _rootView.findViewById(R.id.filmstrip_wrapper);
+        _choices = (Button) _rootView.findViewById(R.id.choices);
+        _content = (TextView) _rootView.findViewById(R.id.content);
+
+        if (_fragment.getStoryMedia() == null)
+            _fragment.setStoryMedia(new ArrayList<Image>());
+
+        /* Run on UI Thread for server stuff */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
 
-		// 1) Create new ImageView and add to the LinearLayout
-		// 2) Set appropriate Layout Params to ImageView
-		// 3) Give onClickListener for going to fullscreen
-		LinearLayout.LayoutParams lp;
-		//for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
-		for (int i = 0; i < 5; i++) {
-			// TODO::JF Get images from fragment
-			ImageView li = new ImageView(this);
-			li.setScaleType(ScaleType.CENTER_INSIDE);
-			li.setImageResource(R.drawable.grumpy_cat2);
-			_filmLayout.addView(li);
+                /** Programmatically set filmstrip height **/
+                if (_fragment.getStoryMedia().size() > 0)
+                    _filmstrip.getLayoutParams().height = FILM_STRIP_SIZE;
+                else
+                    _filmstrip.getLayoutParams().height = 0;
 
-			lp = (LinearLayout.LayoutParams) li.getLayoutParams();
-			lp.setMargins(10, 10, 10, 10);
-			lp.width = LayoutParams.WRAP_CONTENT;
-			lp.gravity = Gravity.CENTER_VERTICAL;
-			li.setLayoutParams(lp);
+                _content.setText(_fragment.getStoryText());
+                _filmLayout.removeAllViews();
 
-			li.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(FragmentView.this, FullScreen_Image.class);
-					intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
-					startActivity(intent);
-				}
-			});
-		}
+                // 1) Create new ImageView and add to the LinearLayout
+                // 2) Set appropriate Layout Params to ImageView
+                // 3) Give onClickListener for going to fullscreen
+                LinearLayout.LayoutParams lp;
+                //for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
+                for (int i = 0; i < _fragment.getStoryMedia().size(); i++) {
 
-		if (_fragment.getChoices().size() > 0) {
-			/** Choices **/
-			final List<String> choices = new ArrayList<String>();
-			for (Choice choice : _fragment.getChoices())
-				choices.add(choice.getText());
-			choices.add("I'm feeling lucky.");
+                    ImageView li = new ImageView(getActivity());
+                    li.setScaleType(ScaleType.CENTER_INSIDE);
+                    li.setImageBitmap(_fragment.getStoryMedia().get(i).decodeBitmap());
+                    _filmLayout.addView(li);
 
-			_choices.setText("Actions");
-			_choices.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					new AlertDialog.Builder(v.getContext())
-					.setTitle("Actions")
-					.setCancelable(true)
-					.setItems(choices.toArray(new String[choices.size()]), 
-							new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
+                    lp = (LinearLayout.LayoutParams) li.getLayoutParams();
+                    lp.setMargins(10, 10, 10, 10);
+                    lp.width = FILM_STRIP_SIZE;
+                    lp.height = FILM_STRIP_SIZE;
+                    lp.gravity = Gravity.CENTER_VERTICAL;
+                    li.setLayoutParams(lp);
 
-							/** You feeling lucky, punk? **/
-							if (which == _fragment.getChoices().size())
-								which = (int) (Math.random() * _fragment.getChoices().size());
+                    li.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), FullScreen_Image.class);
+                            intent.putExtra(FullScreen_Image.TAG_AUTHOR, false);
+                            startActivity(intent);
+                        }
+                    });
+                }
 
-							Choice choice = _fragment.getChoices().get(which);
+                if (_fragment.getChoices().size() > 0) {
+                    /** Choices **/
+                    final List<String> choices = new ArrayList<String>();
+                    for (Choice choice : _fragment.getChoices())
+                        choices.add(choice.getText());
+                    choices.add("I'm feeling lucky.");
 
-							Toast.makeText(getApplicationContext(), 
-									choice.getText(), Toast.LENGTH_LONG).show();
-							Locator.getUserController().MakeChoice(choice);
-						}
-					})
-					.create().show();
-				}
-			});
-		} else {
-			/** End of story **/
-			_choices.setText("The End");
-			_choices.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					new AlertDialog.Builder(v.getContext())
-					.setTitle("La Fin")
-					.setCancelable(true)
-					.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							Locator.getUserController().StartStory(_fragment.getStoryID());							
-						}
-					})
-					.setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-					.create().show();
-					
-				}
-			});
-		}
+                    _choices.setText("Actions");
+                    _choices.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle("Actions")
+                                    .setCancelable(true)
+                                    .setItems(choices.toArray(new String[choices.size()]),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
 
-	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		if (forServerEh)
-			getMenuInflater().inflate(R.menu.fragment_menu, menu);
-		return true;
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_comment:
-			/* Open comments activity */
-			Intent intent = new Intent(this, CommentsView.class);
-			intent.putExtra(CommentsView.COMMENT_TYPE, false);
-			startActivity(intent);
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+                                                    /** You feeling lucky, punk? **/
+                                                    if (which == _fragment.getChoices().size())
+                                                        which = (int) (Math.random() * _fragment.getChoices().size());
 
+                                                    Choice choice = _fragment.getChoices().get(which);
+
+                                                    Toast.makeText(FragmentView.this.getActivity(),
+                                                            choice.getText(), Toast.LENGTH_LONG).show();
+                                                    Locator.getUserController().MakeChoice(choice);
+                                                }
+                                            })
+                                    .create().show();
+                        }
+                    });
+                } else {
+                    /** End of story **/
+                    Locator.getUserController().deleteBookmark();
+                    _choices.setText("The End");
+                    _choices.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle("La Fin")
+                                    .setCancelable(true)
+                                    .setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Locator.getUserController().StartStory(_fragment.getStoryID());
+                                        }
+                                    })
+                                    .setNegativeButton("Change Adventures", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if(!_isEditing)
+                                                getActivity().onBackPressed();
+                                        }
+                                    })
+                                    .create().show();
+
+                        }
+                    });
+                }
+            }});
+
+    }
 }

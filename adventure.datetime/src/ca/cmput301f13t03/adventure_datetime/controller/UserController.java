@@ -23,22 +23,21 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-import java.util.UUID;
-
 import android.util.Log;
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Choice;
 import ca.cmput301f13t03.adventure_datetime.model.Comment;
-
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
+
+import java.util.UUID;
 
 /**
  * Controller for aspects of playing through stories
  */
 public class UserController {
 	private IStoryModelDirector m_storyDirector = null;
-
+	private static final String TAG = "USER_CONTROLLER";
 
 	public UserController(IStoryModelDirector director, ILocalStorage storage) {
 		m_storyDirector = director;
@@ -80,8 +79,8 @@ public class UserController {
     /**
      * Creates a bookmark at the current location
      */
-	public void SetBookmark() {
-		m_storyDirector.setBookmark();
+	public void SetBookmark(UUID fragmentId) {
+		m_storyDirector.setBookmark(fragmentId);
 	}
 
     /**
@@ -98,8 +97,17 @@ public class UserController {
      *
      * @param choice The choice made
      */
-	public void MakeChoice(Choice choice) {
-		m_storyDirector.selectFragment(choice.getTarget());
+	public void MakeChoice(Choice choice) 
+	{
+		try
+		{
+			m_storyDirector.selectFragment(choice.getTarget());
+			m_storyDirector.setBookmark(choice.getTarget());
+		}
+		catch(RuntimeException ex)
+		{
+			Log.e(TAG, "Failed to make a choice!", ex);
+		}
 	}
 	
 	public void download() 
@@ -109,6 +117,11 @@ public class UserController {
 	
 	public void search(String searchTerm) {
 		m_storyDirector.search(searchTerm);
+	}
+
+	public void deleteBookmark() {
+		m_storyDirector.deleteBookmark();
+		
 	}
 
 }

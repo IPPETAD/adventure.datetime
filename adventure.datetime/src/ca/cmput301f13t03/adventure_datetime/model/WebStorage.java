@@ -22,20 +22,15 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IWebStorage;
 import io.searchbox.Action;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Bulk;
-import io.searchbox.core.Delete;
-import io.searchbox.core.Get;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
+import io.searchbox.core.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IWebStorage;
 
 
 /**
@@ -174,7 +169,10 @@ public class WebStorage implements IWebStorage {
 	public StoryFragment getFragment(UUID fragmentId) throws Exception {
 		Get get = new Get.Builder(_index, fragmentId.toString()).type("fragment").build();
 		JestResult result = execute(get);
-		return result.getSourceAsObject(StoryFragment.class);
+		StoryFragment fragment = result.getSourceAsObject(StoryFragment.class);
+		mapImagesToFragment(fragment);
+		
+		return fragment;
 	}
 	
 	/* (non-Javadoc)
@@ -183,13 +181,16 @@ public class WebStorage implements IWebStorage {
 	@Override
 	public List<StoryFragment> getFragmentsForStory(UUID storyId, int from, int size) throws Exception {
 		Search search = new Search.Builder(
-				String.format(MATCH, from, size, "", "storyId", storyId))
+				String.format(MATCH, from, size, "", "storyID", storyId))
 			.addIndex(_index)
 			.addType("fragment")
 			.build();
 		
 		JestResult result = execute(search);
-		return result.getSourceAsObjectList(StoryFragment.class);
+		List<StoryFragment> fragments =  result.getSourceAsObjectList(StoryFragment.class);
+		mapImagesToFragments(fragments);
+		
+		return fragments;
 	}
 	
 	/* (non-Javadoc)
@@ -278,11 +279,16 @@ public class WebStorage implements IWebStorage {
 		
 		if (fragments != null) {
 			for (StoryFragment f : fragments) {
+				f.updateMediaIds();
 				bulkBuilder.addAction(new Index.Builder(f).id(f.getFragmentID().toString()).build());
 			}
 		
 			result = execute(bulkBuilder.build());
 			succeeded &= result.isSucceeded();
+			
+			for (StoryFragment f : fragments) {
+				succeeded &= putImages(f.getStoryMedia());
+			}
 		}
 		
 		return succeeded;
@@ -337,6 +343,22 @@ public class WebStorage implements IWebStorage {
 		return result.isSucceeded();
 	}
 	
+	private boolean putImages(List<Image> images) throws Exception {
+		if (images == null)
+			return true;
+			
+		Bulk.Builder bulkBuilder = new Bulk.Builder()
+			.defaultIndex(_index)
+			.defaultType("image");
+		
+		for(Image i : images) {
+			bulkBuilder.addAction(new Index.Builder(i).id(i.getId().toString()).build());
+		}
+		
+		JestResult result = execute(bulkBuilder.build());
+		return result.isSucceeded();
+	}
+	
 	/* (non-Javadoc)
 	 * @see ca.cmput301f13t03.adventure_datetime.model.IWebStorage#deleteImage(java.util.UUID)
 	 */
@@ -378,6 +400,7 @@ public class WebStorage implements IWebStorage {
 		JestResult result = execute(new Delete.Builder(fragId.toString())
 			.index(_index)
 			.type("fragment").build());
+		
 		return result.isSucceeded();
 	}
 
@@ -479,5 +502,19 @@ public class WebStorage implements IWebStorage {
 				}
 			}
 		}
+	}
+	
+	private void mapImagesToFragments(List<StoryFragment> fragments) throws Exception {
+		for (StoryFragment f : fragments) {
+			mapImagesToFragment(f);
+		}
+	}
+	
+	private void mapImagesToFragment(StoryFragment fragment) throws Exception {
+		if (fragment.getMediaIds() == null)
+			return;
+		
+		List<Image> images = getImages(fragment.getMediaIds());	
+		fragment.setStoryMedia(new ArrayList<Image>(images));
 	}
 }

@@ -71,6 +71,7 @@ local.properties
 .settings/
 .loadpath
 .properties
+*.log
 
 # External tool builders
 .externalToolBuilders/
