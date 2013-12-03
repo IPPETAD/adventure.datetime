@@ -159,7 +159,6 @@ public class StoryFragment implements Comparable<StoryFragment>
 	/**
      * Sets the StoryFragment UUID
      *
-     * @return UUID of the StoryFragment
      */
 	public void setFragmentID() {
 		this.fragmentID = UUID.randomUUID();

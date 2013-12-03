@@ -103,7 +103,7 @@ public interface IStoryModelDirector
 	 * Why is a fetch in the director?
 	 * 
 	 * @param bookmarkId
-	 * @return
+	 * @return bookmark with the given UUID
 	 */
 	public Bookmark getBookmark(UUID bookmarkId);
 
@@ -131,7 +131,8 @@ public interface IStoryModelDirector
 	
 	/**
 	 * Changes a downloaded story to author mode
-	 * @param storyId, username
+	 * @param storyId The UUID of the story
+     * @param username The new author name
 	 * @return new UUID for the story
 	 */
 	public UUID setStoryToAuthor(UUID storyId, String username);

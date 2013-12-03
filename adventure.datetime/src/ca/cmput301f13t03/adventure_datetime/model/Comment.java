@@ -63,7 +63,7 @@ public class Comment {
 	
 	/**
 	 * Construct a Comment object with populated fields
-	 * @param webId the webId
+	 * @param id the webId
 	 * @param targetId the targetId
 	 * @param author the Author
 	 * @param content the Content

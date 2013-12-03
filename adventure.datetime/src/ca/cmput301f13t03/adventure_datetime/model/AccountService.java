@@ -39,7 +39,7 @@ public class AccountService {
 	
 	/**
 	 * Returns a users display name from their contacts profile.
-	 * @param cr, for querying the user's contacts profile.
+	 * @param cr for querying the user's contacts profile.
 	 * @return the display name from the contacts profile
 	 */
 	public static String getUserName(ContentResolver cr) {

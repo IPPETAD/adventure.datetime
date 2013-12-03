@@ -4,3 +4,4 @@ ca.cmput301f13t03.adventure_datetime.model
 ca.cmput301f13t03.adventure_datetime.model.Interfaces
 ca.cmput301f13t03.adventure_datetime.serviceLocator
 ca.cmput301f13t03.adventure_datetime.view
+ca.cmput301f13t03.adventure_datetime.view.treeView

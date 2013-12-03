@@ -86,7 +86,7 @@ public interface IWebStorage {
 	 * Gets comments for the targetId. May be a StoryId or FragmentId.
 	 * Will return up to size comments starting at from.
 	 * Loads images if a comment contains one as well.
-	 * @param targetId. The Story or StoryFragment to retrieve comments for.
+	 * @param targetId The Story or StoryFragment to retrieve comments for.
 	 * @param from the start index to return comments from
 	 * @param size the amount of comments to try to return
 	 * @return A List of comments
@@ -142,7 +142,7 @@ public interface IWebStorage {
 	/**
 	 * Puts an image into elasticsearch.
 	 * Updates it if it already exists.
-	 * @param Image, the image to put
+	 * @param image the image to put
 	 * @return True if succeeded, false otherwise.
 	 * @throws Exception, connection errors, etc. See JestClient
 	 */

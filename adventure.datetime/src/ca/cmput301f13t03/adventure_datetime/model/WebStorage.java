@@ -436,7 +436,6 @@ public class WebStorage implements IWebStorage {
 	 * Sets the index to run against
 	 * For production use "setDefaultIndex()"
 	 * For test, put "test" in here.
-	 * @return
 	 */
 	public void setIndex(String index) {
 		this._index = index;

@@ -223,7 +223,7 @@ public class Story {
 	
 	/**
      * Sets the UUID of the Story
-     * @param UUID id
+     * @param storyId
      */
 	public void setId(UUID storyId) {
 		this.id = storyId;

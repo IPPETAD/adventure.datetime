@@ -67,7 +67,6 @@ public class AuthorController {
 
     /**
      * Saves a story to the local storage
-     * @param story The Story to save
      * @return Whether or not the save was successful
      */
 	public boolean saveStory() 
@@ -146,7 +145,7 @@ public class AuthorController {
 	/**
 	 * Changes a downloaded story to author mode
 	 * @param storyId
-	 * @return new UUID for the story
+     * @param username The new author name
 	 */
 	public void setStoryToAuthor(UUID storyId, String username) {
 		m_storyDirector.setStoryToAuthor(storyId, username);
