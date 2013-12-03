@@ -931,7 +931,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
             story = new Story(UUID.fromString("9b135456-ecc9-4619-89ca-94f21aefd5b5"), UUID.fromString("6395015f-d63d-416f-8be6-eb4ff5c99c4c"),
                     "Andrew", 706232100, "A guide to creating choose your own adventures\nPress the pencil in the top right, and meet me over in " +
-                    "Author!\n\nI'm going to assume you're there now. If you are, pressing on that little white square next to the title" +
+                    "Author!\n\nI'm going to assume you're there now. If you are, pressing on that little black square next to the title" +
                     " will allow you to change this " +
                     "story's thumbnail to something a little more suitable. You should also notice that the author's name is now you! Unless this " +
                     "isn't your phone, that is. The pencil, which is where we're going next, allows us to edit the interior of the story. " +
