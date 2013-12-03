@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -26,7 +25,9 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentLis
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentStoryListener;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -22,12 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.graphics.Bitmap;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
-
-import android.graphics.Bitmap;
 
 public class Comment {
 

@@ -21,12 +21,12 @@
  */
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.util.Log;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import android.util.Log;
 
 public class ThreadPool {
 	private static ThreadPoolExecutor threadPool;

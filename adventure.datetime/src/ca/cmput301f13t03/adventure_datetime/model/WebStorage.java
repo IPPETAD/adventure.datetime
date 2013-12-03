@@ -22,20 +22,15 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IWebStorage;
 import io.searchbox.Action;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Bulk;
-import io.searchbox.core.Delete;
-import io.searchbox.core.Get;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
+import io.searchbox.core.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IWebStorage;
 
 
 /**

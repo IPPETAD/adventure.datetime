@@ -22,39 +22,34 @@
 
 package ca.cmput301f13t03.adventure_datetime.view;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.database.Cursor;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Image;
-import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Image;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ICurrentFragmentListener;
+import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -174,7 +169,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                     Bitmap bit = BitmapFactory.decodeStream(is);
                     Image selectedImage = new Image(Image.compressBitmap(bit, 85));
                     _fragment.addMedia(selectedImage);
-                    Locator.getAuthorController().saveFragment(_fragment);
+                    Locator.getAuthorController().saveStory();
                 }
                 catch(Exception e) {
                     Log.e(TAG, "Error getting new image", e);
@@ -186,7 +181,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
                     Bitmap bit = BitmapFactory.decodeStream(is);
                     Image selectedImage = new Image(Image.compressBitmap(bit, 85));
                     _fragment.addMedia(selectedImage);
-                    Locator.getAuthorController().saveFragment(_fragment);
+                    Locator.getAuthorController().saveStory();
                 }
                 catch(Exception e) {
                     Log.e(TAG, "Error getting new image", e);

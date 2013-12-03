@@ -22,12 +22,12 @@
 
 package ca.cmput301f13t03.adventure_datetime.model.Interfaces;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import ca.cmput301f13t03.adventure_datetime.model.Bookmark;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public interface ILocalStorage {
 

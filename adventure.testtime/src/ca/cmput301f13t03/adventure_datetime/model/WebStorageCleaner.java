@@ -22,9 +22,9 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.List;
-
 import android.test.AndroidTestCase;
+
+import java.util.List;
 
 public class WebStorageCleaner extends AndroidTestCase {
 

@@ -3,10 +3,10 @@ package ca.cmput301f13t03.adventure_datetime.serviceLocator;
 import android.content.Context;
 import ca.cmput301f13t03.adventure_datetime.controller.AuthorController;
 import ca.cmput301f13t03.adventure_datetime.controller.UserController;
-import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelPresenter;
+import ca.cmput301f13t03.adventure_datetime.model.StoryManager;
 
 /**
  * Locator class used to tie the view, model and controller componenets together into a cohesive whole.
@@ -29,7 +29,7 @@ public final class Locator
 	{
 		StoryManager manager = new StoryManager(applicationContext);
 		// TODO: Find person below how to "TODO" properly. Oh, and I murdered IReaderStorage
-		ILocalStorage localDatabase = null; // todo::jt fill this in
+		ILocalStorage localDatabase = null;
 		
 		s_director = manager;
 		s_presenter = manager;

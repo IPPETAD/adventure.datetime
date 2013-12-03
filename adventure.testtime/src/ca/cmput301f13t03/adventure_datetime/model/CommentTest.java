@@ -1,12 +1,11 @@
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import java.util.UUID;
-
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import ca.cmput301f13t03.adventure_datetime.R;
-
 import com.google.gson.Gson;
+
+import java.util.UUID;
 
 public class CommentTest extends AndroidTestCase {
 

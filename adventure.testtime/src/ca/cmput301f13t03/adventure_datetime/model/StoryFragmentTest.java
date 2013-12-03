@@ -22,8 +22,6 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
-import android.net.Uri;
-import android.util.Log;
 import com.google.gson.Gson;
 import junit.framework.Assert;
 import junit.framework.TestCase;

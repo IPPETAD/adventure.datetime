@@ -23,6 +23,7 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
+<<<<<<< HEAD
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
@@ -32,10 +33,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+=======
+>>>>>>> 1622a9bbd15a3f9da47cf7777b541219e6a38782
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
-import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Controller for aspects of authoring a story
@@ -65,14 +70,20 @@ public class AuthorController {
 	{
 		return m_storyDirector.CreateNewStory();
 	}
+	
+	public StoryFragment CreateFragment()
+	{
+		return m_storyDirector.CreateNewStoryFragment();
+	}
 
     /**
      * Saves a story to the local storage
      * @param story The Story to save
      * @return Whether or not the save was successful
      */
-	public boolean saveStory(Story story) {
-		return m_storyDirector.putStory(story);
+	public boolean saveStory() 
+	{
+		return m_storyDirector.SaveStory();
 	}
 
     /**
@@ -102,17 +113,6 @@ public class AuthorController {
 		}
 
 		m_storyDirector.deleteStory(storyId);
-	}
-
-    /**
-     * Saves a fragment to local storage
-     *
-     * @param fragment The fragment to save
-     *
-     * @return Whether or not the fragment was saved successfully
-     */
-	public boolean saveFragment(StoryFragment fragment) {
-		return m_storyDirector.putFragment(fragment);
 	}
 
     /**

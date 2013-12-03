@@ -23,12 +23,11 @@ package ca.cmput301f13t03.adventure_datetime.model;/*
 import android.graphics.BitmapFactory;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+import ca.cmput301f13t03.adventure_datetime.R;
+import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 import junit.framework.Assert;
 
 import java.util.UUID;
-
-import ca.cmput301f13t03.adventure_datetime.R;
-import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStorage;
 
 /**
  * @author Andrew Fontaine

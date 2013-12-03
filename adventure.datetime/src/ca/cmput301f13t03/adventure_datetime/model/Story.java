@@ -22,11 +22,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.model;
 
+import android.graphics.Bitmap;
+
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
-
-import android.graphics.Bitmap;
 
 /**
  * A model for an entire Choose-Your-Own-Adventure story
