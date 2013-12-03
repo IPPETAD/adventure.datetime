@@ -721,7 +721,8 @@ IStoryModelDirector {
 		
 		story.setHeadFragmentId(oldToNew.get(story.getHeadFragmentId()));
 		story.setAuthor(username);
-		m_db.setStory(story);
+		selectStory(storyId);
+		SaveStory();
 		m_db.setAuthoredStory(story);
 		LoadStories();
 		

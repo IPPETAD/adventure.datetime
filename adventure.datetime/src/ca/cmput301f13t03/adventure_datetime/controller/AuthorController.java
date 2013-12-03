@@ -145,7 +145,7 @@ public class AuthorController {
 	 * @return new UUID for the story
 	 */
 	public void setStoryToAuthor(UUID storyId, String username) {
-		selectStory(m_storyDirector.setStoryToAuthor(storyId, username));
+		m_storyDirector.setStoryToAuthor(storyId, username);
 	}
 
 	/**
