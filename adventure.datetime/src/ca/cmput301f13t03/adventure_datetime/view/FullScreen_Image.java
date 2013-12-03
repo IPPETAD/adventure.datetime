@@ -156,9 +156,6 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
         if (resultCode != RESULT_OK) {
-            if(requestCode == CAMERA) {
-                _fragment.removeMedia(_fragment.getStoryMedia().size() - 1);
-            }
             return;
         }
 
