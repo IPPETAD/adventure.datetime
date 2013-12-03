@@ -364,6 +364,11 @@ IStoryModelDirector {
 		PublishStoriesChanged();
 	}
 
+    public void deleteImage(UUID imageId) {
+        m_db.deleteImage(imageId);
+        PublishCurrentFragmentChanged();
+    }
+
 	/**
 	 * Get a story from the database or cloud
 	 */
