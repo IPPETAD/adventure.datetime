@@ -767,7 +767,7 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 
 	public class StoryDBHelper extends SQLiteOpenHelper {
 
-		public static final int DATABASE_VERSION = 6;
+		public static final int DATABASE_VERSION = 7;
 		public static final String DATABASE_NAME = "adventure.database";
 
 		private static final String TAG = "StoryDBHelper";
@@ -871,21 +871,28 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 		private void populateDB(SQLiteDatabase db) {
 			Bitmap bit = Bitmap.createBitmap(new int[]{Color.BLACK}, 1, 1, Bitmap.Config.ARGB_8888);
 			Story story = new Story(UUID.fromString("5582f797-29b8-4d9d-83bf-88c434c1944a"), UUID.fromString("fc662870-5d6a-4ae2-98f6-0cdfe36013bb"),
-					"Andrew", 706232100, "A tale of romance and might",
-					bit, "Super Kewl Story, GUIZ");
-			String storyText = "You wake up. The room is spinning very gently round your head. Or at least it would be "
-					+ "if you could see it which you can't";
+					"Andrew", 706232100, "A guide to playing choose your own adventures\nPress 'Play Story' below to begin!",
+					bit, "Play me!");
+			String storyText = "Welcome to Adventure.DateTime! To progress, press 'Actions' and select 'Next Tutorial'.";
 			StoryFragment frag = new StoryFragment(story.getId(), UUID.fromString("5582f797-29b8-4d9d-83bf-88c434c1944a"), storyText,
 					new ArrayList<Image>(), new ArrayList<Choice>());
-			StoryFragment frag2 = new StoryFragment(story.getId(), UUID.fromString("b10ef8ca-1180-44f6-b11b-170fef5ec071"), "You break" +
-					" your neck in the dark.", new ArrayList<Image>(), new ArrayList<Choice>());
-			Choice choice = new Choice("Get out of bed", frag2.getFragmentID());
+			StoryFragment frag2 = new StoryFragment(story.getId(), UUID.fromString("b10ef8ca-1180-44f6-b11b-170fef5ec071"), "Great job! " +
+                    "A new bookmark has automatically been created so you can pick up from where you left off later.\n" +
+                    "Playing these is as simple as that! A few things to note:\n" +
+                    "\tSometimes, these little story fragments,as we call them, contain pictures. " +
+                    "If they do, you'll see this above all this text. Press one, and it'll open up a " +
+                    "full-screen view." +
+                    "\t 'I'm feeling lucky' is an option in every story fragment. If you can't decide which option to choose," +
+                    " it'll pick one for you at random.\n\n" +
+                    "That's really about it. Now get playing! Hit 'The End' and 'Change Adventures' to find something else " +
+                    "to play. I suggest looking in Online.", new ArrayList<Image>(), new ArrayList<Choice>());
+			Choice choice = new Choice("Next tutorial", frag2.getFragmentID());
 			frag.addChoice(choice);
 			story.addFragment(frag);
+            story.setHeadFragmentId(frag);
 			story.addFragment(frag2);
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(1383652800L * 1000L);
-			Bookmark bookmark = new Bookmark(frag2.getFragmentID(), story.getId(), cal.getTime());
 
 			db.beginTransaction();
 			long inserted;
@@ -919,18 +926,82 @@ public class StoryDB implements BaseColumns, ILocalStorage {
 			values.put(COLUMN_GUID, frag2.getFragmentID().toString());
 			inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
 			Log.d(TAG, String.valueOf(inserted));
-			values = new ContentValues();
-			values.put(BOOKMARK_COLUMN_STORYID, bookmark.getStoryID().toString());
-			values.put(BOOKMARK_COLUMN_FRAGMENTID, bookmark.getFragmentID().toString());
-			values.put(BOOKMARK_COLUMN_DATE, bookmark.getTimestamp() / 1000L);
-			inserted = db.insert(BOOKMARK_TABLE_NAME, null, values);
-			Log.d(TAG, String.valueOf(inserted));
-            values = new ContentValues();
-            values.put(COLUMN_GUID, story.getId().toString());
-            inserted = db.insert(AUTHORED_STORY_TABLE_NAME, null, values);
-            Log.d(TAG, String.valueOf(inserted));
 			db.setTransactionSuccessful();
 			db.endTransaction();
+
+            story = new Story(UUID.fromString("9b135456-ecc9-4619-89ca-94f21aefd5b5"), UUID.fromString("6395015f-d63d-416f-8be6-eb4ff5c99c4c"),
+                    "Andrew", 706232100, "A guide to creating choose your own adventures\nPress the pencil in the top right, and meet me over in " +
+                    "Author!\n\nI'm going to assume you're there now. If you are, pressing on that little white square next to the title" +
+                    " will allow you to change this " +
+                    "story's thumbnail to something a little more suitable. You should also notice that the author's name is now you! Unless this " +
+                    "isn't your phone, that is. The pencil, which is where we're going next, allows us to edit the interior of the story. " +
+                    "The floppy disk saves your changes, although we generally handle the saving for you. The arrow uploads your story to our" +
+                    " servers to share with everyone. The trash can deletes your story, but beware, if you upload your story, there's no eliminating it." +
+                    "\n\n When you're ready, hit that pencil!",
+                    bit, "Edit me!");
+            storyText = "Scroll over to Edit...\n\n" +
+                    "Hey there! You're editing the head fragment of your story. This is the first part your readers will encounter. " +
+                    "We have a few things you can do here, namely, editing this text, as well as editing the choices connecting it to " +
+                    "other fragments. There should already be a choice sitting there. " +
+                    "There isn't much here... let's change that. We want to add a new choice. " +
+                    "To add a choice, we need a new fragment to " +
+                    "connect it to. Go back to 'Overview,' and press the 'Add' button in the top right. " +
+                    "REMEMBER! To change the fragment you're editing, press on its node in Overview. Press the other node once " +
+                    "you have a new fragment.";
+            frag = new StoryFragment(story.getId(), UUID.fromString("6395015f-d63d-416f-8be6-eb4ff5c99c4c"), storyText,
+                    new ArrayList<Image>(), new ArrayList<Choice>());
+
+            storyText = "Good you made it back. I was worried for a moment. To connect your new fragment to this one, hit " +
+                    "the add choice button. You'll have to fill out what you want your choice's text to be. When you hit " +
+                    "'Okay', you'll jump over to the Overview, where you can press on the node the choice will lead to. " +
+                    "Easy, right? To add pictures to your super cool story, press the Organize Media button above this. " +
+                    "You'll be able to select pictures from your gallery or take new ones. To take a look at what your fragment " +
+                    "will look like, head over to the Preview! Have fun creating!";
+
+            frag2 = new StoryFragment(story.getId(), UUID.fromString("dd868b19-d3bc-4c3b-beff-2c5bdad4026c"), storyText,
+                    new ArrayList<Image>(), new ArrayList<Choice>());
+
+            choice = new Choice("Next tutorial", frag2.getFragmentID());
+            frag.addChoice(choice);
+            story.addFragment(frag);
+            story.addFragment(frag2);
+            story.setHeadFragmentId(frag);
+            cal = Calendar.getInstance();
+            cal.setTimeInMillis(1383652800L * 1000L);
+
+            db.beginTransaction();
+
+            values = new ContentValues();
+            values.put(STORY_COLUMN_TITLE, story.getTitle());
+            values.put(STORY_COLUMN_AUTHOR, story.getAuthor());
+            values.put(STORY_COLUMN_HEAD_FRAGMENT, story.getHeadFragmentId().toString());
+            values.put(STORY_COLUMN_SYNOPSIS, story.getSynopsis());
+            values.put(STORY_COLUMN_TIMESTAMP, story.getTimestamp());
+            values.put(STORY_COLUMN_THUMBNAIL, story.getThumbnail().getId().toString());
+            values.put(COLUMN_GUID, story.getId().toString());
+            inserted = db.insert(STORY_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(COLUMN_GUID, story.getThumbnail().getId().toString());
+            values.put(STORY_IMAGE_COLUMN_IMAGE, story.getThumbnail().getEncodedBitmap());
+            inserted = db.insert(STORY_IMAGE_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(STORYFRAGMENT_COLUMN_STORYID, frag.getStoryID().toString());
+            values.put(STORYFRAGMENT_COLUMN_CONTENT, frag.getStoryText());
+            values.put(STORYFRAGMENT_COLUMN_CHOICES, frag.getChoicesInJson());
+            values.put(COLUMN_GUID, frag.getFragmentID().toString());
+            inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            values = new ContentValues();
+            values.put(STORYFRAGMENT_COLUMN_STORYID, frag2.getStoryID().toString());
+            values.put(STORYFRAGMENT_COLUMN_CONTENT, frag2.getStoryText());
+            values.put(STORYFRAGMENT_COLUMN_CHOICES, frag2.getChoicesInJson());
+            values.put(COLUMN_GUID, frag2.getFragmentID().toString());
+            inserted = db.insert(STORYFRAGMENT_TABLE_NAME, null, values);
+            Log.d(TAG, String.valueOf(inserted));
+            db.setTransactionSuccessful();
+            db.endTransaction();
 		}
 	}
 }
