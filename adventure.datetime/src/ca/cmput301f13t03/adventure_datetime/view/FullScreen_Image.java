@@ -215,7 +215,7 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
         public void setIllustrations(List<Image> imageIds, boolean author) {
             _illustrations = imageIds;
             _author = author;
-
+            this.notifyDataSetChanged();
         }
 
         @Override
@@ -273,14 +273,19 @@ public class FullScreen_Image extends FragmentActivity implements ICurrentFragme
             if (_rootView == null) return;
 
             /** Layout items **/
-            ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+            final  ImageView image = (ImageView) _rootView.findViewById(R.id.image);
+            final  TextView counter = (TextView) _rootView.findViewById(R.id.count);
 
-            TextView counter = (TextView) _rootView.findViewById(R.id.count);
-            image.invalidate();
+            getActivity().runOnUiThread(new Runnable(){
+                @Override
+                public void run() {
 
+                    image.setImageBitmap(_sID.decodeBitmap());
+                    counter.setText(_positionString);
+                    image.invalidate();
 
-            image.setImageBitmap(_sID.decodeBitmap());
-            counter.setText(_positionString);
+                }
+            });
 
         }
 
