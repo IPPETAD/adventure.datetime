@@ -451,9 +451,6 @@ public final class ConnectionPlacer
 			nodes = SimplifyPath(nodes);
 			CenterNodes(nodes);
 
-			// Code courtesy of stack overflow
-			// http://stackoverflow.com/questions/8287949/android-how-to-draw-a-smooth-line-following-your-finger/8289516#8289516
-			// --Thanks to : johncarl
 			if(nodes.size() > 1)
 			{
 				for(int i = nodes.size() - 2; i < nodes.size(); i++)
