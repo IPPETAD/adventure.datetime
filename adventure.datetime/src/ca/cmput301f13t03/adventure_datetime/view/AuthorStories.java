@@ -35,6 +35,7 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.ILocalStoriesListen
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.serviceLocator.Locator;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 

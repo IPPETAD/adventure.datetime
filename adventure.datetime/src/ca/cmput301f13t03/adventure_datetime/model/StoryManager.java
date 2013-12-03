@@ -30,6 +30,8 @@ import ca.cmput301f13t03.adventure_datetime.model.Interfaces.*;
 
 import java.util.*;
 
+import junit.framework.Assert;
+
 /**
  * Manages all transactions between views, controllers, and models.
  * Creates new Stories, StoryFragments, etc.
@@ -304,6 +306,7 @@ IStoryModelDirector {
 
 		m_stories.put(newStory.getId(), newStory);
 		m_db.setAuthoredStory(newStory);
+		Assert.assertTrue(m_db.getAuthoredStory(newStory.getId()));
 		m_fragmentList.put(headFragment.getFragmentID(), headFragment);
 
 		PublishCurrentStoryChanged();

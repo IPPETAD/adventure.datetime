@@ -23,22 +23,11 @@
 
 package ca.cmput301f13t03.adventure_datetime.controller;
 
-<<<<<<< HEAD
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
-
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
-=======
->>>>>>> 1622a9bbd15a3f9da47cf7777b541219e6a38782
 import ca.cmput301f13t03.adventure_datetime.model.Interfaces.IStoryModelDirector;
 import ca.cmput301f13t03.adventure_datetime.model.Story;
 import ca.cmput301f13t03.adventure_datetime.model.StoryFragment;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
